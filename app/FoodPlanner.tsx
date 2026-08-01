@@ -28,7 +28,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.4.0";
+const VERSION = "1.5.0";
 const photo = (name: string) => `${import.meta.env.BASE_URL}food/${name}.png`;
 const drinkOptions: LogItem[] = [
   { label: "Acqua", kcal: 0, amount: "500 ml" },
@@ -414,6 +414,86 @@ const foods: Record<string, Food> = {
     fat: 1.6,
     fiber: 0,
     source: "CREA",
+  },
+  "Latte intero": {
+    kcal: 64,
+    protein: 3.3,
+    carbs: 4.9,
+    fat: 3.6,
+    fiber: 0,
+    source: "CREA",
+  },
+  "Pasta cotta": {
+    kcal: 157,
+    protein: 5.8,
+    carbs: 30.9,
+    fat: 0.9,
+    fiber: 1.8,
+    source: "USDA",
+  },
+  "Passata di pomodoro": {
+    kcal: 29,
+    protein: 1.4,
+    carbs: 4.8,
+    fat: 0.2,
+    fiber: 1.5,
+    source: "CREA",
+  },
+  "Prosciutto cotto": {
+    kcal: 215,
+    protein: 19.8,
+    carbs: 0.9,
+    fat: 14.7,
+    fiber: 0,
+    source: "CREA",
+  },
+  "Prosciutto crudo": {
+    kcal: 268,
+    protein: 25.5,
+    carbs: 0.3,
+    fat: 18.4,
+    fiber: 0,
+    source: "CREA",
+  },
+  Bresaola: {
+    kcal: 151,
+    protein: 32,
+    carbs: 0,
+    fat: 2.6,
+    fiber: 0,
+    source: "CREA",
+  },
+  "Fesa di tacchino": {
+    kcal: 107,
+    protein: 24,
+    carbs: 0,
+    fat: 1.2,
+    fiber: 0,
+    source: "CREA",
+  },
+  "Bistecca di manzo cotta": {
+    kcal: 217,
+    protein: 26,
+    carbs: 0,
+    fat: 12,
+    fiber: 0,
+    source: "USDA",
+  },
+  "Patate lesse": {
+    kcal: 87,
+    protein: 1.9,
+    carbs: 20.1,
+    fat: 0.1,
+    fiber: 1.8,
+    source: "USDA",
+  },
+  "Piselli cotti": {
+    kcal: 84,
+    protein: 5.4,
+    carbs: 15.6,
+    fat: 0.2,
+    fiber: 5.5,
+    source: "USDA",
   },
   "Bevanda di soia senza zucchero": {
     kcal: 33,
@@ -1367,7 +1447,7 @@ const quickSnacks: Recipe[] = [
     kicker: "Da tenere in borsa",
     course: "Spuntino",
     cuisine: "Italiano",
-    image: photo("fruit-breakfast-v2"),
+    image: photo("walnuts-20g-v5"),
     time: 1,
     ingredients: [{ food: "Noci", grams: 20 }],
     steps: ["Pesa le noci una volta e mettile in un contenitore piccolo."],
@@ -1379,7 +1459,7 @@ const quickSnacks: Recipe[] = [
     kicker: "Apri, pesa, mangia",
     course: "Spuntino",
     cuisine: "Italiano",
-    image: photo("rusks-ricotta-jam-v3"),
+    image: photo("crackers-35g-v5"),
     time: 1,
     ingredients: [{ food: "Cracker integrali", grams: 35 }],
     steps: [
@@ -1407,9 +1487,173 @@ const quickSnacks: Recipe[] = [
     ],
   },
 ];
+const portableRecipes: Recipe[] = [
+  {
+    id: "work-bresaola",
+    name: "Panino bresaola, rucola e ricotta",
+    kicker: "Freddo, trasportabile, pronto in 4 minuti",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    image: photo("work-bresaola-v5"),
+    time: 4,
+    ingredients: [
+      { food: "Pane integrale", grams: 100 },
+      { food: "Bresaola", grams: 70 },
+      { food: "Ricotta vaccina", grams: 35 },
+      { food: "Rucola", grams: 25 },
+    ],
+    steps: [
+      "Apri il pane e spalma la ricotta.",
+      "Aggiungi bresaola e rucola asciutta; chiudi e avvolgi bene.",
+    ],
+    alternatives: [
+      "Fesa di tacchino o prosciutto cotto al posto della bresaola",
+    ],
+  },
+  {
+    id: "work-cotto",
+    name: "Panino prosciutto cotto e pomodoro",
+    kicker: "Pranzo semplice da portare",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    image: photo("work-cotto-v5"),
+    time: 3,
+    ingredients: [
+      { food: "Pane integrale", grams: 110 },
+      { food: "Prosciutto cotto", grams: 80 },
+      { food: "Pomodorini", grams: 100 },
+    ],
+    steps: [
+      "Taglia pane e pomodorini.",
+      "Farcisci con prosciutto cotto e pomodoro ben asciutto; conserva al fresco.",
+    ],
+    alternatives: ["Prosciutto crudo, bresaola o fesa di tacchino"],
+  },
+  {
+    id: "work-rice-salad",
+    name: "Insalata di riso semplice",
+    kicker: "Preparabile la sera prima",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    image: photo("work-rice-salad-v5"),
+    time: 15,
+    ingredients: [
+      { food: "Riso basmati cotto", grams: 200 },
+      { food: "Tonno al naturale sgocciolato", grams: 90 },
+      { food: "Piselli cotti", grams: 70 },
+      { food: "Pomodorini", grams: 100 },
+      { food: "Olio extravergine", grams: 8 },
+    ],
+    steps: [
+      "Cuoci il riso, scolalo e raffreddalo rapidamente.",
+      "Unisci tonno sgocciolato, piselli e pomodorini; aggiungi l'olio pesato.",
+      "Conserva in frigorifero e trasporta in una borsa termica.",
+    ],
+    alternatives: [
+      "Fesa di tacchino al posto del tonno",
+      "Zucchine al posto dei piselli",
+    ],
+  },
+  {
+    id: "simple-pasta-white",
+    name: "Pasta in bianco",
+    kicker: "Semplice, disponibile anche in mensa",
+    course: "Primo",
+    cuisine: "Italiano",
+    image: photo("simple-pasta-white-v5"),
+    time: 12,
+    ingredients: [
+      { food: "Pasta cotta", grams: 220 },
+      { food: "Olio extravergine", grams: 8 },
+    ],
+    steps: [
+      "Cuoci la pasta in acqua secondo il tempo indicato sulla confezione.",
+      "Scola e condisci con l'olio pesato.",
+    ],
+    alternatives: ["Aggiungi un secondo semplice per completare il pasto"],
+  },
+  {
+    id: "simple-pasta-tomato",
+    name: "Pasta al pomodoro",
+    kicker: "Primo italiano quotidiano",
+    course: "Primo",
+    cuisine: "Italiano",
+    image: photo("simple-pasta-tomato-v5"),
+    time: 15,
+    ingredients: [
+      { food: "Pasta cotta", grams: 220 },
+      { food: "Passata di pomodoro", grams: 120 },
+      { food: "Olio extravergine", grams: 8 },
+    ],
+    steps: [
+      "Scalda la passata per 8 minuti.",
+      "Cuoci e scola la pasta; unisci passata e olio pesato.",
+    ],
+    alternatives: ["Riso al pomodoro mantenendo una quota simile"],
+  },
+  {
+    id: "work-turkey",
+    name: "Pane e fesa di tacchino",
+    kicker: "Due ingredienti, zero cucina",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    image: photo("work-turkey-v5"),
+    time: 2,
+    ingredients: [
+      { food: "Pane integrale", grams: 110 },
+      { food: "Fesa di tacchino", grams: 100 },
+      { food: "Pomodorini", grams: 120 },
+    ],
+    steps: [
+      "Pesa pane e fesa di tacchino.",
+      "Aggiungi i pomodorini lavati in un contenitore separato.",
+    ],
+    alternatives: ["Bresaola, prosciutto cotto o crudo"],
+  },
+  {
+    id: "simple-eggs",
+    name: "Uova sode, pane e pomodori",
+    kicker: "Preparabile la sera prima",
+    course: "Secondo",
+    cuisine: "Italiano",
+    image: photo("simple-eggs-v5"),
+    time: 11,
+    ingredients: [
+      { food: "Uovo", grams: 120 },
+      { food: "Pane integrale", grams: 90 },
+      { food: "Pomodorini", grams: 150 },
+    ],
+    steps: [
+      "Metti le uova in acqua fredda, porta a bollore e cuoci 9 minuti.",
+      "Raffreddale in acqua, sgusciale e conserva al fresco; servi con pane e pomodori.",
+    ],
+    alternatives: ["Bresaola o fesa di tacchino al posto delle uova"],
+  },
+  {
+    id: "simple-steak-potatoes",
+    name: "Bistecca ai ferri e patate lesse",
+    kicker: "Cena semplice con cotture chiare",
+    course: "Secondo",
+    cuisine: "Italiano",
+    image: photo("simple-steak-potatoes-v5"),
+    time: 25,
+    ingredients: [
+      { food: "Bistecca di manzo cotta", grams: 150 },
+      { food: "Patate lesse", grams: 250 },
+      { food: "Olio extravergine", grams: 8 },
+    ],
+    steps: [
+      "Lessa le patate a pezzi per 15-20 minuti, finché la forchetta entra facilmente.",
+      "Cuoci la bistecca su piastra ben calda fino al grado di cottura sicuro e preferito.",
+      "Condisci le patate con l'olio pesato.",
+    ],
+    alternatives: ["Fesa di tacchino o uova al posto della bistecca"],
+  },
+];
 const allRecipes = [
   ...simpleBreakfasts,
   ...quickSnacks,
+  ...portableRecipes,
   ...recipes,
   ...generatedRecipes,
   ...snackRecipes,
@@ -1422,7 +1666,7 @@ const days: Day[] = [
     recipes: [
       "breakfast-rusks-jam",
       "quick-apple",
-      "bowl",
+      "work-bresaola",
       "quick-nuts",
       "salmon",
     ],
@@ -1433,7 +1677,7 @@ const days: Day[] = [
     recipes: [
       "breakfast-milk-biscuits",
       "quick-crackers",
-      "farro",
+      "work-rice-salad",
       "snack-banana",
       "rice",
     ],
@@ -1444,7 +1688,7 @@ const days: Day[] = [
     recipes: [
       "breakfast-crackers-ricotta",
       "quick-nuts",
-      "chicken-farro",
+      "work-cotto",
       "quick-apple",
       "sweet-ricotta",
     ],
@@ -1455,7 +1699,7 @@ const days: Day[] = [
     recipes: [
       "breakfast-rusks-butter",
       "quick-wafer",
-      "salmon-rice",
+      "simple-pasta-tomato",
       "quick-apple",
       "lentil-quinoa",
     ],
@@ -1466,7 +1710,7 @@ const days: Day[] = [
     recipes: [
       "breakfast-rusks-jam",
       "quick-crackers",
-      "tuna-chickpeas",
+      "work-turkey",
       "quick-nuts",
       "eggs-quinoa",
     ],
@@ -1475,7 +1719,7 @@ const days: Day[] = [
     label: "Giorno 6",
     mood: "Più movimento",
     recipes: [
-      "breakfast-milk-biscuits",
+      "jar",
       "quick-apple",
       "chicken-farro",
       "snack-banana",
@@ -1486,7 +1730,7 @@ const days: Day[] = [
     label: "Giorno 7",
     mood: "Equilibrio e varietà",
     recipes: [
-      "breakfast-crackers-ricotta",
+      "apple-oats",
       "quick-nuts",
       "lentil-quinoa",
       "quick-apple",
@@ -1526,6 +1770,7 @@ export function FoodPlanner() {
   const [swapReturnTab, setSwapReturnTab] = useState<Tab>("today");
   const [libraryQuery, setLibraryQuery] = useState("");
   const [cuisineChoice, setCuisineChoice] = useState("Italiano");
+  const [dayContext, setDayContext] = useState("Lavoro");
   const [plannedDrink, setPlannedDrink] = useState("Acqua");
   const [cuisineFilter, setCuisineFilter] = useState("Tutte");
   const [drinks, setDrinks] = useState<Record<string, LogItem[]>>({});
@@ -1574,6 +1819,7 @@ export function FoodPlanner() {
         setGroceryChecked(s.groceryChecked || {});
         setGroceryAmounts(s.groceryAmounts || {});
         setPlannedDrink(s.plannedDrink || "Acqua");
+        setDayContext(s.dayContext || "Lavoro");
       }
     } catch {}
   }, []);
@@ -1594,6 +1840,7 @@ export function FoodPlanner() {
         groceryChecked,
         groceryAmounts,
         plannedDrink,
+        dayContext,
       }),
     );
   }, [
@@ -1610,6 +1857,7 @@ export function FoodPlanner() {
     groceryChecked,
     groceryAmounts,
     plannedDrink,
+    dayContext,
   ]);
   const groupFoods: Record<string, string[]> = {
     Latte: ["Yogurt greco 2%", "Ricotta vaccina", "Feta"],
@@ -1770,12 +2018,20 @@ export function FoodPlanner() {
     const mains = styled.filter((r) =>
       ["Piatto unico", "Primo", "Secondo"].includes(recipeCourse(r)),
     );
-    if (!breakfasts.length || !snacks.length || !mains.length) return;
+    const lunches =
+      dayContext === "Lavoro" ? portableRecipes.filter(isAllowed) : mains;
+    if (
+      !breakfasts.length ||
+      !snacks.length ||
+      !mains.length ||
+      !lunches.length
+    )
+      return;
     setChoices((v) => ({
       ...v,
       [`${dayIndex}-0`]: breakfasts[dayIndex % breakfasts.length].id,
       [`${dayIndex}-1`]: snacks[dayIndex % snacks.length].id,
-      [`${dayIndex}-2`]: mains[(dayIndex * 2) % mains.length].id,
+      [`${dayIndex}-2`]: lunches[(dayIndex * 2) % lunches.length].id,
       [`${dayIndex}-3`]: snacks[(dayIndex + 1) % snacks.length].id,
       [`${dayIndex}-4`]: mains[(dayIndex * 2 + 1) % mains.length].id,
     }));
@@ -1832,26 +2088,29 @@ export function FoodPlanner() {
       );
     }
     if (!breakfasts.length || !snacks.length || !mains.length) return;
+    const lunches =
+      dayContext === "Lavoro" ? portableRecipes.filter(isAllowed) : mains;
+    if (!lunches.length) return;
     const offset =
       next.yesterday === "molto" ? 1 : next.yesterday === "poco" ? 2 : 0;
     setChoices((v) => ({
       ...v,
       [`${dayIndex}-0`]: breakfasts[(dayIndex + offset) % breakfasts.length].id,
       [`${dayIndex}-1`]: snacks[(dayIndex + offset) % snacks.length].id,
-      [`${dayIndex}-2`]: mains[(dayIndex + offset) % mains.length].id,
+      [`${dayIndex}-2`]: lunches[(dayIndex + offset) % lunches.length].id,
       [`${dayIndex}-3`]: snacks[(dayIndex + offset + 1) % snacks.length].id,
       [`${dayIndex}-4`]: mains[(dayIndex + offset + 1) % mains.length].id,
     }));
     setReplanNote(
       next.feeling === "gonfio"
-        ? "Menu cambiato: porzioni distribuite, niente bibite gassate e proposte senza legumi. Se il gonfiore persiste o è doloroso, parlane con il medico."
+        ? "Gonfio: menu semplice, senza legumi e bibite gassate. Sintomi persistenti o dolore: medico."
         : next.feeling === "stanco"
-          ? "Menu cambiato: carboidrati distribuiti, frutta e pasti regolari; il cibo non sostituisce il sonno."
+          ? "Stanco: pasti regolari, carboidrati distribuiti e frutta."
           : next.feeling === "fame"
-            ? "Menu cambiato: ho privilegiato proteine e fibre per aumentare la sazietà."
+            ? "Fame: più proteine e fibre per la sazietà."
             : next.todayActivity === "intensa"
-              ? "Menu cambiato: più energia e uno spuntino ricco di carboidrati vicino all'attività."
-              : "Menu aggiornato in base alle risposte, mantenendo pasti regolari.",
+              ? "Attività intensa: più energia vicino all'attività."
+              : "Menu aggiornato.",
     );
   };
   const answerCheck = (key: keyof typeof check, value: string) => {
@@ -2163,6 +2422,16 @@ export function FoodPlanner() {
                 </select>
               </div>
               <div>
+                <span>Dove</span>
+                <select
+                  value={dayContext}
+                  onChange={(e) => setDayContext(e.target.value)}
+                >
+                  <option>Lavoro</option>
+                  <option>Casa</option>
+                </select>
+              </div>
+              <div>
                 <span>Bevanda</span>
                 <select
                   value={plannedDrink}
@@ -2327,6 +2596,10 @@ export function FoodPlanner() {
                 {currentIds.map((id, i) => {
                   const r = recipeMap[id];
                   const m = calc(r.ingredients, scale);
+                  const portion =
+                    r.ingredients.length === 1
+                      ? `${round(r.ingredients[0].grams * scale)} g porzione · `
+                      : "";
                   const key = `${dayIndex}-${i}`;
                   const allowed = isAllowed(r);
                   const actual = completed[key]
@@ -2362,7 +2635,7 @@ export function FoodPlanner() {
                             : allowed
                               ? actual
                                 ? `Mangiato · ${round(actual.kcal)} kcal`
-                                : `${round(m.kcal)} kcal · ${round(m.protein)}g · ${r.time} min`
+                                : `${portion}${round(m.kcal)} kcal · ${round(m.protein)} g proteine · ${r.time} min`
                               : "Contiene un alimento escluso"}
                         </p>
                       </div>

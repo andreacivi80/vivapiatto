@@ -26,3 +26,7 @@ Prompt finali: fotografia gastronomica naturale, porzione domestica verosimile, 
 - `zucchini-tomato-side-v3.png`: zucchine e pomodorini con semi, erbe e olio.
 
 Ogni prompt v1.3.0 deriva dagli ingredienti visibili della ricetta e vieta ingredienti estranei, testo, loghi e filigrane.
+
+### Nuove immagini v1.5.0
+
+Immagini originali generate dalla ricetta: pasta in bianco, pasta al pomodoro, panino con fesa e pomodoro, panino con bresaola, panino con cotto, insalata di riso, uova con pane e pomodori, bistecca con patate lesse, cracker e noci. Ogni immagine mostra soltanto gli ingredienti dichiarati, senza testo, loghi o decorazioni estranee.

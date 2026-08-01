@@ -31,7 +31,7 @@ Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggior
 - [x] Stato: bene, gonfio, stanco, affamato; suggerimenti non punitivi.
 - [x] Cambio piatto direttamente dalla vista settimana, collegato alla giornata scelta.
 
-## v1.4.0 — in preparazione
+## v1.4.0 — pubblicata
 
 - [x] Impedire definitivamente che una colazione venga proposta a pranzo o cena.
 - [x] Sostituire “Proponi pranzo e cena” con “Crea menu completo”.
@@ -56,14 +56,16 @@ Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggior
 - [ ] Centrifughe, smoothie e bevande preparabili a casa.
 - [ ] Modalità “Fuori casa” con zona, tipo di locale e registrazione della scelta reale.
 
-## v1.5.0 — da fare
+## v1.5.0 — pubblicata
 
-- [ ] Colazioni feriali predefinite entro 1-3 minuti; colazioni più elaborate solo nel weekend o su scelta esplicita.
-- [ ] Piatti italiani semplici: pasta al pomodoro, riso in bianco/al sugo, pane, secondi e contorni separati.
-- [ ] Completamento guidato dei piatti semplici senza obbligare un piatto unico composto.
+- [x] Colazioni feriali predefinite entro 1-3 minuti; colazioni più elaborate solo nel weekend o su scelta esplicita.
+- [x] Piatti italiani semplici: pasta in bianco/al pomodoro, pane, panini, uova, bistecca e patate lesse.
+- [x] Modalità Lavoro/Casa: a pranzo propone preparazioni trasportabili o reperibili in mensa; la cena resta libera.
+- [x] Completamento guidato dei piatti semplici senza obbligare un piatto unico composto.
 - [ ] Legumi completi: ceci, lenticchie, fagioli, piselli; disponibili normalmente e limitati solo quando il check-in lo giustifica.
 - [ ] Tabella interna verificata “stato → preferenze/cautele” con fonti ufficiali.
-- [ ] Nuove foto specifiche per frutti, piatti semplici, spuntini e ricette principali.
+- [x] Nuove foto specifiche per pasta, panini, insalata di riso, uova, bistecca con patate, cracker e noci.
+- [x] Etichette non ambigue: “g porzione” e “g proteine”.
 
 ## Continuo
 

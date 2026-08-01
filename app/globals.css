@@ -427,7 +427,7 @@ button {
 }
 .builder-score {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
   background: var(--ink);
   border-radius: 24px;
