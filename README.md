@@ -1,10 +1,10 @@
-# VivaPiatto
+# Tavola Mia
 
 Applicazione mobile per costruire e seguire un percorso alimentare pratico.
 
 ## Versione
 
-Versione corrente: **1.0.0**
+Versione corrente: **1.3.0**
 
 ## Funzioni
 
