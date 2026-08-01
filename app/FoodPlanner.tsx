@@ -7,12 +7,15 @@ type Food = Macro & { fiber: number; source: "CREA" | "USDA" };
 type RecipeIngredient = { food: string; grams: number; label?: string };
 type Recipe = {
   id: string; name: string; kicker: string; image: string; time: number;
-  ingredients: RecipeIngredient[]; steps: string[]; alternatives: string[];
+  ingredients: RecipeIngredient[]; steps: string[]; alternatives: string[]; cuisine?: string; course?: string;
 };
 type Day = { label: string; mood: string; recipes: string[] };
+type Tab = "today"|"week"|"library"|"builder"|"progress";
+type LogItem = { label:string; kcal:number; amount?:string };
 
-const VERSION = "1.0.0";
+const VERSION = "1.2.0";
 const photo = (name: string) => `${import.meta.env.BASE_URL}food/${name}.png`;
+const drinkOptions:LogItem[]=[{label:"Acqua",kcal:0,amount:"500 ml"},{label:"Caffè senza zucchero",kcal:2,amount:"1 tazza"},{label:"Coca-Cola Zero",kcal:0,amount:"330 ml"},{label:"Gassata zero",kcal:0,amount:"330 ml"},{label:"Bibita zuccherata",kcal:140,amount:"330 ml"}];
 
 const foods: Record<string, Food> = {
   "Yogurt greco 2%": { kcal: 73, protein: 9.9, carbs: 3.9, fat: 2, fiber: 0, source: "USDA" },
@@ -30,6 +33,11 @@ const foods: Record<string, Food> = {
   "Quinoa cotta": { kcal: 120, protein: 4.4, carbs: 21.3, fat: 1.9, fiber: 2.8, source: "USDA" },
   "Farro cotto": { kcal: 127, protein: 4.3, carbs: 26.4, fat: 0.7, fiber: 3.8, source: "CREA" },
   "Riso basmati cotto": { kcal: 121, protein: 3.5, carbs: 25.2, fat: 0.4, fiber: 0.4, source: "USDA" },
+  "Miglio cotto": { kcal: 119, protein: 3.5, carbs: 23.7, fat: 1, fiber: 1.3, source: "USDA" },
+  "Cous cous integrale cotto": { kcal: 112, protein: 3.8, carbs: 23.2, fat: 0.2, fiber: 2.4, source: "USDA" },
+  "Grano saraceno cotto": { kcal: 92, protein: 3.4, carbs: 19.9, fat: 0.6, fiber: 2.7, source: "USDA" },
+  "Orzo perlato cotto": { kcal: 123, protein: 2.3, carbs: 28.2, fat: 0.4, fiber: 3.8, source: "USDA" },
+  "Noodles di riso cotti": { kcal: 109, protein: 0.9, carbs: 24.9, fat: 0.2, fiber: 1, source: "USDA" },
   "Ceci cotti": { kcal: 164, protein: 8.9, carbs: 27.4, fat: 2.6, fiber: 7.6, source: "USDA" },
   "Lenticchie cotte": { kcal: 116, protein: 9, carbs: 20.1, fat: 0.4, fiber: 7.9, source: "USDA" },
   "Patata dolce cotta": { kcal: 90, protein: 2, carbs: 20.7, fat: 0.2, fiber: 3.3, source: "USDA" },
@@ -45,6 +53,15 @@ const foods: Record<string, Food> = {
   "Semi di zucca": { kcal: 559, protein: 30.2, carbs: 10.7, fat: 49.1, fiber: 6, source: "USDA" },
   "Banana": { kcal: 89, protein: 1.1, carbs: 22.8, fat: 0.3, fiber: 2.6, source: "CREA" },
   "Mela": { kcal: 52, protein: 0.3, carbs: 13.8, fat: 0.2, fiber: 2.4, source: "CREA" },
+  "Pera": { kcal: 57, protein: 0.4, carbs: 15.2, fat: 0.1, fiber: 3.1, source: "USDA" },
+  "Arancia": { kcal: 47, protein: 0.9, carbs: 11.8, fat: 0.1, fiber: 2.4, source: "CREA" },
+  "Mango": { kcal: 60, protein: 0.8, carbs: 15, fat: 0.4, fiber: 1.6, source: "USDA" },
+  "Ananas": { kcal: 50, protein: 0.5, carbs: 13.1, fat: 0.1, fiber: 1.4, source: "CREA" },
+  "Mandorle": { kcal: 579, protein: 21.2, carbs: 21.6, fat: 49.9, fiber: 12.5, source: "USDA" },
+  "Pistacchi": { kcal: 560, protein: 20.2, carbs: 27.2, fat: 45.3, fiber: 10.6, source: "USDA" },
+  "Nocciole": { kcal: 628, protein: 15, carbs: 16.7, fat: 60.8, fiber: 9.7, source: "CREA" },
+  "Semi di chia": { kcal: 486, protein: 16.5, carbs: 42.1, fat: 30.7, fiber: 34.4, source: "USDA" },
+  "Cioccolato fondente 70%": { kcal: 598, protein: 7.8, carbs: 45.9, fat: 42.6, fiber: 10.9, source: "USDA" },
 };
 
 const calc = (ingredients: RecipeIngredient[], scale = 1): Macro & { fiber: number; weight: number } =>
@@ -58,80 +75,234 @@ const calc = (ingredients: RecipeIngredient[], scale = 1): Macro & { fiber: numb
 const recipes: Recipe[] = [
   { id:"jar", name:"Jar yogurt, avena e frutti", kicker:"Colazione fresca e saziante", image:photo("yogurt"), time:5,
     ingredients:[{food:"Yogurt greco 2%",grams:220},{food:"Fiocchi d'avena",grams:45},{food:"Frutti di bosco",grams:100},{food:"Kiwi",grams:70},{food:"Noci",grams:12},{food:"Miele",grams:8}],
-    steps:["Versa metà yogurt nel barattolo.","Aggiungi avena e frutta a strati.","Completa con noci tritate e miele."], alternatives:["Skyr al posto dello yogurt", "Pera al posto del kiwi", "Mandorle al posto delle noci"] },
+    steps:["Lava e asciuga la frutta. Pela il kiwi, taglialo a cubetti e spezza grossolanamente le noci.","Pesa lo yogurt direttamente nel barattolo e livellane metà con un cucchiaio.","Aggiungi metà avena e metà frutta; ripeti gli strati senza schiacciarli.","Completa con noci e miele. Chiudi e lascia 10 minuti in frigorifero, oppure preparalo la sera per una consistenza più morbida."], alternatives:["Skyr al posto dello yogurt", "Pera al posto del kiwi", "Mandorle al posto delle noci"] },
   { id:"toast", name:"Toast ricotta, uovo e pomodoro", kicker:"Croccante, proteico, veloce", image:photo("toast"), time:10,
     ingredients:[{food:"Pane integrale",grams:90},{food:"Ricotta vaccina",grams:80},{food:"Uovo",grams:60},{food:"Pomodorini",grams:120}],
-    steps:["Tosta il pane.","Cuoci l'uovo in padella antiaderente.","Spalma la ricotta e completa con uovo e pomodorini."], alternatives:["Tonno al naturale al posto dell'uovo", "Yogurt greco denso al posto della ricotta"] },
+    steps:["Lava i pomodorini e tagliali in quattro. Metti pane, ricotta, uovo e una padella sul piano di lavoro.","Scalda la padella senza olio per un minuto. Tosta bene il pane 2-3 minuti per lato: deve diventare dorato e croccante sui bordi.","Abbassa il fuoco, rompi l'uovo in padella e copri. Cuoci 4-5 minuti, finché l'albume è completamente bianco e rappreso.","Spalma la ricotta sul pane caldo, aggiungi pomodorini, pepe ed erbe, poi appoggia sopra l'uovo. Servi subito per non perdere la croccantezza."], alternatives:["Tonno al naturale al posto dell'uovo", "Yogurt greco denso al posto della ricotta"] },
   { id:"bowl", name:"Bowl pollo, quinoa e ceci", kicker:"Energia stabile e gusto mediterraneo", image:photo("chicken-bowl"), time:25,
     ingredients:[{food:"Petto di pollo cotto",grams:130},{food:"Quinoa cotta",grams:130},{food:"Ceci cotti",grams:60},{food:"Zucchine",grams:160},{food:"Pomodorini",grams:100},{food:"Spinaci",grams:50},{food:"Olio extravergine",grams:10}],
-    steps:["Griglia pollo e zucchine con spezie.","Scalda quinoa e ceci.","Componi la bowl con spinaci e pomodorini; condisci con olio e limone."], alternatives:["Tofu compatto al posto del pollo", "Farro al posto della quinoa", "Fagioli cannellini al posto dei ceci"] },
+    steps:["Pesa tutto. Sciacqua la quinoa in un colino fine per un minuto; mettila in pentola con il doppio del suo volume d'acqua, porta a bollore, copri e cuoci piano 12-15 minuti. Spegni, riposa 5 minuti e sgrana con la forchetta.","Taglia il pollo crudo a bocconcini di 2-3 cm e le zucchine a mezze lune. Scalda bene una padella e aggiungi paprika, pepe e rosmarino.","Cuoci il pollo 6-8 minuti girandolo spesso; aggiungi le zucchine e continua per altri 6 minuti. Il pollo deve raggiungere 74 °C al cuore.","Sciacqua e scola i ceci, poi scaldali 3 minuti insieme alla quinoa. Lava spinaci e pomodorini.","Metti quinoa e ceci sul fondo, aggiungi verdure e pollo ben dorato. Condisci solo alla fine con olio pesato, limone ed erbe."], alternatives:["Tofu compatto al posto del pollo", "Farro al posto della quinoa", "Fagioli cannellini al posto dei ceci"] },
   { id:"salmon", name:"Salmone, patata dolce e fagiolini", kicker:"Piatto completo senza complicazioni", image:photo("salmon"), time:30,
     ingredients:[{food:"Salmone cotto",grams:140},{food:"Patata dolce cotta",grams:230},{food:"Fagiolini",grams:180},{food:"Olio extravergine",grams:8}],
-    steps:["Cuoci la patata dolce a cubetti in forno.","Cuoci il salmone al forno con limone ed erbe.","Lessa i fagiolini e condisci tutto con l'olio pesato."], alternatives:["Trota al posto del salmone", "Patate comuni al posto della patata dolce", "Broccoli al posto dei fagiolini"] },
+    steps:["Scalda il forno a 200 °C. Lava la patata dolce, tagliala a cubetti di 2 cm e distribuiscila su carta forno senza sovrapporla.","Cuoci la patata per 25 minuti, girandola dopo 15: è pronta quando la forchetta entra facilmente e gli spigoli sono dorati.","Metti il salmone su una seconda teglia con limone ed erbe. Inforna a 190 °C per 12-15 minuti, finché è opaco e si divide in scaglie.","Spunta i fagiolini e lessali 7-9 minuti: devono essere teneri ma non sfatti. Scolali bene.","Disponi i tre elementi nel piatto e aggiungi l'olio misurato, limone e pepe solo alla fine."], alternatives:["Trota al posto del salmone", "Patate comuni al posto della patata dolce", "Broccoli al posto dei fagiolini"] },
   { id:"farro", name:"Farro, lenticchie e feta croccante", kicker:"Insalata particolare, ricca di fibre", image:photo("farro"), time:18,
     ingredients:[{food:"Farro cotto",grams:150},{food:"Lenticchie cotte",grams:110},{food:"Peperoni",grams:120},{food:"Cetriolo",grams:100},{food:"Rucola",grams:50},{food:"Feta",grams:45},{food:"Semi di zucca",grams:10},{food:"Olio extravergine",grams:8}],
-    steps:["Arrostisci rapidamente i peperoni.","Mescola farro e lenticchie tiepidi con le verdure.","Completa con feta, semi e olio pesato."], alternatives:["Ceci al posto delle lenticchie", "Ricotta salata al posto della feta", "Quinoa per una variante senza glutine"] },
+    steps:["Cuoci il farro in acqua secondo la confezione, scolalo e allargalo nel piatto per far uscire il vapore.","Sciacqua le lenticchie cotte. Taglia peperone e cetriolo a cubetti, lava la rucola e asciugala.","Scalda una padella e arrostisci il peperone 7-8 minuti, finché compaiono parti dorate ma resta consistente.","Mescola farro e lenticchie ancora tiepidi con peperone, cetriolo e rucola.","Sbriciola la feta con le dita, aggiungi semi e olio pesato. Mescola una sola volta e servi."], alternatives:["Ceci al posto delle lenticchie", "Ricotta salata al posto della feta", "Quinoa per una variante senza glutine"] },
   { id:"rice", name:"Riso basmati, tonno e verdure", kicker:"Pranzo rapido da portare", image:photo("tuna-rice"), time:15,
     ingredients:[{food:"Riso basmati cotto",grams:190},{food:"Tonno al naturale sgocciolato",grams:120},{food:"Zucchine",grams:150},{food:"Peperoni",grams:100},{food:"Olio extravergine",grams:9}],
-    steps:["Salta zucchine e peperoni.","Unisci il riso caldo e il tonno sgocciolato.","Spegni il fuoco e aggiungi l'olio misurato."], alternatives:["Pollo al posto del tonno", "Farro al posto del riso", "Ceci per la variante vegetale"] },
+    steps:["Sciacqua il riso finché l'acqua è quasi limpida. Cuocilo secondo la confezione, spegni e lascialo riposare coperto 5 minuti.","Taglia zucchine e peperoni in pezzi piccoli e uguali. Cuocili in padella calda 8-10 minuti, mescolando: devono colorarsi senza diventare molli.","Apri il tonno, sgocciolalo molto bene e dividilo con una forchetta.","Sgrana il riso, uniscilo alle verdure e scalda per 2 minuti. Spegni il fuoco e aggiungi tonno, olio pesato, limone ed erbe."], alternatives:["Pollo al posto del tonno", "Farro al posto del riso", "Ceci per la variante vegetale"] },
   { id:"snack-apple", name:"Mela, yogurt e noci", kicker:"Spuntino con masticazione e proteine", image:photo("snack"), time:3,
     ingredients:[{food:"Mela",grams:180},{food:"Yogurt greco 2%",grams:140},{food:"Noci",grams:12}],
     steps:["Taglia la mela a spicchi.","Servi con yogurt e noci; non serve aggiungere zucchero."], alternatives:["Kiwi al posto della mela", "Skyr al posto dello yogurt"] },
   { id:"snack-banana", name:"Banana e crema yogurt", kicker:"Prima o dopo un'attività intensa", image:photo("snack"), time:3,
     ingredients:[{food:"Banana",grams:130},{food:"Yogurt greco 2%",grams:170},{food:"Fiocchi d'avena",grams:20}],
     steps:["Schiaccia metà banana nello yogurt.","Completa con avena e la restante banana a rondelle."], alternatives:["Mela e cannella al posto della banana", "Pane integrale al posto dell'avena"] },
+  { id:"eggs-quinoa", name:"Uova, quinoa e spinaci cremosi", kicker:"Colazione salata o pranzo leggero", image:photo("toast"), time:14,
+    ingredients:[{food:"Uovo",grams:120},{food:"Quinoa cotta",grams:110},{food:"Spinaci",grams:140},{food:"Pomodorini",grams:100},{food:"Olio extravergine",grams:6}],
+    steps:["Scalda la quinoa in padella con due cucchiai d'acqua.","Aggiungi gli spinaci e falli appassire per 3-4 minuti.","Cuoci le uova a parte lasciando il tuorlo morbido oppure ben cotto, secondo preferenza.","Metti tutto nel piatto, completa con pomodorini, olio pesato, pepe ed erbe."], alternatives:["Pane integrale al posto della quinoa", "Ricotta al posto di un uovo"] },
+  { id:"chicken-farro", name:"Pollo speziato, farro e peperoni", kicker:"Piatto caldo, saziante e colorato", image:photo("chicken-bowl"), time:24,
+    ingredients:[{food:"Petto di pollo cotto",grams:130},{food:"Farro cotto",grams:160},{food:"Peperoni",grams:150},{food:"Zucchine",grams:120},{food:"Rucola",grams:40},{food:"Olio extravergine",grams:9}],
+    steps:["Taglia peperoni e zucchine e cuocili in padella per 10 minuti con paprika ed erbe.","Scalda il farro con un cucchiaio d'acqua.","Rosola il pollo già cotto per 2-3 minuti con le verdure.","Servi sopra la rucola e aggiungi l'olio solo alla fine."], alternatives:["Tonno al posto del pollo", "Riso basmati al posto del farro"] },
+  { id:"salmon-rice", name:"Bowl salmone, riso e cetriolo", kicker:"Fresca, completa e ricca di proteine", image:photo("salmon"), time:20,
+    ingredients:[{food:"Salmone cotto",grams:125},{food:"Riso basmati cotto",grams:170},{food:"Cetriolo",grams:120},{food:"Spinaci",grams:60},{food:"Pomodorini",grams:100},{food:"Semi di zucca",grams:8}],
+    steps:["Cuoci il salmone in forno o friggitrice ad aria finché si sfalda con la forchetta.","Scalda il riso e distribuiscilo nella ciotola.","Aggiungi cetriolo, spinaci e pomodorini.","Completa con salmone a pezzi, semi, limone ed erbe aromatiche."], alternatives:["Tonno al naturale al posto del salmone", "Quinoa al posto del riso"] },
+  { id:"lentil-quinoa", name:"Quinoa tiepida, lenticchie e kiwi", kicker:"Contrasto particolare, fibre e freschezza", image:photo("farro"), time:16,
+    ingredients:[{food:"Quinoa cotta",grams:150},{food:"Lenticchie cotte",grams:130},{food:"Kiwi",grams:80},{food:"Rucola",grams:60},{food:"Cetriolo",grams:100},{food:"Feta",grams:35},{food:"Olio extravergine",grams:7}],
+    steps:["Scalda quinoa e lenticchie per 3 minuti, senza farle asciugare.","Taglia cetriolo e kiwi a cubetti.","Unisci la base tiepida alla rucola e agli ingredienti freschi.","Sbriciola la feta e condisci con olio pesato e limone."], alternatives:["Farro al posto della quinoa", "Ceci al posto delle lenticchie"] },
+  { id:"tuna-chickpeas", name:"Insalatona tonno, ceci e croccante", kicker:"Molto saziante, pronta in dieci minuti", image:photo("tuna-rice"), time:10,
+    ingredients:[{food:"Tonno al naturale sgocciolato",grams:110},{food:"Ceci cotti",grams:130},{food:"Pomodorini",grams:130},{food:"Cetriolo",grams:120},{food:"Rucola",grams:60},{food:"Semi di zucca",grams:10},{food:"Olio extravergine",grams:8}],
+    steps:["Sciacqua e scola bene i ceci; sgocciola completamente il tonno.","Taglia pomodorini e cetriolo.","Mescola tutto con la rucola in una ciotola capiente.","Aggiungi semi, olio pesato, limone e pepe appena prima di mangiare."], alternatives:["Pollo al posto del tonno", "Lenticchie al posto dei ceci"] },
+  { id:"sweet-ricotta", name:"Patata dolce ripiena di ricotta", kicker:"Cremosa dentro, croccante fuori", image:photo("sweet-ricotta-v2"), time:32,cuisine:"Italiano",
+    ingredients:[{food:"Patata dolce cotta",grams:280},{food:"Ricotta vaccina",grams:100},{food:"Spinaci",grams:150},{food:"Pomodorini",grams:100},{food:"Semi di zucca",grams:8}],
+    steps:["Dividi la patata dolce a metà e scaldala in forno finché i bordi diventano dorati.","Cuoci gli spinaci in padella e strizzali bene.","Mescola ricotta, spinaci, pepe ed erbe e riempi la patata.","Rimetti in forno per 5 minuti e completa con pomodorini e semi."], alternatives:["Feta al posto della ricotta", "Ceci schiacciati per una variante senza latticini"] },
+  { id:"apple-oats", name:"Coppa mela, avena e yogurt", kicker:"Dolce naturale e lunga sazietà", image:photo("yogurt"), time:8,
+    ingredients:[{food:"Yogurt greco 2%",grams:200},{food:"Mela",grams:170},{food:"Fiocchi d'avena",grams:40},{food:"Noci",grams:10},{food:"Miele",grams:5}],
+    steps:["Taglia la mela a cubetti e scaldala 3 minuti con cannella e poca acqua.","Tosta l'avena in padella per 2 minuti, mescolando continuamente.","Versa yogurt, mela tiepida e avena in una coppa.","Completa con noci tritate e il miele misurato."], alternatives:["Kiwi al posto della mela", "Semi di zucca al posto delle noci"] },
+  { id:"toast-tuna", name:"Toast croccante con tonno e ricotta", kicker:"Veloce, saporito e davvero pratico", image:photo("toast-tuna-v2"), time:9,cuisine:"Italiano",
+    ingredients:[{food:"Pane integrale",grams:90},{food:"Tonno al naturale sgocciolato",grams:90},{food:"Ricotta vaccina",grams:60},{food:"Pomodorini",grams:120},{food:"Rucola",grams:40}],
+    steps:["Tosta bene il pane per 3-4 minuti: deve risultare asciutto e croccante sui bordi.","Sgocciola il tonno e mescolalo con la ricotta, pepe e qualche goccia di limone.","Spalma la crema sul pane ancora caldo.","Completa con pomodorini tagliati e rucola; mangialo subito per mantenerlo croccante."], alternatives:["Uovo al posto del tonno", "Yogurt greco denso al posto della ricotta"] },
 ];
-const recipeMap = Object.fromEntries(recipes.map(r => [r.id, r]));
+const mainCombos = [
+  ["Petto di pollo cotto","pollo dorato"],["Salmone cotto","salmone al limone"],
+  ["Tonno al naturale sgocciolato","tonno mediterraneo"],["Uovo","uova morbide"],
+  ["Ceci cotti","ceci speziati"],["Lenticchie cotte","lenticchie alle erbe"],
+  ["Ricotta vaccina","ricotta cremosa"]
+] as const;
+const baseCombos = [
+  ["Quinoa cotta","quinoa"],["Farro cotto","farro"],["Riso basmati cotto","riso basmati"],
+  ["Patata dolce cotta","patata dolce"],["Pane integrale","pane integrale croccante"],
+  ["Miglio cotto","miglio"],["Cous cous integrale cotto","cous cous integrale"],["Grano saraceno cotto","grano saraceno"],
+  ["Orzo perlato cotto","orzo perlato"],["Noodles di riso cotti","noodles di riso"]
+] as const;
+const baseHow:Record<string,string>={
+  "Quinoa cotta":"Sciacqua la quinoa in un colino fine per un minuto. Mettila in pentola con il doppio del suo volume d'acqua, porta a bollore, copri e cuoci piano 12-15 minuti. Spegni, riposa 5 minuti e sgrana con la forchetta.",
+  "Farro cotto":"Sciacqua il farro. Versalo in abbondante acqua bollente leggermente salata e cuoci 25-30 minuti, o il tempo della confezione se è precotto. Assaggia: deve essere tenero ma ancora consistente, poi scolalo bene.",
+  "Riso basmati cotto":"Sciacqua il riso 3-4 volte. Usa una parte di riso e una parte e mezza d'acqua. Porta a bollore, copri, abbassa al minimo e cuoci 10-12 minuti senza sollevare il coperchio. Riposa 5 minuti e sgrana.",
+  "Miglio cotto":"Sciacqua il miglio, tostalo due minuti in pentola e aggiungi due parti e mezza d'acqua per una parte di miglio. Copri e cuoci piano 18-20 minuti. Riposa 5 minuti: i chicchi devono essere morbidi e separabili.",
+  "Cous cous integrale cotto":"Metti il cous cous in una ciotola. Versa lo stesso volume di acqua bollente, copri 5 minuti, poi separa ogni grumo con una forchetta. Se resta duro aggiungi un cucchiaio d'acqua e attendi altri 2 minuti.",
+  "Grano saraceno cotto":"Sciacqua i chicchi, usa due parti d'acqua per una di grano saraceno e cuoci coperto a fuoco basso per 12-15 minuti. Spegni quando l'acqua è assorbita e riposa 5 minuti.",
+  "Orzo perlato cotto":"Sciacqua l'orzo e versalo in abbondante acqua bollente. Cuoci 30-35 minuti, assaggiando negli ultimi 5: deve essere morbido ma non sfatto. Scola e lascia uscire il vapore.",
+  "Noodles di riso cotti":"Copri i noodles con acqua molto calda e lasciali 4-6 minuti, controllando la confezione. Scolali quando sono flessibili ma ancora consistenti e sciacquali rapidamente per fermare la cottura.",
+  "Patata dolce cotta":"Taglia la patata dolce a cubetti di 2 cm. Cuocila in forno a 200 °C per 22-25 minuti, girandola a metà: è pronta quando la forchetta entra facilmente e gli angoli sono dorati.",
+  "Pane integrale":"Scalda una padella pulita e tosta il pane 2-3 minuti per lato, finché è dorato, asciutto sui bordi e ancora appena morbido al centro."
+};
+const vegCombos = [
+  [["Zucchine",140],["Pomodorini",110],"zucchine e pomodorini"],
+  [["Peperoni",140],["Spinaci",80],"peperoni e spinaci"],
+  [["Fagiolini",150],["Cetriolo",100],"fagiolini e cetriolo"],
+  [["Rucola",60],["Pomodorini",130],"rucola e pomodorini"]
+] as const;
+const flavorProfiles = [
+  {cuisine:"Asiatico",name:"Tokyo",aroma:"zenzero, lime e un cucchiaino di salsa di soia a ridotto contenuto di sale",finish:"taglio ordinato, erbe fresche e semi di zucca tostati"},
+  {cuisine:"Asiatico",name:"Bangkok",aroma:"lime, zenzero, peperoncino e coriandolo",finish:"verdure croccanti e una spremuta di lime"},
+  {cuisine:"Asiatico",name:"Delhi",aroma:"curry dolce, curcuma, cumino e limone",finish:"spezie tostate e una cucchiaiata fresca di yogurt se gradito"},
+  {cuisine:"Asiatico",name:"Seoul",aroma:"zenzero, aglio, peperoncino e aceto di riso",finish:"strisce sottili di verdura e semi tostati"},
+  {cuisine:"Mediterraneo",name:"Levant",aroma:"cumino, paprika affumicata, limone e menta",finish:"erbe fresche, limone e verdure ben colorate"},
+  {cuisine:"Gourmet",name:"Marrakech",aroma:"ras el hanout, cannella appena accennata e scorza di limone",finish:"contrasto caldo-fresco e impiattamento a mezzaluna"},
+  {cuisine:"Gourmet",name:"Bistrot",aroma:"senape, pepe nero, timo e limone",finish:"base compatta, verdure appoggiate in altezza e salsa a piccoli punti"},
+  {cuisine:"Italiano",name:"Sicilia",aroma:"origano, finocchietto, scorza di limone e pepe",finish:"pomodorini lucidi, rucola fresca e olio a filo"},
+  {cuisine:"Italiano",name:"Toscana",aroma:"rosmarino, salvia, aglio e pepe nero",finish:"elementi rustici ben dorati e olio solo a crudo"},
+  {cuisine:"Mediterraneo",name:"Atene",aroma:"origano, limone, aglio e menta",finish:"ingredienti separati, feta sbriciolata se prevista ed erbe"},
+  {cuisine:"Gourmet",name:"Nordica",aroma:"aneto, scorza di limone, pepe e aceto delicato",finish:"linee pulite, verdure croccanti e ciuffi di aneto"},
+  {cuisine:"Vegetale",name:"Orto creativo",aroma:"paprika, cumino, limone ed erbe miste",finish:"molti colori, consistenze diverse e semi tostati"},
+  {cuisine:"Gourmet",name:"Lima",aroma:"lime, peperoncino dolce, coriandolo e cipolla marinata",finish:"colori netti e una finitura fresca e acidula"},
+  {cuisine:"Gourmet",name:"Rio",aroma:"lime, aglio, paprika e prezzemolo",finish:"base compatta e verdure vivaci disposte a spicchi"},
+  {cuisine:"Asiatico",name:"Hanoi",aroma:"lime, zenzero, menta e coriandolo",finish:"erbe fresche, verdure sottili e parte calda separata"},
+  {cuisine:"Asiatico",name:"Bali",aroma:"curcuma, zenzero, lime e peperoncino",finish:"contrasto dorato e verde con lime a lato"},
+  {cuisine:"Mediterraneo",name:"Istanbul",aroma:"cumino, sommacco, menta e limone",finish:"erbe, spezie rosse e ingredienti disposti a ventaglio"},
+  {cuisine:"Gourmet",name:"Tbilisi",aroma:"coriandolo, paprika, aglio e aceto",finish:"verdure ben arrostite e noci solo se consentite"},
+  {cuisine:"Vegetale",name:"Addis Abeba",aroma:"paprika, curcuma, cumino e zenzero",finish:"componenti separati e spezie distribuite in superficie"},
+  {cuisine:"Mediterraneo",name:"Lisboa",aroma:"alloro, aglio, limone e prezzemolo",finish:"olio a crudo, erbe e una fetta di limone"},
+  {cuisine:"Mediterraneo",name:"Valencia",aroma:"paprika affumicata, zafferano, limone e prezzemolo",finish:"base stesa, verdure ordinate e bordi ben dorati"},
+  {cuisine:"Gourmet",name:"Caraibi",aroma:"lime, pimento, timo e peperoncino",finish:"colori tropicali e una finitura fresca"},
+  {cuisine:"Gourmet",name:"Parigi",aroma:"timo, senape delicata, limone e pepe",finish:"porzione raccolta, salsa leggera e verdure in altezza"},
+  {cuisine:"Gourmet",name:"Balcani",aroma:"paprika, origano, aglio e aceto",finish:"verdure arrostite, erbe e contrasti cremosi se consentiti"}
+] as const;
+
+const generatedRecipes: Recipe[] = Array.from({length:284},(_,index)=>{
+  const protein=mainCombos[index%mainCombos.length];
+  const base=baseCombos[Math.floor(index/mainCombos.length)%baseCombos.length];
+  const veg=vegCombos[Math.floor(index/(mainCombos.length*baseCombos.length))%vegCombos.length];
+  const style=["Bowl calda","Piatto rustico","Insalata tiepida","Teglia profumata"][index%4];
+  const course=["Piatto unico","Primo","Secondo","Contorno"][index%4];
+  const profile=flavorProfiles[index%flavorProfiles.length];
+  const proteinGrams=protein[0]==="Uovo"?120:protein[0].includes("cotti")?140:protein[0].includes("Ricotta")?110:125;
+  const baseGrams=base[0]==="Pane integrale"?90:base[0]==="Patata dolce cotta"?240:165;
+  const proteinKey=protein[0].toLowerCase();
+  const image=profile.cuisine==="Asiatico"?photo("asian-bowl-v2"):proteinKey.includes("salmone")?photo("salmon"):proteinKey.includes("tonno")?photo("tuna-rice"):proteinKey.includes("pollo")?photo("chicken-bowl"):photo("farro");
+  const title=course==="Primo"?`${profile.name} · ${base[1]} con ${veg[2]}`:course==="Secondo"?`${profile.name} · ${protein[1]} con ${veg[2]}`:course==="Contorno"?`${profile.name} · ${veg[2]} speziati`:`${profile.name} · ${style} con ${protein[1]}, ${base[1]} e ${veg[2]}`;
+  const ingredients:RecipeIngredient[]=course==="Primo"?[{food:base[0],grams:baseGrams+35},{food:veg[0][0],grams:veg[0][1]},{food:veg[1][0],grams:veg[1][1]},{food:"Olio extravergine",grams:8}]:course==="Secondo"?[{food:protein[0],grams:proteinGrams+25},{food:veg[0][0],grams:veg[0][1]},{food:veg[1][0],grams:veg[1][1]},{food:"Olio extravergine",grams:8}]:course==="Contorno"?[{food:veg[0][0],grams:Number(veg[0][1])+80},{food:veg[1][0],grams:Number(veg[1][1])+60},{food:"Semi di zucca",grams:10},{food:"Olio extravergine",grams:7}]:[{food:protein[0],grams:proteinGrams},{food:base[0],grams:baseGrams},{food:veg[0][0],grams:veg[0][1]},{food:veg[1][0],grams:veg[1][1]},{food:"Olio extravergine",grams:8}];
+  const steps=["Prima di iniziare, pesa tutto, lava le verdure e prepara tagliere, coltello, padella, pentola e ciotola.",...(course==="Primo"||course==="Piatto unico"?[baseHow[base[0]]]:[]),...(course==="Secondo"||course==="Piatto unico"?[proteinKey.includes("pollo")?"Taglia il pollo crudo a bocconcini uguali. Cuocilo in padella calda 6-8 minuti, girandolo spesso: deve raggiungere 74 °C al cuore.":proteinKey.includes("salmone")?"Cuoci il salmone su carta forno a 190 °C per 12-15 minuti: è pronto quando è opaco e si separa in scaglie.":protein[0]==="Uovo"?"Per uova ben cotte, usa fuoco medio-basso per 4-5 minuti finché l'albume è rappreso; per uova sode, parti da acqua fredda e calcola 9 minuti dal bollore.":`Scalda ${protein[1]} per 3-4 minuti a fuoco medio con spezie ed erbe, mescolando senza schiacciarlo.`]:[]),`Cuoci le verdure più dure per 6-8 minuti e aggiungi quelle delicate negli ultimi 2. Insaporisci con ${profile.aroma}; devono restare colorate e leggermente consistenti.`,`Impiatta con ${profile.finish}. Aggiungi l'olio misurato solo alla fine e assaggia prima di aggiungere sale.`];
+  return {
+    id:`scelta-${index+1}`,
+    name:title,
+    kicker:`${course} · stile ${profile.cuisine.toLowerCase()}`,cuisine:profile.cuisine,course,
+    image,time:proteinKey.includes("pollo")||proteinKey.includes("salmone")?30:20,
+    ingredients,steps,
+    alternatives:["Cambia la base mantenendo una porzione simile", "Sostituisci la parte proteica con una delle proposte del catalogo", "Usa verdure di stagione che tolleri bene"]
+  };
+});
+const snackFruits=["Mela","Banana","Kiwi","Pera","Arancia","Mango","Ananas","Frutti di bosco"];
+const snackNuts=["Noci","Mandorle","Pistacchi","Nocciole"];
+const snackRecipes:Recipe[]=Array.from({length:32},(_,index)=>{const fruit=snackFruits[index%snackFruits.length];const nuts=snackNuts[index%snackNuts.length];const kind=["Colazione","Spuntino","Dolce","Gelato"][index%4];const frozen=kind==="Gelato";return {id:`dolce-${index+1}`,name:frozen?`Frozen yogurt a ${fruit.toLowerCase()} e ${nuts.toLowerCase()}`:`${kind} · coppa di ${fruit.toLowerCase()}, yogurt e ${nuts.toLowerCase()}`,kicker:`${kind} bilanciato con quantità modificabili`,course:kind,cuisine:"Gourmet",image:photo("fruit-breakfast-v2"),time:frozen?185:8,ingredients:[{food:"Yogurt greco 2%",grams:180},{food:fruit,grams:150},{food:nuts,grams:12},{food:index%3===0?"Cioccolato fondente 70%":"Fiocchi d'avena",grams:index%3===0?10:20}],steps:frozen?[`Lava e taglia ${fruit.toLowerCase()} in pezzi piccoli; tienine alcuni da parte per la finitura.`,`Frulla yogurt e frutta per 30-40 secondi, senza aggiungere zucchero. Versa in un contenitore basso.`,`Congela per 3 ore, mescolando energicamente ogni 45 minuti per rompere i cristalli. Prima di servire lascialo 8 minuti a temperatura ambiente.`,`Completa con ${nuts.toLowerCase()} tritati e la finitura prevista; usa una coppa piccola per mantenere la porzione chiara.`]:[`Lava e taglia ${fruit.toLowerCase()} in pezzi regolari.`,`Tosta avena o frutta secca per 2 minuti in padella asciutta, mescolando e senza farla scurire troppo.`,`Metti lo yogurt nella coppa, aggiungi la frutta e completa con ${nuts.toLowerCase()} tritati.`,`Servi subito se vuoi contrasto croccante; lascia 10 minuti se preferisci l'avena più morbida.`],alternatives:["Cambia frutto mantenendo una quantità simile","Usa un'alternativa vegetale compatibile con i tuoi filtri","Aumenta o riduci i grammi e registra la quantità reale"]}});
+const allRecipes=[...recipes,...generatedRecipes,...snackRecipes];
+const recipeMap = Object.fromEntries(allRecipes.map(r => [r.id, r]));
 const days: Day[] = [
   {label:"Giorno 1",mood:"Partenza semplice",recipes:["jar","bowl","snack-apple","salmon"]},
   {label:"Giorno 2",mood:"Fibre e colore",recipes:["toast","farro","snack-banana","rice"]},
-  {label:"Giorno 3",mood:"Energia stabile",recipes:["jar","rice","snack-apple","bowl"]},
-  {label:"Giorno 4",mood:"Mediterraneo",recipes:["toast","salmon","snack-banana","farro"]},
-  {label:"Giorno 5",mood:"Veloce ma completo",recipes:["jar","bowl","snack-apple","rice"]},
-  {label:"Giorno 6",mood:"Più movimento",recipes:["toast","farro","snack-banana","salmon"]},
-  {label:"Giorno 7",mood:"Equilibrio e varietà",recipes:["jar","rice","snack-apple","bowl"]},
+  {label:"Giorno 3",mood:"Energia stabile",recipes:["apple-oats","chicken-farro","snack-apple","sweet-ricotta"]},
+  {label:"Giorno 4",mood:"Mediterraneo",recipes:["toast-tuna","salmon-rice","snack-banana","lentil-quinoa"]},
+  {label:"Giorno 5",mood:"Veloce ma completo",recipes:["jar","tuna-chickpeas","snack-apple","eggs-quinoa"]},
+  {label:"Giorno 6",mood:"Più movimento",recipes:["toast","chicken-farro","snack-banana","salmon-rice"]},
+  {label:"Giorno 7",mood:"Equilibrio e varietà",recipes:["apple-oats","lentil-quinoa","snack-apple","tuna-chickpeas"]},
 ];
 
 function round(n:number){ return Math.round(n); }
 function fmt(n:number){ return Math.round(n * 10) / 10; }
 
 export function FoodPlanner(){
-  const [tab,setTab]=useState<"today"|"week"|"builder"|"progress">("today");
+  const [tab,setTab]=useState<Tab>("today");
   const [calories,setCalories]=useState(1800); const [goal,setGoal]=useState("Equilibrio");
   const [dayIndex,setDayIndex]=useState(0); const [selected,setSelected]=useState<Recipe|null>(null);
+  const [selectedMealKey,setSelectedMealKey]=useState<string|null>(null);
   const [completed,setCompleted]=useState<Record<string,boolean>>({});
+  const [actualWeights,setActualWeights]=useState<Record<string,number[]>>({});
+  const [preferencesOpen,setPreferencesOpen]=useState(false);
+  const [excludedGroups,setExcludedGroups]=useState<string[]>([]);
+  const [dislikedFoods,setDislikedFoods]=useState<string[]>([]);
+  const [foodToAvoid,setFoodToAvoid]=useState("");
+  const [choices,setChoices]=useState<Record<string,string>>({});
+  const [swapTarget,setSwapTarget]=useState<{day:number;slot:number}|null>(null);
+  const [libraryQuery,setLibraryQuery]=useState("");
+  const [cuisineChoice,setCuisineChoice]=useState("Italiano");
+  const [cuisineFilter,setCuisineFilter]=useState("Tutte");
+  const [drinks,setDrinks]=useState<Record<string,LogItem[]>>({});
+  const [extras,setExtras]=useState<Record<string,LogItem[]>>({});
+  const [diaryDay,setDiaryDay]=useState(0);
+  const [extraName,setExtraName]=useState("");
+  const [extraKcal,setExtraKcal]=useState("");
+  const [replanNote,setReplanNote]=useState("");
+  const [shoppingOpen,setShoppingOpen]=useState(false);
+  const [shoppingScope,setShoppingScope]=useState<"day"|"week">("day");
+  const [groceryChecked,setGroceryChecked]=useState<Record<string,boolean>>({});
+  const [groceryAmounts,setGroceryAmounts]=useState<Record<string,number>>({});
   const [check,setCheck]=useState({yesterday:"regolare", todayActivity:"no", tomorrowActivity:"no", feeling:"bene"});
   const [builder,setBuilder]=useState<RecipeIngredient[]>([{food:"Rucola",grams:60},{food:"Petto di pollo cotto",grams:120},{food:"Pomodorini",grams:120},{food:"Quinoa cotta",grams:100},{food:"Olio extravergine",grams:8}]);
 
-  useEffect(()=>{ try { const raw=localStorage.getItem("vivapiatto-v1"); if(raw){const s=JSON.parse(raw); setCalories(s.calories||1800); setGoal(s.goal||"Equilibrio"); setCompleted(s.completed||{}); setCheck(s.check||check);} } catch{} },[]);
-  useEffect(()=>{ localStorage.setItem("vivapiatto-v1",JSON.stringify({calories,goal,completed,check})); },[calories,goal,completed,check]);
-  const baseTotal=useMemo(()=>days[dayIndex].recipes.reduce((s,id)=>s+calc(recipeMap[id].ingredients).kcal,0),[dayIndex]);
+  useEffect(()=>{ try { const raw=localStorage.getItem("vivapiatto-v1"); if(raw){const s=JSON.parse(raw); setCalories(s.calories||1800); setGoal(s.goal||"Equilibrio"); setCompleted(s.completed||{}); setActualWeights(s.actualWeights||{});setCheck(s.check||check);setExcludedGroups(s.excludedGroups||[]);setDislikedFoods(s.dislikedFoods||[]);setChoices(s.choices||{});setDrinks(s.drinks||{});setExtras(s.extras||{});setGroceryChecked(s.groceryChecked||{});setGroceryAmounts(s.groceryAmounts||{});} } catch{} },[]);
+  useEffect(()=>{ localStorage.setItem("vivapiatto-v1",JSON.stringify({calories,goal,completed,actualWeights,check,excludedGroups,dislikedFoods,choices,drinks,extras,groceryChecked,groceryAmounts})); },[calories,goal,completed,actualWeights,check,excludedGroups,dislikedFoods,choices,drinks,extras,groceryChecked,groceryAmounts]);
+  const groupFoods:Record<string,string[]>={"Latte":["Yogurt greco 2%","Ricotta vaccina","Feta"],"Uova":["Uovo"],"Pesce":["Salmone cotto","Tonno al naturale sgocciolato"],"Glutine":["Pane integrale","Farro cotto","Cous cous integrale cotto","Orzo perlato cotto"],"Frutta a guscio":["Noci","Mandorle","Pistacchi","Nocciole"]};
+  const blockedFoods=[...dislikedFoods,...excludedGroups.flatMap(g=>groupFoods[g]||[])];
+  const isAllowed=(recipe:Recipe)=>recipe.ingredients.every(i=>!blockedFoods.includes(i.food));
+  const getDayIds=(day:number)=>days[day].recipes.map((id,slot)=>choices[`${day}-${slot}`]||id);
+  const currentIds=getDayIds(dayIndex);
+  const recipeCuisine=(r:Recipe)=>r.cuisine||(r.id.includes("toast")||r.id.includes("sweet")?"Italiano":"Mediterraneo");
+  const filteredRecipes=allRecipes.filter(r=>isAllowed(r)&&(cuisineFilter==="Tutte"||recipeCuisine(r)===cuisineFilter)&&r.name.toLowerCase().includes(libraryQuery.toLowerCase()));
+  const baseTotal=useMemo(()=>currentIds.reduce((s,id)=>s+calc(recipeMap[id].ingredients).kcal,0),[dayIndex,choices]);
   const scale=calories/baseTotal;
-  const dayTotals=useMemo(()=>days[dayIndex].recipes.reduce((s,id)=>{const m=calc(recipeMap[id].ingredients,scale); return {kcal:s.kcal+m.kcal,protein:s.protein+m.protein,carbs:s.carbs+m.carbs,fat:s.fat+m.fat};},{kcal:0,protein:0,carbs:0,fat:0}),[dayIndex,scale]);
+  const dayTotals=useMemo(()=>currentIds.reduce((s,id)=>{const m=calc(recipeMap[id].ingredients,scale); return {kcal:s.kcal+m.kcal,protein:s.protein+m.protein,carbs:s.carbs+m.carbs,fat:s.fat+m.fat};},{kcal:0,protein:0,carbs:0,fat:0}),[dayIndex,scale,choices]);
   const builderTotals=useMemo(()=>calc(builder),[builder]);
   const doneCount=Object.values(completed).filter(Boolean).length;
   const guidance = check.yesterday === "molto" ? "Ieri hai mangiato più del previsto: oggi torna alla regolarità, senza saltare pasti. Scegli acqua, verdure e porzioni già pesate." : check.feeling === "gonfio" ? "Oggi ti senti gonfio: preferisci pasti regolari e non enormi, mangia lentamente e registra i cibi che sembrano associati al sintomo." : check.feeling === "stanco" ? "Giornata stanca: mantieni carboidrati e proteine distribuiti nei pasti. Non ridurre automaticamente il cibo." : check.todayActivity === "intensa" ? "Attività intensa oggi: usa lo spuntino banana e yogurt vicino all'allenamento e cura l'idratazione." : "Giornata regolare: segui le porzioni proposte e ascolta fame e sazietà.";
 
   const updateBuilder=(index:number,key:"food"|"grams",value:string|number)=>setBuilder(v=>v.map((x,i)=>i===index?{...x,[key]:key==="grams"?Number(value):value}:x));
+  const chooseRecipe=(recipe:Recipe)=>{if(swapTarget){setChoices(v=>({...v,[`${swapTarget.day}-${swapTarget.slot}`]:recipe.id}));setSwapTarget(null);setTab("today");setDayIndex(swapTarget.day);scrollTo({top:0,behavior:"smooth"});}else{setSelectedMealKey(null);setSelected(recipe)}};
+  const applyCuisine=()=>{const picks=allRecipes.filter(r=>isAllowed(r)&&recipeCuisine(r)===cuisineChoice);if(picks.length){setChoices(v=>({...v,[`${dayIndex}-1`]:picks[(dayIndex*2)%picks.length].id,[`${dayIndex}-3`]:picks[(dayIndex*2+1)%picks.length].id}))}};
+  const addDrink=(day:number,item:LogItem)=>setDrinks(v=>({...v,[day]:[...(v[day]||[]),item]}));
+  const addExtra=()=>{if(!extraName.trim())return;setExtras(v=>({...v,[diaryDay]:[...(v[diaryDay]||[]),{label:extraName.trim(),kcal:Number(extraKcal)||0}]}));setExtraName("");setExtraKcal("")};
+  const dayScale=(day:number)=>{const ids=getDayIds(day);return calories/ids.reduce((s,id)=>s+calc(recipeMap[id].ingredients).kcal,0)};
+  const actualIngredients=(key:string,recipe:Recipe)=>{const day=Number(key.split("-")[0]);const saved=actualWeights[key];return recipe.ingredients.map((x,i)=>({...x,grams:saved?.[i]??round(x.grams*dayScale(day))}))};
+  const loggedMealKcal=(day:number)=>getDayIds(day).reduce((sum,id,slot)=>{const key=`${day}-${slot}`;return sum+(completed[key]?calc(actualIngredients(key,recipeMap[id])).kcal:0)},0);
+  const loggedTotal=(day:number)=>loggedMealKcal(day)+(drinks[day]||[]).reduce((s,x)=>s+x.kcal,0)+(extras[day]||[]).reduce((s,x)=>s+x.kcal,0);
+  const replanNextDay=(day:number)=>{if(day>=days.length-1){setReplanNote("Settimana completata: usa il diario per impostare la prossima.");return}const total=loggedTotal(day);const safe=allRecipes.filter(isAllowed);const ranked=[...safe].sort((a,b)=>calc(a.ingredients).kcal-calc(b.ingredients).kcal);const pool=total>calories*1.1?ranked.slice(0,Math.max(2,Math.floor(ranked.length/2))):total<calories*.8?ranked.slice(Math.floor(ranked.length/2)):safe;setChoices(v=>({...v,[`${day+1}-1`]:pool[(day*2)%pool.length].id,[`${day+1}-3`]:pool[(day*2+1)%pool.length].id}));setReplanNote(total>calories*1.1?"Domani resta regolare: piatti sazianti e nessun pasto saltato.":total<calories*.8?"Domani non ridurre ancora: pasti completi e spuntino confermato.":"Domani aggiornato mantenendo il tuo equilibrio.")};
+  const shoppingItems=useMemo(()=>{const totals:Record<string,number>={};const targetDays=shoppingScope==="day"?[dayIndex]:days.map((_,i)=>i);targetDays.forEach(day=>getDayIds(day).forEach(id=>recipeMap[id].ingredients.forEach(x=>{totals[x.food]=(totals[x.food]||0)+x.grams*dayScale(day)})));return Object.entries(totals).map(([food,grams])=>({food,grams:round(grams)})).sort((a,b)=>a.food.localeCompare(b.food));},[shoppingScope,dayIndex,choices,calories]);
+  const shareShopping=async()=>{const text=`Lista spesa ${shoppingScope==="day"?days[dayIndex].label:"settimanale"}\n`+shoppingItems.filter(x=>!groceryChecked[x.food]).map(x=>`• ${x.food}: ${groceryAmounts[x.food]??x.grams} g`).join("\n");if(navigator.share)await navigator.share({title:"Lista spesa - Scheda Alimenti",text});else await navigator.clipboard.writeText(text)};
+  const selectedIngredients=selected?(selectedMealKey?actualIngredients(selectedMealKey,selected):selected.ingredients.map(x=>({...x,grams:round(x.grams*scale)}))):[];
+  const selectedMacros=calc(selectedIngredients);
   return <main className="app-shell">
-    <header className="topbar"><div className="brand-mark">V</div><div><strong>VivaPiatto</strong><span>il tuo percorso alimentare</span></div><span className="version">v{VERSION}</span></header>
+    <header className="topbar"><div className="brand-mark">S</div><div><strong>Scheda Alimenti</strong><span>menu, ricette e diario</span></div><span className="version">v{VERSION}</span></header>
     <section className="content">
       {tab==="today" && <>
-        <section className="hero-card"><div><span className="eyebrow">OGGI · {days[dayIndex].label}</span><h1>Mangia bene,<br/><em>senza complicarti.</em></h1><p>Un piano pratico, porzioni pesate e scelte che puoi cambiare.</p></div><div className="hero-ring"><strong>{round(dayTotals.kcal)}</strong><span>kcal</span></div></section>
+        <section className="today-strip"><div><span>OGGI · {days[dayIndex].label}</span><b>{round(dayTotals.kcal)} kcal · 4 pasti</b></div><button onClick={()=>setPreferencesOpen(v=>!v)}>⚙ Filtri {blockedFoods.length?`(${blockedFoods.length})`:""}</button></section>
+        {preferencesOpen&&<section className="preferences"><div className="section-title"><div><span className="eyebrow">PRIMA DI SCEGLIERE</span><h2>Cosa devo escludere?</h2></div><button className="text-btn" onClick={()=>{setExcludedGroups([]);setDislikedFoods([])}}>Azzera</button></div><b>Allergie o intolleranze</b><div className="chips">{Object.keys(groupFoods).map(g=><button key={g} className={excludedGroups.includes(g)?"active":""} onClick={()=>setExcludedGroups(v=>v.includes(g)?v.filter(x=>x!==g):[...v,g])}>{g}</button>)}</div><b>Oggi non voglio mangiare</b><div className="avoid-add"><select value={foodToAvoid} onChange={e=>setFoodToAvoid(e.target.value)}><option value="">Scegli un alimento…</option>{Object.keys(foods).filter(f=>!dislikedFoods.includes(f)).map(f=><option key={f}>{f}</option>)}</select><button disabled={!foodToAvoid} onClick={()=>{setDislikedFoods(v=>[...v,foodToAvoid]);setFoodToAvoid("")}}>Escludi</button></div>{dislikedFoods.length>0&&<div className="removed-foods">{dislikedFoods.map(f=><button key={f} onClick={()=>setDislikedFoods(v=>v.filter(x=>x!==f))}>{f} ×</button>)}</div>}<p className="safety-mini">In caso di allergia diagnosticata, controlla sempre etichette e contaminazioni: il filtro aiuta a scegliere, ma non sostituisce la verifica personale o medica.</p></section>}
         <section className="compact-config"><div><label>Obiettivo</label><select value={goal} onChange={e=>setGoal(e.target.value)}><option>Dimagrimento graduale</option><option>Equilibrio</option><option>Mantenimento massa</option></select></div><div><label>Target kcal</label><select value={calories} onChange={e=>setCalories(Number(e.target.value))}>{[1400,1600,1800,2000,2200,2400].map(x=><option key={x}>{x}</option>)}</select></div></section>
+        <section className="cuisine-picker"><div><span>Che gusto vuoi oggi?</span><select value={cuisineChoice} onChange={e=>setCuisineChoice(e.target.value)}>{["Italiano","Asiatico","Gourmet","Mediterraneo","Vegetale"].map(x=><option key={x}>{x}</option>)}</select></div><button onClick={applyCuisine}>Proponimi pranzo e cena</button></section>
+        <button className="shopping-trigger" onClick={()=>{setShoppingScope("day");setShoppingOpen(true)}}>🛒 Lista della spesa di oggi</button>
         <section className="checkin"><div className="section-title"><div><span className="eyebrow">CHECK-IN RAPIDO</span><h2>Come arrivi a oggi?</h2></div><span>30 sec</span></div>
           <div className="question"><span>Ieri com'è andata?</span><div className="chips">{[["regolare","Regolare"],["poco","Ho mangiato poco"],["molto","Ho mangiato di più"]].map(([v,l])=><button className={check.yesterday===v?"active":""} key={v} onClick={()=>setCheck({...check,yesterday:v})}>{l}</button>)}</div></div>
           <div className="question"><span>Attività fisica oggi?</span><div className="chips">{[["no","No"],["leggera","Leggera"],["intensa","Intensa"]].map(([v,l])=><button className={check.todayActivity===v?"active":""} key={v} onClick={()=>setCheck({...check,todayActivity:v})}>{l}</button>)}</div></div>
           <div className="question"><span>Come ti senti?</span><div className="chips icon-chips">{[["bene","🙂 Bene"],["gonfio","◯ Gonfio"],["stanco","☾ Stanco"],["fame","♨ Molta fame"]].map(([v,l])=><button className={check.feeling===v?"active":""} key={v} onClick={()=>setCheck({...check,feeling:v})}>{l}</button>)}</div></div>
           <div className="question"><span>Attività prevista domani?</span><div className="chips">{[["no","No"],["leggera","Leggera"],["intensa","Intensa"]].map(([v,l])=><button className={check.tomorrowActivity===v?"active":""} key={v} onClick={()=>setCheck({...check,tomorrowActivity:v})}>{l}</button>)}</div></div>
           <div className="coach-note"><b>Indicazione di oggi</b><p>{guidance}</p></div>
+          <div className="drink-quick"><b>Cosa hai bevuto?</b><div>{drinkOptions.slice(0,4).map(d=><button key={d.label} onClick={()=>addDrink(dayIndex,d)}>＋ {d.label}</button>)}</div></div>
         </section>
         <section className="macro-strip"><div><b>{round(dayTotals.protein)}g</b><span>proteine</span></div><div><b>{round(dayTotals.carbs)}g</b><span>carboidrati</span></div><div><b>{round(dayTotals.fat)}g</b><span>grassi</span></div></section>
         <section><div className="section-title"><div><span className="eyebrow">IL TUO MENU</span><h2>Quattro momenti, zero dubbi</h2></div><button className="text-btn" onClick={()=>setTab("week")}>7 giorni</button></div>
-          <div className="meal-list">{days[dayIndex].recipes.map((id,i)=>{const r=recipeMap[id];const m=calc(r.ingredients,scale);const key=`${dayIndex}-${id}`;return <article className="meal-card" key={key} onClick={()=>setSelected(r)}><img src={r.image} alt={r.name}/><div className="meal-body"><span>{["Colazione","Pranzo","Spuntino","Cena"][i]}</span><h3>{r.name}</h3><p>{round(m.kcal)} kcal · {round(m.protein)}g proteine · {r.time} min</p></div><button aria-label={completed[key]?"Segna da fare":"Segna mangiato"} className={`check ${completed[key]?"done":""}`} onClick={e=>{e.stopPropagation();setCompleted({...completed,[key]:!completed[key]})}}>{completed[key]?"✓":""}</button></article>})}</div>
+          <div className="meal-list">{currentIds.map((id,i)=>{const r=recipeMap[id];const m=calc(r.ingredients,scale);const key=`${dayIndex}-${i}`;const allowed=isAllowed(r);const actual=completed[key]?calc(actualIngredients(key,r)):null;return <article className={`meal-card ${allowed?"":"blocked"}`} key={key} onClick={()=>{setSelectedMealKey(key);setSelected(r)}}><img src={r.image} alt={r.name}/><div className="meal-body"><span>{["Colazione","Pranzo","Spuntino","Cena"][i]}</span><h3>{r.name}</h3><p>{allowed?actual?`Mangiato · ${round(actual.kcal)} kcal`:`${round(m.kcal)} kcal · ${round(m.protein)}g proteine · ${r.time} min`:"Contiene un alimento escluso"}</p><button className="swap-link" onClick={e=>{e.stopPropagation();setSwapTarget({day:dayIndex,slot:i});setTab("library")}}>Cambia piatto</button></div><button aria-label={completed[key]?"Segna da fare":"Segna mangiato"} className={`check ${completed[key]?"done":""}`} onClick={e=>{e.stopPropagation();setSelectedMealKey(key);setSelected(r)}}>{completed[key]?"✓":""}</button></article>})}</div>
         </section>
       </>}
-      {tab==="week" && <section><span className="eyebrow">PIANO SETTIMANALE</span><h1 className="page-title">La tua settimana</h1><p className="page-lead">Scegli un giorno. Le porzioni si adattano al target di {calories} kcal.</p><div className="week-grid">{days.map((d,i)=>{const total=d.recipes.reduce((s,id)=>s+calc(recipeMap[id].ingredients).kcal,0);return <button key={d.label} className={i===dayIndex?"selected":""} onClick={()=>{setDayIndex(i);setTab("today");scrollTo({top:0,behavior:"smooth"})}}><span>{d.label}</span><b>{d.mood}</b><small>{round(total*(calories/total))} kcal · 4 pasti</small><i>→</i></button>})}</div><div className="source-card"><b>Numeri tracciabili, non inventati</b><p>I valori per 100 g sono registrati nella banca dati interna con fonte CREA o USDA. Le porzioni vengono moltiplicate matematicamente. Marca, varietà, cottura e sgocciolamento possono modificare il risultato reale: controlla sempre l'etichetta del prodotto.</p></div></section>}
+      {tab==="week" && <section><span className="eyebrow">SETTIMANA</span><h1 className="page-title">Menu e andamento</h1><button className="shopping-trigger" onClick={()=>{setShoppingScope("week");setShoppingOpen(true)}}>🛒 Lista della spesa settimanale</button><div className="week-plan">{days.map((d,i)=><article key={d.label} className="week-day"><header><div><span>{d.label}</span><b>{d.mood}</b></div><button onClick={()=>{setDayIndex(i);setTab("today");scrollTo({top:0,behavior:"smooth"})}}>Apri</button></header>{getDayIds(i).map((id,slot)=>{const r=recipeMap[id];const key=`${i}-${slot}`;return <button className="week-meal" key={key} onClick={()=>{setSelectedMealKey(key);setSelected(r)}}><img src={r.image} alt=""/><span><small>{["Colazione","Pranzo","Spuntino","Cena"][slot]}</small><b>{r.name}</b></span><i>{completed[key]?"✓":"→"}</i></button>})}</article>)}</div></section>}
+      {tab==="library" && <section><span className="eyebrow">300+ RICETTE GUIDATE</span><h1 className="page-title">{swapTarget?"Scegli il sostituto":"Scegli cosa cucinare"}</h1><div className="cuisine-tabs">{["Tutte","Italiano","Asiatico","Gourmet","Mediterraneo","Vegetale"].map(x=><button className={cuisineFilter===x?"active":""} key={x} onClick={()=>setCuisineFilter(x)}>{x}</button>)}</div><div className="library-tools"><input aria-label="Cerca ricetta" placeholder="Cerca un piatto…" value={libraryQuery} onChange={e=>setLibraryQuery(e.target.value)}/><b>{filteredRecipes.length}</b></div>{!libraryQuery&&filteredRecipes.length>0&&<div className="start-here"><span>INIZIA DA QUI</span><b>{filteredRecipes[0].name}</b><button onClick={()=>chooseRecipe(filteredRecipes[0])}>{swapTarget?"Scegli":"Apri"}</button></div>}<div className="recipe-grid">{filteredRecipes.map(r=>{const m=calc(r.ingredients);return <article key={r.id} onClick={()=>chooseRecipe(r)}><img src={r.image} alt={r.name}/><div><span>{r.course||recipeCuisine(r)} · {round(m.kcal)} kcal · {r.time} min</span><h3>{r.name}</h3><p>{r.kicker}</p></div></article>})}</div></section>}
       {tab==="builder" && <section><span className="eyebrow">LABORATORIO DEL PIATTO</span><h1 className="page-title">Componi la tua insalatona</h1><p className="page-lead">Aggiungi ciò che vuoi e indica i grammi. Il totale cambia in tempo reale.</p>
         <div className="builder-score"><div><span>Peso totale</span><strong>{round(builderTotals.weight)}<small> g</small></strong></div><div><span>Energia</span><strong>{round(builderTotals.kcal)}<small> kcal</small></strong></div><div><span>Proteine</span><strong>{round(builderTotals.protein)}<small> g</small></strong></div><div><span>Fibre</span><strong>{fmt(builderTotals.fiber)}<small> g</small></strong></div></div>
         <div className="balance-meter"><div className={builderTotals.protein>=25?"ok":""}><span>Proteine</span><b>{builderTotals.protein>=25?"Buona quota":"Da aumentare"}</b></div><div className={builderTotals.fiber>=8?"ok":""}><span>Fibre</span><b>{builderTotals.fiber>=8?"Saziante":"Aggiungi vegetali"}</b></div><div className={builderTotals.kcal<=700?"ok":"warn"}><span>Budget</span><b>{builderTotals.kcal<=700?"Compatibile":"Piatto energetico"}</b></div></div>
@@ -142,11 +313,12 @@ export function FoodPlanner(){
       </section>}
       {tab==="progress" && <section><span className="eyebrow">IL TUO DIARIO</span><h1 className="page-title">Progressi, non perfezione</h1><p className="page-lead">I dati restano su questo dispositivo.</p><div className="progress-hero"><div className="progress-ring" style={{"--p":`${Math.min(doneCount/28*100,100)}%`} as React.CSSProperties}><strong>{doneCount}</strong><span>pasti registrati</span></div><div><b>Serie attuale</b><strong>{Math.floor(doneCount/4)} giorni</strong><span>Continua con regolarità</span></div></div>
         <div className="history">{days.map((d,i)=>{const n=d.recipes.filter(id=>completed[`${i}-${id}`]).length;return <div key={d.label}><span>{d.label}</span><div><i style={{width:`${n/4*100}%`}}/></div><b>{n}/4</b></div>})}</div>
-        <div className="source-card"><b>Sicurezza prima di tutto</b><p>VivaPiatto è uno strumento educativo per adulti sani, non una prescrizione clinica. Allergie, gravidanza, diabete, disturbi alimentari, patologie renali o gastrointestinali richiedono un piano validato da medico o dietista. Gonfiore persistente, dolore, perdita di peso involontaria o sangue nelle feci richiedono valutazione medica.</p></div>
+        <div className="source-card"><b>Sicurezza</b><p>Strumento educativo, non prescrizione clinica. In presenza di allergie o patologie, fai validare il piano da medico o dietista.</p></div>
         <div className="links"><a href="https://www.crea.gov.it/-/on-line-le-linee-guida-per-una-sana-alimentazione-2018" target="_blank">Linee guida CREA ↗</a><a href="https://www.efsa.europa.eu/en/topics/topic/dietary-reference-values" target="_blank">Valori di riferimento EFSA ↗</a><a href="https://fdc.nal.usda.gov/about-us/" target="_blank">Banca dati USDA ↗</a></div>
       </section>}
     </section>
-    <nav className="bottom-nav" aria-label="Navigazione principale">{[["today","⌂","Oggi"],["week","▦","Settimana"],["builder","＋","Componi"],["progress","◔","Progressi"]].map(([id,icon,label])=><button key={id} className={tab===id?"active":""} onClick={()=>{setTab(id as typeof tab);scrollTo({top:0,behavior:"smooth"})}}><i>{icon}</i><span>{label}</span></button>)}</nav>
-    {selected && <div className="modal-backdrop" onClick={()=>setSelected(null)}><article className="recipe-sheet" onClick={e=>e.stopPropagation()}><button className="close" onClick={()=>setSelected(null)}>×</button><img src={selected.image} alt={selected.name}/><div className="recipe-content"><span className="eyebrow">RICETTA GUIDATA · {selected.time} MIN</span><h2>{selected.name}</h2><p>{selected.kicker}</p>{(()=>{const m=calc(selected.ingredients,scale);return <div className="recipe-macros"><span><b>{round(m.kcal)}</b> kcal</span><span><b>{round(m.protein)}g</b> proteine</span><span><b>{round(m.carbs)}g</b> carbo</span><span><b>{round(m.fat)}g</b> grassi</span></div>})()}<h3>Cosa ti serve</h3><ul className="ingredients">{selected.ingredients.map((x,i)=><li key={i}><span>{x.label||x.food}</span><b>{round(x.grams*scale)} g</b></li>)}</ul><h3>Come prepararlo</h3><ol className="steps">{selected.steps.map((x,i)=><li key={x}><b>{i+1}</b><span>{x}</span></li>)}</ol><h3>Alternative equivalenti</h3><div className="alternatives">{selected.alternatives.map(x=><span key={x}>{x}</span>)}</div><div className="data-note">Calcolo: valori per 100 g × grammi / 100. Fonte di ogni ingrediente: CREA o USDA. Il dato è una stima nutrizionale, non un'analisi di laboratorio del piatto cucinato.</div></div></article></div>}
+    <nav className="bottom-nav five" aria-label="Navigazione principale">{[["today","⌂","Oggi"],["week","▦","Settimana"],["library","≡","Ricette"],["builder","＋","Componi"],["progress","◔","Progressi"]].map(([id,icon,label])=><button key={id} className={tab===id?"active":""} onClick={()=>{setSwapTarget(null);setTab(id as Tab);scrollTo({top:0,behavior:"smooth"})}}><i>{icon}</i><span>{label}</span></button>)}</nav>
+    {selected && <div className="modal-backdrop" onClick={()=>setSelected(null)}><article className="recipe-sheet" onClick={e=>e.stopPropagation()}><button className="close" onClick={()=>setSelected(null)}>×</button><img src={selected.image} alt={selected.name}/><div className="recipe-content"><span className="eyebrow">DA ZERO · {selected.time} MIN</span><h2>{selected.name}</h2><div className="recipe-macros"><span><b>{round(selectedMacros.kcal)}</b> kcal</span><span><b>{round(selectedMacros.protein)}g</b> proteine</span><span><b>{round(selectedMacros.carbs)}g</b> carbo</span><span><b>{round(selectedMacros.fat)}g</b> grassi</span></div><h3>Ingredienti e grammi reali</h3><ul className="ingredients editable">{selectedIngredients.map((x,i)=><li key={i}><span>{x.label||x.food}</span>{selectedMealKey?<label><input aria-label={`Grammi reali ${x.food}`} type="number" min="0" max="2000" value={x.grams} onChange={e=>setActualWeights(v=>({...v,[selectedMealKey]:selectedIngredients.map((z,n)=>n===i?Number(e.target.value):z.grams)}))}/><i>g</i></label>:<b>{x.grams} g</b>}</li>)}</ul>{selectedMealKey&&<button className="primary-btn" onClick={()=>{setCompleted(v=>({...v,[selectedMealKey]:true}));setSelected(null)}}>✓ Registra ciò che ho mangiato</button>}<h3>Preparazione</h3><ol className="steps">{selected.steps.map((x,i)=><li key={`${i}-${x}`}><b>{i+1}</b><span>{x}</span></li>)}</ol><h3>Alternative</h3><div className="alternatives">{selected.alternatives.map(x=><span key={x}>{x}</span>)}</div></div></article></div>}
+    {shoppingOpen&&<div className="modal-backdrop" onClick={()=>setShoppingOpen(false)}><article className="shopping-sheet" onClick={e=>e.stopPropagation()}><header><div><span>LISTA DELLA SPESA</span><h2>{shoppingScope==="day"?days[dayIndex].label:"Settimana"}</h2></div><button onClick={()=>setShoppingOpen(false)}>×</button></header><div className="shopping-scope"><button className={shoppingScope==="day"?"active":""} onClick={()=>setShoppingScope("day")}>Oggi</button><button className={shoppingScope==="week"?"active":""} onClick={()=>setShoppingScope("week")}>Settimana</button><button onClick={shareShopping}>Condividi</button></div><div className="shopping-list">{shoppingItems.map(item=><label className={groceryChecked[item.food]?"bought":""} key={item.food}><input type="checkbox" checked={!!groceryChecked[item.food]} onChange={()=>setGroceryChecked(v=>({...v,[item.food]:!v[item.food]}))}/><span>{item.food}</span><input aria-label={`Quantità ${item.food}`} type="number" min="0" value={groceryAmounts[item.food]??item.grams} onChange={e=>setGroceryAmounts(v=>({...v,[item.food]:Number(e.target.value)}))}/><i>g</i></label>)}</div><button className="primary-btn" onClick={()=>setGroceryChecked({})}>Ripristina spunte</button></article></div>}
   </main>;
 }
