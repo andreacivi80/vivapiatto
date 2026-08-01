@@ -69,7 +69,7 @@ Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggior
 
 ## Continuo
 
-## v1.6.0 — in preparazione
+## v1.6.0 — pubblicata
 
 - [x] Eliminare lo scaling libero che produceva quantità come 290 g di pasta o 237 g di yogurt.
 - [x] Usare porzioni discrete: pasta/riso a peso secco, yogurt a vasetti, pane e patate in quantità pratiche.
@@ -81,13 +81,22 @@ Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggior
 - [x] Obiettivo, calorie, stile, luogo e bevanda incidono sulla selezione dei piatti.
 - [x] Primo catalogo strutturato CREA/SINU con paste, risi, gnocchi, proteine, contorni e cucina orientale.
 
-## v1.7.0 — prossima
+## v1.7.0 — pronta per pubblicazione
 
-- [ ] Alternative equivalenti per ruolo e apporto, con porzioni specifiche e non copiate 1:1.
-- [ ] Scelta libera fuori categoria dopo le alternative consigliate.
-- [ ] Rotazione settimanale di carne bianca/rossa, pesce, uova, legumi, pizza, hamburger e dolci.
+- [x] Alternative per ruolo con porzioni specifiche e sostituzioni contestuali per colazione e pasti principali.
+- [x] Scelta libera fuori categoria dopo le alternative consigliate.
+- [x] Prime proposte occasionali di pizza e hamburger, senza meccanismo punitivo.
 - [ ] Ampliare catalogo di paste, risi, verdure, funghi, olive, carni, pesci e metodi di cottura.
-- [ ] Rendere tutte le parti della colazione sostituibili con più/meno e lista di equivalenti.
+- [x] Rendere le colazioni feriali principali scomponibili, eliminabili e sostituibili.
+- [x] Rendere reversibile il comando “registrato come mangiato”.
+- [x] Conservare il piatto registrato quando un nuovo check-in rigenera il menu.
+- [x] Fotografie atomiche per riso basmati/Venere, gnocchi, pollo, bistecca, salmone, uova, tonno, bresaola, verdure e frutta principali.
+
+## v1.8.0 — prossima
+
+- [ ] Metodi di cottura distinti con immagine e valori coerenti: forno, piastra, bollito, vapore.
+- [ ] Rotazione settimanale completa senza ripetizioni inutili.
+- [ ] Estetica iniziale più calda e riconoscibile, ispirata alla cucina, senza aumentare gli spazi vuoti.
 
 - [ ] Ampliare progressivamente piatti e fotografie senza sacrificare precisione e usabilità.
 - [ ] Verificare sempre assenza di scorrimento orizzontale e densità su cellulare.

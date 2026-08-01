@@ -4,7 +4,7 @@ Applicazione mobile per costruire e seguire un percorso alimentare pratico.
 
 ## Versione
 
-Versione corrente: **1.6.0**
+Versione corrente: **1.7.0**
 
 ## Funzioni
 
@@ -15,6 +15,8 @@ Versione corrente: **1.6.0**
 - check-in su giornata precedente, attività e stato percepito;
 - compositore di piatti con calcolo in tempo reale;
 - diario dei pasti e progressi salvati sul dispositivo.
+- pasti scomposti in elementi sostituibili con alternative consigliate e scelta libera;
+- fotografie dedicate per i singoli alimenti visibili nelle schede a componenti.
 
 ## Fonti nutrizionali
 

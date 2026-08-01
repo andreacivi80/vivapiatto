@@ -7,7 +7,8 @@ type Macro = { kcal: number; protein: number; carbs: number; fat: number };
 type Food = Macro & { fiber: number; source: "CREA" | "USDA" };
 type RecipeIngredient = { food: string; grams: number; label?: string };
 type MealPart = RecipeIngredient & {
-  category: "Carboidrato" | "Proteina" | "Contorno";
+  category:
+    "Carboidrato" | "Proteina" | "Contorno" | "Latticino" | "Frutta" | "Extra";
   image: string;
 };
 type Recipe = {
@@ -34,7 +35,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.6.0";
+const VERSION = "1.7.0";
 const photo = (name: string) => `${import.meta.env.BASE_URL}food/${name}.png`;
 const drinkOptions: LogItem[] = [
   { label: "Acqua", kcal: 0, amount: "500 ml" },
@@ -261,6 +262,30 @@ const foods: Record<string, Food> = {
     fiber: 3.4,
     source: "CREA",
   },
+  Carote: {
+    kcal: 41,
+    protein: 0.9,
+    carbs: 9.6,
+    fat: 0.2,
+    fiber: 2.8,
+    source: "CREA",
+  },
+  Funghi: {
+    kcal: 22,
+    protein: 3.1,
+    carbs: 3.3,
+    fat: 0.3,
+    fiber: 1,
+    source: "CREA",
+  },
+  Olive: {
+    kcal: 145,
+    protein: 1,
+    carbs: 3.8,
+    fat: 15.3,
+    fiber: 3.3,
+    source: "CREA",
+  },
   Peperoni: {
     kcal: 31,
     protein: 1,
@@ -332,6 +357,14 @@ const foods: Record<string, Food> = {
     fat: 0.1,
     fiber: 3.1,
     source: "USDA",
+  },
+  Uva: {
+    kcal: 61,
+    protein: 0.5,
+    carbs: 15.6,
+    fat: 0.1,
+    fiber: 1.5,
+    source: "CREA",
   },
   Arancia: {
     kcal: 47,
@@ -475,6 +508,14 @@ const foods: Record<string, Food> = {
     carbs: 33,
     fat: 0.7,
     fiber: 2,
+    source: "CREA",
+  },
+  "Pizza margherita": {
+    kcal: 250,
+    protein: 10,
+    carbs: 45,
+    fat: 5.5,
+    fiber: 2.5,
     source: "CREA",
   },
   "Passata di pomodoro": {
@@ -1401,6 +1442,43 @@ const simpleBreakfasts: Recipe[] = [
       { food: "Confettura di frutta", grams: 20 },
       { food: "Arancia", grams: 150 },
     ],
+    parts: [
+      {
+        category: "Latticino",
+        food: "Latte parzialmente scremato",
+        grams: 200,
+        label: "Latte",
+        image: photo("part-milk-v7"),
+      },
+      {
+        category: "Carboidrato",
+        food: "Fette biscottate integrali",
+        grams: 30,
+        label: "Fette biscottate",
+        image: photo("part-rusks-v7"),
+      },
+      {
+        category: "Latticino",
+        food: "Ricotta vaccina",
+        grams: 50,
+        label: "Ricotta",
+        image: photo("part-ricotta-v7"),
+      },
+      {
+        category: "Extra",
+        food: "Confettura di frutta",
+        grams: 20,
+        label: "Confettura",
+        image: photo("part-jam-v7"),
+      },
+      {
+        category: "Frutta",
+        food: "Arancia",
+        grams: 150,
+        label: "Arancia",
+        image: photo("part-orange-v7"),
+      },
+    ],
     steps: [
       "Pesa fette biscottate, ricotta e confettura.",
       "Spalma prima la ricotta e poi un velo di confettura; servi con l'arancia già lavata e tagliata.",
@@ -1423,6 +1501,29 @@ const simpleBreakfasts: Recipe[] = [
       { food: "Biscotti secchi", grams: 45 },
       { food: "Mela", grams: 150 },
     ],
+    parts: [
+      {
+        category: "Latticino",
+        food: "Latte parzialmente scremato",
+        grams: 250,
+        label: "Latte",
+        image: photo("part-milk-v7"),
+      },
+      {
+        category: "Carboidrato",
+        food: "Biscotti secchi",
+        grams: 45,
+        label: "Biscotti secchi",
+        image: photo("part-biscuits-v7"),
+      },
+      {
+        category: "Frutta",
+        food: "Mela",
+        grams: 150,
+        label: "Mela",
+        image: photo("part-apple-v7"),
+      },
+    ],
     steps: [
       "Versa il latte nella tazza e scaldalo 60-90 secondi se lo preferisci caldo.",
       "Pesa i biscotti e mangia la mela intera o tagliata a spicchi.",
@@ -1442,6 +1543,36 @@ const simpleBreakfasts: Recipe[] = [
       { food: "Ricotta vaccina", grams: 90 },
       { food: "Miele", grams: 10 },
       { food: "Kiwi", grams: 130 },
+    ],
+    parts: [
+      {
+        category: "Carboidrato",
+        food: "Cracker integrali",
+        grams: 50,
+        label: "Cracker integrali",
+        image: photo("crackers-35g-v5"),
+      },
+      {
+        category: "Latticino",
+        food: "Ricotta vaccina",
+        grams: 90,
+        label: "Ricotta",
+        image: photo("part-ricotta-v7"),
+      },
+      {
+        category: "Extra",
+        food: "Miele",
+        grams: 10,
+        label: "Miele",
+        image: photo("part-honey-v7"),
+      },
+      {
+        category: "Frutta",
+        food: "Kiwi",
+        grams: 130,
+        label: "Kiwi",
+        image: photo("part-kiwi-v7"),
+      },
     ],
     steps: [
       "Pesa gli ingredienti e pela il kiwi.",
@@ -1466,6 +1597,36 @@ const simpleBreakfasts: Recipe[] = [
       { food: "Confettura di frutta", grams: 25 },
       { food: "Latte parzialmente scremato", grams: 200 },
     ],
+    parts: [
+      {
+        category: "Carboidrato",
+        food: "Fette biscottate integrali",
+        grams: 45,
+        label: "Fette biscottate",
+        image: photo("part-rusks-v7"),
+      },
+      {
+        category: "Extra",
+        food: "Burro",
+        grams: 10,
+        label: "Burro",
+        image: photo("part-butter-v7"),
+      },
+      {
+        category: "Extra",
+        food: "Confettura di frutta",
+        grams: 25,
+        label: "Confettura",
+        image: photo("part-jam-v7"),
+      },
+      {
+        category: "Latticino",
+        food: "Latte parzialmente scremato",
+        grams: 200,
+        label: "Latte",
+        image: photo("part-milk-v7"),
+      },
+    ],
     steps: [
       "Lascia ammorbidire il burro un minuto e pesane la quantità.",
       "Spalmalo sulle fette biscottate, aggiungi la confettura e accompagna con il latte.",
@@ -1480,9 +1641,9 @@ const quickSnacks: Recipe[] = [
     kicker: "Zero preparazione",
     course: "Spuntino",
     cuisine: "Italiano",
-    image: photo("snack"),
+    image: photo("part-apple-v7"),
     time: 1,
-    ingredients: [{ food: "Mela", grams: 180 }],
+    ingredients: [{ food: "Mela", grams: 150 }],
     steps: [
       "Lava la mela e portala intera; pesala solo se vuoi registrare una quantità precisa.",
     ],
@@ -1548,6 +1709,29 @@ const portableRecipes: Recipe[] = [
       { food: "Bresaola", grams: 70 },
       { food: "Ricotta vaccina", grams: 35 },
       { food: "Rucola", grams: 25 },
+    ],
+    parts: [
+      {
+        category: "Carboidrato",
+        food: "Pane integrale",
+        grams: 100,
+        label: "Pane",
+        image: photo("part-bread-v7"),
+      },
+      {
+        category: "Proteina",
+        food: "Bresaola",
+        grams: 70,
+        label: "Bresaola",
+        image: photo("part-bresaola-v7"),
+      },
+      {
+        category: "Contorno",
+        food: "Rucola",
+        grams: 25,
+        label: "Rucola",
+        image: photo("part-rucola-v7"),
+      },
     ],
     steps: [
       "Apri il pane e spalma la ricotta.",
@@ -1726,14 +1910,14 @@ const balancedDinnerRecipes: Recipe[] = [
         food: "Bistecca di manzo cotta",
         grams: 100,
         label: "Bistecca ai ferri",
-        image: photo("simple-steak-potatoes-v5"),
+        image: photo("part-steak-grilled-v7"),
       },
       {
         category: "Contorno",
         food: "Zucchine",
         grams: 200,
         label: "Zucchine cotte",
-        image: photo("zucchini-tomato-side-v3"),
+        image: photo("part-zucchini-v7"),
       },
     ],
     steps: [
@@ -1766,7 +1950,7 @@ const balancedDinnerRecipes: Recipe[] = [
         food: "Patate lesse",
         grams: 200,
         label: "Patate lesse",
-        image: photo("simple-steak-potatoes-v5"),
+        image: photo("part-potatoes-boiled-v7"),
       },
       {
         category: "Proteina",
@@ -1780,7 +1964,7 @@ const balancedDinnerRecipes: Recipe[] = [
         food: "Fagiolini",
         grams: 200,
         label: "Fagiolini",
-        image: photo("salmon"),
+        image: photo("part-green-beans-v7"),
       },
     ],
     steps: [
@@ -1793,9 +1977,125 @@ const balancedDinnerRecipes: Recipe[] = [
       "Pesce o carne bianca al posto delle uova",
     ],
   },
+  {
+    id: "dinner-three-rice-chicken",
+    name: "Cena in 3 parti · riso, pollo, fagiolini",
+    kicker: "Base, proteina e verdura separate",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    image: photo("part-rice-basmati-v7"),
+    time: 25,
+    ingredients: [
+      { food: "Riso basmati secco", grams: 80 },
+      { food: "Petto di pollo cotto", grams: 100 },
+      { food: "Fagiolini", grams: 200 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    parts: [
+      {
+        category: "Carboidrato",
+        food: "Riso basmati secco",
+        grams: 80,
+        label: "Riso basmati · peso secco",
+        image: photo("part-rice-basmati-v7"),
+      },
+      {
+        category: "Proteina",
+        food: "Petto di pollo cotto",
+        grams: 100,
+        label: "Petto di pollo alla piastra",
+        image: photo("part-chicken-grilled-v7"),
+      },
+      {
+        category: "Contorno",
+        food: "Fagiolini",
+        grams: 200,
+        label: "Fagiolini al vapore",
+        image: photo("part-green-beans-v7"),
+      },
+    ],
+    steps: [
+      "Sciacqua il riso e cuocilo nell'acqua per il tempo indicato sulla confezione; scolalo bene.",
+      "Cuoci il petto di pollo su piastra calda 5-7 minuti per lato, fino a completa cottura.",
+      "Cuoci i fagiolini al vapore o lessali 8-12 minuti e condisci con l'olio pesato.",
+    ],
+    alternatives: ["Cambia ogni parte dal pannello visivo"],
+  },
+  {
+    id: "dinner-three-gnocchi-salmon",
+    name: "Cena in 3 parti · gnocchi, salmone, spinaci",
+    kicker: "Alternativa completa con quantità standard",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    image: photo("part-gnocchi-v7"),
+    time: 22,
+    ingredients: [
+      { food: "Gnocchi di patate", grams: 150 },
+      { food: "Salmone cotto", grams: 150 },
+      { food: "Spinaci", grams: 200 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    parts: [
+      {
+        category: "Carboidrato",
+        food: "Gnocchi di patate",
+        grams: 150,
+        label: "Gnocchi di patate",
+        image: photo("part-gnocchi-v7"),
+      },
+      {
+        category: "Proteina",
+        food: "Salmone cotto",
+        grams: 150,
+        label: "Salmone al forno",
+        image: photo("part-salmon-baked-v7"),
+      },
+      {
+        category: "Contorno",
+        food: "Spinaci",
+        grams: 200,
+        label: "Spinaci cotti",
+        image: photo("part-spinach-v7"),
+      },
+    ],
+    steps: [
+      "Cuoci gli gnocchi in acqua bollente e scolali quando salgono in superficie.",
+      "Cuoci il salmone in forno a 190 °C per 12-15 minuti, fino a cottura completa.",
+      "Cuoci gli spinaci in padella coperta 6-8 minuti e aggiungi l'olio pesato.",
+    ],
+    alternatives: ["Cambia ogni parte dal pannello visivo"],
+  },
 ];
 const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
   Carboidrato: [
+    {
+      category: "Carboidrato",
+      food: "Fette biscottate integrali",
+      grams: 30,
+      label: "Fette biscottate",
+      image: photo("part-rusks-v7"),
+    },
+    {
+      category: "Carboidrato",
+      food: "Biscotti secchi",
+      grams: 30,
+      label: "Biscotti secchi",
+      image: photo("part-biscuits-v7"),
+    },
+    {
+      category: "Carboidrato",
+      food: "Cracker integrali",
+      grams: 30,
+      label: "Cracker integrali",
+      image: photo("crackers-35g-v5"),
+    },
+    {
+      category: "Carboidrato",
+      food: "Pasta integrale secca",
+      grams: 80,
+      label: "Pasta integrale secca",
+      image: photo("simple-pasta-white-v5"),
+    },
     {
       category: "Carboidrato",
       food: "Pasta di semola secca",
@@ -1808,35 +2108,35 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       food: "Riso basmati secco",
       grams: 80,
       label: "Riso basmati secco",
-      image: photo("work-rice-salad-v5"),
+      image: photo("part-rice-basmati-v7"),
     },
     {
       category: "Carboidrato",
       food: "Riso Venere secco",
       grams: 80,
       label: "Riso Venere secco",
-      image: photo("work-rice-salad-v5"),
+      image: photo("part-rice-venere-v7"),
     },
     {
       category: "Carboidrato",
       food: "Gnocchi di patate",
       grams: 150,
       label: "Gnocchi",
-      image: photo("simple-pasta-white-v5"),
+      image: photo("part-gnocchi-v7"),
     },
     {
       category: "Carboidrato",
       food: "Patate lesse",
       grams: 200,
       label: "Patate lesse",
-      image: photo("simple-steak-potatoes-v5"),
+      image: photo("part-potatoes-boiled-v7"),
     },
     {
       category: "Carboidrato",
       food: "Pane integrale",
       grams: 100,
       label: "Pane",
-      image: photo("work-turkey-v5"),
+      image: photo("part-bread-v7"),
     },
   ],
   Proteina: [
@@ -1845,28 +2145,28 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       food: "Bistecca di manzo cotta",
       grams: 100,
       label: "Bistecca",
-      image: photo("simple-steak-potatoes-v5"),
+      image: photo("part-steak-grilled-v7"),
     },
     {
       category: "Proteina",
       food: "Petto di pollo cotto",
       grams: 100,
       label: "Pollo",
-      image: photo("chicken-bowl"),
+      image: photo("part-chicken-grilled-v7"),
     },
     {
       category: "Proteina",
       food: "Salmone cotto",
       grams: 150,
       label: "Salmone",
-      image: photo("salmon"),
+      image: photo("part-salmon-baked-v7"),
     },
     {
       category: "Proteina",
       food: "Uovo",
       grams: 100,
       label: "Due uova",
-      image: photo("simple-eggs-v5"),
+      image: photo("part-eggs-boiled-v7"),
     },
     {
       category: "Proteina",
@@ -1878,9 +2178,23 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     {
       category: "Proteina",
       food: "Bresaola",
-      grams: 70,
+      grams: 50,
       label: "Bresaola",
-      image: photo("work-bresaola-v5"),
+      image: photo("part-bresaola-v7"),
+    },
+    {
+      category: "Proteina",
+      food: "Tonno al naturale sgocciolato",
+      grams: 100,
+      label: "Tonno al naturale",
+      image: photo("part-tuna-v7"),
+    },
+    {
+      category: "Proteina",
+      food: "Prosciutto cotto",
+      grams: 50,
+      label: "Prosciutto cotto",
+      image: photo("work-cotto-v5"),
     },
   ],
   Contorno: [
@@ -1889,21 +2203,21 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       food: "Zucchine",
       grams: 200,
       label: "Zucchine",
-      image: photo("zucchini-tomato-side-v3"),
+      image: photo("part-zucchini-v7"),
     },
     {
       category: "Contorno",
       food: "Spinaci",
       grams: 200,
       label: "Spinaci",
-      image: photo("eggs-quinoa-v3"),
+      image: photo("part-spinach-v7"),
     },
     {
       category: "Contorno",
       food: "Fagiolini",
       grams: 200,
       label: "Fagiolini",
-      image: photo("salmon"),
+      image: photo("part-green-beans-v7"),
     },
     {
       category: "Contorno",
@@ -1917,15 +2231,259 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       food: "Rucola",
       grams: 80,
       label: "Insalata di rucola",
-      image: photo("work-bresaola-v5"),
+      image: photo("part-rucola-v7"),
+    },
+    {
+      category: "Contorno",
+      food: "Carote",
+      grams: 200,
+      label: "Carote",
+      image: photo("zucchini-tomato-side-v3"),
+    },
+    {
+      category: "Contorno",
+      food: "Funghi",
+      grams: 200,
+      label: "Funghi",
+      image: photo("zucchini-tomato-side-v3"),
+    },
+    {
+      category: "Contorno",
+      food: "Olive",
+      grams: 30,
+      label: "Olive · contorno piccolo",
+      image: photo("zucchini-tomato-side-v3"),
+    },
+  ],
+  Latticino: [
+    {
+      category: "Latticino",
+      food: "Latte parzialmente scremato",
+      grams: 200,
+      label: "Latte",
+      image: photo("part-milk-v7"),
+    },
+    {
+      category: "Latticino",
+      food: "Yogurt greco 2%",
+      grams: 125,
+      label: "Yogurt · 1 vasetto",
+      image: photo("part-yogurt-v7"),
+    },
+    {
+      category: "Latticino",
+      food: "Ricotta vaccina",
+      grams: 50,
+      label: "Ricotta",
+      image: photo("part-ricotta-v7"),
+    },
+    {
+      category: "Latticino",
+      food: "Bevanda di soia senza zucchero",
+      grams: 200,
+      label: "Bevanda di soia",
+      image: photo("part-milk-v7"),
+    },
+    {
+      category: "Latticino",
+      food: "Bevanda d'avena senza zucchero",
+      grams: 200,
+      label: "Bevanda d'avena",
+      image: photo("part-milk-v7"),
+    },
+  ],
+  Frutta: [
+    {
+      category: "Frutta",
+      food: "Mela",
+      grams: 150,
+      label: "Mela",
+      image: photo("part-apple-v7"),
+    },
+    {
+      category: "Frutta",
+      food: "Banana",
+      grams: 150,
+      label: "Banana",
+      image: photo("part-banana-v7"),
+    },
+    {
+      category: "Frutta",
+      food: "Pera",
+      grams: 150,
+      label: "Pera",
+      image: photo("part-pear-v7"),
+    },
+    {
+      category: "Frutta",
+      food: "Kiwi",
+      grams: 150,
+      label: "Kiwi",
+      image: photo("part-kiwi-v7"),
+    },
+    {
+      category: "Frutta",
+      food: "Uva",
+      grams: 150,
+      label: "Uva",
+      image: photo("part-grapes-v7"),
+    },
+    {
+      category: "Frutta",
+      food: "Arancia",
+      grams: 150,
+      label: "Arancia",
+      image: photo("part-orange-v7"),
+    },
+    {
+      category: "Frutta",
+      food: "Frutti di bosco",
+      grams: 150,
+      label: "Frutti di bosco",
+      image: photo("fruit-breakfast-v2"),
+    },
+  ],
+  Extra: [
+    {
+      category: "Extra",
+      food: "Confettura di frutta",
+      grams: 20,
+      label: "Confettura",
+      image: photo("part-jam-v7"),
+    },
+    {
+      category: "Extra",
+      food: "Miele",
+      grams: 10,
+      label: "Miele",
+      image: photo("part-honey-v7"),
+    },
+    {
+      category: "Extra",
+      food: "Burro",
+      grams: 10,
+      label: "Burro",
+      image: photo("part-butter-v7"),
+    },
+    {
+      category: "Extra",
+      food: "Noci",
+      grams: 20,
+      label: "Noci",
+      image: photo("walnuts-20g-v5"),
     },
   ],
 };
+
+const recommendedPartOptions = (part: MealPart, key: string) => {
+  const slot = Number(key.split("-")[1]);
+  const options = mealPartOptions[part.category];
+  if (slot === 0) {
+    if (part.category === "Carboidrato")
+      return options.filter((x) =>
+        [
+          "Fette biscottate integrali",
+          "Biscotti secchi",
+          "Cracker integrali",
+          "Pane integrale",
+        ].includes(x.food),
+      );
+    return options;
+  }
+  if (slot === 1 || slot === 3) {
+    if (part.category === "Carboidrato")
+      return options.filter((x) =>
+        [
+          "Fette biscottate integrali",
+          "Biscotti secchi",
+          "Cracker integrali",
+        ].includes(x.food),
+      );
+    if (part.category === "Proteina") return [];
+  }
+  if ((slot === 2 || slot === 4) && part.category === "Carboidrato")
+    return options.filter(
+      (x) =>
+        !["Fette biscottate integrali", "Biscotti secchi"].includes(x.food),
+    );
+  return options;
+};
+const occasionalRecipes: Recipe[] = [
+  {
+    id: "occasional-pizza-margherita",
+    name: "Pizza margherita",
+    kicker: "Una scelta possibile, non una punizione",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    image: photo("pizza-margherita-v7"),
+    time: 15,
+    ingredients: [{ food: "Pizza margherita", grams: 300 }],
+    steps: [
+      "Se la ordini, scegli una margherita semplice e registra il peso disponibile o la porzione realmente mangiata.",
+      "Mangiala con calma e abbinala ad acqua; non saltare automaticamente il pasto successivo.",
+    ],
+    alternatives: [
+      "Pizza marinara",
+      "Porzione più piccola con un contorno di verdure",
+    ],
+  },
+  {
+    id: "occasional-hamburger",
+    name: "Hamburger semplice fatto in casa",
+    kicker: "Pane, carne e verdure con quantità chiare",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    image: photo("hamburger-simple-v7"),
+    time: 15,
+    ingredients: [
+      { food: "Pane integrale", grams: 100 },
+      {
+        food: "Bistecca di manzo cotta",
+        grams: 100,
+        label: "Hamburger di manzo",
+      },
+      { food: "Pomodorini", grams: 100, label: "Pomodoro" },
+      { food: "Rucola", grams: 30 },
+    ],
+    parts: [
+      {
+        category: "Carboidrato",
+        food: "Pane integrale",
+        grams: 100,
+        label: "Pane",
+        image: photo("part-bread-v7"),
+      },
+      {
+        category: "Proteina",
+        food: "Bistecca di manzo cotta",
+        grams: 100,
+        label: "Hamburger di manzo",
+        image: photo("part-steak-grilled-v7"),
+      },
+      {
+        category: "Contorno",
+        food: "Rucola",
+        grams: 30,
+        label: "Rucola e pomodoro",
+        image: photo("part-rucola-v7"),
+      },
+    ],
+    steps: [
+      "Forma un hamburger spesso circa 2 cm e cuocilo su piastra calda fino a cottura completa.",
+      "Tosta il pane 1-2 minuti, aggiungi carne, pomodoro lavato e rucola asciutta.",
+    ],
+    alternatives: [
+      "Pollo alla piastra al posto del manzo",
+      "Pane 50 g per una porzione più piccola",
+    ],
+  },
+];
 const allRecipes = [
   ...simpleBreakfasts,
   ...quickSnacks,
   ...portableRecipes,
   ...balancedDinnerRecipes,
+  ...occasionalRecipes,
   ...recipes,
   ...generatedRecipes,
   ...snackRecipes,
@@ -2026,6 +2584,9 @@ export function FoodPlanner() {
   const [selected, setSelected] = useState<Recipe | null>(null);
   const [selectedMealKey, setSelectedMealKey] = useState<string | null>(null);
   const [completed, setCompleted] = useState<Record<string, boolean>>({});
+  const [completedRecipes, setCompletedRecipes] = useState<
+    Record<string, string>
+  >({});
   const [actualWeights, setActualWeights] = useState<Record<string, number[]>>(
     {},
   );
@@ -2035,6 +2596,11 @@ export function FoodPlanner() {
   const [partSelections, setPartSelections] = useState<
     Record<string, MealPart[]>
   >({});
+  const [partPicker, setPartPicker] = useState<{
+    key: string;
+    index: number;
+    part: MealPart;
+  } | null>(null);
   const [preferencesOpen, setPreferencesOpen] = useState(false);
   const [checkinOpen, setCheckinOpen] = useState(false);
   const [excludedGroups, setExcludedGroups] = useState<string[]>([]);
@@ -2087,6 +2653,7 @@ export function FoodPlanner() {
         setCalories(s.calories || 1800);
         setGoal(s.goal || "Equilibrio");
         setCompleted(s.completed || {});
+        setCompletedRecipes(s.completedRecipes || {});
         setActualWeights(s.actualWeights || {});
         setRemovedIngredients(s.removedIngredients || {});
         setPartSelections(s.partSelections || {});
@@ -2110,6 +2677,7 @@ export function FoodPlanner() {
         calories,
         goal,
         completed,
+        completedRecipes,
         actualWeights,
         removedIngredients,
         partSelections,
@@ -2129,6 +2697,7 @@ export function FoodPlanner() {
     calories,
     goal,
     completed,
+    completedRecipes,
     actualWeights,
     removedIngredients,
     partSelections,
@@ -2370,6 +2939,14 @@ export function FoodPlanner() {
       setSelected(recipe);
     }
   };
+  const keepRecordedChoice = (
+    current: Record<string, string>,
+    slot: number,
+    nextId: string,
+  ) => {
+    const key = `${dayIndex}-${slot}`;
+    return completed[key] ? current[key] || getDayIds(dayIndex)[slot] : nextId;
+  };
   const applyCuisine = () => {
     const profileSeed =
       (calories >= 2400 ? 1 : calories >= 2000 ? 2 : 0) +
@@ -2407,15 +2984,31 @@ export function FoodPlanner() {
       return;
     setChoices((v) => ({
       ...v,
-      [`${dayIndex}-0`]:
+      [`${dayIndex}-0`]: keepRecordedChoice(
+        v,
+        0,
         breakfasts[(dayIndex + profileSeed) % breakfasts.length].id,
-      [`${dayIndex}-1`]: snacks[(dayIndex + profileSeed) % snacks.length].id,
-      [`${dayIndex}-2`]:
+      ),
+      [`${dayIndex}-1`]: keepRecordedChoice(
+        v,
+        1,
+        snacks[(dayIndex + profileSeed) % snacks.length].id,
+      ),
+      [`${dayIndex}-2`]: keepRecordedChoice(
+        v,
+        2,
         lunches[(dayIndex * 2 + profileSeed) % lunches.length].id,
-      [`${dayIndex}-3`]:
+      ),
+      [`${dayIndex}-3`]: keepRecordedChoice(
+        v,
+        3,
         snacks[(dayIndex + profileSeed + 1) % snacks.length].id,
-      [`${dayIndex}-4`]:
+      ),
+      [`${dayIndex}-4`]: keepRecordedChoice(
+        v,
+        4,
         dinners[(dayIndex * 2 + profileSeed + 1) % dinners.length].id,
+      ),
     }));
     setReplanNote(
       `Menu completo ${cuisineChoice.toLowerCase()} creato: 5 momenti e spesa aggiornata.`,
@@ -2493,11 +3086,31 @@ export function FoodPlanner() {
       profileSeed;
     setChoices((v) => ({
       ...v,
-      [`${dayIndex}-0`]: breakfasts[(dayIndex + offset) % breakfasts.length].id,
-      [`${dayIndex}-1`]: snacks[(dayIndex + offset) % snacks.length].id,
-      [`${dayIndex}-2`]: lunches[(dayIndex + offset) % lunches.length].id,
-      [`${dayIndex}-3`]: snacks[(dayIndex + offset + 1) % snacks.length].id,
-      [`${dayIndex}-4`]: dinners[(dayIndex + offset + 1) % dinners.length].id,
+      [`${dayIndex}-0`]: keepRecordedChoice(
+        v,
+        0,
+        breakfasts[(dayIndex + offset) % breakfasts.length].id,
+      ),
+      [`${dayIndex}-1`]: keepRecordedChoice(
+        v,
+        1,
+        snacks[(dayIndex + offset) % snacks.length].id,
+      ),
+      [`${dayIndex}-2`]: keepRecordedChoice(
+        v,
+        2,
+        lunches[(dayIndex + offset) % lunches.length].id,
+      ),
+      [`${dayIndex}-3`]: keepRecordedChoice(
+        v,
+        3,
+        snacks[(dayIndex + offset + 1) % snacks.length].id,
+      ),
+      [`${dayIndex}-4`]: keepRecordedChoice(
+        v,
+        4,
+        dinners[(dayIndex + offset + 1) % dinners.length].id,
+      ),
     }));
     setReplanNote(
       next.feeling === "gonfio"
@@ -2515,6 +3128,37 @@ export function FoodPlanner() {
     const next = { ...check, [key]: value };
     setCheck(next);
     planFromCheck(next);
+  };
+  const chooseMealPart = (replacement: MealPart) => {
+    if (!partPicker) return;
+    const [dayText, slotText] = partPicker.key.split("-");
+    const day = Number(dayText);
+    const slot = Number(slotText);
+    const recipe = recipeMap[getDayIds(day)[slot]];
+    const activeParts = partSelections[partPicker.key] || recipe.parts || [];
+    const previous = activeParts[partPicker.index];
+    const delta =
+      calc([{ food: replacement.food, grams: replacement.grams }]).kcal -
+      calc([{ food: previous.food, grams: previous.grams }]).kcal;
+    setPartSelections((v) => ({
+      ...v,
+      [partPicker.key]: activeParts.map((x, index) =>
+        index === partPicker.index ? replacement : x,
+      ),
+    }));
+    const nextSlot = slot === 0 ? 1 : slot <= 2 ? 3 : null;
+    if (nextSlot !== null && !completed[`${day}-${nextSlot}`]) {
+      const snackId =
+        delta > 80 ? "quick-apple" : delta < -80 ? "quick-nuts" : null;
+      if (snackId)
+        setChoices((v) => ({ ...v, [`${day}-${nextSlot}`]: snackId }));
+    }
+    setReplanNote(
+      nextSlot === null
+        ? `Parte cambiata: ${replacement.label || replacement.food} ${replacement.grams} g.`
+        : `Parte cambiata e ${SLOT_LABELS[nextSlot].toLowerCase()} ricalibrato.`,
+    );
+    setPartPicker(null);
   };
   useEffect(() => {
     applyCuisine();
@@ -2557,9 +3201,12 @@ export function FoodPlanner() {
   const loggedMealKcal = (day: number) =>
     getDayIds(day).reduce((sum, id, slot) => {
       const key = `${day}-${slot}`;
+      const recordedId = completedRecipes[key] || id;
       return (
         sum +
-        (completed[key] ? calc(actualIngredients(key, recipeMap[id])).kcal : 0)
+        (completed[key]
+          ? calc(actualIngredients(key, recipeMap[recordedId])).kcal
+          : 0)
       );
     }, 0);
   const loggedTotal = (day: number) =>
@@ -2700,8 +3347,7 @@ export function FoodPlanner() {
                 </b>
               </div>
               <button onClick={() => setPreferencesOpen((v) => !v)}>
-                ⚙ Filtri{" "}
-                {blockedFoods.length ? `(${blockedFoods.length})` : ""}
+                ⚙ Filtri {blockedFoods.length ? `(${blockedFoods.length})` : ""}
               </button>
             </section>
             {preferencesOpen && (
@@ -3045,7 +3691,7 @@ export function FoodPlanner() {
                           <>
                             <div className="meal-parts">
                               {activeParts.map((part, partIndex) => (
-                                <label
+                                <div
                                   className="meal-part"
                                   key={`${part.category}-${partIndex}`}
                                   onClick={(e) => e.stopPropagation()}
@@ -3054,31 +3700,22 @@ export function FoodPlanner() {
                                     src={part.image}
                                     alt={part.label || part.food}
                                   />
-                                  <select
+                                  <button
+                                    className="part-change"
                                     aria-label={`Cambia ${part.category}`}
-                                    value={part.food}
-                                    onChange={(e) => {
-                                      const replacement = mealPartOptions[
-                                        part.category
-                                      ].find((x) => x.food === e.target.value);
-                                      if (!replacement) return;
-                                      setPartSelections((v) => ({
-                                        ...v,
-                                        [key]: activeParts.map((x, n) =>
-                                          n === partIndex ? replacement : x,
-                                        ),
-                                      }));
-                                      e.currentTarget.blur();
+                                    onClick={() => {
+                                      setPartPicker({
+                                        key,
+                                        index: partIndex,
+                                        part,
+                                      });
                                     }}
                                   >
-                                    {mealPartOptions[part.category].map((x) => (
-                                      <option value={x.food} key={x.food}>
-                                        {x.label || x.food}
-                                      </option>
-                                    ))}
-                                  </select>
+                                    {part.label || part.food}
+                                    <i>Alternative</i>
+                                  </button>
                                   <b>{part.grams} g</b>
-                                </label>
+                                </div>
                               ))}
                             </div>
                             <div className="part-extras">
@@ -3093,8 +3730,15 @@ export function FoodPlanner() {
                                   </span>
                                 ))}
                             </div>
+                            {new Set(activeParts.map((x) => x.category)).size <
+                              3 && (
+                              <small className="structure-note">
+                                Scelta libera: manca una delle tre funzioni del
+                                pasto. Puoi continuare o riequilibrare dopo.
+                              </small>
+                            )}
                           </>
-                        ) : (
+                        ) : plannedIngredients(key, r).length > 1 ? (
                           <div className="ingredient-preview">
                             {plannedIngredients(key, r).map(
                               (x, ingredientIndex) => {
@@ -3127,7 +3771,7 @@ export function FoodPlanner() {
                               },
                             )}
                           </div>
-                        )}
+                        ) : null}
                         <p>
                           {caution
                             ? "Sconsigliato oggi: possibile alimento fermentabile"
@@ -3157,6 +3801,15 @@ export function FoodPlanner() {
                           className={`check ${completed[key] ? "done" : ""}`}
                           onClick={(e) => {
                             e.stopPropagation();
+                            if (completed[key]) {
+                              setCompleted((v) => ({ ...v, [key]: false }));
+                              setCompletedRecipes((v) => {
+                                const next = { ...v };
+                                delete next[key];
+                                return next;
+                              });
+                              return;
+                            }
                             setSelectedMealKey(key);
                             setSelected(r);
                           }}
@@ -3433,7 +4086,8 @@ export function FoodPlanner() {
             const difference = round(total - target);
             const completedMeals = getDayIds(diaryDay)
               .map((id, slot) => ({
-                recipe: recipeMap[id],
+                recipe:
+                  recipeMap[completedRecipes[`${diaryDay}-${slot}`] || id],
                 slot,
                 key: `${diaryDay}-${slot}`,
               }))
@@ -3653,6 +4307,63 @@ export function FoodPlanner() {
           </button>
         ))}
       </nav>
+      {partPicker && (
+        <div className="modal-backdrop" onClick={() => setPartPicker(null)}>
+          <article
+            className="part-picker-sheet"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <header>
+              <div>
+                <span>CAMBIA UNA PARTE</span>
+                <h2>{partPicker.part.label || partPicker.part.food}</h2>
+              </div>
+              <button onClick={() => setPartPicker(null)}>×</button>
+            </header>
+            <h3>Alternative consigliate</h3>
+            <div className="part-choice-grid">
+              {recommendedPartOptions(partPicker.part, partPicker.key).map(
+                (option) => (
+                  <button
+                    className={
+                      option.food === partPicker.part.food ? "selected" : ""
+                    }
+                    key={option.food}
+                    onClick={() => chooseMealPart(option)}
+                  >
+                    <img src={option.image} alt={option.label || option.food} />
+                    <span>{option.label || option.food}</span>
+                    <b>
+                      {option.grams} g · {round(calc([option]).kcal)} kcal
+                    </b>
+                  </button>
+                ),
+              )}
+            </div>
+            <h3>Scelta libera</h3>
+            <p>
+              Scegli anche un'altra categoria: l'app segnalerà lo scostamento.
+            </p>
+            <div className="part-choice-grid free">
+              {(Object.keys(mealPartOptions) as MealPart["category"][])
+                .filter((category) => category !== partPicker.part.category)
+                .flatMap((category) => mealPartOptions[category])
+                .map((option) => (
+                  <button
+                    key={option.food}
+                    onClick={() => chooseMealPart(option)}
+                  >
+                    <img src={option.image} alt={option.label || option.food} />
+                    <span>{option.label || option.food}</span>
+                    <b>
+                      {option.grams} g · {round(calc([option]).kcal)} kcal
+                    </b>
+                  </button>
+                ))}
+            </div>
+          </article>
+        </div>
+      )}
       {selected && (
         <div className="modal-backdrop" onClick={() => setSelected(null)}>
           <article
@@ -3716,6 +4427,10 @@ export function FoodPlanner() {
                   className="primary-btn"
                   onClick={() => {
                     setCompleted((v) => ({ ...v, [selectedMealKey]: true }));
+                    setCompletedRecipes((v) => ({
+                      ...v,
+                      [selectedMealKey]: selected.id,
+                    }));
                     setSelected(null);
                   }}
                 >

@@ -387,7 +387,7 @@ button {
   height: 76px;
   border-radius: 9px;
 }
-.meal-part select {
+.meal-part .part-change {
   width: 100%;
   min-width: 0;
   border: 0;
@@ -395,6 +395,16 @@ button {
   background: transparent;
   font-size: 8px;
   font-weight: 800;
+  padding: 0;
+  text-align: left;
+  line-height: 1.15;
+}
+.part-change i {
+  display: block;
+  color: var(--coral);
+  font-size: 7px;
+  font-style: normal;
+  margin-top: 2px;
 }
 .meal-part b {
   font-size: 10px;
@@ -410,6 +420,96 @@ button {
   background: #eef3ea;
   padding: 3px 5px;
   font-size: 8px;
+}
+.structure-note {
+  display: block;
+  margin: 2px 0 5px;
+  color: #9a4e3d;
+  font-size: 8px;
+  line-height: 1.25;
+}
+.part-picker-sheet {
+  width: min(100%, 520px);
+  max-height: 92vh;
+  overflow-y: auto;
+  background: var(--cream);
+  border-radius: 24px 24px 0 0;
+  padding: 16px;
+}
+.part-picker-sheet header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 10px;
+}
+.part-picker-sheet header span {
+  color: var(--coral);
+  font-size: 8px;
+  font-weight: 900;
+}
+.part-picker-sheet h2 {
+  margin: 3px 0 10px;
+  font-size: 22px;
+}
+.part-picker-sheet header > button {
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--paper);
+  font-size: 22px;
+}
+.part-picker-sheet h3 {
+  margin: 10px 0 6px;
+  font-size: 13px;
+}
+.part-picker-sheet > p {
+  margin: -2px 0 7px;
+  color: var(--muted);
+  font-size: 9px;
+}
+.part-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+.part-choice-grid > button {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper);
+  padding: 5px;
+  text-align: left;
+}
+.part-choice-grid > button.selected {
+  border: 2px solid var(--coral);
+}
+.part-choice-grid img {
+  width: 100%;
+  height: 70px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+.part-choice-grid span,
+.part-choice-grid b {
+  display: block;
+  overflow-wrap: anywhere;
+}
+.part-choice-grid span {
+  margin-top: 4px;
+  font-size: 9px;
+  font-weight: 900;
+}
+.part-choice-grid b {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 8px;
+}
+.part-choice-grid.free {
+  max-height: 245px;
+  overflow-y: auto;
+  padding-bottom: 4px;
 }
 .check {
   width: 30px;
