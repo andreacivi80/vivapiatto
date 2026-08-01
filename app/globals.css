@@ -304,7 +304,7 @@ button {
   gap: 10px;
 }
 .meal-card {
-  height: 106px;
+  min-height: 128px;
   background: var(--paper);
   border: 1px solid var(--line);
   border-radius: 20px;
@@ -314,6 +314,11 @@ button {
   gap: 11px;
   align-items: center;
   box-shadow: 0 5px 16px rgba(22, 49, 41, 0.035);
+}
+.meal-card.composed {
+  min-height: 238px;
+  grid-template-columns: 1fr 34px;
+  align-items: start;
 }
 .meal-card img {
   width: 90px;
@@ -342,6 +347,69 @@ button {
   color: var(--muted);
   margin: 0;
   line-height: 1.35;
+}
+.ingredient-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin: 0 0 5px;
+}
+.ingredient-preview button {
+  border: 0;
+  border-radius: 7px;
+  background: #eef3ea;
+  padding: 3px 5px;
+  font-size: 8px;
+  color: var(--ink);
+}
+.ingredient-preview button i {
+  font-style: normal;
+  font-weight: 900;
+  margin-right: 2px;
+}
+.ingredient-preview button.removed {
+  opacity: 0.48;
+  text-decoration: line-through;
+}
+.meal-parts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+  margin: 5px 0 6px;
+}
+.meal-part {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+.meal-card .meal-part img {
+  width: 100%;
+  height: 76px;
+  border-radius: 9px;
+}
+.meal-part select {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-size: 8px;
+  font-weight: 800;
+}
+.meal-part b {
+  font-size: 10px;
+}
+.part-extras {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin-bottom: 5px;
+}
+.part-extras span {
+  border-radius: 6px;
+  background: #eef3ea;
+  padding: 3px 5px;
+  font-size: 8px;
 }
 .check {
   width: 30px;
@@ -1352,6 +1420,11 @@ button {
   background: transparent;
   font-size: 9px;
   font-weight: 900;
+}
+.cuisine-picker select:focus,
+.cuisine-picker select:focus-visible {
+  outline: none;
+  box-shadow: none;
 }
 .cuisine-picker > button {
   grid-column: 1/-1;

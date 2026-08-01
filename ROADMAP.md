@@ -69,6 +69,26 @@ Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggior
 
 ## Continuo
 
+## v1.6.0 — in preparazione
+
+- [x] Eliminare lo scaling libero che produceva quantità come 290 g di pasta o 237 g di yogurt.
+- [x] Usare porzioni discrete: pasta/riso a peso secco, yogurt a vasetti, pane e patate in quantità pratiche.
+- [x] Mostrare ingredienti e pesi direttamente nella scheda del pasto.
+- [x] Cena a tre parti con tre immagini, tre pesi e sostituzione separata di base, proteina e contorno.
+- [x] Alternare pasti in tre parti e piatti unici completi.
+- [x] Latte come componente eliminabile della colazione, non come bevanda dell'intera giornata.
+- [x] Modalità Lavoro: escludere ricette elaborate da pranzo, cambio piatto e rigenerazione.
+- [x] Obiettivo, calorie, stile, luogo e bevanda incidono sulla selezione dei piatti.
+- [x] Primo catalogo strutturato CREA/SINU con paste, risi, gnocchi, proteine, contorni e cucina orientale.
+
+## v1.7.0 — prossima
+
+- [ ] Alternative equivalenti per ruolo e apporto, con porzioni specifiche e non copiate 1:1.
+- [ ] Scelta libera fuori categoria dopo le alternative consigliate.
+- [ ] Rotazione settimanale di carne bianca/rossa, pesce, uova, legumi, pizza, hamburger e dolci.
+- [ ] Ampliare catalogo di paste, risi, verdure, funghi, olive, carni, pesci e metodi di cottura.
+- [ ] Rendere tutte le parti della colazione sostituibili con più/meno e lista di equivalenti.
+
 - [ ] Ampliare progressivamente piatti e fotografie senza sacrificare precisione e usabilità.
 - [ ] Verificare sempre assenza di scorrimento orizzontale e densità su cellulare.
 - [ ] Mantenere un unico repository, un unico link GitHub Pages e numero di versione visibile.

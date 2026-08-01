@@ -1,10 +1,15 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { portionOptions, STANDARD_SOURCES } from "./nutritionEngine";
 
 type Macro = { kcal: number; protein: number; carbs: number; fat: number };
 type Food = Macro & { fiber: number; source: "CREA" | "USDA" };
 type RecipeIngredient = { food: string; grams: number; label?: string };
+type MealPart = RecipeIngredient & {
+  category: "Carboidrato" | "Proteina" | "Contorno";
+  image: string;
+};
 type Recipe = {
   id: string;
   name: string;
@@ -16,6 +21,7 @@ type Recipe = {
   alternatives: string[];
   cuisine?: string;
   course?: string;
+  parts?: MealPart[];
 };
 type Day = { label: string; mood: string; recipes: string[] };
 type Tab = "today" | "week" | "library" | "builder" | "progress";
@@ -28,7 +34,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.5.0";
+const VERSION = "1.6.0";
 const photo = (name: string) => `${import.meta.env.BASE_URL}food/${name}.png`;
 const drinkOptions: LogItem[] = [
   { label: "Acqua", kcal: 0, amount: "500 ml" },
@@ -430,6 +436,46 @@ const foods: Record<string, Food> = {
     fat: 0.9,
     fiber: 1.8,
     source: "USDA",
+  },
+  "Pasta di semola secca": {
+    kcal: 353,
+    protein: 13,
+    carbs: 71.5,
+    fat: 1.5,
+    fiber: 3,
+    source: "CREA",
+  },
+  "Pasta integrale secca": {
+    kcal: 348,
+    protein: 14,
+    carbs: 66,
+    fat: 2.5,
+    fiber: 8,
+    source: "CREA",
+  },
+  "Riso basmati secco": {
+    kcal: 356,
+    protein: 8,
+    carbs: 78,
+    fat: 0.8,
+    fiber: 1,
+    source: "CREA",
+  },
+  "Riso Venere secco": {
+    kcal: 355,
+    protein: 8.5,
+    carbs: 73,
+    fat: 2.8,
+    fiber: 4.5,
+    source: "CREA",
+  },
+  "Gnocchi di patate": {
+    kcal: 155,
+    protein: 4,
+    carbs: 33,
+    fat: 0.7,
+    fiber: 2,
+    source: "CREA",
   },
   "Passata di pomodoro": {
     kcal: 29,
@@ -1349,9 +1395,10 @@ const simpleBreakfasts: Recipe[] = [
     image: photo("rusks-ricotta-jam-v3"),
     time: 3,
     ingredients: [
-      { food: "Fette biscottate integrali", grams: 45 },
-      { food: "Ricotta vaccina", grams: 80 },
-      { food: "Confettura di frutta", grams: 25 },
+      { food: "Latte parzialmente scremato", grams: 200 },
+      { food: "Fette biscottate integrali", grams: 30 },
+      { food: "Ricotta vaccina", grams: 50 },
+      { food: "Confettura di frutta", grams: 20 },
       { food: "Arancia", grams: 150 },
     ],
     steps: [
@@ -1650,10 +1697,235 @@ const portableRecipes: Recipe[] = [
     alternatives: ["Fesa di tacchino o uova al posto della bistecca"],
   },
 ];
+const balancedDinnerRecipes: Recipe[] = [
+  {
+    id: "dinner-three-italian",
+    name: "Cena in 3 parti · pasta, bistecca, zucchine",
+    kicker: "Tre componenti separate, porzioni standard",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    image: photo("simple-pasta-tomato-v5"),
+    time: 25,
+    ingredients: [
+      { food: "Pasta di semola secca", grams: 80 },
+      { food: "Passata di pomodoro", grams: 120 },
+      { food: "Bistecca di manzo cotta", grams: 100 },
+      { food: "Zucchine", grams: 200 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    parts: [
+      {
+        category: "Carboidrato",
+        food: "Pasta di semola secca",
+        grams: 80,
+        label: "Pasta al pomodoro · peso secco",
+        image: photo("simple-pasta-tomato-v5"),
+      },
+      {
+        category: "Proteina",
+        food: "Bistecca di manzo cotta",
+        grams: 100,
+        label: "Bistecca ai ferri",
+        image: photo("simple-steak-potatoes-v5"),
+      },
+      {
+        category: "Contorno",
+        food: "Zucchine",
+        grams: 200,
+        label: "Zucchine cotte",
+        image: photo("zucchini-tomato-side-v3"),
+      },
+    ],
+    steps: [
+      "Scalda la passata 8 minuti; cuoci 80 g di pasta secca per il tempo indicato e condiscila con metà olio.",
+      "Scalda bene la piastra e cuoci la bistecca al grado di cottura desiderato e sicuro.",
+      "Taglia le zucchine e cuocile in padella 8-10 minuti; completa con l'olio rimasto.",
+    ],
+    alternatives: [
+      "Cambia separatamente base, proteina o contorno",
+      "Passa a un piatto unico completo",
+    ],
+  },
+  {
+    id: "dinner-three-eggs",
+    name: "Cena in 3 parti · patate, uova, fagiolini",
+    kicker: "Semplice, pesabile, senza grammi casuali",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    image: photo("simple-eggs-v5"),
+    time: 25,
+    ingredients: [
+      { food: "Patate lesse", grams: 200 },
+      { food: "Uovo", grams: 100 },
+      { food: "Fagiolini", grams: 200 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    parts: [
+      {
+        category: "Carboidrato",
+        food: "Patate lesse",
+        grams: 200,
+        label: "Patate lesse",
+        image: photo("simple-steak-potatoes-v5"),
+      },
+      {
+        category: "Proteina",
+        food: "Uovo",
+        grams: 100,
+        label: "Due uova sode",
+        image: photo("simple-eggs-v5"),
+      },
+      {
+        category: "Contorno",
+        food: "Fagiolini",
+        grams: 200,
+        label: "Fagiolini",
+        image: photo("salmon"),
+      },
+    ],
+    steps: [
+      "Taglia le patate e lessale 15-20 minuti, finché la forchetta entra facilmente.",
+      "Cuoci due uova dal bollore per 9 minuti e raffreddale subito.",
+      "Lessa o cuoci al vapore i fagiolini 8-12 minuti; condisci patate e fagiolini con l'olio pesato.",
+    ],
+    alternatives: [
+      "Pane 100 g al posto delle patate",
+      "Pesce o carne bianca al posto delle uova",
+    ],
+  },
+];
+const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
+  Carboidrato: [
+    {
+      category: "Carboidrato",
+      food: "Pasta di semola secca",
+      grams: 80,
+      label: "Pasta secca",
+      image: photo("simple-pasta-white-v5"),
+    },
+    {
+      category: "Carboidrato",
+      food: "Riso basmati secco",
+      grams: 80,
+      label: "Riso basmati secco",
+      image: photo("work-rice-salad-v5"),
+    },
+    {
+      category: "Carboidrato",
+      food: "Riso Venere secco",
+      grams: 80,
+      label: "Riso Venere secco",
+      image: photo("work-rice-salad-v5"),
+    },
+    {
+      category: "Carboidrato",
+      food: "Gnocchi di patate",
+      grams: 150,
+      label: "Gnocchi",
+      image: photo("simple-pasta-white-v5"),
+    },
+    {
+      category: "Carboidrato",
+      food: "Patate lesse",
+      grams: 200,
+      label: "Patate lesse",
+      image: photo("simple-steak-potatoes-v5"),
+    },
+    {
+      category: "Carboidrato",
+      food: "Pane integrale",
+      grams: 100,
+      label: "Pane",
+      image: photo("work-turkey-v5"),
+    },
+  ],
+  Proteina: [
+    {
+      category: "Proteina",
+      food: "Bistecca di manzo cotta",
+      grams: 100,
+      label: "Bistecca",
+      image: photo("simple-steak-potatoes-v5"),
+    },
+    {
+      category: "Proteina",
+      food: "Petto di pollo cotto",
+      grams: 100,
+      label: "Pollo",
+      image: photo("chicken-bowl"),
+    },
+    {
+      category: "Proteina",
+      food: "Salmone cotto",
+      grams: 150,
+      label: "Salmone",
+      image: photo("salmon"),
+    },
+    {
+      category: "Proteina",
+      food: "Uovo",
+      grams: 100,
+      label: "Due uova",
+      image: photo("simple-eggs-v5"),
+    },
+    {
+      category: "Proteina",
+      food: "Fesa di tacchino",
+      grams: 100,
+      label: "Fesa di tacchino",
+      image: photo("work-turkey-v5"),
+    },
+    {
+      category: "Proteina",
+      food: "Bresaola",
+      grams: 70,
+      label: "Bresaola",
+      image: photo("work-bresaola-v5"),
+    },
+  ],
+  Contorno: [
+    {
+      category: "Contorno",
+      food: "Zucchine",
+      grams: 200,
+      label: "Zucchine",
+      image: photo("zucchini-tomato-side-v3"),
+    },
+    {
+      category: "Contorno",
+      food: "Spinaci",
+      grams: 200,
+      label: "Spinaci",
+      image: photo("eggs-quinoa-v3"),
+    },
+    {
+      category: "Contorno",
+      food: "Fagiolini",
+      grams: 200,
+      label: "Fagiolini",
+      image: photo("salmon"),
+    },
+    {
+      category: "Contorno",
+      food: "Pomodorini",
+      grams: 200,
+      label: "Pomodori",
+      image: photo("zucchini-tomato-side-v3"),
+    },
+    {
+      category: "Contorno",
+      food: "Rucola",
+      grams: 80,
+      label: "Insalata di rucola",
+      image: photo("work-bresaola-v5"),
+    },
+  ],
+};
 const allRecipes = [
   ...simpleBreakfasts,
   ...quickSnacks,
   ...portableRecipes,
+  ...balancedDinnerRecipes,
   ...recipes,
   ...generatedRecipes,
   ...snackRecipes,
@@ -1668,7 +1940,7 @@ const days: Day[] = [
       "quick-apple",
       "work-bresaola",
       "quick-nuts",
-      "salmon",
+      "dinner-three-italian",
     ],
   },
   {
@@ -1679,7 +1951,7 @@ const days: Day[] = [
       "quick-crackers",
       "work-rice-salad",
       "snack-banana",
-      "rice",
+      "salmon",
     ],
   },
   {
@@ -1690,7 +1962,7 @@ const days: Day[] = [
       "quick-nuts",
       "work-cotto",
       "quick-apple",
-      "sweet-ricotta",
+      "dinner-three-eggs",
     ],
   },
   {
@@ -1757,6 +2029,12 @@ export function FoodPlanner() {
   const [actualWeights, setActualWeights] = useState<Record<string, number[]>>(
     {},
   );
+  const [removedIngredients, setRemovedIngredients] = useState<
+    Record<string, number[]>
+  >({});
+  const [partSelections, setPartSelections] = useState<
+    Record<string, MealPart[]>
+  >({});
   const [preferencesOpen, setPreferencesOpen] = useState(false);
   const [checkinOpen, setCheckinOpen] = useState(false);
   const [excludedGroups, setExcludedGroups] = useState<string[]>([]);
@@ -1810,6 +2088,8 @@ export function FoodPlanner() {
         setGoal(s.goal || "Equilibrio");
         setCompleted(s.completed || {});
         setActualWeights(s.actualWeights || {});
+        setRemovedIngredients(s.removedIngredients || {});
+        setPartSelections(s.partSelections || {});
         setCheck(s.check || check);
         setExcludedGroups(s.excludedGroups || []);
         setDislikedFoods(s.dislikedFoods || []);
@@ -1831,6 +2111,8 @@ export function FoodPlanner() {
         goal,
         completed,
         actualWeights,
+        removedIngredients,
+        partSelections,
         check,
         excludedGroups,
         dislikedFoods,
@@ -1848,6 +2130,8 @@ export function FoodPlanner() {
     goal,
     completed,
     actualWeights,
+    removedIngredients,
+    partSelections,
     check,
     excludedGroups,
     dislikedFoods,
@@ -1912,20 +2196,7 @@ export function FoodPlanner() {
   const plannedCalories = Math.max(1200, calories + activityDelta);
   const plannedDrinkMap: Record<string, RecipeIngredient[]> = {
     Acqua: [],
-    "Latte parz. scremato": [
-      { food: "Latte parzialmente scremato", grams: 250 },
-    ],
-    "Bevanda di soia": [{ food: "Bevanda di soia senza zucchero", grams: 250 }],
-    "Bevanda d'avena": [{ food: "Bevanda d'avena senza zucchero", grams: 250 }],
-    "Spremuta d'arancia": [{ food: "Succo d'arancia 100%", grams: 250 }],
-    "Frullato banana e soia": [
-      { food: "Bevanda di soia senza zucchero", grams: 200 },
-      { food: "Banana", grams: 100 },
-    ],
-    "Frullato frutti e avena": [
-      { food: "Bevanda d'avena senza zucchero", grams: 200 },
-      { food: "Frutti di bosco", grams: 100 },
-    ],
+    "Spremuta 150 ml": [{ food: "Succo d'arancia 100%", grams: 150 }],
     "Coca-Cola Zero": [],
     "Gassata zero": [],
   };
@@ -1934,25 +2205,108 @@ export function FoodPlanner() {
     day === dayIndex ? plannedCalories : calories;
   const compatibleWithSlot = (r: Recipe) =>
     !swapTarget || fitsSlot(r, swapTarget.slot);
+  const compatibleWithPlace = (r: Recipe) => {
+    if (!swapTarget || dayContext !== "Lavoro") return true;
+    if (swapTarget.slot === 2)
+      return (
+        portableRecipes.some((x) => x.id === r.id) &&
+        calc(r.ingredients).protein >= 18
+      );
+    if (swapTarget.slot === 4)
+      return balancedDinnerRecipes.some((x) => x.id === r.id);
+    return true;
+  };
   const filteredRecipes = allRecipes.filter(
     (r) =>
       isAllowed(r) &&
       compatibleWithSlot(r) &&
+      compatibleWithPlace(r) &&
       (cuisineFilter === "Tutte" || recipeCuisine(r) === cuisineFilter) &&
       r.name.toLowerCase().includes(libraryQuery.toLowerCase()),
   );
-  const baseTotal = useMemo(
-    () =>
-      currentIds.reduce((s, id) => s + calc(recipeMap[id].ingredients).kcal, 0),
-    [dayIndex, choices],
-  );
-  const scale =
-    Math.max(1000, plannedCalories - plannedDrinkMacros.kcal) / baseTotal;
+  const plannedIngredients = (key: string, recipe: Recipe) => {
+    const slot = Number(key.split("-")[1]);
+    const targetAdditions: RecipeIngredient[] =
+      calories >= 2400
+        ? slot === 0
+          ? [
+              {
+                food: "Yogurt greco 2%",
+                grams: 125,
+                label: "Yogurt · 1 vasetto",
+              },
+              { food: "Noci", grams: 20 },
+            ]
+          : slot === 1
+            ? [{ food: "Banana", grams: 150 }]
+            : slot === 2
+              ? [
+                  {
+                    food: "Pane integrale",
+                    grams: 50,
+                    label: "Pane · 1 porzione",
+                  },
+                  { food: "Olio extravergine", grams: 5 },
+                ]
+              : slot === 3
+                ? [
+                    {
+                      food: "Yogurt greco 2%",
+                      grams: 125,
+                      label: "Yogurt · 1 vasetto",
+                    },
+                  ]
+                : [
+                    {
+                      food: "Pane integrale",
+                      grams: 50,
+                      label: "Pane · 1 porzione",
+                    },
+                    { food: "Olio extravergine", grams: 5 },
+                  ]
+        : calories >= 2000
+          ? slot === 0
+            ? [
+                {
+                  food: "Yogurt greco 2%",
+                  grams: 125,
+                  label: "Yogurt · 1 vasetto",
+                },
+              ]
+            : slot === 1
+              ? [{ food: "Mela", grams: 150 }]
+              : slot === 4
+                ? [
+                    {
+                      food: "Pane integrale",
+                      grams: 50,
+                      label: "Pane · 1 porzione",
+                    },
+                  ]
+                : []
+          : [];
+    if (!recipe.parts) return [...recipe.ingredients, ...targetAdditions];
+    const activeParts = partSelections[key] || recipe.parts;
+    const pastaSelected = activeParts.some((x) => x.food.includes("Pasta"));
+    const extras = recipe.ingredients.filter(
+      (x) =>
+        !recipe.parts?.some((p) => p.food === x.food) &&
+        (x.food === "Olio extravergine" ||
+          (pastaSelected && x.food === "Passata di pomodoro")),
+    );
+    return [...activeParts, ...extras, ...targetAdditions];
+  };
+  const scale = 1;
   const dayTotals = useMemo(
     () =>
       currentIds.reduce(
-        (s, id) => {
-          const m = calc(recipeMap[id].ingredients, scale);
+        (s, id, slot) => {
+          const key = `${dayIndex}-${slot}`;
+          const removed = removedIngredients[key] || [];
+          const ingredients = plannedIngredients(key, recipeMap[id]).filter(
+            (_, index) => !removed.includes(index),
+          );
+          const m = calc(ingredients, scale);
           return {
             kcal: s.kcal + m.kcal,
             protein: s.protein + m.protein,
@@ -1967,7 +2321,14 @@ export function FoodPlanner() {
           fat: plannedDrinkMacros.fat,
         },
       ),
-    [dayIndex, scale, choices, plannedDrink],
+    [
+      dayIndex,
+      scale,
+      choices,
+      plannedDrink,
+      partSelections,
+      removedIngredients,
+    ],
   );
   const builderTotals = useMemo(() => calc(builder), [builder]);
   const doneCount = Object.values(completed).filter(Boolean).length;
@@ -2010,6 +2371,14 @@ export function FoodPlanner() {
     }
   };
   const applyCuisine = () => {
+    const profileSeed =
+      (calories >= 2400 ? 1 : calories >= 2000 ? 2 : 0) +
+      (goal === "Dimagrimento graduale"
+        ? 1
+        : goal === "Mantenimento massa"
+          ? 3
+          : 2) +
+      (plannedDrink === "Acqua" ? 0 : 1);
     const styled = allRecipes.filter(
       (r) => isAllowed(r) && recipeCuisine(r) === cuisineChoice,
     );
@@ -2019,27 +2388,47 @@ export function FoodPlanner() {
       ["Piatto unico", "Primo", "Secondo"].includes(recipeCourse(r)),
     );
     const lunches =
-      dayContext === "Lavoro" ? portableRecipes.filter(isAllowed) : mains;
+      dayContext === "Lavoro"
+        ? portableRecipes
+            .filter(isAllowed)
+            .filter((r) => calc(r.ingredients).protein >= 18)
+        : mains;
+    const dinners =
+      dayContext === "Lavoro"
+        ? balancedDinnerRecipes.filter(isAllowed)
+        : mains.filter((r) => r.id !== "sweet-ricotta");
     if (
       !breakfasts.length ||
       !snacks.length ||
       !mains.length ||
-      !lunches.length
+      !lunches.length ||
+      !dinners.length
     )
       return;
     setChoices((v) => ({
       ...v,
-      [`${dayIndex}-0`]: breakfasts[dayIndex % breakfasts.length].id,
-      [`${dayIndex}-1`]: snacks[dayIndex % snacks.length].id,
-      [`${dayIndex}-2`]: lunches[(dayIndex * 2) % lunches.length].id,
-      [`${dayIndex}-3`]: snacks[(dayIndex + 1) % snacks.length].id,
-      [`${dayIndex}-4`]: mains[(dayIndex * 2 + 1) % mains.length].id,
+      [`${dayIndex}-0`]:
+        breakfasts[(dayIndex + profileSeed) % breakfasts.length].id,
+      [`${dayIndex}-1`]: snacks[(dayIndex + profileSeed) % snacks.length].id,
+      [`${dayIndex}-2`]:
+        lunches[(dayIndex * 2 + profileSeed) % lunches.length].id,
+      [`${dayIndex}-3`]:
+        snacks[(dayIndex + profileSeed + 1) % snacks.length].id,
+      [`${dayIndex}-4`]:
+        dinners[(dayIndex * 2 + profileSeed + 1) % dinners.length].id,
     }));
     setReplanNote(
       `Menu completo ${cuisineChoice.toLowerCase()} creato: 5 momenti e spesa aggiornata.`,
     );
   };
   const planFromCheck = (next: typeof check) => {
+    const profileSeed =
+      (calories >= 2400 ? 1 : calories >= 2000 ? 2 : 0) +
+      (goal === "Dimagrimento graduale"
+        ? 1
+        : goal === "Mantenimento massa"
+          ? 3
+          : 2);
     const breakfasts = simpleBreakfasts.filter(isAllowed);
     let snacks = quickSnacks.filter(isAllowed);
     let mains = allRecipes.filter(
@@ -2089,17 +2478,26 @@ export function FoodPlanner() {
     }
     if (!breakfasts.length || !snacks.length || !mains.length) return;
     const lunches =
-      dayContext === "Lavoro" ? portableRecipes.filter(isAllowed) : mains;
-    if (!lunches.length) return;
+      dayContext === "Lavoro"
+        ? portableRecipes
+            .filter(isAllowed)
+            .filter((r) => calc(r.ingredients).protein >= 18)
+        : mains;
+    const dinners =
+      dayContext === "Lavoro"
+        ? balancedDinnerRecipes.filter(isAllowed)
+        : mains.filter((r) => r.id !== "sweet-ricotta");
+    if (!lunches.length || !dinners.length) return;
     const offset =
-      next.yesterday === "molto" ? 1 : next.yesterday === "poco" ? 2 : 0;
+      (next.yesterday === "molto" ? 1 : next.yesterday === "poco" ? 2 : 0) +
+      profileSeed;
     setChoices((v) => ({
       ...v,
       [`${dayIndex}-0`]: breakfasts[(dayIndex + offset) % breakfasts.length].id,
       [`${dayIndex}-1`]: snacks[(dayIndex + offset) % snacks.length].id,
       [`${dayIndex}-2`]: lunches[(dayIndex + offset) % lunches.length].id,
       [`${dayIndex}-3`]: snacks[(dayIndex + offset + 1) % snacks.length].id,
-      [`${dayIndex}-4`]: mains[(dayIndex + offset + 1) % mains.length].id,
+      [`${dayIndex}-4`]: dinners[(dayIndex + offset + 1) % dinners.length].id,
     }));
     setReplanNote(
       next.feeling === "gonfio"
@@ -2118,6 +2516,9 @@ export function FoodPlanner() {
     setCheck(next);
     planFromCheck(next);
   };
+  useEffect(() => {
+    applyCuisine();
+  }, [goal, calories, cuisineChoice, dayContext, plannedDrink]);
   const addDrink = (day: number, item: LogItem) =>
     setDrinks((v) => ({ ...v, [day]: [...(v[day] || []), item] }));
   const addExtra = () => {
@@ -2141,21 +2542,17 @@ export function FoodPlanner() {
     setExtraName("");
     setExtraGrams("50");
   };
-  const dayScale = (day: number) => {
-    const ids = getDayIds(day);
-    const drinkKcal = day === dayIndex ? plannedDrinkMacros.kcal : 0;
-    return (
-      Math.max(1000, targetForDay(day) - drinkKcal) /
-      ids.reduce((s, id) => s + calc(recipeMap[id].ingredients).kcal, 0)
-    );
-  };
+  const dayScale = (_day: number) => 1;
   const actualIngredients = (key: string, recipe: Recipe) => {
-    const day = Number(key.split("-")[0]);
     const saved = actualWeights[key];
-    return recipe.ingredients.map((x, i) => ({
-      ...x,
-      grams: saved?.[i] ?? round(x.grams * dayScale(day)),
-    }));
+    const removed = removedIngredients[key] || [];
+    return plannedIngredients(key, recipe)
+      .map((x, i) => ({
+        ...x,
+        grams: saved?.[i] ?? x.grams,
+        originalIndex: i,
+      }))
+      .filter((x) => !removed.includes(x.originalIndex));
   };
   const loggedMealKcal = (day: number) =>
     getDayIds(day).reduce((sum, id, slot) => {
@@ -2234,11 +2631,15 @@ export function FoodPlanner() {
     const targetDays =
       shoppingScope === "day" ? [dayIndex] : days.map((_, i) => i);
     targetDays.forEach((day) =>
-      getDayIds(day).forEach((id) =>
-        recipeMap[id].ingredients.forEach((x) => {
-          totals[x.food] = (totals[x.food] || 0) + x.grams * dayScale(day);
-        }),
-      ),
+      getDayIds(day).forEach((id, slot) => {
+        const key = `${day}-${slot}`;
+        const removed = removedIngredients[key] || [];
+        plannedIngredients(key, recipeMap[id])
+          .filter((_, index) => !removed.includes(index))
+          .forEach((x) => {
+            totals[x.food] = (totals[x.food] || 0) + x.grams;
+          });
+      }),
     );
     if (targetDays.includes(dayIndex))
       (plannedDrinkMap[plannedDrink] || []).forEach((x) => {
@@ -2247,7 +2648,15 @@ export function FoodPlanner() {
     return Object.entries(totals)
       .map(([food, grams]) => ({ food, grams: round(grams) }))
       .sort((a, b) => a.food.localeCompare(b.food));
-  }, [shoppingScope, dayIndex, choices, calories, plannedDrink]);
+  }, [
+    shoppingScope,
+    dayIndex,
+    choices,
+    calories,
+    plannedDrink,
+    partSelections,
+    removedIngredients,
+  ]);
   const shareShopping = async () => {
     const text =
       `Lista spesa ${shoppingScope === "day" ? days[dayIndex].label : "settimanale"}\n` +
@@ -2408,7 +2817,10 @@ export function FoodPlanner() {
                 <span>Stile</span>
                 <select
                   value={cuisineChoice}
-                  onChange={(e) => setCuisineChoice(e.target.value)}
+                  onChange={(e) => {
+                    setCuisineChoice(e.target.value);
+                    e.currentTarget.blur();
+                  }}
                 >
                   {[
                     "Italiano",
@@ -2425,26 +2837,24 @@ export function FoodPlanner() {
                 <span>Dove</span>
                 <select
                   value={dayContext}
-                  onChange={(e) => setDayContext(e.target.value)}
+                  onChange={(e) => {
+                    setDayContext(e.target.value);
+                    e.currentTarget.blur();
+                  }}
                 >
                   <option>Lavoro</option>
                   <option>Casa</option>
                 </select>
               </div>
               <div>
-                <span>Bevanda</span>
+                <span>Da bere</span>
                 <select
                   value={plannedDrink}
                   onChange={(e) => setPlannedDrink(e.target.value)}
                 >
                   {[
                     "Acqua",
-                    "Latte parz. scremato",
-                    "Bevanda di soia",
-                    "Bevanda d'avena",
-                    "Spremuta d'arancia",
-                    "Frullato banana e soia",
-                    "Frullato frutti e avena",
+                    "Spremuta 150 ml",
                     "Coca-Cola Zero",
                     "Gassata zero",
                   ].map((x) => (
@@ -2595,12 +3005,14 @@ export function FoodPlanner() {
               <div className="meal-list">
                 {currentIds.map((id, i) => {
                   const r = recipeMap[id];
-                  const m = calc(r.ingredients, scale);
-                  const portion =
-                    r.ingredients.length === 1
-                      ? `${round(r.ingredients[0].grams * scale)} g porzione · `
-                      : "";
                   const key = `${dayIndex}-${i}`;
+                  const visibleIngredients = actualIngredients(key, r);
+                  const m = calc(visibleIngredients);
+                  const portion =
+                    visibleIngredients.length === 1
+                      ? `${round(visibleIngredients[0].grams)} g porzione · `
+                      : "";
+                  const activeParts = partSelections[key] || r.parts || [];
                   const allowed = isAllowed(r);
                   const actual = completed[key]
                     ? calc(actualIngredients(key, r))
@@ -2618,17 +3030,104 @@ export function FoodPlanner() {
                     );
                   return (
                     <article
-                      className={`meal-card ${allowed ? "" : "blocked"} ${caution ? "caution" : ""}`}
+                      className={`meal-card ${r.parts ? "composed" : "detailed"} ${allowed ? "" : "blocked"} ${caution ? "caution" : ""}`}
                       key={key}
                       onClick={() => {
                         setSelectedMealKey(key);
                         setSelected(r);
                       }}
                     >
-                      <img src={r.image} alt={r.name} />
+                      {!r.parts && <img src={r.image} alt={r.name} />}
                       <div className="meal-body">
                         <span>{SLOT_LABELS[i]}</span>
                         <h3>{r.name}</h3>
+                        {r.parts ? (
+                          <>
+                            <div className="meal-parts">
+                              {activeParts.map((part, partIndex) => (
+                                <label
+                                  className="meal-part"
+                                  key={`${part.category}-${partIndex}`}
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <img
+                                    src={part.image}
+                                    alt={part.label || part.food}
+                                  />
+                                  <select
+                                    aria-label={`Cambia ${part.category}`}
+                                    value={part.food}
+                                    onChange={(e) => {
+                                      const replacement = mealPartOptions[
+                                        part.category
+                                      ].find((x) => x.food === e.target.value);
+                                      if (!replacement) return;
+                                      setPartSelections((v) => ({
+                                        ...v,
+                                        [key]: activeParts.map((x, n) =>
+                                          n === partIndex ? replacement : x,
+                                        ),
+                                      }));
+                                      e.currentTarget.blur();
+                                    }}
+                                  >
+                                    {mealPartOptions[part.category].map((x) => (
+                                      <option value={x.food} key={x.food}>
+                                        {x.label || x.food}
+                                      </option>
+                                    ))}
+                                  </select>
+                                  <b>{part.grams} g</b>
+                                </label>
+                              ))}
+                            </div>
+                            <div className="part-extras">
+                              {visibleIngredients
+                                .filter(
+                                  (x) =>
+                                    !activeParts.some((p) => p.food === x.food),
+                                )
+                                .map((x, extraIndex) => (
+                                  <span key={`${x.food}-${extraIndex}`}>
+                                    {x.label || x.food} {x.grams} g
+                                  </span>
+                                ))}
+                            </div>
+                          </>
+                        ) : (
+                          <div className="ingredient-preview">
+                            {plannedIngredients(key, r).map(
+                              (x, ingredientIndex) => {
+                                const removed = (
+                                  removedIngredients[key] || []
+                                ).includes(ingredientIndex);
+                                return (
+                                  <button
+                                    className={removed ? "removed" : ""}
+                                    key={`${x.food}-${ingredientIndex}`}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setRemovedIngredients((v) => ({
+                                        ...v,
+                                        [key]: removed
+                                          ? (v[key] || []).filter(
+                                              (n) => n !== ingredientIndex,
+                                            )
+                                          : [
+                                              ...(v[key] || []),
+                                              ingredientIndex,
+                                            ],
+                                      }));
+                                    }}
+                                  >
+                                    <i>{removed ? "+" : "−"}</i>
+                                    {x.label || x.food} {x.grams} g
+                                  </button>
+                                );
+                              },
+                            )}
+                          </div>
+                        )}
                         <p>
                           {caution
                             ? "Sconsigliato oggi: possibile alimento fermentabile"
@@ -3101,10 +3600,11 @@ export function FoodPlanner() {
                   })}
                 </div>
                 <div className="source-card">
-                  <b>Nessuna punizione</b>
+                  <b>Motore alimentare verificabile</b>
                   <p>
-                    Una giornata diversa non richiede digiuno: registra, osserva
-                    e torna a pasti regolari.
+                    {STANDARD_SOURCES.length} riferimenti istituzionali ·{" "}
+                    {portionOptions("Carboidrato").length} basi standard già
+                    strutturate. Una giornata diversa non richiede digiuno.
                   </p>
                 </div>
                 <div className="links">
