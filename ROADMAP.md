@@ -17,7 +17,7 @@ Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggior
 - [x] Lista della spesa giornaliera/settimanale modificabile, spuntabile e condivisibile.
 - [x] Collaudo mobile e pubblicazione GitHub.
 
-## v1.3.0 — in preparazione
+## v1.3.0 — pubblicata
 
 - [x] Nuovo nome “Tavola Mia”, senza cambiare link GitHub o perdere i dati salvati.
 - [x] “Cambia piatto” rispetta il momento: colazione con colazioni, spuntino con spuntini, pranzo/cena con pasti completi.
@@ -31,7 +31,19 @@ Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggior
 - [x] Stato: bene, gonfio, stanco, affamato; suggerimenti non punitivi.
 - [x] Cambio piatto direttamente dalla vista settimana, collegato alla giornata scelta.
 
-## v1.4.0 — da fare
+## v1.4.0 — in preparazione
+
+- [x] Impedire definitivamente che una colazione venga proposta a pranzo o cena.
+- [x] Sostituire “Proponi pranzo e cena” con “Crea menu completo”.
+- [x] Cinque momenti: colazione, spuntino mattina, pranzo, spuntino pomeriggio e cena.
+- [x] Spuntini immediati: frutta, noci, cracker e wafer porzionati.
+- [x] Check-in operativo: le risposte cambiano realmente piatti e distribuzione del menu.
+- [x] Stato gonfio: ridurre proposte fermentabili e bibite gassate, con avviso non diagnostico.
+- [x] Stato stanco/attività: pasti regolari, carboidrati distribuiti e spuntino coerente.
+- [x] Diario: conteggio dei caffè e riferimento EFSA sulla caffeina.
+- [x] Extra assistiti: suggerimento alimento, grammi e calorie calcolate automaticamente.
+- [x] Target selezionabile fino a 3000 kcal.
+- [x] Più esclusioni alimentari contemporanee e chiusura esplicita del pannello filtri.
 
 - [ ] Cambio del singolo ingrediente nella ricetta (es. mela, kiwi, arancia) con grammi e calorie equivalenti ricalcolati.
 - [ ] Foto dedicata e rappresentativa per ogni famiglia di piatti; rifiutare immagini con ingredienti estranei.
@@ -43,6 +55,15 @@ Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggior
 - [ ] Suggerimento di riequilibrio, sempre facoltativo.
 - [ ] Centrifughe, smoothie e bevande preparabili a casa.
 - [ ] Modalità “Fuori casa” con zona, tipo di locale e registrazione della scelta reale.
+
+## v1.5.0 — da fare
+
+- [ ] Colazioni feriali predefinite entro 1-3 minuti; colazioni più elaborate solo nel weekend o su scelta esplicita.
+- [ ] Piatti italiani semplici: pasta al pomodoro, riso in bianco/al sugo, pane, secondi e contorni separati.
+- [ ] Completamento guidato dei piatti semplici senza obbligare un piatto unico composto.
+- [ ] Legumi completi: ceci, lenticchie, fagioli, piselli; disponibili normalmente e limitati solo quando il check-in lo giustifica.
+- [ ] Tabella interna verificata “stato → preferenze/cautele” con fonti ufficiali.
+- [ ] Nuove foto specifiche per frutti, piatti semplici, spuntini e ricette principali.
 
 ## Continuo
 

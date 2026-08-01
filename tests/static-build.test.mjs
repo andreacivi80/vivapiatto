@@ -16,11 +16,11 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.3\.0"/);
-  assert.match(app, /length:284/);
+  assert.match(app, /VERSION = "1\.4\.0"/);
+  assert.match(app, /length:\s*284/);
   assert.match(app, /300\+ RICETTE GUIDATE/);
   assert.match(app, /CREA/);
   assert.match(app, /USDA/);
-  assert.match(css, /overflow-x:hidden/);
-  assert.match(css, /max-width:520px/);
+  assert.match(css, /overflow-x:\s*hidden/);
+  assert.match(css, /max-width:\s*520px/);
 });
