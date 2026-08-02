@@ -36,7 +36,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.13.0";
+const VERSION = "1.13.1";
 const photo = (name: string) =>
   `${import.meta.env.BASE_URL}food/${name}.png?v=${VERSION}`;
 const WEEK_SLOT_IMAGES = [
@@ -1807,6 +1807,7 @@ const simpleBreakfasts: Recipe[] = [
     alternatives: ["Ricotta al posto del burro", "Yogurt al posto del latte"],
   },
 ];
+simpleBreakfasts.forEach((recipe) => (recipe.kind = "combination"));
 const matrixBreakfasts: Recipe[] = [
   {
     id: "matrix-c05-oat-pancakes",
@@ -2074,6 +2075,7 @@ const quickSnacks: Recipe[] = [
     ],
   },
 ];
+quickSnacks.forEach((recipe) => (recipe.kind = "combination"));
 const portableRecipes: Recipe[] = [
   {
     id: "work-bresaola",
@@ -2263,8 +2265,8 @@ const portableRecipes: Recipe[] = [
   },
   {
     id: "work-turkey",
-    name: "Pane e fesa di tacchino",
-    kicker: "Due ingredienti, zero cucina",
+    name: "Panino con fesa di tacchino e pomodorini",
+    kicker: "Panino completo, distinto dalla fesa servita da sola",
     course: "Piatto unico",
     cuisine: "Italiano",
     image: photo("work-turkey-v5"),
@@ -2298,8 +2300,8 @@ const portableRecipes: Recipe[] = [
       },
     ],
     steps: [
-      "Pesa pane e fesa di tacchino.",
-      "Aggiungi i pomodorini lavati in un contenitore separato.",
+      "Apri il pane e farciscilo con la fesa di tacchino pesata.",
+      "Aggiungi i pomodorini lavati e ben asciutti, oppure portali in un contenitore separato.",
     ],
     alternatives: ["Bresaola, prosciutto cotto o crudo"],
   },
@@ -3145,11 +3147,11 @@ const recommendedPartOptions = (part: MealPart, key: string) => {
         [
           "Confettura di frutta",
           "Miele",
-          "Burro",
           "Noci",
           "Mandorle",
+          "Arachidi",
+          "Crema 100% arachidi",
           "Crema cacao e nocciole",
-          "Caffè senza zucchero",
         ].includes(x.food),
       );
     return options;
@@ -3171,7 +3173,14 @@ const recommendedPartOptions = (part: MealPart, key: string) => {
   if ((slot === 2 || slot === 4) && part.category === "Carboidrato")
     return options.filter(
       (x) =>
-        !["Fette biscottate integrali", "Biscotti secchi"].includes(x.food),
+        ![
+          "Fette biscottate integrali",
+          "Biscotti secchi",
+          "Fiocchi d'avena",
+          "Farina d'avena",
+          "Farina di frumento integrale",
+          "Farina di grano saraceno",
+        ].includes(x.food),
     );
   if ((slot === 2 || slot === 4) && part.category === "Extra")
     return options.filter((x) =>
@@ -3190,7 +3199,20 @@ const orderedFreePartOptions = (role: MealPart["category"], key: string) => {
         : ["Carboidrato", "Proteina", "Contorno", "Extra", "Latticino", "Frutta"];
   return categoryOrder
     .filter((category) => category !== role)
-    .flatMap((category) => mealPartOptions[category]);
+    .flatMap((category) => mealPartOptions[category])
+    .filter(
+      (option) =>
+        ![
+          "Farina d'avena",
+          "Farina di frumento integrale",
+          "Farina di grano saraceno",
+          "Fiocchi d'avena",
+          "Burro",
+          "Olio extravergine",
+          "Semi di lino macinati",
+          "Caffè senza zucchero",
+        ].includes(option.food),
+    );
 };
 
 const equivalentPart = (option: MealPart, current: MealPart, role: MealPart["category"]) => {
@@ -3198,12 +3220,29 @@ const equivalentPart = (option: MealPart, current: MealPart, role: MealPart["cat
   const targetKcal = calc([current]).kcal;
   const kcalPerGram = foods[option.food]?.kcal / 100;
   if (!kcalPerGram || targetKcal <= 0) return option;
-  const step = role === "Contorno" ? 25 : role === "Frutta" ? 25 : 10;
-  const minimum = role === "Contorno" ? 50 : role === "Extra" ? 5 : 20;
-  const maximum = role === "Contorno" ? 400 : role === "Frutta" ? 300 : 250;
+  const practicalRange = (() => {
+    if (option.food.includes("Pasta") || option.food.includes("Riso"))
+      return { min: 60, max: 100, step: 10 };
+    if (option.food === "Gnocchi di patate")
+      return { min: 120, max: 200, step: 10 };
+    if (option.food === "Patate lesse")
+      return { min: 150, max: 300, step: 25 };
+    if (option.food === "Pane integrale")
+      return { min: 50, max: 120, step: 10 };
+    if (role === "Carboidrato")
+      return { min: Math.min(option.grams, 30), max: Math.max(option.grams, 100), step: 10 };
+    if (role === "Proteina") return { min: 80, max: 200, step: 10 };
+    if (role === "Contorno") return { min: 100, max: 400, step: 25 };
+    if (role === "Frutta") return { min: 100, max: 300, step: 25 };
+    if (role === "Latticino") return { min: 50, max: 250, step: 10 };
+    return { min: 5, max: 30, step: 5 };
+  })();
   const grams = Math.max(
-    minimum,
-    Math.min(maximum, Math.round(targetKcal / kcalPerGram / step) * step),
+    practicalRange.min,
+    Math.min(
+      practicalRange.max,
+      Math.round(targetKcal / kcalPerGram / practicalRange.step) * practicalRange.step,
+    ),
   );
   return { ...option, grams };
 };
@@ -3256,6 +3295,7 @@ const catalogBreakfasts: Recipe[] = Array.from({ length: 36 }, (_, index) => {
     alternatives: ["Cambia ogni tessera per vedere equivalenze e quantità"],
   };
 });
+catalogBreakfasts.forEach((recipe) => (recipe.kind = "combination"));
 
 const catalogSnacks: Recipe[] = Array.from({ length: 30 }, (_, index) => {
   const fruit = mealPartOptions.Frutta[index % mealPartOptions.Frutta.length];
@@ -3280,12 +3320,14 @@ const catalogSnacks: Recipe[] = Array.from({ length: 30 }, (_, index) => {
     alternatives: ["Sostituisci una sola parte con la porzione equivalente proposta"],
   };
 });
+catalogSnacks.forEach((recipe) => (recipe.kind = "combination"));
 
 const rotationMainCarbs = mealPartOptions.Carboidrato.filter(
   (part) =>
     ![
       "Fette biscottate integrali",
       "Biscotti secchi",
+      "Fiocchi d'avena",
       "Farina d'avena",
       "Farina di frumento integrale",
       "Farina di grano saraceno",
@@ -3733,8 +3775,8 @@ export function FoodPlanner() {
     recipe.ingredients.every((i) => !blockedFoods.includes(i.food));
   const availableBreakfasts = () =>
     [
-      ...simpleBreakfasts,
       ...matrixBreakfasts.filter((recipe) => dayContext === "Casa" || recipe.time <= 7),
+      ...simpleBreakfasts,
       ...catalogBreakfasts,
     ].filter(isAllowed);
   const recipeCuisine = (r: Recipe) =>
@@ -4358,7 +4400,7 @@ export function FoodPlanner() {
     days.forEach((_, day) => {
       getDayIds(day).forEach((id, slot) => {
         const key = `${day}-${slot}`;
-        if (!completed[key]) return;
+        if (!weekLocked && !completed[key]) return;
         const recipe = recipeMap[completedRecipes[key] || id];
         const names = actualIngredients(key, recipe).map((item) => item.food);
         const has = (terms: string[]) =>
@@ -4377,6 +4419,18 @@ export function FoodPlanner() {
     return counts;
   };
   const weeklyCounts = weeklyProteinCounts();
+  const weeklyPlannedKcal = days.map((_, day) =>
+    round(
+      getDayIds(day).reduce((total, id, slot) => {
+        const key = `${day}-${slot}`;
+        return total + calc(plannedIngredients(key, recipeMap[id])).kcal;
+      }, 0),
+    ),
+  );
+  const weeklyAverageKcal = round(
+    weeklyPlannedKcal.reduce((sum, kcal) => sum + kcal, 0) /
+      weeklyPlannedKcal.length,
+  );
   const weeklyTargets = [
     { label: "Pesce", target: "2–3", count: weeklyCounts.Pesce },
     {
@@ -4991,7 +5045,7 @@ export function FoodPlanner() {
                             : allowed
                               ? actual
                                 ? `Mangiato · ${round(actual.kcal)} kcal`
-                                : `${portion}${round(m.kcal)} kcal · ${round(m.protein)} g proteine · ${r.time} min`
+                                : `${portion}${round(m.kcal)} kcal · P ${round(m.protein)} g · C ${round(m.carbs)} g · G ${round(m.fat)} g · ${r.time} min`
                               : "Contiene un alimento escluso"}
                         </p>
                       </div>
@@ -5104,13 +5158,28 @@ export function FoodPlanner() {
                   setReplanNote(
                     weekLocked
                       ? "Settimana riaperta: i giorni successivi possono essere riequilibrati."
-                      : "Settimana confermata: le modifiche giornaliere non cambieranno il resto.",
+                      : "Settimana confermata: calorie dei 7 giorni e rotazione salvate.",
                   );
                 }}
               >
                 {weekLocked ? "Riapri" : "Conferma"}
               </button>
             </section>
+            <div className="week-kcal-summary">
+              <header>
+                <b>Calorie pianificate</b>
+                <span>media {weeklyAverageKcal} kcal/giorno</span>
+              </header>
+              <div>
+                {weeklyPlannedKcal.map((kcal, index) => (
+                  <span key={days[index].label}>
+                    <small>G{index + 1}</small>
+                    <b>{kcal}</b>
+                    <i>kcal</i>
+                  </span>
+                ))}
+              </div>
+            </div>
             <button
               className="shopping-trigger"
               onClick={() => {
@@ -5122,7 +5191,7 @@ export function FoodPlanner() {
             </button>
             <div className="weekly-frequency">
               <header>
-                <b>Rotazione registrata</b>
+                <b>{weekLocked ? "Rotazione confermata" : "Rotazione consumata"}</b>
                 <span>porzioni · riferimento CREA</span>
               </header>
               <div>
@@ -5215,9 +5284,7 @@ export function FoodPlanner() {
                                     key,
                                     index: partIndex,
                                     part,
-                                    role:
-                                      r.parts?.[partIndex]?.category ||
-                                      part.category,
+                                        role: part.category,
                                   })
                                 }
                               >

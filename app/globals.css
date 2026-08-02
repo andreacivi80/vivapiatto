@@ -714,6 +714,50 @@ button {
   margin: 7px 0 0;
   line-height: 1.35;
 }
+.week-kcal-summary {
+  margin: 8px 0;
+  padding: 9px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--paper);
+}
+.week-kcal-summary header {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 10px;
+}
+.week-kcal-summary header span {
+  color: var(--muted);
+  font-size: 8px;
+}
+.week-kcal-summary > div {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 3px;
+  margin-top: 7px;
+}
+.week-kcal-summary > div span {
+  min-width: 0;
+  padding: 5px 1px;
+  border-radius: 8px;
+  background: #eef3ea;
+  text-align: center;
+}
+.week-kcal-summary small,
+.week-kcal-summary b,
+.week-kcal-summary i {
+  display: block;
+}
+.week-kcal-summary small,
+.week-kcal-summary i {
+  color: var(--muted);
+  font-size: 6px;
+  font-style: normal;
+}
+.week-kcal-summary b {
+  font-size: 9px;
+}
 .page-lead {
   font-size: 13px;
   color: var(--muted);

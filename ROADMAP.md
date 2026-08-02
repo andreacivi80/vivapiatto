@@ -2,7 +2,18 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.13.0 — in preparazione
+## v1.13.1 — in preparazione
+
+- [x] Corretto il ruolo corrente delle tessere: riaprendo il latte compaiono alternative latticino e non cereali.
+- [x] Porzioni alternative pratiche: pasta/riso 60–100 g, gnocchi 120–200 g, patate 150–300 g.
+- [x] Farine, fiocchi d'avena crudi, burro, olio e lino esclusi dalle scelte libere isolate.
+- [x] Riepilogo di ogni pasto con kcal, proteine, carboidrati e grassi.
+- [x] Conferma settimana con kcal per giorno, media giornaliera e rotazione calcolata sul piano confermato.
+- [x] Mela, frutta singola, spuntini e combinazioni semplici esclusi dalla libreria delle ricette.
+- [x] “Panino con fesa di tacchino” distinto dalla fesa di tacchino come alimento.
+- [ ] Riequilibrare automaticamente le frequenze quando il piano supera gli intervalli settimanali.
+
+## v1.13.0 — pubblicata
 
 - [x] C21 porridge banana, arachidi e lino: ricetta completa, componenti modificabili, calcolo e fotografia specifica.
 - [x] S11 banana e crema 100% arachidi: presente nei due spuntini, ma escluso dalla libreria delle ricette complete.
