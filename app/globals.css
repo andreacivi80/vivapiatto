@@ -41,12 +41,12 @@ button {
   overflow-x: hidden;
 }
 .topbar {
-  height: 68px;
+  height: 66px;
   padding: 12px 18px;
   display: flex;
   align-items: center;
   gap: 10px;
-  background: rgba(245, 242, 233, 0.94);
+  background: rgba(255, 252, 244, 0.96);
   backdrop-filter: blur(16px);
   position: sticky;
   top: 0;
@@ -57,8 +57,8 @@ button {
   width: 38px;
   height: 38px;
   border-radius: 13px;
-  background: var(--ink);
-  color: var(--lime);
+  background: linear-gradient(145deg, #18332c, #2f6353);
+  color: #fff4cc;
   display: grid;
   place-items: center;
   font-weight: 900;
@@ -70,7 +70,8 @@ button {
   min-width: 0;
 }
 .topbar strong {
-  font-size: 16px;
+  font-family: Georgia, serif;
+  font-size: 18px;
   line-height: 1;
 }
 .topbar span {
@@ -80,7 +81,7 @@ button {
 }
 .topbar .version {
   margin-left: auto;
-  background: var(--lime2);
+  background: #f6e8bd;
   padding: 5px 9px;
   border-radius: 999px;
   color: var(--ink);
@@ -166,11 +167,11 @@ button {
   display: grid;
   grid-template-columns: 1.4fr 0.8fr;
   gap: 10px;
-  margin: 11px 0 20px;
+  margin: 9px 0 7px;
 }
 .compact-config > div {
-  background: var(--paper);
-  border: 1px solid var(--line);
+  background: linear-gradient(145deg, #fffef8, #f4eddb);
+  border: 1px solid #e5d9bd;
   border-radius: 16px;
   padding: 10px 12px;
 }
@@ -464,7 +465,7 @@ button {
   border: 1px solid var(--line);
   border-radius: 14px;
   background: var(--paper);
-  padding: 9px;
+  padding: 12px;
 }
 .today-extra summary {
   cursor: pointer;
@@ -475,6 +476,17 @@ button {
 }
 .today-extra .extra-form {
   margin-top: 8px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 86px;
+  gap: 8px;
+}
+.today-extra .extra-form input:first-child {
+  grid-column: 1 / -1;
+  min-height: 44px;
+}
+.today-extra .extra-form input,
+.today-extra .extra-form button {
+  min-height: 42px;
 }
 .structure-note {
   display: block;
@@ -485,24 +497,73 @@ button {
 }
 .part-picker-sheet {
   width: min(100%, 520px);
-  max-height: 92vh;
-  overflow-y: auto;
+  height: 97dvh;
+  max-height: 97dvh;
+  overflow: hidden;
   background: var(--cream);
-  border-radius: 24px 24px 0 0;
-  padding: 16px;
+  border-radius: 18px 18px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
 }
 .part-picker-sheet header {
   display: flex;
   align-items: start;
   justify-content: space-between;
   gap: 10px;
-  position: sticky;
-  top: -16px;
+  position: relative;
   z-index: 20;
-  margin: -16px -16px 8px;
-  padding: 16px 16px 8px;
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 14px 16px 10px;
   background: var(--cream);
   border-bottom: 1px solid var(--line);
+}
+.part-picker-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 10px 16px 24px;
+}
+.picker-group {
+  margin-top: 8px;
+  border-top: 1px solid var(--line);
+  padding-top: 4px;
+}
+.picker-group summary {
+  position: sticky;
+  top: -10px;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 38px;
+  background: var(--cream);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  list-style: none;
+}
+.picker-group summary::after {
+  content: "+";
+  display: grid;
+  place-items: center;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: white;
+  font-size: 17px;
+}
+.picker-group[open] summary::after {
+  content: "−";
+}
+.picker-group > p {
+  margin: 0 0 7px;
+  color: var(--muted);
+  font-size: 9px;
 }
 .part-picker-sheet header span {
   color: var(--coral);
@@ -539,7 +600,7 @@ button {
   font-size: 11px;
   font-weight: 900;
 }
-.part-picker-sheet > p {
+.part-picker-scroll > p {
   margin: -2px 0 7px;
   color: var(--muted);
   font-size: 9px;
@@ -583,8 +644,8 @@ button {
   font-size: 8px;
 }
 .part-choice-grid.free {
-  max-height: 245px;
-  overflow-y: auto;
+  max-height: none;
+  overflow: visible;
   padding-bottom: 4px;
 }
 .check {
@@ -1346,12 +1407,25 @@ button {
   min-height: 58px;
   padding: 10px 12px;
   border-radius: 17px;
-  background: var(--ink);
+  background: linear-gradient(125deg, #17372f 0%, #245849 68%, #b85d42 140%);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
+  box-shadow: 0 10px 24px rgba(24, 51, 44, 0.16);
+  position: relative;
+  overflow: hidden;
+}
+.today-strip:after {
+  content: "";
+  position: absolute;
+  width: 72px;
+  height: 72px;
+  right: 84px;
+  top: -48px;
+  border-radius: 50%;
+  background: rgba(255, 244, 204, 0.14);
 }
 .today-strip > div {
   display: flex;
@@ -1371,11 +1445,13 @@ button {
 .today-strip button {
   border: 0;
   border-radius: 11px;
-  background: var(--lime);
+  background: #fff0c9;
   padding: 9px 10px;
   font-size: 10px;
   font-weight: 900;
   white-space: nowrap;
+  position: relative;
+  z-index: 1;
 }
 .preferences {
   background: var(--paper);
@@ -1631,15 +1707,18 @@ button {
 }
 .cuisine-picker {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 6px;
-  margin: -2px 0 7px;
+  margin: 0 0 8px;
+  padding: 7px;
+  border-radius: 15px;
+  background: #eadfca;
 }
 .cuisine-picker > div {
   display: flex;
   flex-direction: column;
   background: var(--paper);
-  border: 1px solid var(--line);
+  border: 1px solid #e2d4b8;
   border-radius: 12px;
   padding: 6px 8px;
   min-width: 0;
@@ -1866,15 +1945,17 @@ button {
 }
 .checkin.compact {
   padding: 0;
-  margin: 4px 0 7px;
+  margin: 7px 0;
   border-radius: 13px;
   overflow: hidden;
+  border: 1px solid #dfd2b7;
+  box-shadow: 0 6px 16px rgba(61, 45, 26, 0.06);
 }
 .checkin-toggle {
   width: 100%;
   height: 42px;
   border: 0;
-  background: var(--paper);
+  background: linear-gradient(90deg, #fffdf7, #f4ead7);
   display: grid;
   grid-template-columns: auto 1fr auto;
   gap: 8px;

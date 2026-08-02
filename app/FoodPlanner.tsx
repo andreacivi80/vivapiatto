@@ -35,7 +35,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.10.0";
+const VERSION = "1.11.0";
 const photo = (name: string) =>
   `${import.meta.env.BASE_URL}food/${name}.png?v=${VERSION}`;
 const drinkOptions: LogItem[] = [
@@ -71,6 +71,22 @@ const foods: Record<string, Food> = {
     carbs: 11.5,
     fat: 0.4,
     fiber: 4.4,
+    source: "USDA",
+  },
+  Fragole: {
+    kcal: 32,
+    protein: 0.7,
+    carbs: 7.7,
+    fat: 0.3,
+    fiber: 2,
+    source: "USDA",
+  },
+  Papaya: {
+    kcal: 43,
+    protein: 0.5,
+    carbs: 10.8,
+    fat: 0.3,
+    fiber: 1.7,
     source: "USDA",
   },
   Kiwi: {
@@ -1446,6 +1462,8 @@ const snackFruits = [
   "Arancia",
   "Mango",
   "Ananas",
+  "Papaya",
+  "Fragole",
   "Frutti di bosco",
 ];
 const snackNuts = ["Noci", "Mandorle", "Pistacchi", "Nocciole"];
@@ -2677,7 +2695,28 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       food: "Frutti di bosco",
       grams: 150,
       label: "Frutti di bosco",
-      image: photo("fruit-breakfast-v2"),
+      image: photo("part-mixed-berries-v11"),
+    },
+    {
+      category: "Frutta",
+      food: "Fragole",
+      grams: 150,
+      label: "Fragole",
+      image: photo("part-strawberries-v11"),
+    },
+    {
+      category: "Frutta",
+      food: "Mango",
+      grams: 150,
+      label: "Mango",
+      image: photo("part-mango-v11"),
+    },
+    {
+      category: "Frutta",
+      food: "Papaya",
+      grams: 150,
+      label: "Papaya",
+      image: photo("part-papaya-v11"),
     },
   ],
   Extra: [
@@ -2802,6 +2841,119 @@ const orderedFreePartOptions = (role: MealPart["category"], key: string) => {
     .filter((category) => category !== role)
     .flatMap((category) => mealPartOptions[category]);
 };
+
+const equivalentPart = (option: MealPart, current: MealPart, role: MealPart["category"]) => {
+  if (option.category !== role || current.grams <= 0) return option;
+  const targetKcal = calc([current]).kcal;
+  const kcalPerGram = foods[option.food]?.kcal / 100;
+  if (!kcalPerGram || targetKcal <= 0) return option;
+  const step = role === "Contorno" ? 25 : role === "Frutta" ? 25 : 10;
+  const minimum = role === "Contorno" ? 50 : role === "Extra" ? 5 : 20;
+  const maximum = role === "Contorno" ? 400 : role === "Frutta" ? 300 : 250;
+  const grams = Math.max(
+    minimum,
+    Math.min(maximum, Math.round(targetKcal / kcalPerGram / step) * step),
+  );
+  return { ...option, grams };
+};
+
+const rotationBreakfastCarbs = mealPartOptions.Carboidrato.filter((part) =>
+  [
+    "Fette biscottate integrali",
+    "Biscotti secchi",
+    "Cracker integrali",
+    "Grissini",
+    "Pane integrale",
+  ].includes(part.food),
+);
+const rotationBreakfastExtras = mealPartOptions.Extra.filter(
+  (part) => part.food !== "Olio extravergine" && part.food !== "Caffè senza zucchero",
+);
+const catalogBreakfasts: Recipe[] = Array.from({ length: 36 }, (_, index) => {
+  const parts = [
+    rotationBreakfastCarbs[index % rotationBreakfastCarbs.length],
+    mealPartOptions.Latticino[index % mealPartOptions.Latticino.length],
+    mealPartOptions.Frutta[index % mealPartOptions.Frutta.length],
+    rotationBreakfastExtras[index % rotationBreakfastExtras.length],
+  ].map((part) => ({ ...part }));
+  return {
+    id: `catalog-breakfast-${index + 1}`,
+    name: parts.map((part) => part.label || part.food).join(" · "),
+    kicker: "Colazione del paniere quotidiano",
+    course: "Colazione",
+    cuisine: "Italiano",
+    image: parts[0].image,
+    time: 3,
+    ingredients: parts,
+    parts,
+    steps: [
+      "Pesa o conta le porzioni indicate.",
+      "Prepara la bevanda o il latticino e servi il frutto lavato e tagliato se necessario.",
+      "Spalma o abbina la parte extra alla base, senza aggiungere quantità non registrate.",
+    ],
+    alternatives: ["Cambia ogni tessera per vedere equivalenze e quantità"],
+  };
+});
+
+const catalogSnacks: Recipe[] = Array.from({ length: 30 }, (_, index) => {
+  const fruit = mealPartOptions.Frutta[index % mealPartOptions.Frutta.length];
+  const companion =
+    index % 3 === 0
+      ? mealPartOptions.Latticino[index % mealPartOptions.Latticino.length]
+      : index % 3 === 1
+        ? rotationBreakfastExtras[index % rotationBreakfastExtras.length]
+        : rotationBreakfastCarbs[index % rotationBreakfastCarbs.length];
+  const parts = [{ ...fruit }, { ...companion }];
+  return {
+    id: `catalog-snack-${index + 1}`,
+    name: parts.map((part) => part.label || part.food).join(" · "),
+    kicker: "Spuntino pratico del paniere",
+    course: "Spuntino",
+    cuisine: "Italiano",
+    image: fruit.image,
+    time: 2,
+    ingredients: parts,
+    parts,
+    steps: ["Lava il frutto, pesa le quantità e porta le due parti in contenitori separati se sei al lavoro."],
+    alternatives: ["Sostituisci una sola parte con la porzione equivalente proposta"],
+  };
+});
+
+const rotationMainCarbs = mealPartOptions.Carboidrato.filter(
+  (part) => !["Fette biscottate integrali", "Biscotti secchi"].includes(part.food),
+);
+const catalogMains: Recipe[] = Array.from({ length: 84 }, (_, index) => {
+  const parts = [
+    rotationMainCarbs[index % rotationMainCarbs.length],
+    mealPartOptions.Proteina[index % mealPartOptions.Proteina.length],
+    mealPartOptions.Contorno[index % mealPartOptions.Contorno.length],
+    mealPartOptions.Extra.find((part) => part.food === "Olio extravergine")!,
+  ].map((part) => ({ ...part }));
+  return {
+    id: `catalog-main-${index + 1}`,
+    name: parts.slice(0, 3).map((part) => part.label || part.food).join(" · "),
+    kicker: "Pasto completo costruito dal paniere",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    image: parts[0].image,
+    time: 25,
+    ingredients: parts,
+    parts,
+    steps: [
+      "Pesa la base nella forma indicata dall'etichetta, a crudo o cotta.",
+      "Cuoci la proteina con il metodo scritto nella tessera, fino a cottura completa.",
+      "Cuoci o prepara il contorno e aggiungi soltanto alla fine l'olio pesato.",
+    ],
+    alternatives: ["Cambia base, proteina o contorno separatamente"],
+  };
+});
+const catalogWorkMains = catalogMains.filter((recipe) =>
+  recipe.parts?.some((part) =>
+    ["Pane integrale", "Riso basmati secco", "Riso Venere secco", "Patate lesse"].includes(part.food),
+  ) && recipe.parts?.some((part) =>
+    ["Bresaola", "Fesa di tacchino", "Tonno al naturale sgocciolato", "Prosciutto cotto"].includes(part.food),
+  ),
+);
 const occasionalRecipes: Recipe[] = [
   {
     id: "occasional-pizza-margherita",
@@ -2874,9 +3026,12 @@ const occasionalRecipes: Recipe[] = [
 ];
 const allRecipes = [
   ...simpleBreakfasts,
+  ...catalogBreakfasts,
   ...quickSnacks,
+  ...catalogSnacks,
   ...portableRecipes,
   ...balancedDinnerRecipes,
+  ...catalogMains,
   ...occasionalRecipes,
   ...recipes,
   ...generatedRecipes,
@@ -2889,9 +3044,9 @@ const days: Day[] = [
     mood: "Partenza semplice",
     recipes: [
       "breakfast-rusks-jam",
-      "quick-apple",
+      "catalog-snack-1",
       "work-bresaola",
-      "quick-nuts",
+      "catalog-snack-2",
       "dinner-three-italian",
     ],
   },
@@ -2900,9 +3055,9 @@ const days: Day[] = [
     mood: "Fibre e colore",
     recipes: [
       "breakfast-milk-biscuits",
-      "quick-crackers",
+      "catalog-snack-3",
       "work-rice-salad",
-      "snack-banana",
+      "catalog-snack-4",
       "salmon",
     ],
   },
@@ -2911,9 +3066,9 @@ const days: Day[] = [
     mood: "Energia stabile",
     recipes: [
       "breakfast-crackers-ricotta",
-      "quick-nuts",
+      "catalog-snack-5",
       "work-cotto",
-      "quick-apple",
+      "catalog-snack-6",
       "dinner-three-eggs",
     ],
   },
@@ -2922,9 +3077,9 @@ const days: Day[] = [
     mood: "Mediterraneo",
     recipes: [
       "breakfast-rusks-butter",
-      "quick-wafer",
+      "catalog-snack-7",
       "simple-pasta-tomato",
-      "quick-apple",
+      "catalog-snack-8",
       "lentil-quinoa",
     ],
   },
@@ -2933,9 +3088,9 @@ const days: Day[] = [
     mood: "Veloce ma completo",
     recipes: [
       "breakfast-rusks-jam",
-      "quick-crackers",
+      "catalog-snack-9",
       "work-turkey",
-      "quick-nuts",
+      "catalog-snack-10",
       "eggs-quinoa",
     ],
   },
@@ -2944,9 +3099,9 @@ const days: Day[] = [
     mood: "Più movimento",
     recipes: [
       "jar",
-      "quick-apple",
+      "catalog-snack-11",
       "chicken-farro",
-      "snack-banana",
+      "catalog-snack-12",
       "salmon-rice",
     ],
   },
@@ -2955,9 +3110,9 @@ const days: Day[] = [
     mood: "Equilibrio e varietà",
     recipes: [
       "apple-oats",
-      "quick-nuts",
+      "catalog-snack-13",
       "lentil-quinoa",
-      "quick-apple",
+      "catalog-snack-14",
       "tuna-chickpeas",
     ],
   },
@@ -3189,8 +3344,8 @@ export function FoodPlanner() {
       r.name.toLowerCase().includes(libraryQuery.toLowerCase()),
   );
   const replanFollowingDays = (changedDay: number) => {
-    const breakfasts = simpleBreakfasts.filter(isAllowed);
-    const snacks = quickSnacks.filter(isAllowed);
+    const breakfasts = [...simpleBreakfasts, ...catalogBreakfasts].filter(isAllowed);
+    const snacks = [...quickSnacks, ...catalogSnacks].filter(isAllowed);
     const mains = allRecipes.filter(
       (r) =>
         isAllowed(r) &&
@@ -3199,9 +3354,9 @@ export function FoodPlanner() {
     );
     const lunches =
       dayContext === "Lavoro"
-        ? portableRecipes.filter(isAllowed)
+        ? [...portableRecipes, ...catalogWorkMains].filter(isAllowed)
         : mains;
-    const dinners = balancedDinnerRecipes.filter(isAllowed);
+    const dinners = [...balancedDinnerRecipes, ...catalogMains].filter(isAllowed);
     if (!breakfasts.length || !snacks.length || !lunches.length || !dinners.length)
       return;
     setChoices((current) => {
@@ -3307,7 +3462,11 @@ export function FoodPlanner() {
     if (!recipe.parts) return [];
     if (partSelections[key]) return partSelections[key];
     const slot = Number(key.split("-")[1]);
-    return [...recipe.parts, ...targetAdditionsFor(slot).map(additionAsPart)];
+    const existingFoods = new Set(recipe.parts.map((part) => part.food));
+    const additions = targetAdditionsFor(slot)
+      .filter((item) => !existingFoods.has(item.food))
+      .map(additionAsPart);
+    return [...recipe.parts, ...additions];
   };
 
   const plannedIngredients = (key: string, recipe: Recipe) => {
@@ -3420,20 +3579,20 @@ export function FoodPlanner() {
     const styled = allRecipes.filter(
       (r) => isAllowed(r) && recipeCuisine(r) === cuisineChoice,
     );
-    const breakfasts = simpleBreakfasts.filter(isAllowed);
-    const snacks = quickSnacks.filter(isAllowed);
+    const breakfasts = [...simpleBreakfasts, ...catalogBreakfasts].filter(isAllowed);
+    const snacks = [...quickSnacks, ...catalogSnacks].filter(isAllowed);
     const mains = styled.filter((r) =>
       ["Piatto unico", "Primo", "Secondo"].includes(recipeCourse(r)),
     );
     const lunches =
       dayContext === "Lavoro"
-        ? portableRecipes
+        ? [...portableRecipes, ...catalogWorkMains]
             .filter(isAllowed)
             .filter((r) => calc(r.ingredients).protein >= 18)
         : mains;
     const dinners =
       dayContext === "Lavoro"
-        ? balancedDinnerRecipes.filter(isAllowed)
+        ? [...balancedDinnerRecipes, ...catalogMains].filter(isAllowed)
         : mains.filter((r) => r.id !== "sweet-ricotta");
     if (
       !breakfasts.length ||
@@ -3483,8 +3642,8 @@ export function FoodPlanner() {
         : goal === "Mantenimento massa"
           ? 3
           : 2);
-    const breakfasts = simpleBreakfasts.filter(isAllowed);
-    let snacks = quickSnacks.filter(isAllowed);
+    const breakfasts = [...simpleBreakfasts, ...catalogBreakfasts].filter(isAllowed);
+    let snacks = [...quickSnacks, ...catalogSnacks].filter(isAllowed);
     let mains = allRecipes.filter(
       (r) =>
         isAllowed(r) &&
@@ -3533,13 +3692,13 @@ export function FoodPlanner() {
     if (!breakfasts.length || !snacks.length || !mains.length) return;
     const lunches =
       dayContext === "Lavoro"
-        ? portableRecipes
+        ? [...portableRecipes, ...catalogWorkMains]
             .filter(isAllowed)
             .filter((r) => calc(r.ingredients).protein >= 18)
         : mains;
     const dinners =
       dayContext === "Lavoro"
-        ? balancedDinnerRecipes.filter(isAllowed)
+        ? [...balancedDinnerRecipes, ...catalogMains].filter(isAllowed)
         : mains.filter((r) => r.id !== "sweet-ricotta");
     if (!lunches.length || !dinners.length) return;
     const offset =
@@ -3866,7 +4025,7 @@ export function FoodPlanner() {
         <div className="brand-mark">T</div>
         <div>
           <strong>Tavola Mia</strong>
-          <span>menu, ricette e diario</span>
+          <span>piano · ricette · diario</span>
         </div>
         <span className="version">v{VERSION}</span>
       </header>
@@ -3883,7 +4042,7 @@ export function FoodPlanner() {
                 </b>
               </div>
               <button onClick={() => setPreferencesOpen((v) => !v)}>
-                ⚙ Filtri {blockedFoods.length ? `(${blockedFoods.length})` : ""}
+                ⚙ Preferenze {blockedFoods.length ? `(${blockedFoods.length})` : ""}
               </button>
             </section>
             {preferencesOpen && (
@@ -3891,7 +4050,7 @@ export function FoodPlanner() {
                 <div className="section-title">
                   <div>
                     <span className="eyebrow">PRIMA DI SCEGLIERE</span>
-                    <h2>Cosa devo escludere?</h2>
+                    <h2>Allergie e alimenti da evitare</h2>
                   </div>
                   <div className="filter-actions">
                     <button
@@ -4044,17 +4203,7 @@ export function FoodPlanner() {
                   ))}
                 </select>
               </div>
-              <button onClick={applyCuisine}>Crea menu completo</button>
             </section>
-            <button
-              className="shopping-trigger"
-              onClick={() => {
-                setShoppingScope("day");
-                setShoppingOpen(true);
-              }}
-            >
-              🛒 Lista della spesa di oggi
-            </button>
             <section className="checkin compact">
               <button
                 className="checkin-toggle"
@@ -4969,51 +5118,81 @@ export function FoodPlanner() {
                 <span>CAMBIA UNA PARTE</span>
                 <h2>{partPicker.part.label || partPicker.part.food}</h2>
               </div>
-              <button onClick={() => setPartPicker(null)}>×</button>
+              <button
+                type="button"
+                aria-label="Chiudi alternative"
+                onClick={() => setPartPicker(null)}
+              >
+                ×
+              </button>
             </header>
-            <button className="remove-part-choice" onClick={removeMealPart}>
-              − Nessuno · togli questo elemento
-            </button>
-            <h3>Alternative consigliate</h3>
-            <div className="part-choice-grid">
-              {recommendedPartOptions(
-                { ...partPicker.part, category: partPicker.role },
-                partPicker.key,
-              ).map((option) => (
-                <button
-                  className={
-                    option.food === partPicker.part.food ? "selected" : ""
-                  }
-                  key={option.food}
-                  onClick={() => chooseMealPart(option)}
-                >
-                  <img src={option.image} alt={option.label || option.food} />
-                  <span>{option.label || option.food}</span>
-                  <b>
-                    {option.grams} g · {round(calc([option]).kcal)} kcal
-                  </b>
-                </button>
-              ))}
-            </div>
-            <h3>Scelta libera</h3>
-            <p>
-              Prima trovi le scelte più comuni per questo momento; più sotto
-              resta disponibile tutto il catalogo.
-            </p>
-            <div className="part-choice-grid free">
-              {orderedFreePartOptions(partPicker.role, partPicker.key)
-                .map((option) => (
-                  <button
-                    key={option.food}
-                    onClick={() => chooseMealPart(option)}
-                  >
-                    <img src={option.image} alt={option.label || option.food} />
-                    <span>{option.label || option.food}</span>
-                    <b>
-                      {option.grams} g · {round(calc([option]).kcal)} kcal
-                    </b>
-                  </button>
-                ))}
+            <div className="part-picker-scroll">
+              <button className="remove-part-choice" onClick={removeMealPart}>
+                − Nessuno · togli questo elemento
+              </button>
+              <details className="picker-group" open>
+                <summary>Alternative consigliate</summary>
+                <div className="part-choice-grid">
+                  {recommendedPartOptions(
+                    { ...partPicker.part, category: partPicker.role },
+                    partPicker.key,
+                  ).map((option) => {
+                    const adjusted = equivalentPart(
+                      option,
+                      partPicker.part,
+                      partPicker.role,
+                    );
+                    return (
+                      <button
+                        className={
+                          option.food === partPicker.part.food ? "selected" : ""
+                        }
+                        key={option.food}
+                        onClick={() => chooseMealPart(adjusted)}
+                      >
+                        <img src={option.image} alt={option.label || option.food} />
+                        <span>{option.label || option.food}</span>
+                        <b>
+                          {adjusted.grams} g · {round(calc([adjusted]).kcal)} kcal
+                        </b>
+                      </button>
+                    );
+                  })}
+                </div>
+              </details>
+              <details className="picker-group">
+                <summary>Scelta libera</summary>
+                <p>
+                  Prima trovi le scelte più comuni per questo momento; più
+                  sotto resta disponibile tutto il catalogo.
+                </p>
+                <div className="part-choice-grid free">
+                  {orderedFreePartOptions(partPicker.role, partPicker.key).map(
+                    (option) => {
+                      const adjusted = equivalentPart(
+                        option,
+                        partPicker.part,
+                        partPicker.role,
+                      );
+                      return (
+                        <button
+                          key={option.food}
+                          onClick={() => chooseMealPart(adjusted)}
+                        >
+                          <img
+                            src={option.image}
+                            alt={option.label || option.food}
+                          />
+                          <span>{option.label || option.food}</span>
+                          <b>
+                            {adjusted.grams} g · {round(calc([adjusted]).kcal)} kcal
+                          </b>
+                        </button>
+                      );
+                    },
+                  )}
+                </div>
+              </details>
             </div>
           </article>
         </div>

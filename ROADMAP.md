@@ -92,7 +92,22 @@ Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggior
 - [x] Conservare il piatto registrato quando un nuovo check-in rigenera il menu.
 - [x] Fotografie atomiche per riso basmati/Venere, gnocchi, pollo, bistecca, salmone, uova, tonno, bresaola, verdure e frutta principali.
 
-## v1.10.0 — pronta per pubblicazione
+## v1.11.0 — pronta per pubblicazione
+
+- [x] Paniere strutturato collegato alla rotazione: 36 colazioni, 30 spuntini e 84 pasti completi generati dai componenti reali.
+- [x] Fragole, mango, papaya e frutti di bosco separati, con foto dedicate e valori nutrizionali.
+- [x] Nessun duplicato automatico dello stesso frutto nello stesso pasto.
+- [x] Due frutti diversi nelle proposte giornaliere predefinite; la ripetizione resta una scelta manuale.
+- [x] Alternative dello stesso ruolo ricalcolate in grammi per avvicinarsi alle calorie del componente sostituito.
+- [x] Pannello alternative più alto, X sempre visibile e sezioni consigliate/scelta libera richiudibili.
+- [x] Area di inserimento extra ampliata su cellulare.
+- [x] “Preferenze” chiarisce allergie e alimenti da evitare; testata e configurazione iniziale ridisegnate.
+- [x] Rimossi dalla prima schermata i pulsanti “Crea menu completo” e “Lista della spesa di oggi”; la rigenerazione resta automatica.
+- [ ] Riposizionare la lista della spesa in un flusso dedicato dopo la revisione con l’utente.
+- [ ] Prossimo lotto del paniere: feta, grana e altri formaggi, con dati, foto, porzioni, ricette e alternative.
+- [ ] Integrare ogni voce residua dell’elenco generale con dati, fotografia e ricette: il lavoro continua nelle revisioni successive.
+
+## v1.10.0 — pubblicata
 
 - [x] Settimana mostra le stesse tessere alimento di Oggi.
 - [x] Ogni componente settimanale apre direttamente le alternative con foto, grammi e kcal.
