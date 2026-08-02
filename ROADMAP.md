@@ -92,11 +92,24 @@ Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggior
 - [x] Conservare il piatto registrato quando un nuovo check-in rigenera il menu.
 - [x] Fotografie atomiche per riso basmati/Venere, gnocchi, pollo, bistecca, salmone, uova, tonno, bresaola, verdure e frutta principali.
 
-## v1.8.0 — prossima
+## v1.8.0 — pronta per pubblicazione
 
-- [ ] Metodi di cottura distinti con immagine e valori coerenti: forno, piastra, bollito, vapore.
+- [x] Flag diretto e reversibile senza apertura involontaria della ricetta.
+- [x] “Nessuno” per rimuovere qualsiasi componente e sottrarlo dal totale.
+- [x] Titoli dinamici, grammi editabili, kcal/proteine per elemento e tessere ad altezza variabile.
+- [x] Alternative contestuali ancorate al ruolo originale del pasto.
+- [x] Primi metodi/tagli distinti con immagini: pollo alla piastra, petto arrosto, coscia arrosto, merluzzo, orata.
+- [x] Prime frequenze settimanali CREA calcolate sui pasti registrati.
+- [x] Foto atomiche per nuovi ortaggi, condimento, caffè e vino.
 - [ ] Rotazione settimanale completa senza ripetizioni inutili.
 - [ ] Estetica iniziale più calda e riconoscibile, ispirata alla cucina, senza aumentare gli spazi vuoti.
+
+## v1.9.0 — prossima
+
+- [ ] Ampliare il catalogo dall’elenco generale allegato: dati, porzioni, ruoli e foto.
+- [ ] Banca dati testuale separata per extra/sgarri con autocomplete e valori da etichetta.
+- [ ] Portare la vista Settimana alla stessa composizione modificabile di Oggi.
+- [ ] Applicare le frequenze registrate alla generazione automatica dei giorni successivi.
 
 - [ ] Ampliare progressivamente piatti e fotografie senza sacrificare precisione e usabilità.
 - [ ] Verificare sempre assenza di scorrimento orizzontale e densità su cellulare.

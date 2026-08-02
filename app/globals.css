@@ -314,6 +314,7 @@ button {
   gap: 11px;
   align-items: center;
   box-shadow: 0 5px 16px rgba(22, 49, 41, 0.035);
+  overflow: hidden;
 }
 .meal-card.composed {
   min-height: 238px;
@@ -329,6 +330,7 @@ button {
 }
 .meal-body {
   min-width: 0;
+  overflow: hidden;
 }
 .meal-body > span {
   font-size: 9px;
@@ -341,6 +343,7 @@ button {
   font-size: 14px;
   line-height: 1.12;
   margin: 4px 0 7px;
+  overflow-wrap: anywhere;
 }
 .meal-body p {
   font-size: 10px;
@@ -381,6 +384,7 @@ button {
   display: grid;
   min-width: 0;
   gap: 3px;
+  align-content: start;
 }
 .meal-card .meal-part img {
   width: 100%;
@@ -406,8 +410,41 @@ button {
   font-style: normal;
   margin-top: 2px;
 }
-.meal-part b {
+.part-grams {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  width: 100%;
+}
+.part-grams input {
+  width: 42px;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+  padding: 3px;
   font-size: 10px;
+  font-weight: 900;
+}
+.part-grams span,
+.part-nutrients {
+  font-size: 8px;
+}
+.part-nutrients {
+  color: var(--muted);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+.part-empty {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 76px;
+  border: 1px dashed var(--line);
+  border-radius: 9px;
+  color: var(--muted);
+  background: #f3f0e7;
+  font-size: 22px;
 }
 .part-extras {
   display: flex;
@@ -462,6 +499,16 @@ button {
 .part-picker-sheet h3 {
   margin: 10px 0 6px;
   font-size: 13px;
+}
+.remove-part-choice {
+  width: 100%;
+  border: 1px dashed #b66d5d;
+  border-radius: 12px;
+  background: #fff5ef;
+  color: #8c4638;
+  padding: 10px;
+  font-size: 11px;
+  font-weight: 900;
 }
 .part-picker-sheet > p {
   margin: -2px 0 7px;
@@ -528,6 +575,54 @@ button {
   letter-spacing: -1.5px;
   line-height: 1;
   margin: 6px 0 8px;
+}
+.weekly-frequency {
+  margin: 10px 0;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--paper);
+  padding: 10px;
+}
+.weekly-frequency header {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 10px;
+}
+.weekly-frequency header span,
+.weekly-frequency p {
+  color: var(--muted);
+  font-size: 8px;
+}
+.weekly-frequency > div {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 4px;
+  margin-top: 7px;
+}
+.weekly-frequency > div span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  border-radius: 9px;
+  background: #eef3ea;
+  padding: 5px 3px;
+  font-size: 7px;
+  text-align: center;
+}
+.weekly-frequency > div b,
+.weekly-frequency > div small {
+  display: block;
+}
+.weekly-frequency > div b {
+  font-size: 14px;
+}
+.weekly-frequency > div small {
+  color: var(--muted);
+  font-size: 7px;
+}
+.weekly-frequency p {
+  margin: 7px 0 0;
+  line-height: 1.35;
 }
 .page-lead {
   font-size: 13px;
