@@ -2,7 +2,16 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.13.2 — in preparazione
+## v1.14.0 — in preparazione
+
+- [x] Bistecche distinte per animale: manzo, vitello, maiale/lonza e cavallo.
+- [x] Valori CREA specifici e peso dichiarato a crudo per le quattro carni.
+- [x] Fotografie autonome e cache-bustate per le quattro carni.
+- [x] Fotografie sciolte di fesa di tacchino e prosciutto cotto; le foto dei panini restano separate.
+- [x] Porzioni alternative di carne limitate a quantità pratiche da 100–150 g.
+- [x] Conteggio settimanale carne rossa esteso anche a lonza/maiale e cavallo.
+
+## v1.13.2 — pubblicata
 
 - [x] Migrazione automatica di tutte le categorie semantiche salvate male, incluso il latte ereditato come carboidrato.
 - [x] Refresh con URL versionato appena l'app è inattiva e nessuna modifica è aperta; archivio locale invariato.
@@ -34,7 +43,7 @@ Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggior
 - [x] S11 banana e crema 100% arachidi: presente nei due spuntini, ma escluso dalla libreria delle ricette complete.
 - [x] Arachidi, crema 100% arachidi, lino, finocchi, pesche e asparagi con dati, porzioni e foto autonome.
 - [x] Contesto “Stile” e “Dove” disposto su due colonne centrate.
-- [ ] Bistecche distinte per animale e taglio: manzo, vitello, maiale/lonza e cavallo, con dati e immagini autonome.
+- [x] Bistecche distinte per animale e taglio: manzo, vitello, maiale/lonza e cavallo, con dati e immagini autonome.
 
 ## v1.12.1 — pubblicata
 
@@ -44,7 +53,8 @@ Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggior
 - [x] “Attività oggi/domani” usa “Nessuna, leggera, intensa”, senza etichetta ambigua “Riposo”.
 - [x] Settimana con fotografie contestuali: tavola colazione, pausa spuntino, tavola pranzo e tavola cena.
 - [x] Acquisiti due addendum da 40 ricette; totale matrici operative 134 ricette.
-- [ ] Foto autonome per prosciutto cotto, fesa, bresaola, petto di pollo e tacchino; panini separati come ricette.
+- [x] Foto autonome per prosciutto cotto e fesa; panini separati come ricette.
+- [ ] Foto autonome da completare per bresaola, petto di pollo e tacchino.
 - [ ] Sottogruppi visivi nel pannello alternative.
 
 ## v1.12.0 — pronta per pubblicazione

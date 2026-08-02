@@ -36,7 +36,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.13.2";
+const VERSION = "1.14.0";
 const photo = (name: string) =>
   `${import.meta.env.BASE_URL}food/${name}.png?v=${VERSION}`;
 const WEEK_SLOT_IMAGES = [
@@ -737,13 +737,37 @@ const foods: Record<string, Food> = {
     fiber: 0,
     source: "CREA",
   },
-  "Bistecca di manzo cotta": {
-    kcal: 217,
-    protein: 26,
+  "Bistecca di manzo · peso a crudo": {
+    kcal: 140,
+    protein: 21.3,
     carbs: 0,
-    fat: 12,
+    fat: 6.1,
     fiber: 0,
-    source: "USDA",
+    source: "CREA",
+  },
+  "Bistecca di vitello · peso a crudo": {
+    kcal: 107,
+    protein: 20.7,
+    carbs: 0,
+    fat: 2.7,
+    fiber: 0,
+    source: "CREA",
+  },
+  "Lonza di maiale · peso a crudo": {
+    kcal: 146,
+    protein: 20.7,
+    carbs: 0,
+    fat: 7,
+    fiber: 0,
+    source: "CREA",
+  },
+  "Bistecca di cavallo magra · peso a crudo": {
+    kcal: 106,
+    protein: 23.5,
+    carbs: 0.7,
+    fat: 1,
+    fiber: 0,
+    source: "CREA",
   },
   "Patate lesse": {
     kcal: 87,
@@ -2155,7 +2179,7 @@ const portableRecipes: Recipe[] = [
         food: "Prosciutto cotto",
         grams: 80,
         label: "Prosciutto cotto",
-        image: photo("work-cotto-v5"),
+        image: photo("part-prosciutto-cotto-v114"),
       },
       {
         category: "Contorno",
@@ -2289,7 +2313,7 @@ const portableRecipes: Recipe[] = [
         food: "Fesa di tacchino",
         grams: 100,
         label: "Fesa di tacchino",
-        image: photo("work-turkey-v5"),
+        image: photo("part-turkey-slices-v114"),
       },
       {
         category: "Contorno",
@@ -2356,17 +2380,17 @@ const portableRecipes: Recipe[] = [
     image: photo("simple-steak-potatoes-v5"),
     time: 25,
     ingredients: [
-      { food: "Bistecca di manzo cotta", grams: 150 },
+      { food: "Bistecca di manzo · peso a crudo", grams: 150 },
       { food: "Patate lesse", grams: 250 },
       { food: "Olio extravergine", grams: 8 },
     ],
     parts: [
       {
         category: "Proteina",
-        food: "Bistecca di manzo cotta",
+        food: "Bistecca di manzo · peso a crudo",
         grams: 150,
         label: "Bistecca ai ferri",
-        image: photo("part-steak-grilled-v7"),
+        image: photo("part-steak-beef-v114"),
       },
       {
         category: "Carboidrato",
@@ -2385,7 +2409,7 @@ const portableRecipes: Recipe[] = [
     ],
     steps: [
       "Lessa le patate a pezzi per 15-20 minuti, finché la forchetta entra facilmente.",
-      "Cuoci la bistecca su piastra ben calda fino al grado di cottura sicuro e preferito.",
+      "Pesa 150 g di carne cruda. Cuocila su piastra ben calda senza aggiungere altri grassi, fino al grado di cottura sicuro e preferito.",
       "Condisci le patate con l'olio pesato.",
     ],
     alternatives: ["Fesa di tacchino o uova al posto della bistecca"],
@@ -2403,7 +2427,7 @@ const balancedDinnerRecipes: Recipe[] = [
     ingredients: [
       { food: "Pasta di semola secca", grams: 80 },
       { food: "Passata di pomodoro", grams: 120 },
-      { food: "Bistecca di manzo cotta", grams: 100 },
+      { food: "Bistecca di manzo · peso a crudo", grams: 120 },
       { food: "Zucchine", grams: 200 },
       { food: "Olio extravergine", grams: 10 },
     ],
@@ -2417,10 +2441,10 @@ const balancedDinnerRecipes: Recipe[] = [
       },
       {
         category: "Proteina",
-        food: "Bistecca di manzo cotta",
-        grams: 100,
-        label: "Bistecca ai ferri",
-        image: photo("part-steak-grilled-v7"),
+        food: "Bistecca di manzo · peso a crudo",
+        grams: 120,
+        label: "Bistecca di manzo · peso a crudo",
+        image: photo("part-steak-beef-v114"),
       },
       {
         category: "Contorno",
@@ -2439,7 +2463,7 @@ const balancedDinnerRecipes: Recipe[] = [
     ],
     steps: [
       "Scalda la passata 8 minuti; cuoci 80 g di pasta secca per il tempo indicato e condiscila con metà olio.",
-      "Scalda bene la piastra e cuoci la bistecca al grado di cottura desiderato e sicuro.",
+      "Pesa 120 g di carne cruda. Scalda bene la piastra e cuocila senza aggiungere grassi non conteggiati, fino al grado di cottura desiderato e sicuro.",
       "Taglia le zucchine e cuocile in padella 8-10 minuti; completa con l'olio rimasto.",
     ],
     alternatives: [
@@ -2715,10 +2739,31 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
   Proteina: [
     {
       category: "Proteina",
-      food: "Bistecca di manzo cotta",
-      grams: 100,
-      label: "Bistecca",
-      image: photo("part-steak-grilled-v7"),
+      food: "Bistecca di manzo · peso a crudo",
+      grams: 120,
+      label: "Bistecca di manzo · peso a crudo",
+      image: photo("part-steak-beef-v114"),
+    },
+    {
+      category: "Proteina",
+      food: "Bistecca di vitello · peso a crudo",
+      grams: 120,
+      label: "Bistecca di vitello · peso a crudo",
+      image: photo("part-steak-veal-v114"),
+    },
+    {
+      category: "Proteina",
+      food: "Lonza di maiale · peso a crudo",
+      grams: 120,
+      label: "Lonza di maiale · peso a crudo",
+      image: photo("part-steak-pork-loin-v114"),
+    },
+    {
+      category: "Proteina",
+      food: "Bistecca di cavallo magra · peso a crudo",
+      grams: 120,
+      label: "Bistecca di cavallo · peso a crudo",
+      image: photo("part-steak-horse-v114"),
     },
     {
       category: "Proteina",
@@ -2774,7 +2819,7 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       food: "Fesa di tacchino",
       grams: 100,
       label: "Fesa di tacchino",
-      image: photo("work-turkey-v5"),
+      image: photo("part-turkey-slices-v114"),
     },
     {
       category: "Proteina",
@@ -2795,7 +2840,7 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       food: "Prosciutto cotto",
       grams: 50,
       label: "Prosciutto cotto",
-      image: photo("work-cotto-v5"),
+      image: photo("part-prosciutto-cotto-v114"),
     },
     {
       category: "Proteina",
@@ -3255,6 +3300,13 @@ const equivalentPart = (option: MealPart, current: MealPart, role: MealPart["cat
       return { min: 50, max: 120, step: 10 };
     if (role === "Carboidrato")
       return { min: Math.min(option.grams, 30), max: Math.max(option.grams, 100), step: 10 };
+    if (
+      role === "Proteina" &&
+      ["manzo", "vitello", "maiale", "lonza", "cavallo"].some((term) =>
+        option.food.toLowerCase().includes(term),
+      )
+    )
+      return { min: 100, max: 150, step: 10 };
     if (role === "Proteina") return { min: 80, max: 200, step: 10 };
     if (role === "Contorno") return { min: 100, max: 400, step: 25 };
     if (role === "Frutta") return { min: 100, max: 300, step: 25 };
@@ -3366,7 +3418,7 @@ const compatibleMainProteins = (base: MealPart) => {
       ? ["Tonno al naturale sgocciolato", "Salmone cotto", "Feta", "Ceci cotti", "Piselli cotti"]
       : base.food.includes("Riso")
         ? ["Petto di pollo cotto", "Petto di pollo arrosto", "Salmone cotto", "Merluzzo cotto", "Orata cotta", "Tonno al naturale sgocciolato", "Uovo", "Ceci cotti", "Piselli cotti"]
-        : ["Bistecca di manzo cotta", "Petto di pollo cotto", "Merluzzo cotto", "Orata cotta", "Salmone cotto", "Uovo", "Ceci cotti"];
+        : ["Bistecca di manzo · peso a crudo", "Bistecca di vitello · peso a crudo", "Lonza di maiale · peso a crudo", "Bistecca di cavallo magra · peso a crudo", "Petto di pollo cotto", "Merluzzo cotto", "Orata cotta", "Salmone cotto", "Uovo", "Ceci cotti"];
   return mealPartOptions.Proteina.filter((part) => groups.includes(part.food));
 };
 const catalogMains: Recipe[] = Array.from({ length: 84 }, (_, index) => {
@@ -3435,7 +3487,7 @@ const occasionalRecipes: Recipe[] = [
     ingredients: [
       { food: "Pane integrale", grams: 100 },
       {
-        food: "Bistecca di manzo cotta",
+        food: "Bistecca di manzo · peso a crudo",
         grams: 100,
         label: "Hamburger di manzo",
       },
@@ -3452,10 +3504,10 @@ const occasionalRecipes: Recipe[] = [
       },
       {
         category: "Proteina",
-        food: "Bistecca di manzo cotta",
+        food: "Bistecca di manzo · peso a crudo",
         grams: 100,
         label: "Hamburger di manzo",
-        image: photo("part-steak-grilled-v7"),
+        image: photo("part-steak-beef-v114"),
       },
       {
         category: "Contorno",
@@ -4449,7 +4501,8 @@ export function FoodPlanner() {
         if (has(["salmone", "tonno", "merluzzo", "orata", "pesce"]))
           counts.Pesce += 1;
         if (has(["pollo", "tacchino", "coniglio"])) counts["Carne bianca"] += 1;
-        if (has(["manzo", "bistecca", "vitello"])) counts["Carne rossa"] += 1;
+        if (has(["manzo", "bistecca", "vitello", "maiale", "lonza", "cavallo"]))
+          counts["Carne rossa"] += 1;
         if (has(["uovo"])) counts.Uova += 1;
         if (has(["ceci", "lenticchie", "fagioli", "piselli", "legumi"]))
           counts.Legumi += 1;
