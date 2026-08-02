@@ -1,6 +1,6 @@
 # Matrice ricette — stato operativo
 
-Specifiche ricevute: matrice iniziale di 627 righe, primo addendum di 1.109 righe e secondo addendum di 800 righe.
+Specifiche ricevute: matrice iniziale di 627 righe, primo addendum di 1.109 righe, secondo addendum di 800 righe e terzo addendum di 826 righe.
 
 ## Perimetro acquisito
 
@@ -10,7 +10,9 @@ Specifiche ricevute: matrice iniziale di 627 righe, primo addendum di 1.109 righ
 - Cene `D01–D16`: 16.
 - Addendum: colazioni `C13–C20` (8), spuntini `S11–S18` (8), pranzi `P17–P28` (12), cene `D17–D28` (12).
 - Secondo addendum: colazioni `C21–C28` (8), spuntini `S19–S26` (8), pranzi `P29–P40` (12), cene `D29–D40` (12).
-- Totale ricette definite nelle tre matrici: 134.
+- Terzo addendum: colazioni `C29–C36` (8), spuntini `S27–S34` (8), pranzi `P41–P52` (12), cene `D41–D52` (12).
+- Totale elementi definiti nelle quattro matrici: 174.
+- Il terzo addendum aggiunge anche “Crea una ricetta con gli avanzi”, con data, conservazione, stato crudo/cotto e regole di sicurezza vincolanti.
 
 Ogni ricetta entra nel motore reale soltanto dopo ingredienti pesati, indicazione crudo/cotto/sgocciolato, valori nutrizionali, allergeni, componenti sostituibili, preparazione, tempo, metodo di cottura, fotografia specifica e frequenze settimanali.
 
@@ -33,12 +35,12 @@ Ogni ricetta entra nel motore reale soltanto dopo ingredienti pesati, indicazion
 - `S11` collegato nella v1.13.0 alle rotazioni degli spuntini come abbinamento semplice, escluso dalla libreria delle ricette complete.
 - Arachidi, crema 100% arachidi, semi di lino, finocchi, pesche e asparagi hanno dati strutturati, porzioni e fotografie autonome.
 - Farine d'avena, integrale e di grano saraceno strutturate con fotografie specifiche.
-- Restano 131 elementi delle tre matrici da collegare integralmente; non sono completati finché non superano controllo dati, foto, rotazione e mobile.
+- Restano 171 elementi delle quattro matrici da collegare integralmente; non sono completati finché non superano controllo dati, foto, rotazione e mobile.
 
 ## Sequenza prossimi blocchi
 
-1. `C01–C04`, `C06–C28`: colazioni veloci e da casa/weekend.
-2. `S01–S26`: spuntini realistici, distinti e trasportabili.
-3. `P01–P40`: pranzi lavoro/casa con componenti sostituibili.
-4. `D01–D40`: cene complete, metodi di cottura e frequenze.
+1. `C01–C04`, `C06–C36`: colazioni veloci e da casa/weekend.
+2. `S01–S34`: spuntini realistici, distinti e trasportabili.
+3. `P01–P52`: pranzi lavoro/casa con componenti sostituibili.
+4. `D01–D52`: cene complete, metodi di cottura e frequenze.
 5. Controllo col paniere originario: ogni alimento non occasionale deve comparire in almeno una ricetta e in una rotazione settimanale.

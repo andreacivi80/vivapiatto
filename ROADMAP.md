@@ -2,7 +2,22 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.13.1 — in preparazione
+## v1.13.2 — in preparazione
+
+- [x] Migrazione automatica di tutte le categorie semantiche salvate male, incluso il latte ereditato come carboidrato.
+- [x] Refresh con URL versionato appena l'app è inattiva e nessuna modifica è aperta; archivio locale invariato.
+- [x] Lista della spesa con “Seleziona tutto” e “Deseleziona tutto”.
+- [x] Macro scritti per esteso nel riepilogo del pasto.
+- [x] Modifica giorno settimanale con barra fissa e azioni separate “Chiudi” / “Chiudi e riequilibra”.
+- [x] Il riequilibrio conserva gli elementi modificati, ricalibra il resto del giorno e aggiorna i giorni successivi.
+- [x] Grissini esclusi dalle proposte automatiche di colazione e spuntino.
+- [ ] Armonia delle combinazioni: matrice di compatibilità tra base, proteina, verdura, condimento e momento della giornata.
+- [ ] Legumi completi: ceci, fagioli, piselli, lenticchie e altre varietà con foto singole e ricette coerenti.
+- [x] Acquisito integralmente il terzo addendum da 40 elementi; totale matrice 174.
+- [ ] Integrare `C29–C36`, `S27–S34`, `P41–P52` e `D41–D52` in ricette, proposte e rotazioni.
+- [ ] “Crea una ricetta con gli avanzi” con quantità, data, conservazione e blocchi di sicurezza alimentare.
+
+## v1.13.1 — pubblicata
 
 - [x] Corretto il ruolo corrente delle tessere: riaprendo il latte compaiono alternative latticino e non cereali.
 - [x] Porzioni alternative pratiche: pasta/riso 60–100 g, gnocchi 120–200 g, patate 150–300 g.

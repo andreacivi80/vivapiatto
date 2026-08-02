@@ -36,7 +36,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.13.1";
+const VERSION = "1.13.2";
 const photo = (name: string) =>
   `${import.meta.env.BASE_URL}food/${name}.png?v=${VERSION}`;
 const WEEK_SLOT_IMAGES = [
@@ -2804,6 +2804,20 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       label: "Feta · 50 g",
       image: photo("part-feta-v111"),
     },
+    {
+      category: "Proteina",
+      food: "Ceci cotti",
+      grams: 150,
+      label: "Ceci cotti",
+      image: photo("part-chickpeas-v8"),
+    },
+    {
+      category: "Proteina",
+      food: "Piselli cotti",
+      grams: 150,
+      label: "Piselli cotti",
+      image: photo("part-peas-v8"),
+    },
   ],
   Contorno: [
     {
@@ -3116,6 +3130,17 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
   ],
 };
 
+const normalizeMealPart = (part: MealPart): MealPart => {
+  const canonicalCategory = (
+    Object.keys(mealPartOptions) as MealPart["category"][]
+  ).find((category) =>
+    mealPartOptions[category].some((option) => option.food === part.food),
+  );
+  return canonicalCategory && canonicalCategory !== part.category
+    ? { ...part, category: canonicalCategory }
+    : part;
+};
+
 const recommendedPartOptions = (part: MealPart, key: string) => {
   const slot = Number(key.split("-")[1]);
   const options = mealPartOptions[part.category];
@@ -3138,7 +3163,6 @@ const recommendedPartOptions = (part: MealPart, key: string) => {
           "Fette biscottate integrali",
           "Biscotti secchi",
           "Cracker integrali",
-          "Grissini",
           "Pane integrale",
         ].includes(x.food),
       );
@@ -3165,7 +3189,6 @@ const recommendedPartOptions = (part: MealPart, key: string) => {
           "Fette biscottate integrali",
           "Biscotti secchi",
           "Cracker integrali",
-          "Grissini",
         ].includes(x.food),
       );
     if (part.category === "Proteina") return [];
@@ -3202,6 +3225,7 @@ const orderedFreePartOptions = (role: MealPart["category"], key: string) => {
     .flatMap((category) => mealPartOptions[category])
     .filter(
       (option) =>
+        !([0, 1, 3].includes(slot) && option.food === "Grissini") &&
         ![
           "Farina d'avena",
           "Farina di frumento integrale",
@@ -3252,7 +3276,6 @@ const rotationBreakfastCarbs = mealPartOptions.Carboidrato.filter((part) =>
     "Fette biscottate integrali",
     "Biscotti secchi",
     "Cracker integrali",
-    "Grissini",
     "Pane integrale",
   ].includes(part.food),
 );
@@ -3336,10 +3359,22 @@ const rotationMainCarbs = mealPartOptions.Carboidrato.filter(
 const rotationMainExtras = mealPartOptions.Extra.filter((part) =>
   ["Olio extravergine", "Grana Padano DOP"].includes(part.food),
 );
+const compatibleMainProteins = (base: MealPart) => {
+  const groups = base.food.includes("Pane") || base.food.includes("Cracker") || base.food.includes("Grissini")
+    ? ["Fesa di tacchino", "Bresaola", "Tonno al naturale sgocciolato", "Prosciutto cotto", "Feta", "Uovo"]
+    : base.food.includes("Pasta") || base.food.includes("Gnocchi")
+      ? ["Tonno al naturale sgocciolato", "Salmone cotto", "Feta", "Ceci cotti", "Piselli cotti"]
+      : base.food.includes("Riso")
+        ? ["Petto di pollo cotto", "Petto di pollo arrosto", "Salmone cotto", "Merluzzo cotto", "Orata cotta", "Tonno al naturale sgocciolato", "Uovo", "Ceci cotti", "Piselli cotti"]
+        : ["Bistecca di manzo cotta", "Petto di pollo cotto", "Merluzzo cotto", "Orata cotta", "Salmone cotto", "Uovo", "Ceci cotti"];
+  return mealPartOptions.Proteina.filter((part) => groups.includes(part.food));
+};
 const catalogMains: Recipe[] = Array.from({ length: 84 }, (_, index) => {
+  const base = rotationMainCarbs[index % rotationMainCarbs.length];
+  const compatibleProteins = compatibleMainProteins(base);
   const parts = [
-    rotationMainCarbs[index % rotationMainCarbs.length],
-    mealPartOptions.Proteina[index % mealPartOptions.Proteina.length],
+    base,
+    compatibleProteins[index % compatibleProteins.length],
     mealPartOptions.Contorno[index % mealPartOptions.Contorno.length],
     index % 4 === 0
       ? rotationMainExtras.find((part) => part.food === "Grana Padano DOP")!
@@ -3642,6 +3677,7 @@ export function FoodPlanner() {
   useEffect(() => {
     let disposed = false;
     let updateWaiting = false;
+    let pendingVersion = "";
     const applyWhenSafe = () => {
       if (
         !disposed &&
@@ -3649,7 +3685,9 @@ export function FoodPlanner() {
         !updateBlockedRef.current &&
         Date.now() - lastInteractionRef.current > 3000
       ) {
-        window.location.reload();
+        const nextUrl = new URL(window.location.href);
+        nextUrl.searchParams.set("v", pendingVersion || String(Date.now()));
+        window.location.replace(nextUrl.toString());
       }
     };
     const checkVersion = async () => {
@@ -3661,6 +3699,7 @@ export function FoodPlanner() {
         const release = (await response.json()) as { version?: string };
         if (release.version && release.version !== VERSION) {
           updateWaiting = true;
+          pendingVersion = release.version;
           applyWhenSafe();
         }
       } catch {
@@ -3961,13 +4000,13 @@ export function FoodPlanner() {
 
   const activeMealParts = (key: string, recipe: Recipe): MealPart[] => {
     if (!recipe.parts) return [];
-    if (partSelections[key]) return partSelections[key];
+    if (partSelections[key]) return partSelections[key].map(normalizeMealPart);
     const slot = Number(key.split("-")[1]);
     const existingFoods = new Set(recipe.parts.map((part) => part.food));
     const additions = targetAdditionsFor(slot)
       .filter((item) => !existingFoods.has(item.food))
       .map(additionAsPart);
-    return [...recipe.parts, ...additions];
+    return [...recipe.parts, ...additions].map(normalizeMealPart);
   };
 
   const plannedIngredients = (key: string, recipe: Recipe) => {
@@ -4502,6 +4541,43 @@ export function FoodPlanner() {
       `Restano circa ${round(remaining)} kcal: ho aggiornato ${open.length} proposte.`,
     );
   };
+  const rebalanceDayPreservingEdits = (day: number) => {
+    const adjustable = [0, 1, 2, 3, 4].filter((slot) => {
+      const key = `${day}-${slot}`;
+      return !completed[key] && !partSelections[key];
+    });
+    if (!adjustable.length) {
+      setReplanNote("Modifiche salvate; non ci sono altri momenti liberi da riequilibrare oggi.");
+      return;
+    }
+    const fixedKcal = [0, 1, 2, 3, 4]
+      .filter((slot) => !adjustable.includes(slot))
+      .reduce((sum, slot) => {
+        const key = `${day}-${slot}`;
+        const id = completedRecipes[key] || getDayIds(day)[slot];
+        const recipe = recipeMap[id];
+        return (
+          sum +
+          (completed[key]
+            ? calc(actualIngredients(key, recipe)).kcal
+            : calc(plannedIngredients(key, recipe)).kcal)
+        );
+      }, 0);
+    const average = Math.max(80, targetForDay(day) - fixedKcal) / adjustable.length;
+    const safe = allRecipes.filter(isAllowed);
+    const updates: Record<string, string> = {};
+    adjustable.forEach((slot, index) => {
+      const pool = safe.filter((recipe) => fitsSlot(recipe, slot));
+      const ranked = [...pool].sort(
+        (a, b) =>
+          Math.abs(calc(a.ingredients).kcal - average) -
+          Math.abs(calc(b.ingredients).kcal - average),
+      );
+      if (ranked.length) updates[`${day}-${slot}`] = ranked[index % ranked.length].id;
+    });
+    setChoices((current) => ({ ...current, ...updates }));
+    setReplanNote("Giornata riequilibrata mantenendo gli elementi modificati; aggiornati anche i giorni successivi.");
+  };
   const shoppingItems = useMemo(() => {
     const totals: Record<string, number> = {};
     const targetDays =
@@ -4572,16 +4648,28 @@ export function FoodPlanner() {
                   <span>MODIFICA SETTIMANA</span>
                   <b>{days[weekEditingDay].label}</b>
                 </div>
-                <button
-                  onClick={() => {
-                    replanFollowingDays(weekEditingDay);
-                    setWeekEditingDay(null);
-                    setTab("week");
-                    scrollTo({ top: 0, behavior: "smooth" });
-                  }}
-                >
-                  Chiudi e riequilibra
-                </button>
+                <div className="week-edit-actions">
+                  <button
+                    onClick={() => {
+                      setWeekEditingDay(null);
+                      setTab("week");
+                      scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                  >
+                    Chiudi
+                  </button>
+                  <button
+                    onClick={() => {
+                      rebalanceDayPreservingEdits(weekEditingDay);
+                      replanFollowingDays(weekEditingDay);
+                      setWeekEditingDay(null);
+                      setTab("week");
+                      scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                  >
+                    Chiudi e riequilibra
+                  </button>
+                </div>
               </section>
             )}
             <section className="today-strip">
@@ -5045,7 +5133,7 @@ export function FoodPlanner() {
                             : allowed
                               ? actual
                                 ? `Mangiato · ${round(actual.kcal)} kcal`
-                                : `${portion}${round(m.kcal)} kcal · P ${round(m.protein)} g · C ${round(m.carbs)} g · G ${round(m.fat)} g · ${r.time} min`
+                                : `${portion}${round(m.kcal)} kcal · ${round(m.protein)} g proteine · ${round(m.carbs)} g carboidrati · ${round(m.fat)} g grassi · ${r.time} min`
                               : "Contiene un alimento escluso"}
                         </p>
                       </div>
@@ -5893,6 +5981,32 @@ export function FoodPlanner() {
                 Settimana
               </button>
               <button onClick={shareShopping}>Condividi</button>
+            </div>
+            <div className="shopping-bulk-actions">
+              <button
+                onClick={() =>
+                  setGroceryChecked((current) => ({
+                    ...current,
+                    ...Object.fromEntries(
+                      shoppingItems.map((item) => [item.food, true]),
+                    ),
+                  }))
+                }
+              >
+                Seleziona tutto
+              </button>
+              <button
+                onClick={() =>
+                  setGroceryChecked((current) => ({
+                    ...current,
+                    ...Object.fromEntries(
+                      shoppingItems.map((item) => [item.food, false]),
+                    ),
+                  }))
+                }
+              >
+                Deseleziona tutto
+              </button>
             </div>
             <div className="shopping-list">
               {shoppingItems.map((item) => (
