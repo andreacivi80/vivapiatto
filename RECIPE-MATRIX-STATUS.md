@@ -1,6 +1,6 @@
 # Matrice ricette — stato operativo
 
-Specifica ricevuta: 02/08/2026, 627 righe.
+Specifiche ricevute: matrice iniziale di 627 righe, primo addendum di 1.109 righe e secondo addendum di 800 righe.
 
 ## Perimetro acquisito
 
@@ -8,7 +8,9 @@ Specifica ricevuta: 02/08/2026, 627 righe.
 - Spuntini `S01–S10`: 10.
 - Pranzi `P01–P16`: 16.
 - Cene `D01–D16`: 16.
-- Totale ricette definite nella nuova matrice: 54.
+- Addendum: colazioni `C13–C20` (8), spuntini `S11–S18` (8), pranzi `P17–P28` (12), cene `D17–D28` (12).
+- Secondo addendum: colazioni `C21–C28` (8), spuntini `S19–S26` (8), pranzi `P29–P40` (12), cene `D29–D40` (12).
+- Totale ricette definite nelle tre matrici: 134.
 
 Ogni ricetta entra nel motore reale soltanto dopo ingredienti pesati, indicazione crudo/cotto/sgocciolato, valori nutrizionali, allergeni, componenti sostituibili, preparazione, tempo, metodo di cottura, fotografia specifica e frequenze settimanali.
 
@@ -28,12 +30,12 @@ Ogni ricetta entra nel motore reale soltanto dopo ingredienti pesati, indicazion
 
 - `C05` collegata nella v1.12.0 con fotografia finale specifica e cinque componenti modificabili.
 - Farine d'avena, integrale e di grano saraceno strutturate con fotografie specifiche.
-- Restano 53 ricette della nuova matrice da collegare integralmente; non sono completate finché non superano controllo dati, foto, rotazione e mobile.
+- Restano 133 ricette delle tre matrici da collegare integralmente; non sono completate finché non superano controllo dati, foto, rotazione e mobile.
 
 ## Sequenza prossimi blocchi
 
-1. `C01–C04`, `C06–C12`: colazioni veloci e da casa/weekend.
-2. `S01–S10`: spuntini realistici, distinti e trasportabili.
-3. `P01–P16`: pranzi lavoro/casa con componenti sostituibili.
-4. `D01–D16`: cene complete, metodi di cottura e frequenze.
+1. `C01–C04`, `C06–C28`: colazioni veloci e da casa/weekend.
+2. `S01–S26`: spuntini realistici, distinti e trasportabili.
+3. `P01–P40`: pranzi lavoro/casa con componenti sostituibili.
+4. `D01–D40`: cene complete, metodi di cottura e frequenze.
 5. Controllo col paniere originario: ogni alimento non occasionale deve comparire in almeno una ricetta e in una rotazione settimanale.

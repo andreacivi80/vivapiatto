@@ -35,10 +35,16 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.12.0";
+const VERSION = "1.12.1";
 const photo = (name: string) =>
   `${import.meta.env.BASE_URL}food/${name}.png?v=${VERSION}`;
-const WEEK_SLOT_VISUALS = ["☕", "🍎", "🍽", "🥕", "🌙"];
+const WEEK_SLOT_IMAGES = [
+  "moment-breakfast-v1121",
+  "moment-snack-v1121",
+  "moment-lunch-v1121",
+  "moment-snack-v1121",
+  "moment-dinner-v1121",
+];
 const drinkOptions: LogItem[] = [
   { label: "Acqua", kcal: 0, amount: "500 ml" },
   { label: "Caffè senza zucchero", kcal: 2, amount: "1 tazza" },
@@ -4022,7 +4028,7 @@ export function FoodPlanner() {
     setCheck(next);
     planFromCheck(next);
   };
-  const chooseMealPart = (replacement: MealPart) => {
+  const chooseMealPart = (replacement: MealPart, keepOriginalRole = true) => {
     if (!partPicker) return;
     const [dayText, slotText] = partPicker.key.split("-");
     const day = Number(dayText);
@@ -4030,7 +4036,10 @@ export function FoodPlanner() {
     const recipe = recipeMap[getDayIds(day)[slot]];
     const activeParts = activeMealParts(partPicker.key, recipe);
     const previous = activeParts[partPicker.index];
-    const nextPart = { ...replacement, category: partPicker.role };
+    const nextPart = {
+      ...replacement,
+      category: keepOriginalRole ? partPicker.role : replacement.category,
+    };
     const delta =
       calc([{ food: nextPart.food, grams: nextPart.grams }]).kcal -
       calc([{ food: previous.food, grams: previous.grams }]).kcal;
@@ -4480,22 +4489,6 @@ export function FoodPlanner() {
                   <option>Casa</option>
                 </select>
               </div>
-              <div>
-                <span>Da bere</span>
-                <select
-                  value={plannedDrink}
-                  onChange={(e) => setPlannedDrink(e.target.value)}
-                >
-                  {[
-                    "Acqua",
-                    "Spremuta 150 ml",
-                    "Coca-Cola Zero",
-                    "Gassata zero",
-                  ].map((x) => (
-                    <option key={x}>{x}</option>
-                  ))}
-                </select>
-              </div>
             </section>
             <section className="checkin compact">
               <button
@@ -4505,7 +4498,7 @@ export function FoodPlanner() {
                 <span>Check-in · cambia il menu</span>
                 <b>
                   {check.todayActivity === "no"
-                    ? "Riposo"
+                    ? "Nessuna attività"
                     : check.todayActivity}{" "}
                   · {check.feeling}
                 </b>
@@ -4535,7 +4528,7 @@ export function FoodPlanner() {
                     <span>Attività oggi</span>
                     <div className="chips">
                       {[
-                        ["no", "Riposo"],
+                        ["no", "Nessuna"],
                         ["leggera", "Leggera"],
                         ["intensa", "Intensa"],
                       ].map(([v, l]) => (
@@ -4569,10 +4562,10 @@ export function FoodPlanner() {
                     </div>
                   </div>
                   <div className="question">
-                    <span>Domani</span>
+                    <span>Attività domani</span>
                     <div className="chips">
                       {[
-                        ["no", "Riposo"],
+                        ["no", "Nessuna"],
                         ["leggera", "Leggera"],
                         ["intensa", "Intensa"],
                       ].map(([v, l]) => (
@@ -4983,12 +4976,11 @@ export function FoodPlanner() {
                             setSelected(r);
                           }}
                         >
-                          <span
-                            className={`week-slot-visual slot-${slot}`}
-                            aria-hidden="true"
-                          >
-                            {WEEK_SLOT_VISUALS[slot]}
-                          </span>
+                          <img
+                            className="week-slot-visual"
+                            src={photo(WEEK_SLOT_IMAGES[slot])}
+                            alt=""
+                          />
                           <span>
                             <small>{SLOT_LABELS[slot]}</small>
                             <b>
@@ -5466,7 +5458,7 @@ export function FoodPlanner() {
                           option.food === partPicker.part.food ? "selected" : ""
                         }
                         key={option.food}
-                        onClick={() => chooseMealPart(adjusted)}
+                        onClick={() => chooseMealPart(adjusted, true)}
                       >
                         <img src={option.image} alt={option.label || option.food} />
                         <span>{option.label || option.food}</span>
@@ -5495,7 +5487,7 @@ export function FoodPlanner() {
                       return (
                         <button
                           key={option.food}
-                          onClick={() => chooseMealPart(adjusted)}
+                          onClick={() => chooseMealPart(adjusted, false)}
                         >
                           <img
                             src={option.image}

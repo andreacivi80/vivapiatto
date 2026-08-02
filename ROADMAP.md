@@ -2,6 +2,17 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
+## v1.12.1 — in preparazione
+
+- [x] Corretto il ruolo dopo una scelta libera: il latte non eredita più il gruppo delle fette biscottate.
+- [x] Alternative consigliate del latte: vaccino, soia, avena, yogurt e ricotta.
+- [x] Rimossa la scelta globale “Da bere” dalla testata Oggi.
+- [x] “Attività oggi/domani” usa “Nessuna, leggera, intensa”, senza etichetta ambigua “Riposo”.
+- [x] Settimana con fotografie contestuali: tavola colazione, pausa spuntino, tavola pranzo e tavola cena.
+- [x] Acquisiti due addendum da 40 ricette; totale matrici operative 134 ricette.
+- [ ] Foto autonome per prosciutto cotto, fesa, bresaola, petto di pollo e tacchino; panini separati come ricette.
+- [ ] Sottogruppi visivi nel pannello alternative.
+
 ## v1.12.0 — pronta per pubblicazione
 
 - [x] Acquisita integralmente la specifica da 627 righe: 12 colazioni, 10 spuntini, 16 pranzi e 16 cene.
