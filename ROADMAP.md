@@ -2,7 +2,17 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.14.4 — in preparazione
+## v1.15.0 — in preparazione
+
+- [x] Barra “Chiudi / Chiudi e riequilibra” fissa sopra la navigazione e sempre visibile durante lo scorrimento.
+- [x] Miniature Settimana con immagine completa, senza taglio di olio, piselli o cracker.
+- [x] Combinazioni automatiche escluse dalla libreria delle ricette guidate.
+- [x] Lenticchie cotte disponibili anche come contorno con fotografia corretta.
+- [x] Foto finali specifiche per cena patate/uova/fagiolini e riso/pollo/fagiolini.
+- [x] Foto wafer corretta e foto specifica per banana, yogurt e avena.
+- [x] C32 omelette con pomodori, funghi e pane integrale collegata con albume CREA.
+
+## v1.14.4 — pubblicata
 
 - [x] C30 yogurt greco, kiwi, avena e pecan collegata alle colazioni veloci.
 - [x] Fotografia finale C30 e fotografia atomica delle pecan specifiche.

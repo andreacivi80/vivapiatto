@@ -36,7 +36,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.14.4";
+const VERSION = "1.15.0";
 const photo = (name: string) =>
   `${import.meta.env.BASE_URL}food/${name}.png?v=${VERSION}`;
 const WEEK_SLOT_IMAGES = [
@@ -57,6 +57,14 @@ const drinkOptions: LogItem[] = [
 ];
 
 const foods: Record<string, Food> = {
+  Albume: {
+    kcal: 43,
+    protein: 10.7,
+    carbs: 0,
+    fat: 0,
+    fiber: 0,
+    source: "CREA",
+  },
   "Yogurt greco 2%": {
     kcal: 73,
     protein: 9.9,
@@ -1074,7 +1082,7 @@ const recipes: Recipe[] = [
     id: "snack-banana",
     name: "Banana e crema yogurt",
     kicker: "Prima o dopo un'attività intensa",
-    image: photo("snack"),
+    image: photo("snack-banana-yogurt-v115"),
     time: 3,
     ingredients: [
       { food: "Banana", grams: 130 },
@@ -2088,6 +2096,34 @@ const matrixBreakfasts: Recipe[] = [
       "Contiene latte, avena e frutta a guscio",
     ],
   },
+  {
+    id: "matrix-c32-omelette-tomato-mushroom",
+    name: "Omelette con pomodori, funghi e pane integrale",
+    kicker: "Colazione salata da casa · matrice C32",
+    course: "Colazione",
+    cuisine: "Italiano",
+    image: photo("recipe-c32-omelette-v115"),
+    time: 15,
+    ingredients: [
+      { food: "Uovo", grams: 50 }, { food: "Albume", grams: 100 },
+      { food: "Pomodorini", grams: 100 }, { food: "Funghi", grams: 100 },
+      { food: "Pane integrale", grams: 50 }, { food: "Olio extravergine", grams: 5 },
+    ],
+    parts: [
+      { category: "Proteina", food: "Uovo", grams: 50, label: "1 uovo", image: photo("part-eggs-scrambled-v8") },
+      { category: "Proteina", food: "Albume", grams: 100, label: "Albume · 100 g", image: photo("part-eggs-scrambled-v8") },
+      { category: "Contorno", food: "Pomodorini", grams: 100, label: "Pomodori", image: photo("part-tomatoes-v8") },
+      { category: "Contorno", food: "Funghi", grams: 100, label: "Funghi", image: photo("part-mushrooms-v8") },
+      { category: "Carboidrato", food: "Pane integrale", grams: 50, label: "Pane integrale", image: photo("part-bread-v7") },
+      { category: "Extra", food: "Olio extravergine", grams: 5, label: "Olio extravergine", image: photo("part-olive-oil-v8") },
+    ],
+    steps: [
+      "Taglia pomodori e funghi e cuocili in padella antiaderente per 5-6 minuti con metà dell'olio pesato.",
+      "Sbatti un uovo con 100 g di albume, versa sulle verdure e cuoci finché il centro è completamente rappreso.",
+      "Piega l'omelette, completa con l'olio rimasto e servi con 50 g di pane integrale tostato.",
+    ],
+    alternatives: ["Colazione da casa o weekend", "Contiene uova e glutine", "Pomodori e funghi restano sostituibili separatamente"],
+  },
 ];
 const matrixSnacks: Recipe[] = [
   {
@@ -2264,7 +2300,7 @@ const quickSnacks: Recipe[] = [
     kicker: "Spuntino dolce pratico",
     course: "Spuntino",
     cuisine: "Italiano",
-    image: photo("fruit-breakfast-v2"),
+    image: photo("part-wafer-v115"),
     time: 1,
     ingredients: [
       { food: "Wafer confezionati", grams: 25 },
@@ -2276,7 +2312,7 @@ const quickSnacks: Recipe[] = [
         food: "Wafer confezionati",
         grams: 25,
         label: "Wafer",
-        image: photo("fruit-breakfast-v2"),
+        image: photo("part-wafer-v115"),
       },
       {
         category: "Frutta",
@@ -2672,7 +2708,7 @@ const balancedDinnerRecipes: Recipe[] = [
     kicker: "Semplice, pesabile, senza grammi casuali",
     course: "Piatto unico",
     cuisine: "Italiano",
-    image: photo("simple-eggs-v5"),
+    image: photo("dinner-eggs-potatoes-beans-v115"),
     time: 25,
     ingredients: [
       { food: "Patate lesse", grams: 200 },
@@ -2726,7 +2762,7 @@ const balancedDinnerRecipes: Recipe[] = [
     kicker: "Base, proteina e verdura separate",
     course: "Piatto unico",
     cuisine: "Italiano",
-    image: photo("part-rice-basmati-v7"),
+    image: photo("dinner-rice-chicken-beans-v115"),
     time: 25,
     ingredients: [
       { food: "Riso basmati secco", grams: 80 },
@@ -3179,6 +3215,13 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       label: "Asparagi · peso a crudo",
       image: photo("part-asparagus-v113"),
     },
+    {
+      category: "Contorno",
+      food: "Lenticchie cotte",
+      grams: 120,
+      label: "Lenticchie cotte · contorno",
+      image: photo("part-lentils-v1141"),
+    },
   ],
   Latticino: [
     {
@@ -3399,6 +3442,8 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
 };
 
 const normalizeMealPart = (part: MealPart): MealPart => {
+  if (mealPartOptions[part.category]?.some((option) => option.food === part.food))
+    return part;
   const canonicalCategory = (
     Object.keys(mealPartOptions) as MealPart["category"][]
   ).find((category) =>
@@ -3675,6 +3720,7 @@ const catalogMains: Recipe[] = Array.from({ length: 84 }, (_, index) => {
     alternatives: ["Cambia base, proteina o contorno separatamente"],
   };
 });
+catalogMains.forEach((recipe) => (recipe.kind = "combination"));
 const catalogWorkMains = catalogMains.filter((recipe) =>
   recipe.parts?.some((part) =>
     ["Pane integrale", "Riso basmati secco", "Riso Venere secco", "Patate lesse"].includes(part.food),
