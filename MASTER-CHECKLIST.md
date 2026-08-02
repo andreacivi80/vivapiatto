@@ -17,6 +17,7 @@ Questa è la lista unica di completamento. Una voce si spunta soltanto quando è
 - [ ] Importare tutto l'elenco originario non occasionale nel database strutturato.
 - [ ] Completare cereali, farine, pane, pasta, riso, gnocchi, tuberi e derivati.
 - [ ] Completare carni bianche/rosse e relativi tagli e cotture.
+- [ ] Distinguere bistecche e tagli di manzo, vitello, maiale/lonza e cavallo con valori e foto specifici.
 - [ ] Completare pesci, molluschi, crostacei e relativi metodi di cottura.
 - [ ] Completare uova e preparazioni: sode, strapazzate, frittata, forno.
 - [ ] Completare legumi, tofu, tempeh e derivati.

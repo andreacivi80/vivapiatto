@@ -23,6 +23,7 @@ type Recipe = {
   cuisine?: string;
   course?: string;
   parts?: MealPart[];
+  kind?: "recipe" | "combination";
 };
 type Day = { label: string; mood: string; recipes: string[] };
 type Tab = "today" | "week" | "library" | "builder" | "progress";
@@ -35,7 +36,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.12.1";
+const VERSION = "1.13.0";
 const photo = (name: string) =>
   `${import.meta.env.BASE_URL}food/${name}.png?v=${VERSION}`;
 const WEEK_SLOT_IMAGES = [
@@ -135,6 +136,30 @@ const foods: Record<string, Food> = {
     fat: 65.2,
     fiber: 6.7,
     source: "CREA",
+  },
+  Arachidi: {
+    kcal: 567,
+    protein: 25.8,
+    carbs: 16.1,
+    fat: 49.2,
+    fiber: 8.5,
+    source: "USDA",
+  },
+  "Crema 100% arachidi": {
+    kcal: 588,
+    protein: 25.1,
+    carbs: 20,
+    fat: 50.4,
+    fiber: 6,
+    source: "USDA",
+  },
+  "Semi di lino macinati": {
+    kcal: 534,
+    protein: 18.3,
+    carbs: 28.9,
+    fat: 42.2,
+    fiber: 27.3,
+    source: "USDA",
   },
   Miele: {
     kcal: 304,
@@ -462,6 +487,30 @@ const foods: Record<string, Food> = {
     carbs: 22.8,
     fat: 0.3,
     fiber: 2.6,
+    source: "CREA",
+  },
+  Pesca: {
+    kcal: 28,
+    protein: 0.7,
+    carbs: 5.8,
+    fat: 0.1,
+    fiber: 1.9,
+    source: "CREA",
+  },
+  "Finocchi crudi": {
+    kcal: 15,
+    protein: 1.2,
+    carbs: 1.5,
+    fat: 0.1,
+    fiber: 2.2,
+    source: "CREA",
+  },
+  "Asparagi crudi": {
+    kcal: 28,
+    protein: 3,
+    carbs: 3,
+    fat: 0.1,
+    fiber: 2.1,
     source: "CREA",
   },
   Mela: {
@@ -1823,6 +1872,103 @@ const matrixBreakfasts: Recipe[] = [
       "La ricetta contiene un uovo: viene conteggiato nella frequenza settimanale",
     ],
   },
+  {
+    id: "matrix-c21-porridge-banana-peanut",
+    name: "Porridge banana, arachidi e lino",
+    kicker: "Colazione da casa · matrice C21",
+    course: "Colazione",
+    cuisine: "Italiano",
+    image: photo("recipe-c21-porridge-banana-peanut-v113"),
+    time: 10,
+    ingredients: [
+      { food: "Fiocchi d'avena", grams: 40 },
+      { food: "Bevanda di soia senza zucchero", grams: 180 },
+      { food: "Banana", grams: 150 },
+      { food: "Crema 100% arachidi", grams: 10 },
+      { food: "Semi di lino macinati", grams: 5 },
+    ],
+    parts: [
+      {
+        category: "Carboidrato",
+        food: "Fiocchi d'avena",
+        grams: 40,
+        label: "Fiocchi d'avena · peso a crudo",
+        image: photo("part-oats-v113"),
+      },
+      {
+        category: "Latticino",
+        food: "Bevanda di soia senza zucchero",
+        grams: 180,
+        label: "Bevanda di soia senza zuccheri",
+        image: photo("part-milk-v7"),
+      },
+      {
+        category: "Frutta",
+        food: "Banana",
+        grams: 150,
+        label: "Banana",
+        image: photo("part-banana-v7"),
+      },
+      {
+        category: "Extra",
+        food: "Crema 100% arachidi",
+        grams: 10,
+        label: "Crema 100% arachidi",
+        image: photo("part-peanut-butter-v113"),
+      },
+      {
+        category: "Extra",
+        food: "Semi di lino macinati",
+        grams: 5,
+        label: "Semi di lino macinati",
+        image: photo("part-flaxseed-v113"),
+      },
+    ],
+    steps: [
+      "Versa fiocchi d'avena e bevanda di soia in un pentolino.",
+      "Cuoci a fuoco medio-basso per 5-7 minuti, mescolando finché il porridge diventa cremoso.",
+      "Spegni il fuoco, aggiungi la banana a rondelle, la crema 100% arachidi e i semi di lino macinati già pesati.",
+    ],
+    alternatives: [
+      "Bevanda d'avena senza zucchero al posto della soia, con ricalcolo automatico",
+      "Contiene soia e arachidi",
+      "Per la versione da lavoro preparalo la sera e conservalo in frigorifero",
+    ],
+  },
+];
+const matrixSnacks: Recipe[] = [
+  {
+    id: "matrix-s11-banana-peanut",
+    name: "Banana con crema 100% arachidi",
+    kicker: "Spuntino pratico · matrice S11",
+    course: "Spuntino",
+    cuisine: "Italiano",
+    kind: "combination",
+    image: photo("part-banana-v7"),
+    time: 2,
+    ingredients: [
+      { food: "Banana", grams: 150 },
+      { food: "Crema 100% arachidi", grams: 10 },
+    ],
+    parts: [
+      {
+        category: "Frutta",
+        food: "Banana",
+        grams: 150,
+        label: "Banana",
+        image: photo("part-banana-v7"),
+      },
+      {
+        category: "Extra",
+        food: "Crema 100% arachidi",
+        grams: 10,
+        label: "Crema 100% arachidi",
+        image: photo("part-peanut-butter-v113"),
+      },
+    ],
+    steps: ["Taglia la banana e aggiungi la crema composta esclusivamente da arachidi."],
+    alternatives: ["Contiene arachidi", "Porta la crema già pesata in un piccolo contenitore"],
+  },
 ];
 const quickSnacks: Recipe[] = [
   {
@@ -2460,6 +2606,13 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
   Carboidrato: [
     {
       category: "Carboidrato",
+      food: "Fiocchi d'avena",
+      grams: 40,
+      label: "Fiocchi d'avena · peso a crudo",
+      image: photo("part-oats-v113"),
+    },
+    {
+      category: "Carboidrato",
       food: "Fette biscottate integrali",
       grams: 30,
       label: "Fette biscottate",
@@ -2742,6 +2895,20 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       label: "Zucca cotta",
       image: photo("part-pumpkin-v8"),
     },
+    {
+      category: "Contorno",
+      food: "Finocchi crudi",
+      grams: 200,
+      label: "Finocchi crudi",
+      image: photo("part-fennel-v113"),
+    },
+    {
+      category: "Contorno",
+      food: "Asparagi crudi",
+      grams: 200,
+      label: "Asparagi · peso a crudo",
+      image: photo("part-asparagus-v113"),
+    },
   ],
   Latticino: [
     {
@@ -2851,6 +3018,13 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       label: "Papaya",
       image: photo("part-papaya-v11"),
     },
+    {
+      category: "Frutta",
+      food: "Pesca",
+      grams: 150,
+      label: "Pesca · parte edibile",
+      image: photo("part-peach-v113"),
+    },
   ],
   Extra: [
     {
@@ -2915,6 +3089,27 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       grams: 15,
       label: "Crema cacao e nocciole",
       image: photo("part-chocolate-hazelnut-spread-v9"),
+    },
+    {
+      category: "Extra",
+      food: "Arachidi",
+      grams: 15,
+      label: "Arachidi · 1 porzione",
+      image: photo("part-peanuts-v113"),
+    },
+    {
+      category: "Extra",
+      food: "Crema 100% arachidi",
+      grams: 10,
+      label: "Crema 100% arachidi",
+      image: photo("part-peanut-butter-v113"),
+    },
+    {
+      category: "Extra",
+      food: "Semi di lino macinati",
+      grams: 5,
+      label: "Semi di lino macinati",
+      image: photo("part-flaxseed-v113"),
     },
   ],
 };
@@ -3208,6 +3403,7 @@ const allRecipes = [
   ...matrixBreakfasts,
   ...catalogBreakfasts,
   ...quickSnacks,
+  ...matrixSnacks,
   ...catalogSnacks,
   ...portableRecipes,
   ...balancedDinnerRecipes,
@@ -3527,6 +3723,7 @@ export function FoodPlanner() {
       "Orzo perlato cotto",
     ],
     "Frutta a guscio": ["Noci", "Mandorle", "Pistacchi", "Nocciole"],
+    Arachidi: ["Arachidi", "Crema 100% arachidi"],
   };
   const blockedFoods = [
     ...dislikedFoods,
@@ -3537,7 +3734,7 @@ export function FoodPlanner() {
   const availableBreakfasts = () =>
     [
       ...simpleBreakfasts,
-      ...(dayContext === "Casa" ? matrixBreakfasts : []),
+      ...matrixBreakfasts.filter((recipe) => dayContext === "Casa" || recipe.time <= 7),
       ...catalogBreakfasts,
     ].filter(isAllowed);
   const recipeCuisine = (r: Recipe) =>
@@ -3597,6 +3794,7 @@ export function FoodPlanner() {
   };
   const filteredRecipes = allRecipes.filter(
     (r) =>
+      r.kind !== "combination" &&
       isAllowed(r) &&
       compatibleWithSlot(r) &&
       compatibleWithPlace(r) &&
@@ -3606,7 +3804,7 @@ export function FoodPlanner() {
   const replanFollowingDays = (changedDay: number) => {
     if (weekLocked) return;
     const breakfasts = availableBreakfasts();
-    const snacks = [...quickSnacks, ...catalogSnacks].filter(isAllowed);
+    const snacks = [...quickSnacks, ...matrixSnacks, ...catalogSnacks].filter(isAllowed);
     const mains = allRecipes.filter(
       (r) =>
         isAllowed(r) &&
@@ -3841,7 +4039,7 @@ export function FoodPlanner() {
       (r) => isAllowed(r) && recipeCuisine(r) === cuisineChoice,
     );
     const breakfasts = availableBreakfasts();
-    const snacks = [...quickSnacks, ...catalogSnacks].filter(isAllowed);
+    const snacks = [...quickSnacks, ...matrixSnacks, ...catalogSnacks].filter(isAllowed);
     const mains = styled.filter((r) =>
       ["Piatto unico", "Primo", "Secondo"].includes(recipeCourse(r)),
     );
@@ -3913,7 +4111,7 @@ export function FoodPlanner() {
           ? 3
           : 2);
     const breakfasts = availableBreakfasts();
-    let snacks = [...quickSnacks, ...catalogSnacks].filter(isAllowed);
+    let snacks = [...quickSnacks, ...matrixSnacks, ...catalogSnacks].filter(isAllowed);
     let mains = allRecipes.filter(
       (r) =>
         isAllowed(r) &&

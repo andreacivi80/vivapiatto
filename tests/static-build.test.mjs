@@ -16,9 +16,13 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.12\.1"/);
+  assert.match(app, /VERSION = "1\.13\.0"/);
   assert.match(app, /version\.json/);
   assert.match(app, /part-grissini-v112/);
+  assert.match(app, /matrix-c21-porridge-banana-peanut/);
+  assert.match(app, /matrix-s11-banana-peanut/);
+  await access(new URL("../dist/food/recipe-c21-porridge-banana-peanut-v113.png", import.meta.url));
+  await access(new URL("../dist/food/part-peanuts-v113.png", import.meta.url));
   assert.match(app, /length:\s*284/);
   assert.match(app, /300\+ RICETTE GUIDATE/);
   assert.match(app, /CREA/);

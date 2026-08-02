@@ -29,8 +29,11 @@ Ogni ricetta entra nel motore reale soltanto dopo ingredienti pesati, indicazion
 ## Avanzamento
 
 - `C05` collegata nella v1.12.0 con fotografia finale specifica e cinque componenti modificabili.
+- `C21` collegata nella v1.13.0 come ricetta completa con cinque componenti modificabili e fotografia finale specifica.
+- `S11` collegato nella v1.13.0 alle rotazioni degli spuntini come abbinamento semplice, escluso dalla libreria delle ricette complete.
+- Arachidi, crema 100% arachidi, semi di lino, finocchi, pesche e asparagi hanno dati strutturati, porzioni e fotografie autonome.
 - Farine d'avena, integrale e di grano saraceno strutturate con fotografie specifiche.
-- Restano 133 ricette delle tre matrici da collegare integralmente; non sono completate finché non superano controllo dati, foto, rotazione e mobile.
+- Restano 131 elementi delle tre matrici da collegare integralmente; non sono completati finché non superano controllo dati, foto, rotazione e mobile.
 
 ## Sequenza prossimi blocchi
 

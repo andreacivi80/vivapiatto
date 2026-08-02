@@ -2,7 +2,15 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.12.1 — in preparazione
+## v1.13.0 — in preparazione
+
+- [x] C21 porridge banana, arachidi e lino: ricetta completa, componenti modificabili, calcolo e fotografia specifica.
+- [x] S11 banana e crema 100% arachidi: presente nei due spuntini, ma escluso dalla libreria delle ricette complete.
+- [x] Arachidi, crema 100% arachidi, lino, finocchi, pesche e asparagi con dati, porzioni e foto autonome.
+- [x] Contesto “Stile” e “Dove” disposto su due colonne centrate.
+- [ ] Bistecche distinte per animale e taglio: manzo, vitello, maiale/lonza e cavallo, con dati e immagini autonome.
+
+## v1.12.1 — pubblicata
 
 - [x] Corretto il ruolo dopo una scelta libera: il latte non eredita più il gruppo delle fette biscottate.
 - [x] Alternative consigliate del latte: vaccino, soia, avena, yogurt e ricotta.
