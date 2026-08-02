@@ -36,7 +36,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.15.0";
+const VERSION = "1.15.1";
 const photo = (name: string) =>
   `${import.meta.env.BASE_URL}food/${name}.png?v=${VERSION}`;
 const WEEK_SLOT_IMAGES = [
@@ -2857,6 +2857,60 @@ const balancedDinnerRecipes: Recipe[] = [
       "Cuoci gli spinaci in padella coperta 6-8 minuti e aggiungi l'olio pesato.",
     ],
     alternatives: ["Cambia ogni parte dal pannello visivo"],
+  },
+  {
+    id: "pasta-lentils-pumpkin",
+    name: "Pasta integrale con lenticchie e zucca",
+    kicker: "Piatto unico italiano · ingredienti riconoscibili",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    image: photo("recipe-pasta-lentils-pumpkin-v1151"),
+    time: 30,
+    ingredients: [
+      { food: "Pasta integrale secca", grams: 80 },
+      { food: "Lenticchie cotte", grams: 120 },
+      { food: "Zucca cotta", grams: 200 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    parts: [
+      { category: "Carboidrato", food: "Pasta integrale secca", grams: 80, label: "Pasta integrale · peso a crudo", image: photo("simple-pasta-white-v5") },
+      { category: "Proteina", food: "Lenticchie cotte", grams: 120, label: "Lenticchie cotte", image: photo("part-lentils-v1141") },
+      { category: "Contorno", food: "Zucca cotta", grams: 200, label: "Zucca cotta", image: photo("part-pumpkin-v8") },
+      { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio extravergine", image: photo("part-olive-oil-v8") },
+    ],
+    steps: [
+      "Taglia la zucca a cubetti e cuocila in forno a 190 °C per 20-25 minuti, finché è morbida ma ancora compatta.",
+      "Lessa la pasta in acqua bollente salata per il tempo indicato sulla confezione e conserva poca acqua di cottura.",
+      "Scalda le lenticchie già cotte, uniscile a pasta e zucca e completa fuori dal fuoco con i 10 g di olio pesato.",
+    ],
+    alternatives: ["Pasto da casa", "Contiene glutine", "Ogni componente resta sostituibile separatamente"],
+  },
+  {
+    id: "gnocchi-tuna-zucchini",
+    name: "Gnocchi con tonno e zucchine",
+    kicker: "Piatto unico italiano · tre ingredienti ben distinti",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    image: photo("recipe-gnocchi-tuna-zucchini-v1151"),
+    time: 20,
+    ingredients: [
+      { food: "Gnocchi di patate", grams: 180 },
+      { food: "Tonno al naturale sgocciolato", grams: 120 },
+      { food: "Zucchine", grams: 200 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    parts: [
+      { category: "Carboidrato", food: "Gnocchi di patate", grams: 180, label: "Gnocchi di patate", image: photo("part-gnocchi-v7") },
+      { category: "Proteina", food: "Tonno al naturale sgocciolato", grams: 120, label: "Tonno al naturale sgocciolato", image: photo("part-tuna-v7") },
+      { category: "Contorno", food: "Zucchine", grams: 200, label: "Zucchine in padella", image: photo("part-zucchini-v8") },
+      { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio extravergine", image: photo("part-olive-oil-v8") },
+    ],
+    steps: [
+      "Taglia le zucchine a mezze rondelle e cuocile in padella antiaderente 7-9 minuti con poca acqua.",
+      "Lessa gli gnocchi in acqua bollente e scolali appena salgono in superficie.",
+      "Unisci gnocchi, zucchine e tonno ben sgocciolato; spegni il fuoco e condisci con i 10 g di olio pesato.",
+    ],
+    alternatives: ["Pasto da casa", "Contiene pesce", "Ogni componente resta sostituibile separatamente"],
   },
 ];
 const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
@@ -6091,6 +6145,7 @@ export function FoodPlanner() {
             className={tab === id ? "active" : ""}
             onClick={() => {
               setSwapTarget(null);
+              setWeekEditingDay(null);
               setTab(id as Tab);
               scrollTo({ top: 0, behavior: "smooth" });
             }}

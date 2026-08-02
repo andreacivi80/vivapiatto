@@ -1476,7 +1476,7 @@ button {
 .week-edit-banner {
   position: fixed;
   left: 50%;
-  bottom: 86px;
+  top: 58px;
   width: min(492px, calc(100% - 28px));
   transform: translateX(-50%);
   z-index: 60;

@@ -2,7 +2,14 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.15.0 — in preparazione
+## v1.15.1 — in preparazione
+
+- [x] Barra “Chiudi / Chiudi e riequilibra” fissata in alto e rimossa quando si apre normalmente la sezione Oggi.
+- [x] Fotografia finale specifica per pasta integrale, lenticchie e zucca.
+- [x] Fotografia finale specifica per gnocchi, tonno al naturale e zucchine, senza maccheroni.
+- [x] Entrambe le composizioni trasformate in ricette guidate complete e proposte come piatti unici modificabili.
+
+## v1.15.0 — pubblicata
 
 - [x] Barra “Chiudi / Chiudi e riequilibra” fissa sopra la navigazione e sempre visibile durante lo scorrimento.
 - [x] Miniature Settimana con immagine completa, senza taglio di olio, piselli o cracker.
