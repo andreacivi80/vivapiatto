@@ -92,7 +92,21 @@ Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggior
 - [x] Conservare il piatto registrato quando un nuovo check-in rigenera il menu.
 - [x] Fotografie atomiche per riso basmati/Venere, gnocchi, pollo, bistecca, salmone, uova, tonno, bresaola, verdure e frutta principali.
 
-## v1.8.0 — pronta per pubblicazione
+## v1.9.0 — pronta per pubblicazione
+
+- [x] Schede mobile senza altezza fissa: nessun componente tagliato.
+- [x] Pane, olio e aggiunte caloriche trasformati in componenti modificabili.
+- [x] Alternative ordinate per momento della giornata, mantenendo tutto il catalogo nella scelta libera.
+- [x] Pane sostituibile con cracker, fette biscottate e grissini con quantità e kcal.
+- [x] Nomi geografici inventati eliminati dalle ricette generate.
+- [x] X del pannello alternative sempre visibile e ad alto contrasto.
+- [x] Extra spostati nel flusso di Oggi; Progressi resta il riepilogo.
+- [x] Settimana mostra le parti effettivamente scelte e le kcal aggiornate.
+- [x] Cache immagini aggiornata a ogni versione.
+- [x] Foto mancanti di pomodori, carote, funghi e olive create e collegate.
+- [x] Prime nuove immagini dell'elenco: farine, mandorle e crema cacao-nocciole.
+
+## v1.8.0 — pubblicata
 
 - [x] Flag diretto e reversibile senza apertura involontaria della ricetta.
 - [x] “Nessuno” per rimuovere qualsiasi componente e sottrarlo dal totale.

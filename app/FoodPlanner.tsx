@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { portionOptions, STANDARD_SOURCES } from "./nutritionEngine";
 
 type Macro = { kcal: number; protein: number; carbs: number; fat: number };
-type Food = Macro & { fiber: number; source: "CREA" | "USDA" };
+type Food = Macro & { fiber: number; source: "CREA" | "USDA" | "ETICHETTA" };
 type RecipeIngredient = { food: string; grams: number; label?: string };
 type MealPart = RecipeIngredient & {
   category:
@@ -35,8 +35,9 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.8.0";
-const photo = (name: string) => `${import.meta.env.BASE_URL}food/${name}.png`;
+const VERSION = "1.9.0";
+const photo = (name: string) =>
+  `${import.meta.env.BASE_URL}food/${name}.png?v=${VERSION}`;
 const drinkOptions: LogItem[] = [
   { label: "Acqua", kcal: 0, amount: "500 ml" },
   { label: "Caffè senza zucchero", kcal: 2, amount: "1 tazza" },
@@ -464,6 +465,14 @@ const foods: Record<string, Food> = {
     fiber: 12.5,
     source: "USDA",
   },
+  "Crema cacao e nocciole": {
+    kcal: 539,
+    protein: 6.3,
+    carbs: 57.5,
+    fat: 30.9,
+    fiber: 0,
+    source: "ETICHETTA",
+  },
   Pistacchi: {
     kcal: 560,
     protein: 20.2,
@@ -695,6 +704,14 @@ const foods: Record<string, Food> = {
     fat: 13,
     fiber: 7,
     source: "USDA",
+  },
+  Grissini: {
+    kcal: 421,
+    protein: 11.3,
+    carbs: 65.1,
+    fat: 13.9,
+    fiber: 3.5,
+    source: "CREA",
   },
   Burro: {
     kcal: 717,
@@ -1179,147 +1196,123 @@ const vegCombos = [
 const flavorProfiles = [
   {
     cuisine: "Asiatico",
-    name: "Tokyo",
     aroma:
       "zenzero, lime e un cucchiaino di salsa di soia a ridotto contenuto di sale",
     finish: "taglio ordinato, erbe fresche e semi di zucca tostati",
   },
   {
     cuisine: "Asiatico",
-    name: "Bangkok",
     aroma: "lime, zenzero, peperoncino e coriandolo",
     finish: "verdure croccanti e una spremuta di lime",
   },
   {
     cuisine: "Asiatico",
-    name: "Delhi",
     aroma: "curry dolce, curcuma, cumino e limone",
     finish: "spezie tostate e una cucchiaiata fresca di yogurt se gradito",
   },
   {
     cuisine: "Asiatico",
-    name: "Seoul",
     aroma: "zenzero, aglio, peperoncino e aceto di riso",
     finish: "strisce sottili di verdura e semi tostati",
   },
   {
     cuisine: "Mediterraneo",
-    name: "Levant",
     aroma: "cumino, paprika affumicata, limone e menta",
     finish: "erbe fresche, limone e verdure ben colorate",
   },
   {
     cuisine: "Gourmet",
-    name: "Marrakech",
     aroma: "ras el hanout, cannella appena accennata e scorza di limone",
     finish: "contrasto caldo-fresco e impiattamento a mezzaluna",
   },
   {
     cuisine: "Gourmet",
-    name: "Bistrot",
     aroma: "senape, pepe nero, timo e limone",
     finish:
       "base compatta, verdure appoggiate in altezza e salsa a piccoli punti",
   },
   {
     cuisine: "Italiano",
-    name: "Sicilia",
     aroma: "origano, finocchietto, scorza di limone e pepe",
     finish: "pomodorini lucidi, rucola fresca e olio a filo",
   },
   {
     cuisine: "Italiano",
-    name: "Toscana",
     aroma: "rosmarino, salvia, aglio e pepe nero",
     finish: "elementi rustici ben dorati e olio solo a crudo",
   },
   {
     cuisine: "Mediterraneo",
-    name: "Atene",
     aroma: "origano, limone, aglio e menta",
     finish: "ingredienti separati, feta sbriciolata se prevista ed erbe",
   },
   {
     cuisine: "Gourmet",
-    name: "Nordica",
     aroma: "aneto, scorza di limone, pepe e aceto delicato",
     finish: "linee pulite, verdure croccanti e ciuffi di aneto",
   },
   {
     cuisine: "Vegetale",
-    name: "Orto creativo",
     aroma: "paprika, cumino, limone ed erbe miste",
     finish: "molti colori, consistenze diverse e semi tostati",
   },
   {
     cuisine: "Gourmet",
-    name: "Lima",
     aroma: "lime, peperoncino dolce, coriandolo e cipolla marinata",
     finish: "colori netti e una finitura fresca e acidula",
   },
   {
     cuisine: "Gourmet",
-    name: "Rio",
     aroma: "lime, aglio, paprika e prezzemolo",
     finish: "base compatta e verdure vivaci disposte a spicchi",
   },
   {
     cuisine: "Asiatico",
-    name: "Hanoi",
     aroma: "lime, zenzero, menta e coriandolo",
     finish: "erbe fresche, verdure sottili e parte calda separata",
   },
   {
     cuisine: "Asiatico",
-    name: "Bali",
     aroma: "curcuma, zenzero, lime e peperoncino",
     finish: "contrasto dorato e verde con lime a lato",
   },
   {
     cuisine: "Mediterraneo",
-    name: "Istanbul",
     aroma: "cumino, sommacco, menta e limone",
     finish: "erbe, spezie rosse e ingredienti disposti a ventaglio",
   },
   {
     cuisine: "Gourmet",
-    name: "Tbilisi",
     aroma: "coriandolo, paprika, aglio e aceto",
     finish: "verdure ben arrostite e noci solo se consentite",
   },
   {
     cuisine: "Vegetale",
-    name: "Addis Abeba",
     aroma: "paprika, curcuma, cumino e zenzero",
     finish: "componenti separati e spezie distribuite in superficie",
   },
   {
     cuisine: "Mediterraneo",
-    name: "Lisboa",
     aroma: "alloro, aglio, limone e prezzemolo",
     finish: "olio a crudo, erbe e una fetta di limone",
   },
   {
     cuisine: "Mediterraneo",
-    name: "Valencia",
     aroma: "paprika affumicata, zafferano, limone e prezzemolo",
     finish: "base stesa, verdure ordinate e bordi ben dorati",
   },
   {
     cuisine: "Gourmet",
-    name: "Caraibi",
     aroma: "lime, pimento, timo e peperoncino",
     finish: "colori tropicali e una finitura fresca",
   },
   {
     cuisine: "Gourmet",
-    name: "Parigi",
     aroma: "timo, senape delicata, limone e pepe",
     finish: "porzione raccolta, salsa leggera e verdure in altezza",
   },
   {
     cuisine: "Gourmet",
-    name: "Balcani",
     aroma: "paprika, origano, aglio e aceto",
     finish: "verdure arrostite, erbe e contrasti cremosi se consentiti",
   },
@@ -1373,12 +1366,12 @@ const generatedRecipes: Recipe[] = Array.from({ length: 284 }, (_, index) => {
                 : photo("farro");
   const title =
     course === "Primo"
-      ? `${profile.name} · ${base[1]} con ${veg[2]}`
+      ? `${base[1]} con ${veg[2]}`
       : course === "Secondo"
-        ? `${profile.name} · ${protein[1]} con ${veg[2]}`
+        ? `${protein[1]} con ${veg[2]}`
         : course === "Contorno"
-          ? `${profile.name} · ${veg[2]} speziati`
-          : `${profile.name} · ${style} con ${protein[1]}, ${base[1]} e ${veg[2]}`;
+          ? `${veg[2]} con erbe e spezie`
+          : `${style} con ${protein[1]}, ${base[1]} e ${veg[2]}`;
   const ingredients: RecipeIngredient[] =
     course === "Primo"
       ? [
@@ -2365,6 +2358,13 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     },
     {
       category: "Carboidrato",
+      food: "Grissini",
+      grams: 30,
+      label: "Grissini · 1 porzione",
+      image: photo("part-bread-v7"),
+    },
+    {
+      category: "Carboidrato",
       food: "Pasta integrale secca",
       grams: 80,
       label: "Pasta integrale secca",
@@ -2723,6 +2723,20 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       label: "Noci",
       image: photo("walnuts-20g-v5"),
     },
+    {
+      category: "Extra",
+      food: "Mandorle",
+      grams: 20,
+      label: "Mandorle",
+      image: photo("part-almonds-v9"),
+    },
+    {
+      category: "Extra",
+      food: "Crema cacao e nocciole",
+      grams: 15,
+      label: "Crema cacao e nocciole",
+      image: photo("part-chocolate-hazelnut-spread-v9"),
+    },
   ],
 };
 
@@ -2736,6 +2750,7 @@ const recommendedPartOptions = (part: MealPart, key: string) => {
           "Fette biscottate integrali",
           "Biscotti secchi",
           "Cracker integrali",
+          "Grissini",
           "Pane integrale",
         ].includes(x.food),
       );
@@ -2746,6 +2761,8 @@ const recommendedPartOptions = (part: MealPart, key: string) => {
           "Miele",
           "Burro",
           "Noci",
+          "Mandorle",
+          "Crema cacao e nocciole",
           "Caffè senza zucchero",
         ].includes(x.food),
       );
@@ -2758,6 +2775,7 @@ const recommendedPartOptions = (part: MealPart, key: string) => {
           "Fette biscottate integrali",
           "Biscotti secchi",
           "Cracker integrali",
+          "Grissini",
         ].includes(x.food),
       );
     if (part.category === "Proteina") return [];
@@ -2770,6 +2788,19 @@ const recommendedPartOptions = (part: MealPart, key: string) => {
   if ((slot === 2 || slot === 4) && part.category === "Extra")
     return options.filter((x) => x.food === "Olio extravergine");
   return options;
+};
+
+const orderedFreePartOptions = (role: MealPart["category"], key: string) => {
+  const slot = Number(key.split("-")[1]);
+  const categoryOrder: MealPart["category"][] =
+    slot === 0
+      ? ["Latticino", "Frutta", "Carboidrato", "Extra", "Proteina", "Contorno"]
+      : slot === 1 || slot === 3
+        ? ["Frutta", "Latticino", "Carboidrato", "Extra", "Proteina", "Contorno"]
+        : ["Carboidrato", "Proteina", "Contorno", "Extra", "Latticino", "Frutta"];
+  return categoryOrder
+    .filter((category) => category !== role)
+    .flatMap((category) => mealPartOptions[category]);
 };
 const occasionalRecipes: Recipe[] = [
   {
@@ -3157,9 +3188,7 @@ export function FoodPlanner() {
       (cuisineFilter === "Tutte" || recipeCuisine(r) === cuisineFilter) &&
       r.name.toLowerCase().includes(libraryQuery.toLowerCase()),
   );
-  const plannedIngredients = (key: string, recipe: Recipe) => {
-    const slot = Number(key.split("-")[1]);
-    const targetAdditions: RecipeIngredient[] =
+  const targetAdditionsFor = (slot: number): RecipeIngredient[] =>
       calories >= 2400
         ? slot === 0
           ? [
@@ -3218,8 +3247,38 @@ export function FoodPlanner() {
                   ]
                 : []
           : [];
+
+  const additionAsPart = (item: RecipeIngredient): MealPart => {
+    const category: MealPart["category"] =
+      item.food === "Pane integrale"
+        ? "Carboidrato"
+        : ["Mela", "Banana"].includes(item.food)
+          ? "Frutta"
+          : item.food === "Yogurt greco 2%"
+            ? "Latticino"
+            : "Extra";
+    const known = mealPartOptions[category].find((x) => x.food === item.food);
+    return {
+      category,
+      food: item.food,
+      grams: item.grams,
+      label: item.label || known?.label || item.food,
+      image: known?.image || photo("part-bread-v7"),
+    };
+  };
+
+  const activeMealParts = (key: string, recipe: Recipe): MealPart[] => {
+    if (!recipe.parts) return [];
+    if (partSelections[key]) return partSelections[key];
+    const slot = Number(key.split("-")[1]);
+    return [...recipe.parts, ...targetAdditionsFor(slot).map(additionAsPart)];
+  };
+
+  const plannedIngredients = (key: string, recipe: Recipe) => {
+    const slot = Number(key.split("-")[1]);
+    const targetAdditions = targetAdditionsFor(slot);
     if (!recipe.parts) return [...recipe.ingredients, ...targetAdditions];
-    const activeParts = partSelections[key] || recipe.parts;
+    const activeParts = activeMealParts(key, recipe);
     const pastaSelected = activeParts.some((x) => x.food.includes("Pasta"));
     const extras = recipe.ingredients.filter(
       (x) =>
@@ -3227,7 +3286,7 @@ export function FoodPlanner() {
         (x.food === "Olio extravergine" ||
           (pastaSelected && x.food === "Passata di pomodoro")),
     );
-    return [...activeParts, ...extras, ...targetAdditions];
+    return [...activeParts, ...extras];
   };
   const scale = 1;
   const dayTotals = useMemo(
@@ -3499,7 +3558,7 @@ export function FoodPlanner() {
     const day = Number(dayText);
     const slot = Number(slotText);
     const recipe = recipeMap[getDayIds(day)[slot]];
-    const activeParts = partSelections[partPicker.key] || recipe.parts || [];
+    const activeParts = activeMealParts(partPicker.key, recipe);
     const previous = activeParts[partPicker.index];
     const nextPart = { ...replacement, category: partPicker.role };
     const delta =
@@ -3529,7 +3588,7 @@ export function FoodPlanner() {
     if (!partPicker) return;
     const [dayText, slotText] = partPicker.key.split("-");
     const recipe = recipeMap[getDayIds(Number(dayText))[Number(slotText)]];
-    const activeParts = partSelections[partPicker.key] || recipe.parts || [];
+    const activeParts = activeMealParts(partPicker.key, recipe);
     setPartSelections((v) => ({
       ...v,
       [partPicker.key]: activeParts.map((part, index) =>
@@ -3547,7 +3606,7 @@ export function FoodPlanner() {
     index: number,
     grams: number,
   ) => {
-    const activeParts = partSelections[key] || recipe.parts || [];
+    const activeParts = activeMealParts(key, recipe);
     setPartSelections((v) => ({
       ...v,
       [key]: activeParts.map((part, partIndex) =>
@@ -3562,7 +3621,7 @@ export function FoodPlanner() {
   }, [goal, calories, cuisineChoice, dayContext, plannedDrink]);
   const addDrink = (day: number, item: LogItem) =>
     setDrinks((v) => ({ ...v, [day]: [...(v[day] || []), item] }));
-  const addExtra = () => {
+  const addExtra = (day = diaryDay) => {
     if (!extraName.trim()) return;
     const match = Object.keys(foods).find(
       (food) => food.toLowerCase() === extraName.trim().toLowerCase(),
@@ -3575,8 +3634,8 @@ export function FoodPlanner() {
     const kcal = round((foods[match].kcal * grams) / 100);
     setExtras((v) => ({
       ...v,
-      [diaryDay]: [
-        ...(v[diaryDay] || []),
+      [day]: [
+        ...(v[day] || []),
         { label: `${match} · ${grams} g`, kcal },
       ],
     }));
@@ -4096,7 +4155,7 @@ export function FoodPlanner() {
                     visibleIngredients.length === 1
                       ? `${round(visibleIngredients[0].grams)} g porzione · `
                       : "";
-                  const activeParts = partSelections[key] || r.parts || [];
+                  const activeParts = activeMealParts(key, r);
                   const allowed = isAllowed(r);
                   const actual = completed[key]
                     ? calc(actualIngredients(key, r))
@@ -4309,6 +4368,48 @@ export function FoodPlanner() {
                   );
                 })}
               </div>
+              <details className="today-extra">
+                <summary>＋ Aggiungi extra o alimento diverso</summary>
+                <div className="extra-form">
+                  <input
+                    placeholder="Scrivi pane, cracker, dolce…"
+                    list="food-suggestions"
+                    value={extraName}
+                    onChange={(e) => setExtraName(e.target.value)}
+                  />
+                  <datalist id="food-suggestions">
+                    {Object.keys(foods).map((food) => (
+                      <option key={food} value={food} />
+                    ))}
+                  </datalist>
+                  <input
+                    aria-label="Grammi extra"
+                    type="number"
+                    placeholder="grammi"
+                    value={extraGrams}
+                    onChange={(e) => setExtraGrams(e.target.value)}
+                  />
+                  <button onClick={() => addExtra(dayIndex)}>Aggiungi</button>
+                </div>
+                <div className="log-list">
+                  {(extras[dayIndex] || []).map((x, extraIndex) => (
+                    <button
+                      key={`${x.label}-${extraIndex}`}
+                      onClick={() =>
+                        setExtras((v) => ({
+                          ...v,
+                          [dayIndex]: v[dayIndex].filter(
+                            (_, index) => index !== extraIndex,
+                          ),
+                        }))
+                      }
+                    >
+                      <span>{x.label}</span>
+                      <b>{x.kcal} kcal ×</b>
+                    </button>
+                  ))}
+                </div>
+              </details>
             </section>
           </>
         )}
@@ -4365,6 +4466,10 @@ export function FoodPlanner() {
                   {getDayIds(i).map((id, slot) => {
                     const r = recipeMap[id];
                     const key = `${i}-${slot}`;
+                    const weekParts = activeMealParts(key, r).filter(
+                      (part) => part.grams > 0,
+                    );
+                    const weekIngredients = plannedIngredients(key, r);
                     return (
                       <div className="week-meal-row" key={key}>
                         <button
@@ -4374,10 +4479,22 @@ export function FoodPlanner() {
                             setSelected(r);
                           }}
                         >
-                          <img src={r.image} alt="" />
+                          <img
+                            src={weekParts[0]?.image || r.image}
+                            alt=""
+                          />
                           <span>
                             <small>{SLOT_LABELS[slot]}</small>
-                            <b>{r.name}</b>
+                            <b>
+                              {weekParts.length
+                                ? weekParts
+                                    .map((part) => part.label || part.food)
+                                    .join(" · ")
+                                : r.name}
+                            </b>
+                            <em>
+                              {round(calc(weekIngredients).kcal)} kcal
+                            </em>
                           </span>
                           <i>{completed[key] ? "✓" : "→"}</i>
                         </button>
@@ -4696,44 +4813,6 @@ export function FoodPlanner() {
                   giorno; una tazzina varia per miscela e preparazione, quindi
                   il conteggio non equivale ai mg.
                 </p>
-                <h2 className="mini-title">Extra o sgarro</h2>
-                <div className="extra-form">
-                  <input
-                    placeholder="Scrivi pane, cracker…"
-                    list="food-suggestions"
-                    value={extraName}
-                    onChange={(e) => setExtraName(e.target.value)}
-                  />
-                  <datalist id="food-suggestions">
-                    {Object.keys(foods).map((food) => (
-                      <option key={food} value={food} />
-                    ))}
-                  </datalist>
-                  <input
-                    aria-label="Grammi extra"
-                    type="number"
-                    placeholder="grammi"
-                    value={extraGrams}
-                    onChange={(e) => setExtraGrams(e.target.value)}
-                  />
-                  <button onClick={addExtra}>Aggiungi</button>
-                </div>
-                <div className="log-list">
-                  {(extras[diaryDay] || []).map((x, i) => (
-                    <button
-                      key={`${x.label}-${i}`}
-                      onClick={() =>
-                        setExtras((v) => ({
-                          ...v,
-                          [diaryDay]: v[diaryDay].filter((_, n) => n !== i),
-                        }))
-                      }
-                    >
-                      <span>{x.label}</span>
-                      <b>{x.kcal} kcal ×</b>
-                    </button>
-                  ))}
-                </div>
                 <div className="diary-actions">
                   <button onClick={() => rebalanceRemaining(diaryDay)}>
                     Riequilibra il resto
@@ -4853,12 +4932,11 @@ export function FoodPlanner() {
             </div>
             <h3>Scelta libera</h3>
             <p>
-              Scegli anche un'altra categoria: l'app segnalerà lo scostamento.
+              Prima trovi le scelte più comuni per questo momento; più sotto
+              resta disponibile tutto il catalogo.
             </p>
             <div className="part-choice-grid free">
-              {(Object.keys(mealPartOptions) as MealPart["category"][])
-                .filter((category) => category !== partPicker.role)
-                .flatMap((category) => mealPartOptions[category])
+              {orderedFreePartOptions(partPicker.role, partPicker.key)
                 .map((option) => (
                   <button
                     key={option.food}

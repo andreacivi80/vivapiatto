@@ -314,10 +314,11 @@ button {
   gap: 11px;
   align-items: center;
   box-shadow: 0 5px 16px rgba(22, 49, 41, 0.035);
-  overflow: hidden;
+  overflow: visible;
 }
 .meal-card.composed {
   min-height: 238px;
+  height: auto;
   grid-template-columns: 1fr 34px;
   align-items: start;
 }
@@ -330,7 +331,7 @@ button {
 }
 .meal-body {
   min-width: 0;
-  overflow: hidden;
+  overflow: visible;
 }
 .meal-body > span {
   font-size: 9px;
@@ -458,6 +459,23 @@ button {
   padding: 3px 5px;
   font-size: 8px;
 }
+.today-extra {
+  margin-top: 10px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--paper);
+  padding: 9px;
+}
+.today-extra summary {
+  cursor: pointer;
+  color: var(--coral);
+  font-size: 10px;
+  font-weight: 900;
+  list-style: none;
+}
+.today-extra .extra-form {
+  margin-top: 8px;
+}
 .structure-note {
   display: block;
   margin: 2px 0 5px;
@@ -478,6 +496,13 @@ button {
   align-items: start;
   justify-content: space-between;
   gap: 10px;
+  position: sticky;
+  top: -16px;
+  z-index: 20;
+  margin: -16px -16px 8px;
+  padding: 16px 16px 8px;
+  background: var(--cream);
+  border-bottom: 1px solid var(--line);
 }
 .part-picker-sheet header span {
   color: var(--coral);
@@ -489,12 +514,16 @@ button {
   font-size: 22px;
 }
 .part-picker-sheet header > button {
-  width: 32px;
-  height: 32px;
+  flex: 0 0 38px;
+  width: 38px;
+  height: 38px;
   border: 0;
   border-radius: 50%;
-  background: var(--paper);
-  font-size: 22px;
+  background: var(--ink);
+  color: white;
+  font-size: 26px;
+  line-height: 1;
+  box-shadow: 0 3px 10px rgba(22, 49, 41, 0.2);
 }
 .part-picker-sheet h3 {
   margin: 10px 0 6px;
@@ -1245,11 +1274,16 @@ button {
     gap: 7px;
   }
   .meal-card {
-    height: 92px;
+    min-height: 92px;
+    height: auto;
     border-radius: 16px;
     grid-template-columns: 76px 1fr 30px;
     gap: 8px;
     padding: 7px;
+  }
+  .meal-card.composed {
+    min-height: 0;
+    height: auto;
   }
   .meal-card img {
     width: 76px;
@@ -1485,6 +1519,12 @@ button {
   font-size: 10px;
   line-height: 1.2;
   margin-top: 2px;
+}
+.week-meal em {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 8px;
+  font-style: normal;
 }
 .week-meal i {
   font-style: normal;
