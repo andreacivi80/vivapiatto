@@ -1634,6 +1634,28 @@ button {
   object-fit: cover;
   border-radius: 10px;
 }
+.week-meal .week-slot-visual {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #fff8dc, #e9f4df);
+  border: 1px solid rgba(24, 51, 44, 0.08);
+  font-size: 22px;
+  line-height: 1;
+}
+.week-meal .week-slot-visual.slot-1,
+.week-meal .week-slot-visual.slot-3 {
+  background: linear-gradient(145deg, #fff2e8, #fff8d9);
+}
+.week-meal .week-slot-visual.slot-2 {
+  background: linear-gradient(145deg, #e8f3ff, #e5f4e8);
+}
+.week-meal .week-slot-visual.slot-4 {
+  background: linear-gradient(145deg, #ebe9ff, #fff0dc);
+}
 .week-meal span {
   min-width: 0;
   display: flex;

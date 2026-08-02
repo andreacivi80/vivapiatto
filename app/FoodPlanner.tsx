@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { portionOptions, STANDARD_SOURCES } from "./nutritionEngine";
 
 type Macro = { kcal: number; protein: number; carbs: number; fat: number };
@@ -35,9 +35,10 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.11.1";
+const VERSION = "1.12.0";
 const photo = (name: string) =>
   `${import.meta.env.BASE_URL}food/${name}.png?v=${VERSION}`;
+const WEEK_SLOT_VISUALS = ["☕", "🍎", "🍽", "🥕", "🌙"];
 const drinkOptions: LogItem[] = [
   { label: "Acqua", kcal: 0, amount: "500 ml" },
   { label: "Caffè senza zucchero", kcal: 2, amount: "1 tazza" },
@@ -64,6 +65,30 @@ const foods: Record<string, Food> = {
     fat: 6.5,
     fiber: 10.1,
     source: "CREA",
+  },
+  "Farina d'avena": {
+    kcal: 378,
+    protein: 12.6,
+    carbs: 66.3,
+    fat: 7.1,
+    fiber: 7.6,
+    source: "CREA",
+  },
+  "Farina di frumento integrale": {
+    kcal: 313,
+    protein: 11.9,
+    carbs: 61.8,
+    fat: 1.9,
+    fiber: 8.4,
+    source: "CREA",
+  },
+  "Farina di grano saraceno": {
+    kcal: 335,
+    protein: 12.6,
+    carbs: 70.6,
+    fat: 3.1,
+    fiber: 10,
+    source: "USDA",
   },
   "Frutti di bosco": {
     kcal: 50,
@@ -1727,6 +1752,72 @@ const simpleBreakfasts: Recipe[] = [
     alternatives: ["Ricotta al posto del burro", "Yogurt al posto del latte"],
   },
 ];
+const matrixBreakfasts: Recipe[] = [
+  {
+    id: "matrix-c05-oat-pancakes",
+    name: "Pancake d'avena e banana",
+    kicker: "Colazione da casa · matrice C05",
+    course: "Colazione",
+    cuisine: "Italiano",
+    image: photo("recipe-oat-pancakes-v112"),
+    time: 15,
+    ingredients: [
+      { food: "Farina d'avena", grams: 40 },
+      { food: "Banana", grams: 100 },
+      { food: "Uovo", grams: 50 },
+      { food: "Yogurt greco 2%", grams: 60 },
+      { food: "Fragole", grams: 100 },
+    ],
+    parts: [
+      {
+        category: "Carboidrato",
+        food: "Farina d'avena",
+        grams: 40,
+        label: "Farina d'avena · peso a crudo",
+        image: photo("part-oat-flour-v9"),
+      },
+      {
+        category: "Frutta",
+        food: "Banana",
+        grams: 100,
+        label: "Banana",
+        image: photo("part-banana-v7"),
+      },
+      {
+        category: "Proteina",
+        food: "Uovo",
+        grams: 50,
+        label: "1 uovo medio",
+        image: photo("part-eggs-scrambled-v8"),
+      },
+      {
+        category: "Latticino",
+        food: "Yogurt greco 2%",
+        grams: 60,
+        label: "Yogurt bianco",
+        image: photo("part-yogurt-v7"),
+      },
+      {
+        category: "Frutta",
+        food: "Fragole",
+        grams: 100,
+        label: "Fragole",
+        image: photo("part-strawberries-v11"),
+      },
+    ],
+    steps: [
+      "Schiaccia la banana con una forchetta fino a ottenere una crema senza pezzi grandi.",
+      "Unisci l'uovo, poi incorpora la farina d'avena fino a formare una pastella uniforme.",
+      "Scalda una padella antiaderente. Versa tre piccoli pancake e cuocili 2-3 minuti per lato a fuoco medio-basso.",
+      "Servi con lo yogurt e le fragole lavate e tagliate. Non aggiungere olio o zucchero non registrati.",
+    ],
+    alternatives: [
+      "Pera al posto della banana, ricalcolando i grammi",
+      "Yogurt senza lattosio al posto dello yogurt bianco",
+      "La ricetta contiene un uovo: viene conteggiato nella frequenza settimanale",
+    ],
+  },
+];
 const quickSnacks: Recipe[] = [
   {
     id: "quick-apple",
@@ -2387,7 +2478,28 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       food: "Grissini",
       grams: 30,
       label: "Grissini · 1 porzione",
-      image: photo("part-bread-v7"),
+      image: photo("part-grissini-v112"),
+    },
+    {
+      category: "Carboidrato",
+      food: "Farina d'avena",
+      grams: 40,
+      label: "Farina d'avena · peso a crudo",
+      image: photo("part-oat-flour-v9"),
+    },
+    {
+      category: "Carboidrato",
+      food: "Farina di frumento integrale",
+      grams: 50,
+      label: "Farina integrale · peso a crudo",
+      image: photo("part-whole-wheat-flour-v9"),
+    },
+    {
+      category: "Carboidrato",
+      food: "Farina di grano saraceno",
+      grams: 40,
+      label: "Farina di grano saraceno · peso a crudo",
+      image: photo("part-buckwheat-flour-v9"),
     },
     {
       category: "Carboidrato",
@@ -2805,6 +2917,18 @@ const recommendedPartOptions = (part: MealPart, key: string) => {
   const slot = Number(key.split("-")[1]);
   const options = mealPartOptions[part.category];
   if (slot === 0) {
+    if (part.category === "Latticino") {
+      const breakfastDairyOrder = [
+        "Latte parzialmente scremato",
+        "Bevanda di soia senza zucchero",
+        "Bevanda d'avena senza zucchero",
+        "Yogurt greco 2%",
+        "Ricotta vaccina",
+      ];
+      return breakfastDairyOrder
+        .map((food) => options.find((option) => option.food === food))
+        .filter((option): option is MealPart => Boolean(option));
+    }
     if (part.category === "Carboidrato")
       return options.filter((x) =>
         [
@@ -2957,7 +3081,14 @@ const catalogSnacks: Recipe[] = Array.from({ length: 30 }, (_, index) => {
 });
 
 const rotationMainCarbs = mealPartOptions.Carboidrato.filter(
-  (part) => !["Fette biscottate integrali", "Biscotti secchi"].includes(part.food),
+  (part) =>
+    ![
+      "Fette biscottate integrali",
+      "Biscotti secchi",
+      "Farina d'avena",
+      "Farina di frumento integrale",
+      "Farina di grano saraceno",
+    ].includes(part.food),
 );
 const rotationMainExtras = mealPartOptions.Extra.filter((part) =>
   ["Olio extravergine", "Grana Padano DOP"].includes(part.food),
@@ -3068,6 +3199,7 @@ const occasionalRecipes: Recipe[] = [
 ];
 const allRecipes = [
   ...simpleBreakfasts,
+  ...matrixBreakfasts,
   ...catalogBreakfasts,
   ...quickSnacks,
   ...catalogSnacks,
@@ -3238,6 +3370,75 @@ export function FoodPlanner() {
     { food: "Quinoa cotta", grams: 100 },
     { food: "Olio extravergine", grams: 8 },
   ]);
+  const updateBlockedRef = useRef(false);
+  const lastInteractionRef = useRef(Date.now());
+  updateBlockedRef.current = Boolean(
+    selected ||
+      partPicker ||
+      preferencesOpen ||
+      checkinOpen ||
+      shoppingOpen ||
+      weekEditingDay !== null,
+  );
+
+  useEffect(() => {
+    const rememberInteraction = () => {
+      lastInteractionRef.current = Date.now();
+    };
+    window.addEventListener("pointerdown", rememberInteraction, true);
+    window.addEventListener("keydown", rememberInteraction, true);
+    window.addEventListener("input", rememberInteraction, true);
+    return () => {
+      window.removeEventListener("pointerdown", rememberInteraction, true);
+      window.removeEventListener("keydown", rememberInteraction, true);
+      window.removeEventListener("input", rememberInteraction, true);
+    };
+  }, []);
+
+  useEffect(() => {
+    let disposed = false;
+    let updateWaiting = false;
+    const applyWhenSafe = () => {
+      if (
+        !disposed &&
+        updateWaiting &&
+        !updateBlockedRef.current &&
+        Date.now() - lastInteractionRef.current > 3000
+      ) {
+        window.location.reload();
+      }
+    };
+    const checkVersion = async () => {
+      try {
+        const response = await fetch(
+          `${import.meta.env.BASE_URL}version.json?time=${Date.now()}`,
+          { cache: "no-store" },
+        );
+        const release = (await response.json()) as { version?: string };
+        if (release.version && release.version !== VERSION) {
+          updateWaiting = true;
+          applyWhenSafe();
+        }
+      } catch {
+        // Offline: il controllo riprova senza modificare il lavoro salvato.
+      }
+    };
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") checkVersion();
+    };
+    checkVersion();
+    const versionTimer = window.setInterval(checkVersion, 15000);
+    const safeTimer = window.setInterval(applyWhenSafe, 1000);
+    window.addEventListener("focus", checkVersion);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      disposed = true;
+      window.clearInterval(versionTimer);
+      window.clearInterval(safeTimer);
+      window.removeEventListener("focus", checkVersion);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, []);
 
   useEffect(() => {
     try {
@@ -3327,6 +3528,12 @@ export function FoodPlanner() {
   ];
   const isAllowed = (recipe: Recipe) =>
     recipe.ingredients.every((i) => !blockedFoods.includes(i.food));
+  const availableBreakfasts = () =>
+    [
+      ...simpleBreakfasts,
+      ...(dayContext === "Casa" ? matrixBreakfasts : []),
+      ...catalogBreakfasts,
+    ].filter(isAllowed);
   const recipeCuisine = (r: Recipe) =>
     r.cuisine ||
     (r.id.includes("toast") || r.id.includes("sweet")
@@ -3392,7 +3599,7 @@ export function FoodPlanner() {
   );
   const replanFollowingDays = (changedDay: number) => {
     if (weekLocked) return;
-    const breakfasts = [...simpleBreakfasts, ...catalogBreakfasts].filter(isAllowed);
+    const breakfasts = availableBreakfasts();
     const snacks = [...quickSnacks, ...catalogSnacks].filter(isAllowed);
     const mains = allRecipes.filter(
       (r) =>
@@ -3627,7 +3834,7 @@ export function FoodPlanner() {
     const styled = allRecipes.filter(
       (r) => isAllowed(r) && recipeCuisine(r) === cuisineChoice,
     );
-    const breakfasts = [...simpleBreakfasts, ...catalogBreakfasts].filter(isAllowed);
+    const breakfasts = availableBreakfasts();
     const snacks = [...quickSnacks, ...catalogSnacks].filter(isAllowed);
     const mains = styled.filter((r) =>
       ["Piatto unico", "Primo", "Secondo"].includes(recipeCourse(r)),
@@ -3699,7 +3906,7 @@ export function FoodPlanner() {
         : goal === "Mantenimento massa"
           ? 3
           : 2);
-    const breakfasts = [...simpleBreakfasts, ...catalogBreakfasts].filter(isAllowed);
+    const breakfasts = availableBreakfasts();
     let snacks = [...quickSnacks, ...catalogSnacks].filter(isAllowed);
     let mains = allRecipes.filter(
       (r) =>
@@ -4776,14 +4983,12 @@ export function FoodPlanner() {
                             setSelected(r);
                           }}
                         >
-                          <img
-                            src={
-                              slot === 0
-                                ? photo("breakfast-summary-v111")
-                                : weekParts[0]?.image || r.image
-                            }
-                            alt=""
-                          />
+                          <span
+                            className={`week-slot-visual slot-${slot}`}
+                            aria-hidden="true"
+                          >
+                            {WEEK_SLOT_VISUALS[slot]}
+                          </span>
                           <span>
                             <small>{SLOT_LABELS[slot]}</small>
                             <b>

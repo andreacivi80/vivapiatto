@@ -2,6 +2,18 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
+## v1.12.0 — pronta per pubblicazione
+
+- [x] Acquisita integralmente la specifica da 627 righe: 12 colazioni, 10 spuntini, 16 pranzi e 16 cene.
+- [x] Aggiornamento automatico tramite `version.json`, rinviato mentre ricetta, alternative, preferenze o modifica settimanale sono aperte; archivio `vivapiatto-v1` invariato.
+- [x] Vista Settimana con cinque immagini semantiche fisse, indipendenti dal primo ingrediente.
+- [x] Primo collegamento della matrice: C05 pancake d'avena e banana, componenti modificabili, preparazione completa e fotografia specifica.
+- [x] Farina d'avena, integrale e di grano saraceno con valori, foto e peso a crudo; escluse dalle rotazioni come alimenti crudi isolati.
+- [x] Grissini con fotografia esatta e nuovo nome asset per invalidare la cache.
+- [x] Sostituzioni del latticino a colazione ordinate per ruolo: latte, soia, avena, yogurt e ricotta.
+- [ ] Collegare le altre 53 ricette della matrice in blocchi verificati, ognuna con componenti, valori, istruzioni, frequenze e foto propria.
+- [ ] Completare il paniere oltre le 95 fotografie presenti e sostituire le foto ricetta generiche o duplicate.
+
 ## v1.2.0 — pubblicata
 
 - [x] Eliminare il blocco grande “Mangia bene” e ridurre gli spazi inutili.
