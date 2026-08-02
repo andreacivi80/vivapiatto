@@ -92,7 +92,14 @@ Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggior
 - [x] Conservare il piatto registrato quando un nuovo check-in rigenera il menu.
 - [x] Fotografie atomiche per riso basmati/Venere, gnocchi, pollo, bistecca, salmone, uova, tonno, bresaola, verdure e frutta principali.
 
-## v1.9.0 — pronta per pubblicazione
+## v1.10.0 — pronta per pubblicazione
+
+- [x] Settimana mostra le stesse tessere alimento di Oggi.
+- [x] Ogni componente settimanale apre direttamente le alternative con foto, grammi e kcal.
+- [x] Una modifica rigenera soltanto i giorni successivi non ancora registrati.
+- [x] I pasti già mangiati restano invariati nello storico.
+
+## v1.9.0 — pubblicata
 
 - [x] Schede mobile senza altezza fissa: nessun componente tagliato.
 - [x] Pane, olio e aggiunte caloriche trasformati in componenti modificabili.

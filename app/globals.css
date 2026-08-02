@@ -1731,6 +1731,42 @@ button {
   color: #2f568c;
   font-size: 17px;
 }
+.week-part-strip {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px;
+  padding: 0 0 8px 2px;
+}
+.week-part-strip button {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  padding: 3px;
+  text-align: left;
+}
+.week-part-strip img {
+  width: 100%;
+  height: 38px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+.week-part-strip span,
+.week-part-strip b {
+  display: block;
+  overflow-wrap: anywhere;
+  font-size: 7px;
+  line-height: 1.1;
+}
+.week-part-strip span {
+  margin-top: 2px;
+  font-weight: 800;
+}
+.week-part-strip b {
+  margin-top: 2px;
+  color: var(--muted);
+}
 .ingredients.editable label {
   display: flex;
   align-items: center;

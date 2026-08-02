@@ -35,7 +35,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.9.0";
+const VERSION = "1.10.0";
 const photo = (name: string) =>
   `${import.meta.env.BASE_URL}food/${name}.png?v=${VERSION}`;
 const drinkOptions: LogItem[] = [
@@ -3188,6 +3188,42 @@ export function FoodPlanner() {
       (cuisineFilter === "Tutte" || recipeCuisine(r) === cuisineFilter) &&
       r.name.toLowerCase().includes(libraryQuery.toLowerCase()),
   );
+  const replanFollowingDays = (changedDay: number) => {
+    const breakfasts = simpleBreakfasts.filter(isAllowed);
+    const snacks = quickSnacks.filter(isAllowed);
+    const mains = allRecipes.filter(
+      (r) =>
+        isAllowed(r) &&
+        recipeCuisine(r) === cuisineChoice &&
+        ["Piatto unico", "Primo", "Secondo"].includes(recipeCourse(r)),
+    );
+    const lunches =
+      dayContext === "Lavoro"
+        ? portableRecipes.filter(isAllowed)
+        : mains;
+    const dinners = balancedDinnerRecipes.filter(isAllowed);
+    if (!breakfasts.length || !snacks.length || !lunches.length || !dinners.length)
+      return;
+    setChoices((current) => {
+      const next = { ...current };
+      for (let day = changedDay + 1; day < days.length; day += 1) {
+        const pools = [breakfasts, snacks, lunches, snacks, dinners];
+        pools.forEach((pool, slot) => {
+          const key = `${day}-${slot}`;
+          if (!completed[key]) next[key] = pool[(day * 3 + slot) % pool.length].id;
+        });
+      }
+      return next;
+    });
+    setPartSelections((current) => {
+      const next = { ...current };
+      Object.keys(next).forEach((key) => {
+        const [dayText] = key.split("-");
+        if (Number(dayText) > changedDay && !completed[key]) delete next[key];
+      });
+      return next;
+    });
+  };
   const targetAdditionsFor = (slot: number): RecipeIngredient[] =>
       calories >= 2400
         ? slot === 0
@@ -3349,11 +3385,13 @@ export function FoodPlanner() {
     );
   const chooseRecipe = (recipe: Recipe) => {
     if (swapTarget) {
+      const changedDay = swapTarget.day;
       setChoices((v) => ({
         ...v,
         [`${swapTarget.day}-${swapTarget.slot}`]: recipe.id,
       }));
       setDayIndex(swapTarget.day);
+      replanFollowingDays(changedDay);
       setSwapTarget(null);
       setTab(swapReturnTab);
       scrollTo({ top: 0, behavior: "smooth" });
@@ -3582,6 +3620,7 @@ export function FoodPlanner() {
         ? `Parte cambiata: ${nextPart.label || nextPart.food} ${nextPart.grams} g.`
         : `Parte cambiata e ${SLOT_LABELS[nextSlot].toLowerCase()} ricalibrato.`,
     );
+    replanFollowingDays(day);
     setPartPicker(null);
   };
   const removeMealPart = () => {
@@ -4509,6 +4548,32 @@ export function FoodPlanner() {
                         >
                           ↻
                         </button>
+                        {weekParts.length > 0 && (
+                          <div className="week-part-strip">
+                            {weekParts.map((part, partIndex) => (
+                              <button
+                                key={`${part.category}-${partIndex}`}
+                                onClick={() =>
+                                  setPartPicker({
+                                    key,
+                                    index: partIndex,
+                                    part,
+                                    role:
+                                      r.parts?.[partIndex]?.category ||
+                                      part.category,
+                                  })
+                                }
+                              >
+                                <img
+                                  src={part.image}
+                                  alt={part.label || part.food}
+                                />
+                                <span>{part.label || part.food}</span>
+                                <b>{part.grams} g</b>
+                              </button>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     );
                   })}
