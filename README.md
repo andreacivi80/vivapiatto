@@ -4,7 +4,7 @@ Applicazione mobile per costruire e seguire un percorso alimentare pratico.
 
 ## Versione
 
-Versione corrente: **1.14.0**
+Versione corrente: **1.14.1**
 
 ## Funzioni
 

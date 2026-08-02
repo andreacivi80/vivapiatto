@@ -2,7 +2,14 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.14.0 — in preparazione
+## v1.14.1 — in preparazione
+
+- [x] Lenticchie e cannellini aggiunti alle alternative proteiche quotidiane.
+- [x] Fotografie specifiche e cache-bustate per lenticchie cotte e cannellini cotti.
+- [x] Cannellini con porzione standard da 150 g e valori CREA per alimento bollito e scolato.
+- [x] Lenticchie e cannellini collegati alle combinazioni coerenti con pasta, gnocchi, riso e altre basi.
+
+## v1.14.0 — pubblicata
 
 - [x] Bistecche distinte per animale: manzo, vitello, maiale/lonza e cavallo.
 - [x] Valori CREA specifici e peso dichiarato a crudo per le quattro carni.

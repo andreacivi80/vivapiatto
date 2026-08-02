@@ -36,7 +36,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.14.0";
+const VERSION = "1.14.1";
 const photo = (name: string) =>
   `${import.meta.env.BASE_URL}food/${name}.png?v=${VERSION}`;
 const WEEK_SLOT_IMAGES = [
@@ -328,6 +328,14 @@ const foods: Record<string, Food> = {
     fat: 0.4,
     fiber: 7.9,
     source: "USDA",
+  },
+  "Fagioli cannellini cotti": {
+    kcal: 107,
+    protein: 8,
+    carbs: 14.9,
+    fat: 0.4,
+    fiber: 7.8,
+    source: "CREA",
   },
   "Patata dolce cotta": {
     kcal: 90,
@@ -2863,6 +2871,20 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       label: "Piselli cotti",
       image: photo("part-peas-v8"),
     },
+    {
+      category: "Proteina",
+      food: "Lenticchie cotte",
+      grams: 150,
+      label: "Lenticchie cotte",
+      image: photo("part-lentils-v1141"),
+    },
+    {
+      category: "Proteina",
+      food: "Fagioli cannellini cotti",
+      grams: 150,
+      label: "Cannellini cotti",
+      image: photo("part-cannellini-v1141"),
+    },
   ],
   Contorno: [
     {
@@ -3415,10 +3437,10 @@ const compatibleMainProteins = (base: MealPart) => {
   const groups = base.food.includes("Pane") || base.food.includes("Cracker") || base.food.includes("Grissini")
     ? ["Fesa di tacchino", "Bresaola", "Tonno al naturale sgocciolato", "Prosciutto cotto", "Feta", "Uovo"]
     : base.food.includes("Pasta") || base.food.includes("Gnocchi")
-      ? ["Tonno al naturale sgocciolato", "Salmone cotto", "Feta", "Ceci cotti", "Piselli cotti"]
+      ? ["Tonno al naturale sgocciolato", "Salmone cotto", "Feta", "Ceci cotti", "Piselli cotti", "Lenticchie cotte", "Fagioli cannellini cotti"]
       : base.food.includes("Riso")
-        ? ["Petto di pollo cotto", "Petto di pollo arrosto", "Salmone cotto", "Merluzzo cotto", "Orata cotta", "Tonno al naturale sgocciolato", "Uovo", "Ceci cotti", "Piselli cotti"]
-        : ["Bistecca di manzo · peso a crudo", "Bistecca di vitello · peso a crudo", "Lonza di maiale · peso a crudo", "Bistecca di cavallo magra · peso a crudo", "Petto di pollo cotto", "Merluzzo cotto", "Orata cotta", "Salmone cotto", "Uovo", "Ceci cotti"];
+        ? ["Petto di pollo cotto", "Petto di pollo arrosto", "Salmone cotto", "Merluzzo cotto", "Orata cotta", "Tonno al naturale sgocciolato", "Uovo", "Ceci cotti", "Piselli cotti", "Lenticchie cotte", "Fagioli cannellini cotti"]
+        : ["Bistecca di manzo · peso a crudo", "Bistecca di vitello · peso a crudo", "Lonza di maiale · peso a crudo", "Bistecca di cavallo magra · peso a crudo", "Petto di pollo cotto", "Merluzzo cotto", "Orata cotta", "Salmone cotto", "Uovo", "Ceci cotti", "Lenticchie cotte", "Fagioli cannellini cotti"];
   return mealPartOptions.Proteina.filter((part) => groups.includes(part.food));
 };
 const catalogMains: Recipe[] = Array.from({ length: 84 }, (_, index) => {
@@ -4256,7 +4278,12 @@ export function FoodPlanner() {
         .filter(
           (r) =>
             !r.ingredients.some((i) =>
-              ["Ceci cotti", "Lenticchie cotte"].includes(i.food),
+              [
+                "Ceci cotti",
+                "Lenticchie cotte",
+                "Fagioli cannellini cotti",
+                "Piselli cotti",
+              ].includes(i.food),
             ),
         )
         .sort((a, b) => a.ingredients.length - b.ingredients.length);
