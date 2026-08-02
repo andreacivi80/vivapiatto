@@ -2,7 +2,14 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.14.3 — in preparazione
+## v1.14.4 — in preparazione
+
+- [x] C30 yogurt greco, kiwi, avena e pecan collegata alle colazioni veloci.
+- [x] Fotografia finale C30 e fotografia atomica delle pecan specifiche.
+- [x] Pecan e pistacchi inseriti nelle alternative reali della frutta a guscio.
+- [x] Componenti, porzioni, macro, preparazione e trasporto al lavoro verificabili separatamente.
+
+## v1.14.3 — pubblicata
 
 - [x] C29 porridge con pera e pistacchi collegata a ricette e proposte da casa/weekend.
 - [x] Fotografia finale C29 e fotografia atomica dei pistacchi specifiche e cache-bustate.

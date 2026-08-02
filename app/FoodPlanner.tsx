@@ -36,7 +36,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.14.3";
+const VERSION = "1.14.4";
 const photo = (name: string) =>
   `${import.meta.env.BASE_URL}food/${name}.png?v=${VERSION}`;
 const WEEK_SLOT_IMAGES = [
@@ -591,6 +591,14 @@ const foods: Record<string, Food> = {
     carbs: 27.2,
     fat: 45.3,
     fiber: 10.6,
+    source: "USDA",
+  },
+  "Noci pecan": {
+    kcal: 691,
+    protein: 9.2,
+    carbs: 13.9,
+    fat: 72,
+    fiber: 9.6,
     source: "USDA",
   },
   Nocciole: {
@@ -2024,6 +2032,62 @@ const matrixBreakfasts: Recipe[] = [
       "Preparazione da casa o weekend: non viene privilegiata nelle mattine di lavoro",
     ],
   },
+  {
+    id: "matrix-c30-yogurt-kiwi-pecans",
+    name: "Yogurt greco con kiwi, avena e noci pecan",
+    kicker: "Colazione veloce · matrice C30",
+    course: "Colazione",
+    cuisine: "Italiano",
+    image: photo("recipe-c30-yogurt-kiwi-pecans-v1144"),
+    time: 5,
+    ingredients: [
+      { food: "Yogurt greco 2%", grams: 170 },
+      { food: "Kiwi", grams: 150 },
+      { food: "Fiocchi d'avena", grams: 30 },
+      { food: "Noci pecan", grams: 10 },
+    ],
+    parts: [
+      {
+        category: "Latticino",
+        food: "Yogurt greco 2%",
+        grams: 170,
+        label: "Yogurt greco bianco",
+        image: photo("part-yogurt-v7"),
+      },
+      {
+        category: "Frutta",
+        food: "Kiwi",
+        grams: 150,
+        label: "Kiwi",
+        image: photo("part-kiwi-v7"),
+      },
+      {
+        category: "Carboidrato",
+        food: "Fiocchi d'avena",
+        grams: 30,
+        label: "Fiocchi d'avena · peso a crudo",
+        image: photo("part-oats-v113"),
+      },
+      {
+        category: "Extra",
+        food: "Noci pecan",
+        grams: 10,
+        label: "Noci pecan non salate",
+        image: photo("part-pecans-v1144"),
+      },
+    ],
+    steps: [
+      "Versa 170 g di yogurt greco bianco in una ciotola.",
+      "Sbuccia e affetta 150 g di kiwi.",
+      "Aggiungi 30 g di fiocchi d'avena e completa con 10 g di noci pecan spezzettate.",
+      "Per il lavoro, porta avena e pecan separati e aggiungili allo yogurt al momento di mangiare.",
+    ],
+    alternatives: [
+      "Yogurt senza lattosio o di soia non zuccherato, con ricalcolo automatico",
+      "Pistacchi, mandorle o noci nella quantità equivalente proposta",
+      "Contiene latte, avena e frutta a guscio",
+    ],
+  },
 ];
 const matrixSnacks: Recipe[] = [
   {
@@ -3291,6 +3355,20 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     },
     {
       category: "Extra",
+      food: "Pistacchi",
+      grams: 15,
+      label: "Pistacchi non salati",
+      image: photo("part-pistachios-v1143"),
+    },
+    {
+      category: "Extra",
+      food: "Noci pecan",
+      grams: 15,
+      label: "Noci pecan non salate",
+      image: photo("part-pecans-v1144"),
+    },
+    {
+      category: "Extra",
       food: "Crema cacao e nocciole",
       grams: 15,
       label: "Crema cacao e nocciole",
@@ -3363,6 +3441,8 @@ const recommendedPartOptions = (part: MealPart, key: string) => {
           "Miele",
           "Noci",
           "Mandorle",
+          "Pistacchi",
+          "Noci pecan",
           "Arachidi",
           "Crema 100% arachidi",
           "Crema cacao e nocciole",
