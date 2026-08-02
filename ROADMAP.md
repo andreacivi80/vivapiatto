@@ -2,7 +2,15 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.15.2 — in preparazione
+## v1.15.3 — in preparazione
+
+- [x] Crash della pagina Ricette corretto all'origine: `Zucca cotta` riallineata alla voce nutrizionale `Zucca`.
+- [x] Protezione permanente: una ricetta con dati incompleti non può più azzerare l'intera libreria.
+- [x] Dicitura “porzione” rimossa dai riepiloghi generali dei pasti.
+- [x] Data corrente visibile nella pagina Oggi.
+- [x] Alternative frutta e contorni ordinate prima per stagionalità e scelta libera deduplicata.
+
+## v1.15.2 — pubblicata
 
 - [x] Refresh della nuova versione automatico senza scroll, applicato appena non è aperta una modifica.
 - [x] Riepilogo compatto dopo cena con kcal, proteine, carboidrati e grassi aggiornati e percentuali rispetto al piano base.

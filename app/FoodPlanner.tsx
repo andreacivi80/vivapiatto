@@ -43,7 +43,12 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.15.2";
+const VERSION = "1.15.3";
+const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
+  weekday: "long",
+  day: "numeric",
+  month: "long",
+}).format(new Date());
 const photo = (name: string) =>
   `${import.meta.env.BASE_URL}food/${name}.png?v=${VERSION}`;
 const WEEK_SLOT_IMAGES = [
@@ -947,6 +952,7 @@ const calc = (
       const food = foods[item.food];
       const grams = item.grams * scale;
       const f = grams / 100;
+      if (!food) return { ...sum, weight: sum.weight + grams };
       return {
         kcal: sum.kcal + food.kcal * f,
         protein: sum.protein + food.protein * f,
@@ -2955,13 +2961,13 @@ const balancedDinnerRecipes: Recipe[] = [
     ingredients: [
       { food: "Pasta integrale secca", grams: 80 },
       { food: "Lenticchie cotte", grams: 120 },
-      { food: "Zucca cotta", grams: 200 },
+      { food: "Zucca", grams: 200 },
       { food: "Olio extravergine", grams: 10 },
     ],
     parts: [
       { category: "Carboidrato", food: "Pasta integrale secca", grams: 80, label: "Pasta integrale · peso a crudo", image: photo("simple-pasta-white-v5") },
       { category: "Proteina", food: "Lenticchie cotte", grams: 120, label: "Lenticchie cotte", image: photo("part-lentils-v1141") },
-      { category: "Contorno", food: "Zucca cotta", grams: 200, label: "Zucca cotta", image: photo("part-pumpkin-v8") },
+      { category: "Contorno", food: "Zucca", grams: 200, label: "Zucca cotta", image: photo("part-pumpkin-v8") },
       { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio extravergine", image: photo("part-olive-oil-v8") },
     ],
     steps: [
@@ -3636,9 +3642,41 @@ const normalizeMealPart = (part: MealPart): MealPart => {
     : part;
 };
 
+const seasonalMonths: Record<string, number[]> = {
+  "Ciliegie fresche": [5, 6],
+  "Albicocche fresche": [6, 7],
+  Anguria: [6, 7, 8],
+  "Melone estivo": [6, 7, 8],
+  Fragole: [4, 5, 6],
+  Pesca: [6, 7, 8],
+  Uva: [8, 9, 10],
+  Arancia: [11, 12, 1, 2, 3],
+  Kiwi: [11, 12, 1, 2, 3, 4],
+  Mela: [9, 10, 11, 12, 1, 2, 3],
+  Pera: [8, 9, 10, 11, 12, 1, 2],
+  Asparagi: [3, 4, 5, 6],
+  Broccoli: [10, 11, 12, 1, 2, 3],
+  Cavolfiore: [10, 11, 12, 1, 2, 3],
+  Finocchi: [10, 11, 12, 1, 2, 3, 4, 5],
+  Zucca: [9, 10, 11, 12, 1, 2],
+  Zucchine: [5, 6, 7, 8, 9],
+  Pomodorini: [5, 6, 7, 8, 9],
+  Fagiolini: [5, 6, 7, 8, 9],
+};
+const seasonalFirst = (options: MealPart[]) => {
+  const month = new Date().getMonth() + 1;
+  return [...options].sort(
+    (a, b) =>
+      Number(seasonalMonths[b.food]?.includes(month) || false) -
+      Number(seasonalMonths[a.food]?.includes(month) || false),
+  );
+};
+
 const recommendedPartOptions = (part: MealPart, key: string) => {
   const slot = Number(key.split("-")[1]);
-  const options = mealPartOptions[part.category];
+  const options = ["Frutta", "Contorno"].includes(part.category)
+    ? seasonalFirst(mealPartOptions[part.category])
+    : mealPartOptions[part.category];
   if (slot === 0) {
     if (part.category === "Latticino") {
       const breakfastDairyOrder = [
@@ -3733,6 +3771,10 @@ const orderedFreePartOptions = (role: MealPart["category"], key: string) => {
           "Semi di lino macinati",
           "Caffè senza zucchero",
         ].includes(option.food),
+    )
+    .filter(
+      (option, index, all) =>
+        all.findIndex((candidate) => candidate.food === option.food) === index,
     );
 };
 
@@ -4369,6 +4411,7 @@ export function FoodPlanner() {
   const filteredRecipes = allRecipes.filter(
     (r) =>
       r.kind !== "combination" &&
+      r.ingredients.every((item) => Boolean(foods[item.food])) &&
       isAllowed(r) &&
       compatibleWithSlot(r) &&
       compatibleWithPlace(r) &&
@@ -5218,9 +5261,9 @@ export function FoodPlanner() {
             )}
             <section className="today-strip">
               <div>
-                <span>OGGI · {days[dayIndex].label}</span>
+                <span>OGGI · {TODAY_LABEL}</span>
                 <b>
-                  Piano {round(dayTotals.kcal)} · scelto {calories} kcal
+                  {days[dayIndex].label} · piano {round(dayTotals.kcal)} · scelto {calories} kcal
                 </b>
                 <small>
                   Target oggi {plannedCalories} · scarto {round(dayTotals.kcal - plannedCalories) > 0 ? "+" : ""}
@@ -5509,10 +5552,6 @@ export function FoodPlanner() {
                   const key = `${dayIndex}-${i}`;
                   const visibleIngredients = actualIngredients(key, r);
                   const m = calc(visibleIngredients);
-                  const portion =
-                    visibleIngredients.length === 1
-                      ? `${round(visibleIngredients[0].grams)} g porzione · `
-                      : "";
                   const activeParts = activeMealParts(key, r);
                   const allowed = isAllowed(r);
                   const actual = completed[key]
@@ -5677,7 +5716,7 @@ export function FoodPlanner() {
                             : allowed
                               ? actual
                                 ? `Mangiato · ${round(actual.kcal)} kcal`
-                                : `${portion}${round(m.kcal)} kcal · ${round(m.protein)} g proteine · ${round(m.carbs)} g carboidrati · ${round(m.fat)} g grassi · ${r.time} min`
+                                : `${round(m.kcal)} kcal · ${round(m.protein)} g proteine · ${round(m.carbs)} g carboidrati · ${round(m.fat)} g grassi · ${r.time} min`
                               : "Contiene un alimento escluso"}
                         </p>
                       </div>
