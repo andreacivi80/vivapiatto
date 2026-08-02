@@ -36,7 +36,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.14.2";
+const VERSION = "1.14.3";
 const photo = (name: string) =>
   `${import.meta.env.BASE_URL}food/${name}.png?v=${VERSION}`;
 const WEEK_SLOT_IMAGES = [
@@ -1966,6 +1966,62 @@ const matrixBreakfasts: Recipe[] = [
       "Bevanda d'avena senza zucchero al posto della soia, con ricalcolo automatico",
       "Contiene soia e arachidi",
       "Per la versione da lavoro preparalo la sera e conservalo in frigorifero",
+    ],
+  },
+  {
+    id: "matrix-c29-porridge-pear-pistachio",
+    name: "Porridge con pera e pistacchi",
+    kicker: "Colazione da casa · matrice C29",
+    course: "Colazione",
+    cuisine: "Italiano",
+    image: photo("recipe-c29-porridge-pear-pistachio-v1143"),
+    time: 10,
+    ingredients: [
+      { food: "Fiocchi d'avena", grams: 40 },
+      { food: "Latte parzialmente scremato", grams: 180 },
+      { food: "Pera", grams: 150 },
+      { food: "Pistacchi", grams: 10 },
+    ],
+    parts: [
+      {
+        category: "Carboidrato",
+        food: "Fiocchi d'avena",
+        grams: 40,
+        label: "Fiocchi d'avena · peso a crudo",
+        image: photo("part-oats-v113"),
+      },
+      {
+        category: "Latticino",
+        food: "Latte parzialmente scremato",
+        grams: 180,
+        label: "Latte parzialmente scremato",
+        image: photo("part-milk-v7"),
+      },
+      {
+        category: "Frutta",
+        food: "Pera",
+        grams: 150,
+        label: "Pera",
+        image: photo("part-pear-v7"),
+      },
+      {
+        category: "Extra",
+        food: "Pistacchi",
+        grams: 10,
+        label: "Pistacchi non salati",
+        image: photo("part-pistachios-v1143"),
+      },
+    ],
+    steps: [
+      "Versa 40 g di fiocchi d'avena e 180 ml di latte in un pentolino.",
+      "Cuoci a fuoco medio-basso per 5-7 minuti, mescolando finché il porridge diventa cremoso.",
+      "Lava la pera, tagliala a cubetti e aggiungila al porridge.",
+      "Trita 10 g di pistacchi non salati e distribuiscili sopra senza aggiungere zuccheri non registrati.",
+    ],
+    alternatives: [
+      "Bevanda di soia senza zuccheri al posto del latte, con ricalcolo automatico",
+      "Contiene latte e pistacchi; con soia contiene soia",
+      "Preparazione da casa o weekend: non viene privilegiata nelle mattine di lavoro",
     ],
   },
 ];

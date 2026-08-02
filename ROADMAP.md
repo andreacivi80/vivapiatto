@@ -2,7 +2,14 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.14.2 — in preparazione
+## v1.14.3 — in preparazione
+
+- [x] C29 porridge con pera e pistacchi collegata a ricette e proposte da casa/weekend.
+- [x] Fotografia finale C29 e fotografia atomica dei pistacchi specifiche e cache-bustate.
+- [x] Quattro componenti C29 modificabili separatamente con calorie e macro ricalcolati.
+- [x] Alternativa latte/soia coerente e allergeni dichiarati.
+
+## v1.14.2 — pubblicata
 
 - [x] P43 farro, due uova, fagiolini e pomodori collegata come piatto unico trasportabile.
 - [x] Fotografia finale P43 specifica con tutti gli ingredienti realmente visibili.
