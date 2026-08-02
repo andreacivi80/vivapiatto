@@ -2,7 +2,15 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.15.1 — in preparazione
+## v1.15.2 — in preparazione
+
+- [x] Refresh della nuova versione automatico senza scroll, applicato appena non è aperta una modifica.
+- [x] Riepilogo compatto dopo cena con kcal, proteine, carboidrati e grassi aggiornati e percentuali rispetto al piano base.
+- [x] C33 kefir, papaya, muesli e mandorle collegata con dati istituzionali e fotografie specifiche.
+- [x] Ciliegie, albicocche, anguria e melone aggiunti con valori CREA, porzioni e fotografie autonome.
+- [x] Le quattro nuove frutte sono selezionabili nelle alternative e incidono realmente sui calcoli.
+
+## v1.15.1 — pubblicata
 
 - [x] Barra “Chiudi / Chiudi e riequilibra” fissata in alto e rimossa quando si apre normalmente la sezione Oggi.
 - [x] Fotografia finale specifica per pasta integrale, lenticchie e zucca.

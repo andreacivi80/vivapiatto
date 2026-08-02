@@ -1964,6 +1964,60 @@ button {
   font-size: 7px;
   line-height: 1.1;
 }
+
+.actual-day-summary {
+  margin: 10px 0 8px;
+  padding: 10px;
+  border: 1px solid #dfd2bd;
+  border-radius: 14px;
+  background: #fffdf8;
+}
+.actual-day-summary header,
+.actual-day-comparison {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+.actual-day-summary header {
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.actual-day-summary header div {
+  display: grid;
+  gap: 1px;
+}
+.actual-day-summary header span,
+.actual-day-summary header small,
+.actual-day-comparison span {
+  font-size: 10px;
+  color: #776b5d;
+}
+.actual-day-values {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 5px;
+}
+.actual-day-values span {
+  padding: 6px 7px;
+  border-radius: 8px;
+  background: #f4eee4;
+  font-size: 10px;
+  white-space: nowrap;
+}
+.actual-day-values b {
+  font-size: 13px;
+}
+.actual-day-comparison {
+  margin-top: 7px;
+  padding-top: 7px;
+  border-top: 1px solid #e8dfd0;
+}
+.actual-day-comparison b {
+  font-size: 9px;
+  font-weight: 700;
+  color: #51483d;
+}
 .week-part-strip span {
   margin-top: 2px;
   font-weight: 800;

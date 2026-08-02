@@ -27,7 +27,14 @@ type Recipe = {
 };
 type Day = { label: string; mood: string; recipes: string[] };
 type Tab = "today" | "week" | "library" | "builder" | "progress";
-type LogItem = { label: string; kcal: number; amount?: string };
+type LogItem = {
+  label: string;
+  kcal: number;
+  amount?: string;
+  protein?: number;
+  carbs?: number;
+  fat?: number;
+};
 const SLOT_LABELS = [
   "Colazione",
   "Spuntino mattina",
@@ -36,7 +43,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.15.1";
+const VERSION = "1.15.2";
 const photo = (name: string) =>
   `${import.meta.env.BASE_URL}food/${name}.png?v=${VERSION}`;
 const WEEK_SLOT_IMAGES = [
@@ -57,6 +64,54 @@ const drinkOptions: LogItem[] = [
 ];
 
 const foods: Record<string, Food> = {
+  "Kefir bianco magro": {
+    kcal: 48,
+    protein: 3.5,
+    carbs: 4.8,
+    fat: 1.6,
+    fiber: 0,
+    source: "FRIDA",
+  },
+  "Muesli": {
+    kcal: 374,
+    protein: 9.7,
+    carbs: 71.7,
+    fat: 6,
+    fiber: 6.4,
+    source: "CREA",
+  },
+  "Ciliegie fresche": {
+    kcal: 48,
+    protein: 0.8,
+    carbs: 11,
+    fat: 0.1,
+    fiber: 1.3,
+    source: "CREA",
+  },
+  "Albicocche fresche": {
+    kcal: 42,
+    protein: 0.4,
+    carbs: 9.8,
+    fat: 0.1,
+    fiber: 1.5,
+    source: "CREA",
+  },
+  "Anguria": {
+    kcal: 16,
+    protein: 0.4,
+    carbs: 3.7,
+    fat: 0,
+    fiber: 0.2,
+    source: "CREA",
+  },
+  "Melone estivo": {
+    kcal: 34,
+    protein: 0.8,
+    carbs: 7.4,
+    fat: 0.2,
+    fiber: 0.7,
+    source: "CREA",
+  },
   Albume: {
     kcal: 43,
     protein: 10.7,
@@ -2124,6 +2179,37 @@ const matrixBreakfasts: Recipe[] = [
     ],
     alternatives: ["Colazione da casa o weekend", "Contiene uova e glutine", "Pomodori e funghi restano sostituibili separatamente"],
   },
+  {
+    id: "matrix-c33-kefir-papaya-muesli",
+    name: "Kefir con papaya, muesli e mandorle",
+    kicker: "Colazione pronta in tre minuti · matrice C33",
+    course: "Colazione",
+    cuisine: "Italiano",
+    image: photo("recipe-c33-kefir-papaya-v1152"),
+    time: 3,
+    ingredients: [
+      { food: "Kefir bianco magro", grams: 170 },
+      { food: "Papaya", grams: 150 },
+      { food: "Muesli", grams: 30 },
+      { food: "Mandorle", grams: 10 },
+    ],
+    parts: [
+      { category: "Latticino", food: "Kefir bianco magro", grams: 170, label: "Kefir bianco magro", image: photo("part-kefir-v1152") },
+      { category: "Frutta", food: "Papaya", grams: 150, label: "Papaya", image: photo("part-papaya-v8") },
+      { category: "Carboidrato", food: "Muesli", grams: 30, label: "Muesli · 30 g", image: photo("part-muesli-v1152") },
+      { category: "Extra", food: "Mandorle", grams: 10, label: "Mandorle non salate", image: photo("part-almonds-v8") },
+    ],
+    steps: [
+      "Versa 170 g di kefir bianco in una ciotola.",
+      "Sbuccia la papaya, elimina i semi e pesa 150 g di polpa tagliata a cubetti.",
+      "Aggiungi 30 g di muesli e 10 g di mandorle; per mantenerli croccanti, uniscili solo al momento di mangiare.",
+    ],
+    alternatives: [
+      "Colazione rapida da casa o trasportabile",
+      "Contiene latte, cereali con glutine e frutta a guscio",
+      "Kefir, frutta, cereale e mandorle restano sostituibili separatamente",
+    ],
+  },
 ];
 const matrixSnacks: Recipe[] = [
   {
@@ -2917,6 +3003,13 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
   Carboidrato: [
     {
       category: "Carboidrato",
+      food: "Muesli",
+      grams: 30,
+      label: "Muesli · 30 g",
+      image: photo("part-muesli-v1152"),
+    },
+    {
+      category: "Carboidrato",
       food: "Fiocchi d'avena",
       grams: 40,
       label: "Fiocchi d'avena · peso a crudo",
@@ -3280,6 +3373,13 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
   Latticino: [
     {
       category: "Latticino",
+      food: "Kefir bianco magro",
+      grams: 170,
+      label: "Kefir bianco magro",
+      image: photo("part-kefir-v1152"),
+    },
+    {
+      category: "Latticino",
       food: "Latte parzialmente scremato",
       grams: 200,
       label: "Latte",
@@ -3391,6 +3491,34 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       grams: 150,
       label: "Pesca · parte edibile",
       image: photo("part-peach-v113"),
+    },
+    {
+      category: "Frutta",
+      food: "Ciliegie fresche",
+      grams: 150,
+      label: "Ciliegie fresche · parte edibile",
+      image: photo("part-cherries-v1152"),
+    },
+    {
+      category: "Frutta",
+      food: "Albicocche fresche",
+      grams: 150,
+      label: "Albicocche fresche · parte edibile",
+      image: photo("part-apricots-v1152"),
+    },
+    {
+      category: "Frutta",
+      food: "Anguria",
+      grams: 200,
+      label: "Anguria · polpa edibile",
+      image: photo("part-watermelon-v1152"),
+    },
+    {
+      category: "Frutta",
+      food: "Melone estivo",
+      grams: 150,
+      label: "Melone estivo · polpa edibile",
+      image: photo("part-melon-v1152"),
     },
   ],
   Extra: [
@@ -3955,6 +4083,9 @@ function round(n: number) {
 function fmt(n: number) {
   return Math.round(n * 10) / 10;
 }
+function percentOf(value: number, reference: number) {
+  return reference > 0 ? round((value / reference) * 100) : 0;
+}
 
 export function FoodPlanner() {
   const [tab, setTab] = useState<Tab>("today");
@@ -4028,7 +4159,6 @@ export function FoodPlanner() {
     { food: "Olio extravergine", grams: 8 },
   ]);
   const updateBlockedRef = useRef(false);
-  const lastInteractionRef = useRef(Date.now());
   updateBlockedRef.current = Boolean(
     selected ||
       partPicker ||
@@ -4039,20 +4169,6 @@ export function FoodPlanner() {
   );
 
   useEffect(() => {
-    const rememberInteraction = () => {
-      lastInteractionRef.current = Date.now();
-    };
-    window.addEventListener("pointerdown", rememberInteraction, true);
-    window.addEventListener("keydown", rememberInteraction, true);
-    window.addEventListener("input", rememberInteraction, true);
-    return () => {
-      window.removeEventListener("pointerdown", rememberInteraction, true);
-      window.removeEventListener("keydown", rememberInteraction, true);
-      window.removeEventListener("input", rememberInteraction, true);
-    };
-  }, []);
-
-  useEffect(() => {
     let disposed = false;
     let updateWaiting = false;
     let pendingVersion = "";
@@ -4060,8 +4176,7 @@ export function FoodPlanner() {
       if (
         !disposed &&
         updateWaiting &&
-        !updateBlockedRef.current &&
-        Date.now() - lastInteractionRef.current > 3000
+        !updateBlockedRef.current
       ) {
         const nextUrl = new URL(window.location.href);
         nextUrl.searchParams.set("v", pendingVersion || String(Date.now()));
@@ -4088,8 +4203,8 @@ export function FoodPlanner() {
       if (document.visibilityState === "visible") checkVersion();
     };
     checkVersion();
-    const versionTimer = window.setInterval(checkVersion, 15000);
-    const safeTimer = window.setInterval(applyWhenSafe, 1000);
+    const versionTimer = window.setInterval(checkVersion, 5000);
+    const safeTimer = window.setInterval(applyWhenSafe, 500);
     window.addEventListener("focus", checkVersion);
     document.addEventListener("visibilitychange", onVisibility);
     return () => {
@@ -4435,6 +4550,44 @@ export function FoodPlanner() {
       removedIngredients,
     ],
   );
+  const baseDayTotals = useMemo(
+    () =>
+      currentIds.reduce(
+        (sum, id) => {
+          const meal = calc(recipeMap[id].ingredients);
+          return {
+            kcal: sum.kcal + meal.kcal,
+            protein: sum.protein + meal.protein,
+            carbs: sum.carbs + meal.carbs,
+            fat: sum.fat + meal.fat,
+          };
+        },
+        {
+          kcal: plannedDrinkMacros.kcal,
+          protein: plannedDrinkMacros.protein,
+          carbs: plannedDrinkMacros.carbs,
+          fat: plannedDrinkMacros.fat,
+        },
+      ),
+    [dayIndex, choices, plannedDrink],
+  );
+  const effectiveDayTotals = useMemo(() => {
+    const added = (extras[dayIndex] || []).reduce(
+      (sum, item) => ({
+        kcal: sum.kcal + item.kcal,
+        protein: sum.protein + (item.protein || 0),
+        carbs: sum.carbs + (item.carbs || 0),
+        fat: sum.fat + (item.fat || 0),
+      }),
+      { kcal: 0, protein: 0, carbs: 0, fat: 0 },
+    );
+    return {
+      kcal: dayTotals.kcal + added.kcal,
+      protein: dayTotals.protein + added.protein,
+      carbs: dayTotals.carbs + added.carbs,
+      fat: dayTotals.fat + added.fat,
+    };
+  }, [dayTotals, extras, dayIndex]);
   const builderTotals = useMemo(() => calc(builder), [builder]);
   const doneCount = Object.values(completed).filter(Boolean).length;
   const guidance =
@@ -4773,12 +4926,19 @@ export function FoodPlanner() {
       setReplanNote("Scegli un alimento suggerito e indica i grammi.");
       return;
     }
-    const kcal = round((foods[match].kcal * grams) / 100);
+    const factor = grams / 100;
+    const kcal = round(foods[match].kcal * factor);
     setExtras((v) => ({
       ...v,
       [day]: [
         ...(v[day] || []),
-        { label: `${match} · ${grams} g`, kcal },
+        {
+          label: `${match} · ${grams} g`,
+          kcal,
+          protein: foods[match].protein * factor,
+          carbs: foods[match].carbs * factor,
+          fat: foods[match].fat * factor,
+        },
       ],
     }));
     setExtraName("");
@@ -5566,6 +5726,28 @@ export function FoodPlanner() {
                   );
                 })}
               </div>
+              <section className="actual-day-summary" aria-label="Riepilogo alimentare aggiornato">
+                <header>
+                  <div>
+                    <span>DOPO CENA</span>
+                    <b>Totale aggiornato</b>
+                  </div>
+                  <small>grammi, sostituzioni ed extra inclusi</small>
+                </header>
+                <div className="actual-day-values">
+                  <span><b>{round(effectiveDayTotals.kcal)}</b> kcal</span>
+                  <span><b>{round(effectiveDayTotals.protein)}</b> g proteine</span>
+                  <span><b>{round(effectiveDayTotals.carbs)}</b> g carboidrati</span>
+                  <span><b>{round(effectiveDayTotals.fat)}</b> g grassi</span>
+                </div>
+                <div className="actual-day-comparison">
+                  <span>Rispetto al piano base</span>
+                  <b>kcal {percentOf(effectiveDayTotals.kcal, baseDayTotals.kcal)}%</b>
+                  <b>proteine {percentOf(effectiveDayTotals.protein, baseDayTotals.protein)}%</b>
+                  <b>carboidrati {percentOf(effectiveDayTotals.carbs, baseDayTotals.carbs)}%</b>
+                  <b>grassi {percentOf(effectiveDayTotals.fat, baseDayTotals.fat)}%</b>
+                </div>
+              </section>
               <details className="today-extra">
                 <summary>＋ Aggiungi extra o alimento diverso</summary>
                 <div className="extra-form">

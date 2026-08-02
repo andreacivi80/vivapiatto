@@ -37,9 +37,10 @@ Ogni ricetta entra nel motore reale soltanto dopo ingredienti pesati, indicazion
 - `C29` collegata nella v1.14.3 come porridge completo con pera e pistacchi, fotografia finale e quattro componenti modificabili.
 - `C30` collegata nella v1.14.4 come yogurt greco con kiwi, avena e pecan, fotografia finale e quattro componenti modificabili.
 - `C32` collegata nella v1.15.0 come omelette completa con albume CREA, verdure e pane, fotografia finale e componenti modificabili.
+- `C33` collegata nella v1.15.2 come kefir con papaya, muesli e mandorle, con fotografia finale e componenti modificabili.
 - Arachidi, crema 100% arachidi, semi di lino, finocchi, pesche e asparagi hanno dati strutturati, porzioni e fotografie autonome.
 - Farine d'avena, integrale e di grano saraceno strutturate con fotografie specifiche.
-- Restano 167 elementi delle quattro matrici da collegare integralmente; non sono completati finché non superano controllo dati, foto, rotazione e mobile.
+- Restano 166 elementi delle quattro matrici da collegare integralmente; non sono completati finché non superano controllo dati, foto, rotazione e mobile.
 
 ## Sequenza prossimi blocchi
 
