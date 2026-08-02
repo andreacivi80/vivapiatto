@@ -4,7 +4,7 @@ Applicazione mobile per costruire e seguire un percorso alimentare pratico.
 
 ## Versione
 
-Versione corrente: **1.11.0**
+Versione corrente: **1.11.1**
 
 ## Funzioni
 
@@ -23,3 +23,5 @@ Versione corrente: **1.11.0**
 ## Fonti nutrizionali
 
 I valori interni per 100 g indicano la banca dati di provenienza (CREA o USDA). I risultati sono stime matematiche basate sui grammi inseriti; marca, varietà, preparazione e cottura possono modificarli. L'app non sostituisce medico o dietista.
+
+Le regole funzionali e le fonti applicate dal generatore sono raccolte in `NUTRITION-VADEMECUM.md`.

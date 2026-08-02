@@ -35,7 +35,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.11.0";
+const VERSION = "1.11.1";
 const photo = (name: string) =>
   `${import.meta.env.BASE_URL}food/${name}.png?v=${VERSION}`;
 const drinkOptions: LogItem[] = [
@@ -394,12 +394,20 @@ const foods: Record<string, Food> = {
     source: "CREA",
   },
   Feta: {
-    kcal: 265,
-    protein: 14.2,
-    carbs: 3.9,
-    fat: 21.5,
+    kcal: 250,
+    protein: 15.6,
+    carbs: 1.5,
+    fat: 20.2,
     fiber: 0,
-    source: "USDA",
+    source: "CREA",
+  },
+  "Grana Padano DOP": {
+    kcal: 392,
+    protein: 33.9,
+    carbs: 0,
+    fat: 28.5,
+    fiber: 0,
+    source: "CREA",
   },
   "Olio extravergine": {
     kcal: 884,
@@ -2516,6 +2524,13 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       label: "Prosciutto cotto",
       image: photo("work-cotto-v5"),
     },
+    {
+      category: "Proteina",
+      food: "Feta",
+      grams: 50,
+      label: "Feta · 50 g",
+      image: photo("part-feta-v111"),
+    },
   ],
   Contorno: [
     {
@@ -2572,7 +2587,7 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       food: "Olive",
       grams: 30,
       label: "Olive · contorno piccolo",
-      image: photo("part-olives-v8"),
+      image: photo("part-olives-v111"),
     },
     {
       category: "Contorno",
@@ -2736,6 +2751,13 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     },
     {
       category: "Extra",
+      food: "Grana Padano DOP",
+      grams: 20,
+      label: "Grana Padano · 20 g",
+      image: photo("part-grana-v111"),
+    },
+    {
+      category: "Extra",
       food: "Confettura di frutta",
       grams: 20,
       label: "Confettura",
@@ -2808,6 +2830,8 @@ const recommendedPartOptions = (part: MealPart, key: string) => {
     return options;
   }
   if (slot === 1 || slot === 3) {
+    if (part.category === "Latticino")
+      return options.filter((x) => x.food === "Yogurt greco 2%");
     if (part.category === "Carboidrato")
       return options.filter((x) =>
         [
@@ -2825,7 +2849,9 @@ const recommendedPartOptions = (part: MealPart, key: string) => {
         !["Fette biscottate integrali", "Biscotti secchi"].includes(x.food),
     );
   if ((slot === 2 || slot === 4) && part.category === "Extra")
-    return options.filter((x) => x.food === "Olio extravergine");
+    return options.filter((x) =>
+      ["Olio extravergine", "Grana Padano DOP"].includes(x.food),
+    );
   return options;
 };
 
@@ -2867,7 +2893,18 @@ const rotationBreakfastCarbs = mealPartOptions.Carboidrato.filter((part) =>
   ].includes(part.food),
 );
 const rotationBreakfastExtras = mealPartOptions.Extra.filter(
-  (part) => part.food !== "Olio extravergine" && part.food !== "Caffè senza zucchero",
+  (part) =>
+    [
+      "Confettura di frutta",
+      "Miele",
+      "Burro",
+      "Noci",
+      "Mandorle",
+      "Crema cacao e nocciole",
+    ].includes(part.food),
+);
+const portableSnackDairy = mealPartOptions.Latticino.filter(
+  (part) => part.food === "Yogurt greco 2%",
 );
 const catalogBreakfasts: Recipe[] = Array.from({ length: 36 }, (_, index) => {
   const parts = [
@@ -2899,7 +2936,7 @@ const catalogSnacks: Recipe[] = Array.from({ length: 30 }, (_, index) => {
   const fruit = mealPartOptions.Frutta[index % mealPartOptions.Frutta.length];
   const companion =
     index % 3 === 0
-      ? mealPartOptions.Latticino[index % mealPartOptions.Latticino.length]
+      ? portableSnackDairy[index % portableSnackDairy.length]
       : index % 3 === 1
         ? rotationBreakfastExtras[index % rotationBreakfastExtras.length]
         : rotationBreakfastCarbs[index % rotationBreakfastCarbs.length];
@@ -2922,12 +2959,17 @@ const catalogSnacks: Recipe[] = Array.from({ length: 30 }, (_, index) => {
 const rotationMainCarbs = mealPartOptions.Carboidrato.filter(
   (part) => !["Fette biscottate integrali", "Biscotti secchi"].includes(part.food),
 );
+const rotationMainExtras = mealPartOptions.Extra.filter((part) =>
+  ["Olio extravergine", "Grana Padano DOP"].includes(part.food),
+);
 const catalogMains: Recipe[] = Array.from({ length: 84 }, (_, index) => {
   const parts = [
     rotationMainCarbs[index % rotationMainCarbs.length],
     mealPartOptions.Proteina[index % mealPartOptions.Proteina.length],
     mealPartOptions.Contorno[index % mealPartOptions.Contorno.length],
-    mealPartOptions.Extra.find((part) => part.food === "Olio extravergine")!,
+    index % 4 === 0
+      ? rotationMainExtras.find((part) => part.food === "Grana Padano DOP")!
+      : rotationMainExtras.find((part) => part.food === "Olio extravergine")!,
   ].map((part) => ({ ...part }));
   return {
     id: `catalog-main-${index + 1}`,
@@ -3175,6 +3217,8 @@ export function FoodPlanner() {
   const [replanNote, setReplanNote] = useState("");
   const [shoppingOpen, setShoppingOpen] = useState(false);
   const [shoppingScope, setShoppingScope] = useState<"day" | "week">("day");
+  const [weekLocked, setWeekLocked] = useState(false);
+  const [weekEditingDay, setWeekEditingDay] = useState<number | null>(null);
   const [groceryChecked, setGroceryChecked] = useState<Record<string, boolean>>(
     {},
   );
@@ -3217,6 +3261,7 @@ export function FoodPlanner() {
         setGroceryAmounts(s.groceryAmounts || {});
         setPlannedDrink(s.plannedDrink || "Acqua");
         setDayContext(s.dayContext || "Lavoro");
+        setWeekLocked(Boolean(s.weekLocked));
       }
     } catch {}
   }, []);
@@ -3241,6 +3286,7 @@ export function FoodPlanner() {
         groceryAmounts,
         plannedDrink,
         dayContext,
+        weekLocked,
       }),
     );
   }, [
@@ -3261,6 +3307,7 @@ export function FoodPlanner() {
     groceryAmounts,
     plannedDrink,
     dayContext,
+    weekLocked,
   ]);
   const groupFoods: Record<string, string[]> = {
     Latte: ["Yogurt greco 2%", "Ricotta vaccina", "Feta"],
@@ -3344,6 +3391,7 @@ export function FoodPlanner() {
       r.name.toLowerCase().includes(libraryQuery.toLowerCase()),
   );
   const replanFollowingDays = (changedDay: number) => {
+    if (weekLocked) return;
     const breakfasts = [...simpleBreakfasts, ...catalogBreakfasts].filter(isAllowed);
     const snacks = [...quickSnacks, ...catalogSnacks].filter(isAllowed);
     const mains = allRecipes.filter(
@@ -3584,16 +3632,25 @@ export function FoodPlanner() {
     const mains = styled.filter((r) =>
       ["Piatto unico", "Primo", "Secondo"].includes(recipeCourse(r)),
     );
+    const homeMains = mains.filter(
+      (r) =>
+        r.time >= 20 &&
+        !portableRecipes.some((portable) => portable.id === r.id),
+    );
     const lunches =
       dayContext === "Lavoro"
         ? [...portableRecipes, ...catalogWorkMains]
             .filter(isAllowed)
             .filter((r) => calc(r.ingredients).protein >= 18)
-        : mains;
+        : homeMains.length
+          ? homeMains
+          : mains;
     const dinners =
       dayContext === "Lavoro"
         ? [...balancedDinnerRecipes, ...catalogMains].filter(isAllowed)
-        : mains.filter((r) => r.id !== "sweet-ricotta");
+        : (homeMains.length ? homeMains : mains).filter(
+            (r) => r.id !== "sweet-ricotta",
+          );
     if (
       !breakfasts.length ||
       !snacks.length ||
@@ -3690,16 +3747,25 @@ export function FoodPlanner() {
       );
     }
     if (!breakfasts.length || !snacks.length || !mains.length) return;
+    const homeMains = mains.filter(
+      (r) =>
+        r.time >= 20 &&
+        !portableRecipes.some((portable) => portable.id === r.id),
+    );
     const lunches =
       dayContext === "Lavoro"
         ? [...portableRecipes, ...catalogWorkMains]
             .filter(isAllowed)
             .filter((r) => calc(r.ingredients).protein >= 18)
-        : mains;
+        : homeMains.length
+          ? homeMains
+          : mains;
     const dinners =
       dayContext === "Lavoro"
         ? [...balancedDinnerRecipes, ...catalogMains].filter(isAllowed)
-        : mains.filter((r) => r.id !== "sweet-ricotta");
+        : (homeMains.length ? homeMains : mains).filter(
+            (r) => r.id !== "sweet-ricotta",
+          );
     if (!lunches.length || !dinners.length) return;
     const offset =
       (next.yesterday === "molto" ? 1 : next.yesterday === "poco" ? 2 : 0) +
@@ -4032,14 +4098,34 @@ export function FoodPlanner() {
       <section className="content">
         {tab === "today" && (
           <>
+            {weekEditingDay !== null && (
+              <section className="week-edit-banner">
+                <div>
+                  <span>MODIFICA SETTIMANA</span>
+                  <b>{days[weekEditingDay].label}</b>
+                </div>
+                <button
+                  onClick={() => {
+                    replanFollowingDays(weekEditingDay);
+                    setWeekEditingDay(null);
+                    setTab("week");
+                    scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                >
+                  Chiudi e riequilibra
+                </button>
+              </section>
+            )}
             <section className="today-strip">
               <div>
                 <span>OGGI · {days[dayIndex].label}</span>
                 <b>
-                  {round(dayTotals.kcal)} kcal ·{" "}
-                  {activityDelta > 0 ? `+${activityDelta}` : activityDelta}{" "}
-                  attività
+                  Piano {round(dayTotals.kcal)} · scelto {calories} kcal
                 </b>
+                <small>
+                  Target oggi {plannedCalories} · scarto {round(dayTotals.kcal - plannedCalories) > 0 ? "+" : ""}
+                  {round(dayTotals.kcal - plannedCalories)} kcal
+                </small>
               </div>
               <button onClick={() => setPreferencesOpen((v) => !v)}>
                 ⚙ Preferenze {blockedFoods.length ? `(${blockedFoods.length})` : ""}
@@ -4605,6 +4691,28 @@ export function FoodPlanner() {
           <section>
             <span className="eyebrow">SETTIMANA</span>
             <h1 className="page-title">Menu e andamento</h1>
+            <section className={`week-lock ${weekLocked ? "locked" : ""}`}>
+              <div>
+                <b>{weekLocked ? "Settimana confermata" : "Settimana modificabile"}</b>
+                <span>
+                  {weekLocked
+                    ? "Le modifiche in Oggi restano solo giornaliere."
+                    : "Apri un giorno, cambialo e chiudilo per riequilibrare i successivi."}
+                </span>
+              </div>
+              <button
+                onClick={() => {
+                  setWeekLocked((value) => !value);
+                  setReplanNote(
+                    weekLocked
+                      ? "Settimana riaperta: i giorni successivi possono essere riequilibrati."
+                      : "Settimana confermata: le modifiche giornaliere non cambieranno il resto.",
+                  );
+                }}
+              >
+                {weekLocked ? "Riapri" : "Conferma"}
+              </button>
+            </section>
             <button
               className="shopping-trigger"
               onClick={() => {
@@ -4644,6 +4752,7 @@ export function FoodPlanner() {
                     <button
                       onClick={() => {
                         setDayIndex(i);
+                        setWeekEditingDay(i);
                         setTab("today");
                         scrollTo({ top: 0, behavior: "smooth" });
                       }}
@@ -4668,7 +4777,11 @@ export function FoodPlanner() {
                           }}
                         >
                           <img
-                            src={weekParts[0]?.image || r.image}
+                            src={
+                              slot === 0
+                                ? photo("breakfast-summary-v111")
+                                : weekParts[0]?.image || r.image
+                            }
                             alt=""
                           />
                           <span>

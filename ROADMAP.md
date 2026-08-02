@@ -92,7 +92,20 @@ Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggior
 - [x] Conservare il piatto registrato quando un nuovo check-in rigenera il menu.
 - [x] Fotografie atomiche per riso basmati/Venere, gnocchi, pollo, bistecca, salmone, uova, tonno, bresaola, verdure e frutta principali.
 
-## v1.11.0 — pronta per pubblicazione
+## v1.11.1 — pronta per pubblicazione
+
+- [x] Preferenze con contrasto più forte; piano, calorie scelte, target del giorno e scarto visibili insieme.
+- [x] Foto olive servita con un nuovo nome-file per impedire il riuso della cache precedente.
+- [x] Flusso Settimana: apri un giorno, chiudi e riequilibra i successivi, poi conferma o riapri la settimana.
+- [x] Dopo la conferma, le modifiche di Oggi non riscrivono gli altri giorni.
+- [x] Foto-riassunto dedicata alla colazione completa nella vista settimanale.
+- [x] Casa privilegia ricette più elaborate; Lavoro privilegia piatti trasportabili e semplici.
+- [x] Feta e Grana Padano DOP aggiunti con valori CREA, foto atomiche, porzioni e ingresso nelle rotazioni.
+- [x] Spuntini predefiniti senza bicchiere di latte: frutta, yogurt, frutta secca e basi pratiche; latte disponibile solo nella scelta libera.
+- [x] Vademecum nutrizionale tracciabile salvato nel progetto.
+- [ ] Continuare paniere, foto atomiche e fotografie finali delle ricette.
+
+## v1.11.0 — pubblicata
 
 - [x] Paniere strutturato collegato alla rotazione: 36 colazioni, 30 spuntini e 84 pasti completi generati dai componenti reali.
 - [x] Fragole, mango, papaya e frutti di bosco separati, con foto dedicate e valori nutrizionali.

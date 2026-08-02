@@ -1417,6 +1417,52 @@ button {
   position: relative;
   overflow: hidden;
 }
+.week-edit-banner,
+.week-lock {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 11px;
+  margin: 0 0 8px;
+  border-radius: 15px;
+  background: #fff0d6;
+  border: 1px solid #efc98e;
+}
+.week-edit-banner > div,
+.week-lock > div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.week-edit-banner span,
+.week-lock span {
+  font-size: 8px;
+  line-height: 1.3;
+  color: #74563d;
+}
+.week-edit-banner b,
+.week-lock b {
+  font-size: 11px;
+}
+.week-edit-banner button,
+.week-lock button {
+  flex: 0 0 auto;
+  border: 0;
+  border-radius: 10px;
+  background: #a84932;
+  color: #fff;
+  padding: 8px 9px;
+  font-size: 9px;
+  font-weight: 900;
+}
+.week-lock.locked {
+  background: #e9f3dc;
+  border-color: #c7dca6;
+}
+.week-lock.locked button {
+  background: var(--ink);
+}
 .today-strip:after {
   content: "";
   position: absolute;
@@ -1442,10 +1488,18 @@ button {
   font-size: 15px;
   margin-top: 3px;
 }
+.today-strip small {
+  margin-top: 2px;
+  color: #dce9e2;
+  font-size: 8px;
+  line-height: 1.2;
+}
 .today-strip button {
   border: 0;
   border-radius: 11px;
-  background: #fff0c9;
+  background: #ffb36f;
+  color: #321e17;
+  box-shadow: 0 4px 12px rgba(77, 34, 20, 0.22);
   padding: 9px 10px;
   font-size: 10px;
   font-weight: 900;
