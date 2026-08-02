@@ -2,7 +2,14 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.14.1 — in preparazione
+## v1.14.2 — in preparazione
+
+- [x] P43 farro, due uova, fagiolini e pomodori collegata come piatto unico trasportabile.
+- [x] Fotografia finale P43 specifica con tutti gli ingredienti realmente visibili.
+- [x] Componenti P43 modificabili separatamente e due uova conteggiate nella rotazione.
+- [x] Preparazione da zero, distinzione 70 g secco / circa 175 g cotto e istruzioni per il trasporto al lavoro.
+
+## v1.14.1 — pubblicata
 
 - [x] Lenticchie e cannellini aggiunti alle alternative proteiche quotidiane.
 - [x] Fotografie specifiche e cache-bustate per lenticchie cotte e cannellini cotti.

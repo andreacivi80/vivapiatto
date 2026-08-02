@@ -36,7 +36,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.14.1";
+const VERSION = "1.14.2";
 const photo = (name: string) =>
   `${import.meta.env.BASE_URL}food/${name}.png?v=${VERSION}`;
 const WEEK_SLOT_IMAGES = [
@@ -2003,6 +2003,73 @@ const matrixSnacks: Recipe[] = [
     alternatives: ["Contiene arachidi", "Porta la crema già pesata in un piccolo contenitore"],
   },
 ];
+const matrixMainRecipes: Recipe[] = [
+  {
+    id: "matrix-p43-farro-eggs-green-beans",
+    name: "Farro con uova, fagiolini e pomodori",
+    kicker: "Pranzo trasportabile · matrice P43",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    image: photo("recipe-p43-farro-eggs-v1142"),
+    time: 30,
+    ingredients: [
+      { food: "Farro cotto", grams: 175 },
+      { food: "Uovo", grams: 100 },
+      { food: "Fagiolini", grams: 125 },
+      { food: "Pomodorini", grams: 125 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    parts: [
+      {
+        category: "Carboidrato",
+        food: "Farro cotto",
+        grams: 175,
+        label: "Farro cotto · da circa 70 g secco",
+        image: photo("farro"),
+      },
+      {
+        category: "Proteina",
+        food: "Uovo",
+        grams: 100,
+        label: "2 uova sode",
+        image: photo("part-eggs-boiled-v7"),
+      },
+      {
+        category: "Contorno",
+        food: "Fagiolini",
+        grams: 125,
+        label: "Fagiolini cotti",
+        image: photo("part-green-beans-v7"),
+      },
+      {
+        category: "Contorno",
+        food: "Pomodorini",
+        grams: 125,
+        label: "Pomodori",
+        image: photo("part-tomatoes-v8"),
+      },
+      {
+        category: "Extra",
+        food: "Olio extravergine",
+        grams: 10,
+        label: "Olio extravergine",
+        image: photo("part-olive-oil-v8"),
+      },
+    ],
+    steps: [
+      "Sciacqua 70 g di farro secco e lessalo in acqua per il tempo indicato in confezione; scolalo e pesane circa 175 g cotto.",
+      "Metti due uova in acqua fredda, porta a bollore e cuoci 9 minuti; raffreddale e sgusciale.",
+      "Lessa o cuoci al vapore i fagiolini per 8-10 minuti, lasciandoli teneri ma non sfatti.",
+      "Unisci farro, uova, fagiolini e pomodori lavati. Condisci con 10 g di olio, limone, basilico e pepe.",
+      "Per il lavoro, raffredda rapidamente gli ingredienti cotti, conserva il contenitore in frigorifero e trasportalo in borsa termica.",
+    ],
+    alternatives: [
+      "Le due uova vengono conteggiate nella frequenza settimanale",
+      "Riso o quinoa nella quantità equivalente proposta al posto del farro",
+      "Contiene glutine e uova",
+    ],
+  },
+];
 const quickSnacks: Recipe[] = [
   {
     id: "quick-apple",
@@ -3555,6 +3622,7 @@ const allRecipes = [
   ...catalogBreakfasts,
   ...quickSnacks,
   ...matrixSnacks,
+  ...matrixMainRecipes,
   ...catalogSnacks,
   ...portableRecipes,
   ...balancedDinnerRecipes,
