@@ -47,7 +47,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.15.15";
+const VERSION = "1.15.16";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -4798,6 +4798,9 @@ export function FoodPlanner() {
   const [partSelections, setPartSelections] = useState<
     Record<string, MealPart[]>
   >({});
+  const [mealView, setMealView] = useState<Record<string, "dish" | "parts">>(
+    {},
+  );
   const [partPicker, setPartPicker] = useState<{
     key: string;
     index: number;
@@ -5027,7 +5030,7 @@ export function FoodPlanner() {
       ? recipeCourse(r) === "Colazione"
       : [1, 3].includes(slot)
         ? ["Spuntino", "Dolce", "Gelato"].includes(recipeCourse(r))
-        : ["Piatto unico", "Primo", "Secondo"].includes(recipeCourse(r));
+        : ["Piatto unico", "Piatto completo", "Primo", "Secondo"].includes(recipeCourse(r));
   const getDayIds = (day: number) =>
     days[day].recipes.map((fallback, slot) => {
       const chosen = choices[`${day}-${slot}`];
@@ -5054,27 +5057,35 @@ export function FoodPlanner() {
     day === dayIndex ? plannedCalories : calories;
   const compatibleWithSlot = (r: Recipe) =>
     !swapTarget || fitsSlot(r, swapTarget.slot);
-  const compatibleWithPlace = (r: Recipe) => {
-    if (!swapTarget || dayContext !== "Lavoro") return true;
-    if (swapTarget.slot === 2)
-      return (
-        portableRecipes.some((x) => x.id === r.id) &&
-        calc(r.ingredients).protein >= 18
+  const isWorkFriendly = (r: Recipe) =>
+    portableRecipes.some((x) => x.id === r.id) ||
+    (r.time <= 35 &&
+      r.alternatives.some((text) => /trasport|schiscetta|lavoro/i.test(text)) &&
+      !r.alternatives.some((text) => /pasto da casa|preferibile a casa/i.test(text)));
+  const workLunchesFrom = (recipes: Recipe[]) =>
+    [...recipes.filter(isWorkFriendly), ...portableRecipes, ...catalogWorkMains]
+      .filter(isAllowed)
+      .filter(
+        (recipe, index, list) =>
+          list.findIndex((candidate) => candidate.id === recipe.id) === index,
       );
-    if (swapTarget.slot === 4)
-      return balancedDinnerRecipes.some((x) => x.id === r.id);
-    return true;
-  };
-  const filteredRecipes = allRecipes.filter(
-    (r) =>
-      r.kind !== "combination" &&
-      r.ingredients.every((item) => Boolean(foods[item.food])) &&
-      isAllowed(r) &&
-      compatibleWithSlot(r) &&
-      compatibleWithPlace(r) &&
-      (cuisineFilter === "Tutte" || recipeCuisine(r) === cuisineFilter) &&
-      r.name.toLowerCase().includes(libraryQuery.toLowerCase()),
-  );
+  const compatibleWithPlace = (_r: Recipe) => true;
+  const filteredRecipes = allRecipes
+    .filter(
+      (r) =>
+        r.kind !== "combination" &&
+        r.ingredients.every((item) => Boolean(foods[item.food])) &&
+        isAllowed(r) &&
+        compatibleWithSlot(r) &&
+        compatibleWithPlace(r) &&
+        (cuisineFilter === "Tutte" || recipeCuisine(r) === cuisineFilter) &&
+        r.name.toLowerCase().includes(libraryQuery.toLowerCase()),
+    )
+    .sort((a, b) =>
+      dayContext === "Lavoro" && swapTarget?.slot === 2
+        ? Number(isWorkFriendly(b)) - Number(isWorkFriendly(a))
+        : 0,
+    );
   const replanFollowingDays = (changedDay: number) => {
     if (weekLocked) return;
     const breakfasts = availableBreakfasts();
@@ -5083,11 +5094,11 @@ export function FoodPlanner() {
       (r) =>
         isAllowed(r) &&
         recipeCuisine(r) === cuisineChoice &&
-        ["Piatto unico", "Primo", "Secondo"].includes(recipeCourse(r)),
+        ["Piatto unico", "Piatto completo", "Primo", "Secondo"].includes(recipeCourse(r)),
     );
     const lunches =
       dayContext === "Lavoro"
-        ? [...portableRecipes, ...catalogWorkMains].filter(isAllowed)
+        ? workLunchesFrom(mains)
         : mains;
     const dinners = [...balancedDinnerRecipes, ...catalogMains].filter(isAllowed);
     if (!breakfasts.length || !snacks.length || !lunches.length || !dinners.length)
@@ -5428,6 +5439,7 @@ export function FoodPlanner() {
         ...v,
         [`${swapTarget.day}-${swapTarget.slot}`]: recipe.id,
       }));
+      setMealView((current) => ({ ...current, [`${swapTarget.day}-${swapTarget.slot}`]: "dish" }));
       setDayIndex(swapTarget.day);
       replanFollowingDays(changedDay);
       setSwapTarget(null);
@@ -5480,7 +5492,7 @@ export function FoodPlanner() {
     const breakfasts = availableBreakfasts();
     const snacks = [...quickSnacks, ...matrixSnacks, ...catalogSnacks].filter(isAllowed);
     const mains = styled.filter((r) =>
-      ["Piatto unico", "Primo", "Secondo"].includes(recipeCourse(r)),
+      ["Piatto unico", "Piatto completo", "Primo", "Secondo"].includes(recipeCourse(r)),
     );
     const homeMains = mains.filter(
       (r) =>
@@ -5489,9 +5501,7 @@ export function FoodPlanner() {
     );
     const lunches =
       dayContext === "Lavoro"
-        ? [...portableRecipes, ...catalogWorkMains]
-            .filter(isAllowed)
-            .filter((r) => calc(r.ingredients).protein >= 18)
+        ? workLunchesFrom(mains)
         : homeMains.length
           ? homeMains
           : mains;
@@ -5555,7 +5565,7 @@ export function FoodPlanner() {
       (r) =>
         isAllowed(r) &&
         recipeCuisine(r) === cuisineChoice &&
-        ["Piatto unico", "Primo", "Secondo"].includes(recipeCourse(r)),
+        ["Piatto unico", "Piatto completo", "Primo", "Secondo"].includes(recipeCourse(r)),
     );
     if (next.feeling === "gonfio") {
       mains = mains
@@ -5609,9 +5619,7 @@ export function FoodPlanner() {
     );
     const lunches =
       dayContext === "Lavoro"
-        ? [...portableRecipes, ...catalogWorkMains]
-            .filter(isAllowed)
-            .filter((r) => calc(r.ingredients).protein >= 18)
+        ? workLunchesFrom(mains)
         : homeMains.length
           ? homeMains
           : mains;
@@ -5881,7 +5889,7 @@ export function FoodPlanner() {
     const safe = allRecipes.filter(
       (r) =>
         isAllowed(r) &&
-        ["Piatto unico", "Primo", "Secondo"].includes(recipeCourse(r)),
+        ["Piatto unico", "Piatto completo", "Primo", "Secondo"].includes(recipeCourse(r)),
     );
     const ranked = [...safe].sort(
       (a, b) => calc(a.ingredients).kcal - calc(b.ingredients).kcal,
@@ -6358,6 +6366,7 @@ export function FoodPlanner() {
                   const visibleIngredients = actualIngredients(key, r);
                   const m = calc(visibleIngredients);
                   const activeParts = activeMealParts(key, r);
+                  const fullDishView = Boolean(r.parts && r.kind !== "combination" && (mealView[key] || "dish") === "dish");
                   const allowed = isAllowed(r);
                   const actual = completed[key]
                     ? calc(actualIngredients(key, r))
@@ -6375,18 +6384,18 @@ export function FoodPlanner() {
                     );
                   return (
                     <article
-                      className={`meal-card ${r.parts ? "composed" : "detailed"} ${allowed ? "" : "blocked"} ${caution ? "caution" : ""}`}
+                      className={`meal-card ${r.parts && !fullDishView ? "composed" : "detailed"} ${allowed ? "" : "blocked"} ${caution ? "caution" : ""}`}
                       key={key}
                       onClick={() => {
                         setSelectedMealKey(key);
                         setSelected(r);
                       }}
                     >
-                      {!r.parts && <img src={r.image} alt={r.name} />}
+                      {(!r.parts || fullDishView) && <img src={r.image} alt={r.name} />}
                       <div className="meal-body">
                         <span>{SLOT_LABELS[i]}</span>
                         <h3>
-                          {r.parts
+                          {r.parts && !fullDishView
                             ? `${SLOT_LABELS[i]} · ${
                                 activeParts
                                   .filter((part) => part.grams > 0)
@@ -6395,8 +6404,19 @@ export function FoodPlanner() {
                               }`
                             : r.name}
                         </h3>
-                        {r.parts ? (
+                        {r.parts && r.kind !== "combination" && fullDishView ? (
+                          <div className="dish-view-actions" onClick={(e) => e.stopPropagation()}>
+                            <button onClick={() => { setSelectedMealKey(key); setSelected(r); }}>ⓘ Ricetta e preparazione</button>
+                            <button onClick={() => setMealView((current) => ({ ...current, [key]: "parts" }))}>Dividi in componenti</button>
+                          </div>
+                        ) : r.parts ? (
                           <>
+                            {r.kind !== "combination" && (
+                              <div className="dish-view-actions" onClick={(e) => e.stopPropagation()}>
+                                <button onClick={() => setMealView((current) => ({ ...current, [key]: "dish" }))}>Piatto unico</button>
+                                <button onClick={() => { setSelectedMealKey(key); setSelected(r); }}>ⓘ Ricetta</button>
+                              </div>
+                            )}
                             <div className="meal-parts">
                               {activeParts.map((part, partIndex) => (
                                 <div

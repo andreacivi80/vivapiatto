@@ -2,6 +2,14 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
+## v1.15.16 — in verifica
+
+- [x] Ricette complete collegate al pianificatore come piatti unici, non più isolate nella libreria.
+- [x] Informazioni del piatto aprono ingredienti e preparazione dalla giornata.
+- [x] Passaggio reversibile da piatto unico a componenti sostituibili con ricalcolo nutrizionale.
+- [x] “Piatto completo” riconosciuto in selezione, check-in e rigenerazione settimanale.
+- [x] A lavoro le ricette trasportabili hanno precedenza senza nascondere le altre scelte.
+
 ## v1.15.15 — in verifica
 
 - [x] P45–P52 collegati con preparazioni complete, componenti modificabili e foto finali specifiche.

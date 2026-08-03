@@ -317,6 +317,29 @@ button {
   box-shadow: 0 5px 16px rgba(22, 49, 41, 0.035);
   overflow: visible;
 }
+
+.dish-view-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 4px 0 7px;
+}
+
+.dish-view-actions button {
+  min-height: 29px;
+  border: 0;
+  border-radius: 999px;
+  padding: 6px 9px;
+  background: #eef3ea;
+  color: var(--ink);
+  font-size: 9px;
+  font-weight: 850;
+}
+
+.dish-view-actions button:last-child {
+  background: #eaf0ff;
+  color: #2f568c;
+}
 .meal-card.composed {
   min-height: 238px;
   height: auto;

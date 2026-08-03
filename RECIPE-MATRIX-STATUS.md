@@ -42,6 +42,7 @@ Ogni ricetta entra nel motore reale soltanto dopo ingredienti pesati, indicazion
 - `S27–S34` collegati nella v1.15.12 alle due rotazioni quotidiane, con quantità pratiche, preparazione, componenti sostituibili e fotografie atomiche specifiche.
 - `P41`, `P42` e `P44` collegati nella v1.15.13 con fotografie finali specifiche, componenti modificabili e preparazioni complete.
 - `P45–P52` collegati nelle v1.15.14–1.15.15 con fotografie finali specifiche e componenti sostituibili.
+- Dalla v1.15.16 ogni ricetta completa collegata entra anche nei suggerimenti giornalieri come piatto unico, apribile e divisibile nei propri componenti.
 - Pane di farro, pane ai cereali, nocciole, crema 100% nocciole, skyr e semi di chia hanno dati strutturati, porzioni e fotografie autonome.
 - La generazione automatica usa ora una prima matrice esplicita di compatibilità tra famiglia della base e proteina, invece di un abbinamento libero.
 - Arachidi, crema 100% arachidi, semi di lino, finocchi, pesche e asparagi hanno dati strutturati, porzioni e fotografie autonome.
