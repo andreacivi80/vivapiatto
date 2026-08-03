@@ -47,6 +47,11 @@ Questo documento è la base funzionale dell’app. Le fotografie e la grafica de
 - ISS, spuntini freschi e leggeri: https://www.iss.it/-/dalla-colazione-leggera-agli-spuntini-freschi-il-decalogo-iss-per-contrastare-il-caldo-con-una-corretta-alimentazione
 - Ministero della Salute, dieta mediterranea: https://www.salute.gov.it/new/it/tema/dieta-mediterranea/come-seguire-la-dieta-mediterranea/
 
+## Tracciabilità D41–D44 v1.15.19
+
+- Sogliola cruda, riso integrale, petto di pollo crudo, cipolle e carciofi bolliti: tabelle CREA con stato e porzione espliciti.
+- Cicerchie cotte: riferimento Humanitas, 134 kcal per 100 g; uso occasionale e variato, con ammollo/cottura sempre secondo confezione.
+- Fonti: https://www.alimentinutrizione.it/tabelle-nutrizionali/123100 · https://www.alimentinutrizione.it/tabelle-nutrizionali/000110 · https://alimentinutrizione.it/tabelle-nutrizionali/106500 · https://www.alimentinutrizione.it/tabelle-nutrizionali/005300 · https://www.alimentinutrizione.it/tabelle-nutrizionali/005125 · https://www.humanitas.it/enciclopedia/alimenti/legumi/cicerchie/
 ## Tracciabilità latticini v1.15.18
 
 - Crescenza: CREA, 281 kcal, 16,1 g proteine, 1,9 g carboidrati e 23,3 g grassi per 100 g: https://alimentinutrizione.it/tabelle-nutrizionali/160890

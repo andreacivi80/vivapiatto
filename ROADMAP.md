@@ -2,6 +2,13 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
+## v1.15.19 — in verifica
+
+- [x] D41–D44 dell’addendum trasformate in ricette complete, non semplici elementi: sogliola, pollo con riso integrale, zuppa di cicerchie e frittata ai carciofi.
+- [x] Le quattro ricette entrano nel ricettario e nelle proposte della giornata/settimana tramite il bacino delle cene.
+- [x] Ogni piatto può restare intero oppure essere diviso nei singoli componenti con quantità e ricalcolo.
+- [x] Sei alimenti nuovi nel paniere: sogliola, riso integrale, petto di pollo a crudo, cipolle, cicerchie e carciofi cotti.
+- [x] Nove fotografie dedicate: quattro piatti finali e cinque componenti atomici.
 ## v1.15.18 — in verifica
 
 - [x] Vista Settimana corretta: anche i piatti senza componenti precompilati mostrano fotografie, quantità e cambio del singolo ingrediente in tutti i sette giorni.

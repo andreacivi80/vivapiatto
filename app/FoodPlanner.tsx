@@ -6,7 +6,7 @@ import { portionOptions, STANDARD_SOURCES } from "./nutritionEngine";
 type Macro = { kcal: number; protein: number; carbs: number; fat: number };
 type Food = Macro & {
   fiber: number;
-  source: "CREA" | "USDA" | "FRIDA" | "ETICHETTA" | "RICETTA CALCOLATA";
+  source: "CREA" | "USDA" | "FRIDA" | "ETICHETTA" | "HUMANITAS" | "RICETTA CALCOLATA";
 };
 type RecipeIngredient = { food: string; grams: number; label?: string };
 type MealPart = RecipeIngredient & {
@@ -47,7 +47,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.15.18";
+const VERSION = "1.15.19";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -401,7 +401,24 @@ const foods: Record<string, Food> = {
     fiber: 0,
     source: "ETICHETTA",
   },
-  Uovo: {
+  "Sogliola · peso a crudo": {
+    kcal: 83, protein: 16.9, carbs: 0.8, fat: 1.4, fiber: 0, source: "CREA",
+  },
+  "Riso integrale secco": {
+    kcal: 341, protein: 7.5, carbs: 77.4, fat: 1.9, fiber: 1.9, source: "CREA",
+  },
+  "Petto di pollo · peso a crudo": {
+    kcal: 100, protein: 23.3, carbs: 0, fat: 0.8, fiber: 0, source: "CREA",
+  },
+  "Cipolle crude": {
+    kcal: 28, protein: 1, carbs: 5.7, fat: 0.1, fiber: 1, source: "CREA",
+  },
+  "Cicerchie cotte": {
+    kcal: 134, protein: 9.4, carbs: 17.1, fat: 1.7, fiber: 6, source: "HUMANITAS",
+  },
+  "Carciofi cotti bolliti": {
+    kcal: 44, protein: 3.6, carbs: 3.3, fat: 0.3, fiber: 7.4, source: "CREA",
+  },  Uovo: {
     kcal: 143,
     protein: 12.6,
     carbs: 0.7,
@@ -3499,7 +3516,78 @@ const balancedDinnerRecipes: Recipe[] = [
     ],
     alternatives: ["A casa", "Cambia separatamente patate, carne o verdura", "Il peso della carne è indicato a crudo"],
   },
-];
+  {
+    id: "matrix-d41-sole-potatoes-fennel",
+    name: "Sogliola al forno con patate, finocchi e pomodori",
+    kicker: "Cena completa di pesce",
+    course: "Piatto unico", cuisine: "Italiano",
+    image: photo("recipe-d41-sole-potatoes-fennel-v11519"), time: 35,
+    ingredients: [{ food: "Sogliola · peso a crudo", grams: 150 }, { food: "Patate lesse", grams: 200 }, { food: "Finocchi crudi", grams: 150 }, { food: "Pomodorini", grams: 100 }, { food: "Olio extravergine", grams: 10 }],
+    parts: [
+      { category: "Proteina", food: "Sogliola · peso a crudo", grams: 150, label: "Sogliola al forno · 150 g a crudo", image: photo("part-sole-baked-v11519") },
+      { category: "Carboidrato", food: "Patate lesse", grams: 200, label: "Patate · 200 g", image: photo("part-potatoes-boiled-v7") },
+      { category: "Contorno", food: "Finocchi crudi", grams: 150, label: "Finocchi al forno · 150 g a crudo", image: photo("part-fennel-v113") },
+      { category: "Contorno", food: "Pomodorini", grams: 100, label: "Pomodori freschi · 100 g", image: photo("part-tomatoes-v8") },
+      { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") },
+    ],
+    steps: ["Scalda il forno a 200 °C. Taglia patate e finocchi, condiscili con parte dell’olio e cuocili 20-25 minuti.", "Adagia la sogliola sulle verdure e prosegui per 10-12 minuti, fino a cottura completa.", "Servi con i pomodori freschi, limone, prezzemolo e l’olio rimasto pesato."],
+    alternatives: ["Contiene pesce", "Senza glutine", "Ogni parte può essere cambiata separatamente"],
+  },
+  {
+    id: "matrix-d42-chicken-brown-rice-peppers",
+    name: "Pollo alla piastra con riso integrale, peperoni e cipolle",
+    kicker: "Cena completa di carne bianca",
+    course: "Piatto unico", cuisine: "Italiano",
+    image: photo("recipe-d42-chicken-brown-rice-v11519"), time: 30,
+    ingredients: [{ food: "Petto di pollo · peso a crudo", grams: 100 }, { food: "Riso integrale secco", grams: 60 }, { food: "Peperoni", grams: 150 }, { food: "Cipolle crude", grams: 100 }, { food: "Olio extravergine", grams: 10 }],
+    parts: [
+      { category: "Proteina", food: "Petto di pollo · peso a crudo", grams: 100, label: "Petto di pollo alla piastra · 100 g a crudo", image: photo("part-chicken-grilled-v7") },
+      { category: "Carboidrato", food: "Riso integrale secco", grams: 60, label: "Riso integrale · 60 g a crudo", image: photo("part-brown-rice-v11519") },
+      { category: "Contorno", food: "Peperoni", grams: 150, label: "Peperoni · 150 g", image: photo("part-peppers-v11514") },
+      { category: "Contorno", food: "Cipolle crude", grams: 100, label: "Cipolle · 100 g a crudo", image: photo("part-onions-v11519") },
+      { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") },
+    ],
+    steps: ["Sciacqua il riso e cuocilo nel tempo indicato sulla confezione, poi scolalo.", "Cuoci peperoni e cipolle affettati in padella antiaderente per 12-15 minuti.", "Griglia il pollo fino a cottura completa, taglialo e servi le tre parti con l’olio pesato."],
+    alternatives: ["Carne bianca", "Senza glutine", "Adatta a casa; trasportabile se refrigerata"],
+  },
+  {
+    id: "matrix-d43-grass-pea-soup",
+    name: "Zuppa di cicerchie e verdure con pane integrale",
+    kicker: "Cena vegetale completa",
+    course: "Piatto unico", cuisine: "Italiano",
+    image: photo("recipe-d43-grass-pea-soup-v11519"), time: 50,
+    ingredients: [{ food: "Cicerchie cotte", grams: 150 }, { food: "Carote crude", grams: 60 }, { food: "Sedano crudo", grams: 50 }, { food: "Cipolle crude", grams: 50 }, { food: "Pomodorini", grams: 70 }, { food: "Spinaci", grams: 70 }, { food: "Pane integrale", grams: 50 }, { food: "Olio extravergine", grams: 10 }],
+    parts: [
+      { category: "Proteina", food: "Cicerchie cotte", grams: 150, label: "Cicerchie cotte · 150 g", image: photo("part-grass-peas-v11519") },
+      { category: "Contorno", food: "Carote crude", grams: 60, label: "Carote · 60 g", image: photo("part-carrots-raw-v11512") },
+      { category: "Contorno", food: "Sedano crudo", grams: 50, label: "Sedano · 50 g", image: photo("part-celery-v1154") },
+      { category: "Contorno", food: "Cipolle crude", grams: 50, label: "Cipolla · 50 g", image: photo("part-onions-v11519") },
+      { category: "Contorno", food: "Pomodorini", grams: 70, label: "Pomodoro · 70 g", image: photo("part-tomatoes-v8") },
+      { category: "Contorno", food: "Spinaci", grams: 70, label: "Spinaci · 70 g", image: photo("part-spinach-v7") },
+      { category: "Carboidrato", food: "Pane integrale", grams: 50, label: "Pane integrale · 50 g", image: photo("part-bread-v7") },
+      { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") },
+    ],
+    steps: ["Se parti dal secco, ammolla e cuoci le cicerchie seguendo rigorosamente tempi e istruzioni della confezione; non improvvisare la cottura.", "Cuoci carota, sedano, cipolla e pomodoro in acqua; unisci cicerchie e spinaci e prosegui finché le verdure sono tenere.", "Completa con rosmarino, pepe, 10 g di olio a crudo e il pane separato."],
+    alternatives: ["Non proporre cicerchie ogni giorno", "Contiene glutine nel pane", "Legume da variare nella rotazione"],
+  },
+  {
+    id: "matrix-d44-artichoke-frittata",
+    name: "Frittata con carciofi e cipolle, insalata e pane di segale",
+    kicker: "Cena vegetariana completa",
+    course: "Piatto unico", cuisine: "Italiano",
+    image: photo("recipe-d44-artichoke-frittata-v11519"), time: 30,
+    ingredients: [{ food: "Uova strapazzate o in frittata", grams: 100 }, { food: "Carciofi cotti bolliti", grams: 150 }, { food: "Cipolle crude", grams: 50 }, { food: "Insalata verde", grams: 80 }, { food: "Pane di segale", grams: 50 }, { food: "Olio extravergine", grams: 10 }],
+    parts: [
+      { category: "Proteina", food: "Uova strapazzate o in frittata", grams: 100, label: "Frittata · 2 uova", image: photo("part-eggs-scrambled-v1156") },
+      { category: "Contorno", food: "Carciofi cotti bolliti", grams: 150, label: "Carciofi cotti · 150 g", image: photo("part-artichokes-v11519") },
+      { category: "Contorno", food: "Cipolle crude", grams: 50, label: "Cipolle · 50 g a crudo", image: photo("part-onions-v11519") },
+      { category: "Contorno", food: "Insalata verde", grams: 80, label: "Insalata verde · 80 g", image: photo("part-lettuce-v8") },
+      { category: "Carboidrato", food: "Pane di segale", grams: 50, label: "Pane di segale · 50 g", image: photo("part-bread-rye-v1156") },
+      { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") },
+    ],
+    steps: ["Affetta la cipolla e scaldala con i carciofi già cotti in padella antiaderente.", "Sbatti due uova, versale sulle verdure e cuoci coperto a fuoco basso oppure in forno fino a completa coagulazione.", "Servi con insalata, pane di segale e l’olio totale pesato."],
+    alternatives: ["Conta due uova nella rotazione settimanale", "Contiene uova e glutine", "Componenti modificabili separatamente"],
+  },];
 const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
   Carboidrato: [
     {
@@ -3651,6 +3739,7 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     },
     { category: "Carboidrato", food: "Gallette di riso integrale", grams: 27, label: "Gallette integrali · 3 circa", image: photo("part-rice-cakes-whole-v11512") },
     { category: "Carboidrato", food: "Quinoa cotta", grams: 185, label: "Quinoa cotta · da circa 70 g secca", image: photo("part-quinoa-v8") },
+    { category: "Carboidrato", food: "Riso integrale secco", grams: 60, label: "Riso integrale · 60 g a crudo", image: photo("part-brown-rice-v11519") },
     { category: "Carboidrato", food: "Riso rosso integrale cotto", grams: 180, label: "Riso rosso integrale cotto", image: photo("part-red-rice-v11514") },
     { category: "Carboidrato", food: "Pasta di lenticchie secca", grams: 70, label: "Pasta di lenticchie · peso a crudo", image: photo("part-lentil-pasta-v11515") },
     { category: "Carboidrato", food: "Miglio cotto", grams: 190, label: "Miglio cotto", image: photo("part-millet-v11515") },
@@ -3658,6 +3747,9 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     { category: "Carboidrato", food: "Bulgur cotto", grams: 130, label: "Bulgur cotto", image: photo("part-bulgur-v11515") },
   ],
   Proteina: [
+    { category: "Proteina", food: "Sogliola · peso a crudo", grams: 150, label: "Sogliola al forno · 150 g a crudo", image: photo("part-sole-baked-v11519") },
+    { category: "Proteina", food: "Petto di pollo · peso a crudo", grams: 100, label: "Petto di pollo · 100 g a crudo", image: photo("part-chicken-grilled-v7") },
+    { category: "Proteina", food: "Cicerchie cotte", grams: 150, label: "Cicerchie cotte · 150 g", image: photo("part-grass-peas-v11519") },
     {
       category: "Proteina",
       food: "Bistecca di manzo · peso a crudo",
@@ -3820,6 +3912,8 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     { category: "Proteina", food: "Tofu alla piastra", grams: 100, label: "Tofu alla piastra", image: photo("part-tofu-v11515") },
   ],
   Contorno: [
+    { category: "Contorno", food: "Cipolle crude", grams: 100, label: "Cipolle · 100 g a crudo", image: photo("part-onions-v11519") },
+    { category: "Contorno", food: "Carciofi cotti bolliti", grams: 200, label: "Carciofi cotti bolliti · 200 g", image: photo("part-artichokes-v11519") },
     {
       category: "Contorno",
       food: "Zucchine",
@@ -5077,7 +5171,7 @@ export function FoodPlanner() {
   const groupFoods: Record<string, string[]> = {
     Latte: ["Yogurt greco 2%", "Ricotta vaccina", "Crescenza", "Primo sale", "Scamorza", "Provolone Dolce Auricchio", "Feta"],
     Uova: ["Uovo", "Uova sode", "Uova strapazzate o in frittata"],
-    Pesce: ["Salmone cotto", "Tonno al naturale sgocciolato"],
+    Pesce: ["Salmone cotto", "Tonno al naturale sgocciolato", "Sogliola · peso a crudo"],
     Glutine: [
       "Pane integrale",
       "Pane bianco tipo 0",

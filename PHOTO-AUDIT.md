@@ -21,6 +21,11 @@
 - [x] Foto atomiche distinte: latte, yogurt, ricotta, confettura, miele, burro e biscotti.
 - [x] Foto dedicate per pizza margherita e hamburger semplice.
 
+## v1.15.19 completato
+
+- [x] Foto finali specifiche per D41, D42, D43 e D44, coerenti con tutti gli ingredienti mostrati.
+- [x] Foto atomiche autonome per sogliola al forno, riso integrale, cicerchie cotte, carciofi cotti e cipolle.
+- [x] Gli asset usano nomi nuovi di revisione per impedire il riuso della cache precedente.
 ## v1.15.18 completato
 
 - [x] Crescenza, primo sale, scamorza bianca e Provolone Dolce Auricchio: quattro fotografie atomiche distinte.
