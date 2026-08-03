@@ -47,7 +47,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.15.9";
+const VERSION = "1.15.10";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -6217,6 +6217,11 @@ export function FoodPlanner() {
                 </div>
                 <div className="actual-day-comparison">
                   <span>Rispetto al piano previsto</span>
+                  <b>target {targetForDay(dayIndex)} kcal</b>
+                  <b>
+                    scarto {effectiveDayTotals.kcal >= targetForDay(dayIndex) ? "+" : ""}
+                    {round(effectiveDayTotals.kcal - targetForDay(dayIndex))} kcal
+                  </b>
                   <b>kcal {percentOf(effectiveDayTotals.kcal, dayTotals.kcal)}%</b>
                   <b>proteine {percentOf(effectiveDayTotals.protein, dayTotals.protein)}%</b>
                   <b>carboidrati {percentOf(effectiveDayTotals.carbs, dayTotals.carbs)}%</b>

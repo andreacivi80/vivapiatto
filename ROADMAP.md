@@ -2,6 +2,12 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
+## v1.15.10 — pubblicata
+
+- [x] Target calorico del giorno visibile nel riepilogo aggiornato.
+- [x] Scarto con segno positivo o negativo ricalcolato dopo sostituzioni, grammi, bevande ed extra, senza messaggi punitivi.
+- [x] Verifica mobile: target e scarto restano leggibili nel riepilogo compatto senza uscire dalla larghezza.
+
 ## v1.15.9 — pubblicata
 
 - [x] Riepilogo dopo cena calcolato con grammature realmente registrate per i pasti spuntati e piano corrente per quelli ancora aperti.
