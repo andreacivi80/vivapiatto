@@ -47,7 +47,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.15.20";
+const VERSION = "1.15.21";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -7571,11 +7571,28 @@ export function FoodPlanner() {
                   {completeMealOptions(partPicker.key).map((recipe) => {
                     const macros = calc(recipe.ingredients);
                     return (
-                      <button key={recipe.id} onClick={() => chooseCompleteMeal(recipe)}>
-                        <img src={recipe.image} alt={recipe.name} />
-                        <span>{recipe.name}</span>
-                        <b>{round(macros.kcal)} kcal · {recipe.time} min</b>
-                      </button>
+                      <article key={recipe.id}>
+                        <button
+                          className="complete-meal-select"
+                          onClick={() => chooseCompleteMeal(recipe)}
+                        >
+                          <img src={recipe.image} alt={recipe.name} />
+                          <span>{recipe.name}</span>
+                          <b>{round(macros.kcal)} kcal · {recipe.time} min</b>
+                          <strong>Scegli questo piatto</strong>
+                        </button>
+                        <button
+                          className="complete-meal-info"
+                          aria-label={"Vedi ricetta " + recipe.name}
+                          title="Vedi ingredienti e preparazione"
+                          onClick={() => {
+                            setSelectedMealKey(null);
+                            setSelected(recipe);
+                          }}
+                        >
+                          i
+                        </button>
+                      </article>
                     );
                   })}
                 </div>

@@ -2399,13 +2399,21 @@ button {
   gap: 7px;
   margin-bottom: 8px;
 }
-.complete-meal-grid button {
+.complete-meal-grid > article {
+  position: relative;
   min-width: 0;
   overflow: hidden;
   border: 1px solid #d4b986;
   border-radius: 13px;
   background: #fffaf0;
   padding: 6px;
+}
+.complete-meal-select {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  padding: 0 0 27px;
   text-align: left;
 }
 .complete-meal-grid img {
@@ -2415,7 +2423,8 @@ button {
   object-fit: cover;
 }
 .complete-meal-grid span,
-.complete-meal-grid b {
+.complete-meal-grid b,
+.complete-meal-grid strong {
   display: block;
   overflow-wrap: anywhere;
 }
@@ -2429,4 +2438,27 @@ button {
   margin-top: 3px;
   color: var(--muted);
   font-size: 8px;
+}
+.complete-meal-grid strong {
+  position: absolute;
+  left: 7px;
+  bottom: 9px;
+  color: var(--coral);
+  font-size: 8px;
+}
+.complete-meal-info {
+  position: absolute;
+  right: 7px;
+  bottom: 6px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--ink);
+  color: #fff;
+  font: 900 14px/1 Georgia, serif;
+  box-shadow: 0 2px 7px rgba(22, 49, 41, 0.24);
 }

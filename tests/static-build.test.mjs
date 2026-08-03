@@ -16,7 +16,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.15\.20"/);
+  assert.match(app, /VERSION = "1\.15\.21"/);
   assert.match(app, /food: "Crescenza"/);
   assert.match(app, /food: "Primo sale"/);
   assert.match(app, /food: "Scamorza"/);
@@ -34,6 +34,9 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /asian-bibimbap-authentic/);
   assert.match(app, /Piatti completi consigliati/);
   assert.match(app, /chooseCompleteMeal/);
+  assert.match(app, /complete-meal-info/);
+  assert.match(app, /Vedi ingredienti e preparazione/);
+  assert.match(app, /Scegli questo piatto/);
   assert.match(app, /Note utili/);
   assert.match(app, /food: "Quinoa cotta"/);
   assert.match(app, /recipe\.parts \|\| recipe\.ingredients\.map\(additionAsPart\)/);
