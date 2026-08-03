@@ -47,4 +47,10 @@ Questo documento è la base funzionale dell’app. Le fotografie e la grafica de
 - ISS, spuntini freschi e leggeri: https://www.iss.it/-/dalla-colazione-leggera-agli-spuntini-freschi-il-decalogo-iss-per-contrastare-il-caldo-con-una-corretta-alimentazione
 - Ministero della Salute, dieta mediterranea: https://www.salute.gov.it/new/it/tema/dieta-mediterranea/come-seguire-la-dieta-mediterranea/
 
+## Tracciabilità latticini v1.15.18
+
+- Crescenza: CREA, 281 kcal, 16,1 g proteine, 1,9 g carboidrati e 23,3 g grassi per 100 g: https://alimentinutrizione.it/tabelle-nutrizionali/160890
+- Primo sale: etichetta Coop, 204 kcal, 13 g proteine, 3,3 g carboidrati e 16 g grassi per 100 g: https://www.coop.it/il-prodotto-coop/coop/formaggi/alimenti-freschi/formaggi-freschi-libero-servizio/primo-sale-215-g
+- Scamorza bianca: etichetta Coop, 291 kcal, 22 g proteine, 1,2 g carboidrati e 22 g grassi per 100 g: https://www.coop.it/il-prodotto-coop/gli-spesotti/formaggi/alimenti-freschi/formaggi-stagionati-servizio-assistito-3
+- Provolone Dolce Auricchio: scheda ufficiale Auricchio, 364 kcal, 23 g proteine, 0,5 g carboidrati e 30 g grassi per 100 g: https://www.auricchio.it/marchi-e-prodotti/auricchio/provolone-dolce
 I risultati dell’app sono stime matematiche basate sui grammi e non sostituiscono un piano clinico individuale di medico o dietista.

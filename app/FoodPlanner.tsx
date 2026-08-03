@@ -47,7 +47,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.15.17";
+const VERSION = "1.15.18";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -368,6 +368,38 @@ const foods: Record<string, Food> = {
     fat: 10.9,
     fiber: 0,
     source: "CREA",
+  },
+  Crescenza: {
+    kcal: 281,
+    protein: 16.1,
+    carbs: 1.9,
+    fat: 23.3,
+    fiber: 0,
+    source: "CREA",
+  },
+  "Primo sale": {
+    kcal: 204,
+    protein: 13,
+    carbs: 3.3,
+    fat: 16,
+    fiber: 0,
+    source: "ETICHETTA",
+  },
+  Scamorza: {
+    kcal: 291,
+    protein: 22,
+    carbs: 1.2,
+    fat: 22,
+    fiber: 0,
+    source: "ETICHETTA",
+  },
+  "Provolone Dolce Auricchio": {
+    kcal: 364,
+    protein: 23,
+    carbs: 0.5,
+    fat: 30,
+    fiber: 0,
+    source: "ETICHETTA",
   },
   Uovo: {
     kcal: 143,
@@ -3439,6 +3471,34 @@ const balancedDinnerRecipes: Recipe[] = [
     ],
     alternatives: ["Adatto a casa", "Controlla sempre l'etichetta del burger scelto", "Ogni componente resta sostituibile separatamente"],
   },
+  {
+    id: "horse-steak-potatoes-zucchini",
+    name: "Bistecca di cavallo ai ferri con patate lesse e zucchine",
+    kicker: "Cena italiana completa in tre parti",
+    course: "Secondo",
+    cuisine: "Italiano",
+    image: photo("recipe-horse-steak-potatoes-zucchini-v11518"),
+    time: 25,
+    ingredients: [
+      { food: "Bistecca di cavallo magra · peso a crudo", grams: 120 },
+      { food: "Patate lesse", grams: 200 },
+      { food: "Zucchine", grams: 200 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    parts: [
+      { category: "Proteina", food: "Bistecca di cavallo magra · peso a crudo", grams: 120, label: "Bistecca di cavallo ai ferri · 120 g a crudo", image: photo("part-steak-horse-v114") },
+      { category: "Carboidrato", food: "Patate lesse", grams: 200, label: "Patate lesse · 200 g", image: photo("part-potatoes-boiled-v7") },
+      { category: "Contorno", food: "Zucchine", grams: 200, label: "Zucchine grigliate · 200 g", image: photo("part-zucchini-v7") },
+      { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio extravergine · 10 g", image: photo("part-olive-oil-v8") },
+    ],
+    steps: [
+      "Lessa le patate intere con la buccia in acqua non salata per 25-35 minuti, finché la forchetta entra senza sfaldarle; scolale, pelale e tagliale.",
+      "Affetta le zucchine per il lungo e grigliale 3-4 minuti per lato su piastra ben calda.",
+      "Tampona la bistecca, scaldala sulla piastra molto calda e cuocila fino al grado desiderato e in sicurezza, girandola una sola volta.",
+      "Servi le tre parti separate e distribuisci i 10 g di olio pesato tra patate e zucchine.",
+    ],
+    alternatives: ["A casa", "Cambia separatamente patate, carne o verdura", "Il peso della carne è indicato a crudo"],
+  },
 ];
 const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
   Carboidrato: [
@@ -3590,6 +3650,7 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       image: photo("part-bread-cereals-v11511"),
     },
     { category: "Carboidrato", food: "Gallette di riso integrale", grams: 27, label: "Gallette integrali · 3 circa", image: photo("part-rice-cakes-whole-v11512") },
+    { category: "Carboidrato", food: "Quinoa cotta", grams: 185, label: "Quinoa cotta · da circa 70 g secca", image: photo("part-quinoa-v8") },
     { category: "Carboidrato", food: "Riso rosso integrale cotto", grams: 180, label: "Riso rosso integrale cotto", image: photo("part-red-rice-v11514") },
     { category: "Carboidrato", food: "Pasta di lenticchie secca", grams: 70, label: "Pasta di lenticchie · peso a crudo", image: photo("part-lentil-pasta-v11515") },
     { category: "Carboidrato", food: "Miglio cotto", grams: 190, label: "Miglio cotto", image: photo("part-millet-v11515") },
@@ -3952,6 +4013,34 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       grams: 50,
       label: "Ricotta",
       image: photo("part-ricotta-v7"),
+    },
+    {
+      category: "Latticino",
+      food: "Crescenza",
+      grams: 80,
+      label: "Crescenza · 80 g",
+      image: photo("part-crescenza-v11518"),
+    },
+    {
+      category: "Latticino",
+      food: "Primo sale",
+      grams: 100,
+      label: "Primo sale · 100 g",
+      image: photo("part-primo-sale-v11518"),
+    },
+    {
+      category: "Latticino",
+      food: "Scamorza",
+      grams: 80,
+      label: "Scamorza bianca · 80 g",
+      image: photo("part-scamorza-v11518"),
+    },
+    {
+      category: "Latticino",
+      food: "Provolone Dolce Auricchio",
+      grams: 50,
+      label: "Provolone Dolce Auricchio · 50 g",
+      image: photo("part-provolone-auricchio-v11518"),
     },
     {
       category: "Latticino",
@@ -4986,7 +5075,7 @@ export function FoodPlanner() {
     profileHydrated,
   ]);
   const groupFoods: Record<string, string[]> = {
-    Latte: ["Yogurt greco 2%", "Ricotta vaccina", "Feta"],
+    Latte: ["Yogurt greco 2%", "Ricotta vaccina", "Crescenza", "Primo sale", "Scamorza", "Provolone Dolce Auricchio", "Feta"],
     Uova: ["Uovo", "Uova sode", "Uova strapazzate o in frittata"],
     Pesce: ["Salmone cotto", "Tonno al naturale sgocciolato"],
     Glutine: [
@@ -5249,14 +5338,10 @@ export function FoodPlanner() {
   };
 
   const additionAsPart = (item: RecipeIngredient): MealPart => {
-    const category: MealPart["category"] =
-      item.food === "Pane integrale"
-        ? "Carboidrato"
-        : ["Mela", "Banana"].includes(item.food)
-          ? "Frutta"
-          : item.food === "Yogurt greco 2%"
-            ? "Latticino"
-            : "Extra";
+    const category =
+      (Object.keys(mealPartOptions) as MealPart["category"][]).find((role) =>
+        mealPartOptions[role].some((option) => option.food === item.food),
+      ) || "Extra";
     const known = mealPartOptions[category].find((x) => x.food === item.food);
     return {
       category,
@@ -5268,10 +5353,10 @@ export function FoodPlanner() {
   };
 
   const activeMealParts = (key: string, recipe: Recipe): MealPart[] => {
-    if (!recipe.parts) return [];
     if (partSelections[key]) return partSelections[key].map(normalizeMealPart);
     const slot = Number(key.split("-")[1]);
-    const merged = recipe.parts.map((part) => ({ ...part }));
+    const sourceParts = recipe.parts || recipe.ingredients.map(additionAsPart);
+    const merged = sourceParts.map((part) => ({ ...part }));
     targetAdditionsFor(slot).forEach((item) => {
       const existing = merged.find((part) => part.food === item.food);
       if (existing) existing.grams += item.grams;
@@ -5283,13 +5368,14 @@ export function FoodPlanner() {
   const plannedIngredients = (key: string, recipe: Recipe) => {
     const slot = Number(key.split("-")[1]);
     const targetAdditions = targetAdditionsFor(slot);
-    if (!recipe.parts)
+    if (!recipe.parts && !partSelections[key])
       return mergeTargetAdditions(recipe.ingredients, targetAdditions).map(lowEnergyAdjusted);
     const activeParts = activeMealParts(key, recipe);
     const pastaSelected = activeParts.some((x) => x.food.includes("Pasta"));
+    const sourceParts = recipe.parts || recipe.ingredients.map(additionAsPart);
     const extras = recipe.ingredients.filter(
       (x) =>
-        !recipe.parts?.some((p) => p.food === x.food) &&
+        !sourceParts.some((p) => p.food === x.food) &&
         (x.food === "Olio extravergine" ||
           (pastaSelected && x.food === "Passata di pomodoro")),
     );

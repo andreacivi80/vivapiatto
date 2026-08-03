@@ -2,6 +2,13 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
+## v1.15.18 — in verifica
+
+- [x] Vista Settimana corretta: anche i piatti senza componenti precompilati mostrano fotografie, quantità e cambio del singolo ingrediente in tutti i sette giorni.
+- [x] Le sostituzioni effettuate sui componenti derivati aggiornano davvero chilocalorie, proteine, carboidrati, grassi e fibre.
+- [x] Quinoa aggiunta alle basi sostituibili; crescenza, ricotta, primo sale, scamorza e Provolone Dolce Auricchio presenti come latticini distinti.
+- [x] Cavallo presente sia come alimento alternativo sia in una cena completa con patate lesse e zucchine.
+- [x] Cinque fotografie autonome nuove e cache-bustate: crescenza, primo sale, scamorza, provolone e piatto completo di cavallo.
 ## v1.15.17 — in verifica
 
 - [x] Rimosse dall'interfaccia tutte le denominazioni tecniche “matrice C/P/S/D + numero”.

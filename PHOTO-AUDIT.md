@@ -21,6 +21,11 @@
 - [x] Foto atomiche distinte: latte, yogurt, ricotta, confettura, miele, burro e biscotti.
 - [x] Foto dedicate per pizza margherita e hamburger semplice.
 
+## v1.15.18 completato
+
+- [x] Crescenza, primo sale, scamorza bianca e Provolone Dolce Auricchio: quattro fotografie atomiche distinte.
+- [x] Bistecca di cavallo ai ferri con patate lesse e zucchine: fotografia finale dedicata coerente con i quattro componenti.
+- [x] Le ricette della settimana prive di una matrice componenti esplicita derivano ora le immagini dai propri ingredienti reali.
 ## Revisioni successive
 
 - [ ] v1.8: controllo sistematico delle famiglie internazionali e sostituzione di ogni duplicato fuorviante.

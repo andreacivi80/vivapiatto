@@ -16,7 +16,15 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.15\.17"/);
+  assert.match(app, /VERSION = "1\.15\.18"/);
+  assert.match(app, /food: "Crescenza"/);
+  assert.match(app, /food: "Primo sale"/);
+  assert.match(app, /food: "Scamorza"/);
+  assert.match(app, /food: "Provolone Dolce Auricchio"/);
+  assert.match(app, /horse-steak-potatoes-zucchini/);
+  assert.match(app, /food: "Quinoa cotta"/);
+  assert.match(app, /recipe\.parts \|\| recipe\.ingredients\.map\(additionAsPart\)/);
+  assert.match(app, /!recipe\.parts && !partSelections\[key\]/);
   assert.match(app, /cleanKicker/);
   assert.match(app, /matrice\\s\+\[cspd\]/);
   assert.match(app, /Ricetta e preparazione/);
@@ -44,6 +52,11 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /matrix-p52-bulgur-tofu-chickpeas/);
   assert.match(app, /Hummus di barbabietola/);
   assert.match(app, /weeklyPlannedFiber\[index\]\} g fibre/);
+  await access(new URL("../dist/food/part-crescenza-v11518.png", import.meta.url));
+  await access(new URL("../dist/food/part-primo-sale-v11518.png", import.meta.url));
+  await access(new URL("../dist/food/part-scamorza-v11518.png", import.meta.url));
+  await access(new URL("../dist/food/part-provolone-auricchio-v11518.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-horse-steak-potatoes-zucchini-v11518.png", import.meta.url));
   await access(new URL("../dist/food/part-pineapple-v11513.png", import.meta.url));
   await access(new URL("../dist/food/part-beet-hummus-v11513.png", import.meta.url));
   await access(new URL("../dist/food/recipe-p41-pasta-peas-ricotta-v11513.png", import.meta.url));
