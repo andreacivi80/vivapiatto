@@ -2,7 +2,14 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.15.11 — in verifica
+## v1.15.12 — in verifica
+
+- [x] Spuntini S27–S34 collegati alle proposte reali di metà mattina e pomeriggio.
+- [x] Carote crude e carote cotte bollite distinte per dati, foto e alternative.
+- [x] Otto nuove fotografie atomiche cache-bustate: more, gallette, hummus, fiocchi di latte, sesamo, ravanelli e due cotture delle carote.
+- [x] Gallette, hummus, fiocchi di latte, more, ananas, ravanelli e sesamo entrano nel paniere delle sostituzioni per ruolo.
+- [ ] Proseguire con P41–P52 e fotografie finali specifiche.
+## v1.15.11 — pubblicata
 
 - [x] C31 pane di farro, ricotta, mela e nocciole collegata come colazione veloce completa.
 - [x] C34 pancake di grano saraceno con albume, pera e yogurt collegata come colazione da casa/weekend.

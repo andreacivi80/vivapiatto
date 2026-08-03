@@ -47,7 +47,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.15.11";
+const VERSION = "1.15.12";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -609,12 +609,20 @@ const foods: Record<string, Food> = {
     fiber: 0.5,
     source: "CREA",
   },
-  Carote: {
+  "Carote crude": {
     kcal: 41,
-    protein: 0.9,
-    carbs: 9.6,
+    protein: 1.1,
+    carbs: 7.6,
     fat: 0.2,
-    fiber: 2.8,
+    fiber: 3.1,
+    source: "CREA",
+  },
+  "Carote cotte bollite": {
+    kcal: 47,
+    protein: 1.3,
+    carbs: 8.7,
+    fat: 0.2,
+    fiber: 3.6,
     source: "CREA",
   },
   Funghi: {
@@ -642,11 +650,11 @@ const foods: Record<string, Food> = {
     source: "CREA",
   },
   Cetriolo: {
-    kcal: 15,
+    kcal: 16,
     protein: 0.7,
-    carbs: 3.6,
-    fat: 0.1,
-    fiber: 0.5,
+    carbs: 1.8,
+    fat: 0.5,
+    fiber: 0.8,
     source: "CREA",
   },
   Rucola: {
@@ -762,11 +770,59 @@ const foods: Record<string, Food> = {
     source: "USDA",
   },
   Ananas: {
-    kcal: 50,
+    kcal: 42,
     protein: 0.5,
-    carbs: 13.1,
+    carbs: 10,
+    fat: 0,
+    fiber: 1,
+    source: "CREA",
+  },
+  More: {
+    kcal: 43,
+    protein: 1.4,
+    carbs: 9.6,
+    fat: 0.5,
+    fiber: 5.3,
+    source: "USDA",
+  },
+  "Gallette di riso integrale": {
+    kcal: 383,
+    protein: 8.5,
+    carbs: 80,
+    fat: 2.4,
+    fiber: 3.2,
+    source: "ETICHETTA",
+  },
+  "Hummus di ceci": {
+    kcal: 219,
+    protein: 6.4,
+    carbs: 12,
+    fat: 15,
+    fiber: 5.2,
+    source: "ETICHETTA",
+  },
+  "Fiocchi di latte": {
+    kcal: 91,
+    protein: 9.9,
+    carbs: 2.8,
+    fat: 4.5,
+    fiber: 0,
+    source: "ETICHETTA",
+  },
+  "Semi di sesamo": {
+    kcal: 573,
+    protein: 17.7,
+    carbs: 23.5,
+    fat: 49.7,
+    fiber: 11.8,
+    source: "USDA",
+  },
+  "Ravanelli crudi": {
+    kcal: 13,
+    protein: 0.8,
+    carbs: 1.8,
     fat: 0.1,
-    fiber: 1.4,
+    fiber: 1.3,
     source: "CREA",
   },
   Mandorle: {
@@ -2480,7 +2536,14 @@ const matrixSnacks: Recipe[] = [
     steps: ["Taglia la banana e aggiungi la crema composta esclusivamente da arachidi."],
     alternatives: ["Contiene arachidi", "Porta la crema già pesata in un piccolo contenitore"],
   },
-];
+  { id: "matrix-s27-apricot-almond", name: "Albicocche e mandorle", kicker: "Spuntino pratico · matrice S27", course: "Spuntino", cuisine: "Italiano", kind: "combination", image: photo("part-apricots-v1152"), time: 2, ingredients: [{ food: "Albicocche fresche", grams: 150 }, { food: "Mandorle", grams: 15 }], parts: [{ category: "Frutta", food: "Albicocche fresche", grams: 150, label: "Albicocche · parte edibile", image: photo("part-apricots-v1152") }, { category: "Extra", food: "Mandorle", grams: 15, label: "Mandorle non salate", image: photo("part-almonds-v9") }], steps: ["Lava e asciuga le albicocche; pesa 150 g di parte edibile e abbinale a 15 g di mandorle già porzionate."], alternatives: ["Trasportabile al lavoro", "Contiene frutta a guscio"] },
+  { id: "matrix-s28-kefir-blackberries-flax", name: "Kefir con more e semi di lino", kicker: "Spuntino fresco · matrice S28", course: "Spuntino", cuisine: "Italiano", kind: "combination", image: photo("part-blackberries-v11512"), time: 3, ingredients: [{ food: "Kefir bianco magro", grams: 170 }, { food: "More", grams: 150 }, { food: "Semi di lino macinati", grams: 5 }], parts: [{ category: "Latticino", food: "Kefir bianco magro", grams: 170, label: "Kefir bianco", image: photo("part-kefir-v1152") }, { category: "Frutta", food: "More", grams: 150, label: "More fresche", image: photo("part-blackberries-v11512") }, { category: "Extra", food: "Semi di lino macinati", grams: 5, label: "Semi di lino macinati", image: photo("part-flaxseed-v113") }], steps: ["Versa il kefir in un contenitore, aggiungi le more lavate e completa con i semi di lino macinati al momento."], alternatives: ["Conserva refrigerato", "Contiene latte"] },
+  { id: "matrix-s29-ricotta-apple", name: "Ricotta con mela e cannella", kicker: "Spuntino dolce · matrice S29", course: "Spuntino", cuisine: "Italiano", kind: "combination", image: photo("part-ricotta-v7"), time: 5, ingredients: [{ food: "Ricotta vaccina", grams: 80 }, { food: "Mela", grams: 150 }], parts: [{ category: "Latticino", food: "Ricotta vaccina", grams: 80, label: "Ricotta vaccina", image: photo("part-ricotta-v7") }, { category: "Frutta", food: "Mela", grams: 150, label: "Mela a cubetti", image: photo("part-apple-v7") }], steps: ["Lava e taglia la mela a cubetti; servila con la ricotta e cannella facoltativa, senza zucchero aggiunto."], alternatives: ["Conserva refrigerato", "Contiene latte"] },
+  { id: "matrix-s30-rice-cakes-hummus", name: "Gallette integrali con hummus, rucola e pomodorini", kicker: "Spuntino salato · matrice S30", course: "Spuntino", cuisine: "Mediterraneo", kind: "combination", image: photo("part-rice-cakes-whole-v11512"), time: 5, ingredients: [{ food: "Gallette di riso integrale", grams: 27 }, { food: "Hummus di ceci", grams: 40 }, { food: "Rucola", grams: 30 }, { food: "Pomodorini", grams: 100 }], parts: [{ category: "Carboidrato", food: "Gallette di riso integrale", grams: 27, label: "Gallette integrali · 3 circa", image: photo("part-rice-cakes-whole-v11512") }, { category: "Proteina", food: "Hummus di ceci", grams: 40, label: "Hummus di ceci", image: photo("part-hummus-v11512") }, { category: "Contorno", food: "Rucola", grams: 30, label: "Rucola", image: photo("part-rucola-v7") }, { category: "Contorno", food: "Pomodorini", grams: 100, label: "Pomodorini", image: photo("part-tomatoes-v8") }], steps: ["Lava rucola e pomodorini. Spalma l'hummus sulle gallette solo al momento e completa con le verdure."], alternatives: ["Trasporta hummus e verdure separati", "Contiene sesamo se presente nell'hummus"] },
+  { id: "matrix-s31-orange-peanuts", name: "Arancia e arachidi non salate", kicker: "Spuntino pratico · matrice S31", course: "Spuntino", cuisine: "Italiano", kind: "combination", image: photo("part-orange-v7"), time: 2, ingredients: [{ food: "Arancia", grams: 150 }, { food: "Arachidi", grams: 15 }], parts: [{ category: "Frutta", food: "Arancia", grams: 150, label: "Arancia · parte edibile", image: photo("part-orange-v7") }, { category: "Extra", food: "Arachidi", grams: 15, label: "Arachidi non salate", image: photo("part-peanuts-v113") }], steps: ["Pesa 150 g di arancia pulita e abbinala a 15 g di arachidi non salate già porzionate."], alternatives: ["Trasportabile al lavoro", "Contiene arachidi"] },
+  { id: "matrix-s32-cottage-carrot-cucumber", name: "Fiocchi di latte con carote crude e cetrioli", kicker: "Spuntino fresco · matrice S32", course: "Spuntino", cuisine: "Italiano", kind: "combination", image: photo("part-cottage-cheese-v11512"), time: 7, ingredients: [{ food: "Fiocchi di latte", grams: 80 }, { food: "Carote crude", grams: 100 }, { food: "Cetriolo", grams: 100 }], parts: [{ category: "Latticino", food: "Fiocchi di latte", grams: 80, label: "Fiocchi di latte", image: photo("part-cottage-cheese-v11512") }, { category: "Contorno", food: "Carote crude", grams: 100, label: "Carote crude a bastoncino", image: photo("part-carrots-raw-v11512") }, { category: "Contorno", food: "Cetriolo", grams: 100, label: "Cetriolo a bastoncino", image: photo("part-cucumber-v8") }], steps: ["Lava e pela le carote, lava il cetriolo e tagliali a bastoncino. Servi con i fiocchi di latte e erbe aromatiche."], alternatives: ["Conserva refrigerato", "Contiene latte"] },
+  { id: "matrix-s33-yogurt-pineapple-sesame", name: "Yogurt con ananas e sesamo", kicker: "Spuntino fresco · matrice S33", course: "Spuntino", cuisine: "Internazionale", kind: "combination", image: photo("part-pineapple-v11"), time: 3, ingredients: [{ food: "Yogurt greco 2%", grams: 125 }, { food: "Ananas", grams: 150 }, { food: "Semi di sesamo", grams: 5 }], parts: [{ category: "Latticino", food: "Yogurt greco 2%", grams: 125, label: "Yogurt bianco", image: photo("part-yogurt-v7") }, { category: "Frutta", food: "Ananas", grams: 150, label: "Ananas fresco · parte edibile", image: photo("part-pineapple-v11") }, { category: "Extra", food: "Semi di sesamo", grams: 5, label: "Semi di sesamo", image: photo("part-sesame-v11512") }], steps: ["Taglia l'ananas fresco a cubetti, uniscilo allo yogurt e completa con 5 g di semi di sesamo."], alternatives: ["Conserva refrigerato", "Contiene latte e sesamo"] },
+  { id: "matrix-s34-rye-ricotta-radish", name: "Pane di segale con ricotta e ravanelli", kicker: "Spuntino salato · matrice S34", course: "Spuntino", cuisine: "Italiano", kind: "combination", image: photo("part-radishes-v11512"), time: 5, ingredients: [{ food: "Pane di segale", grams: 40 }, { food: "Ricotta vaccina", grams: 60 }, { food: "Ravanelli crudi", grams: 100 }], parts: [{ category: "Carboidrato", food: "Pane di segale", grams: 40, label: "Pane di segale", image: photo("part-bread-rye-v1156") }, { category: "Latticino", food: "Ricotta vaccina", grams: 60, label: "Ricotta vaccina", image: photo("part-ricotta-v7") }, { category: "Contorno", food: "Ravanelli crudi", grams: 100, label: "Ravanelli crudi", image: photo("part-radishes-v11512") }], steps: ["Lava e affetta sottilmente i ravanelli. Spalma la ricotta sul pane di segale e aggiungi i ravanelli."], alternatives: ["Trasportabile separando pane e farcitura", "Contiene latte e segale"] },];
 const matrixMainRecipes: Recipe[] = [
   {
     id: "matrix-p43-farro-eggs-green-beans",
@@ -3476,6 +3539,7 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       label: "Pane ai cereali · 50 g",
       image: photo("part-bread-cereals-v11511"),
     },
+    { category: "Carboidrato", food: "Gallette di riso integrale", grams: 27, label: "Gallette integrali · 3 circa", image: photo("part-rice-cakes-whole-v11512") },
   ],
   Proteina: [
     {
@@ -3632,6 +3696,7 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       label: "Burger vegetali di soia · 2 piccoli",
       image: photo("part-plant-burger-v1154"),
     },
+    { category: "Proteina", food: "Hummus di ceci", grams: 40, label: "Hummus di ceci", image: photo("part-hummus-v11512") },
   ],
   Contorno: [
     {
@@ -3671,10 +3736,24 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     },
     {
       category: "Contorno",
-      food: "Carote",
+      food: "Carote crude",
       grams: 200,
-      label: "Carote",
-      image: photo("part-carrots-v8"),
+      label: "Carote crude",
+      image: photo("part-carrots-raw-v11512"),
+    },
+    {
+      category: "Contorno",
+      food: "Carote cotte bollite",
+      grams: 200,
+      label: "Carote cotte bollite",
+      image: photo("part-carrots-cooked-v11512"),
+    },
+    {
+      category: "Contorno",
+      food: "Ravanelli crudi",
+      grams: 100,
+      label: "Ravanelli crudi",
+      image: photo("part-radishes-v11512"),
     },
     {
       category: "Contorno",
@@ -3818,6 +3897,7 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       label: "Bevanda d'avena",
       image: photo("part-milk-v7"),
     },
+    { category: "Latticino", food: "Fiocchi di latte", grams: 80, label: "Fiocchi di latte", image: photo("part-cottage-cheese-v11512") },
   ],
   Frutta: [
     {
@@ -3925,6 +4005,8 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       label: "Melone estivo · polpa edibile",
       image: photo("part-melon-v1152"),
     },
+    { category: "Frutta", food: "More", grams: 150, label: "More fresche", image: photo("part-blackberries-v11512") },
+    { category: "Frutta", food: "Ananas", grams: 150, label: "Ananas fresco", image: photo("part-pineapple-v11") },
   ],
   Extra: [
     {
@@ -4046,6 +4128,13 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       label: "Semi di lino macinati",
       image: photo("part-flaxseed-v113"),
     },
+    {
+      category: "Extra",
+      food: "Semi di sesamo",
+      grams: 5,
+      label: "Semi di sesamo",
+      image: photo("part-sesame-v11512"),
+    },
   ],
 };
 
@@ -4063,6 +4152,8 @@ const normalizeMealPart = (part: MealPart): MealPart => {
 };
 
 const seasonalMonths: Record<string, number[]> = {
+  More: [6, 7, 8, 9],
+  "Ravanelli crudi": [3, 4, 5, 6, 7, 8, 9, 10],
   "Ciliegie fresche": [5, 6],
   "Albicocche fresche": [6, 7],
   Anguria: [6, 7, 8],
@@ -4112,6 +4203,7 @@ const recommendedPartOptions = (part: MealPart, key: string) => {
         "Skyr bianco",
         "Yogurt greco 2%",
         "Kefir bianco magro",
+      "Fiocchi di latte",
         "Ricotta vaccina",
       ];
       return breakfastDairyOrder
@@ -4160,6 +4252,7 @@ const recommendedPartOptions = (part: MealPart, key: string) => {
           "Skyr bianco",
           "Yogurt greco 2%",
           "Kefir bianco magro",
+      "Fiocchi di latte",
           "Ricotta vaccina",
         ].includes(x.food),
       );
@@ -4297,6 +4390,7 @@ const portableSnackDairy = mealPartOptions.Latticino.filter(
       "Skyr bianco",
       "Yogurt greco 2%",
       "Kefir bianco magro",
+      "Fiocchi di latte",
     ].includes(part.food),
 );
 const catalogBreakfasts: Recipe[] = Array.from({ length: 36 }, (_, index) => {
