@@ -6,7 +6,7 @@ import { portionOptions, STANDARD_SOURCES } from "./nutritionEngine";
 type Macro = { kcal: number; protein: number; carbs: number; fat: number };
 type Food = Macro & {
   fiber: number;
-  source: "CREA" | "USDA" | "FRIDA" | "ETICHETTA";
+  source: "CREA" | "USDA" | "FRIDA" | "ETICHETTA" | "RICETTA CALCOLATA";
 };
 type RecipeIngredient = { food: string; grams: number; label?: string };
 type MealPart = RecipeIngredient & {
@@ -47,7 +47,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.15.12";
+const VERSION = "1.15.13";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -800,6 +800,22 @@ const foods: Record<string, Food> = {
     fat: 15,
     fiber: 5.2,
     source: "ETICHETTA",
+  },
+  "Hummus di barbabietola": {
+    kcal: 184,
+    protein: 5.5,
+    carbs: 12.4,
+    fat: 12,
+    fiber: 4.6,
+    source: "RICETTA CALCOLATA",
+  },
+  "Barbabietole cotte": {
+    kcal: 44,
+    protein: 1.2,
+    carbs: 8,
+    fat: 0.2,
+    fiber: 2.6,
+    source: "CREA",
   },
   "Fiocchi di latte": {
     kcal: 91,
@@ -2542,10 +2558,27 @@ const matrixSnacks: Recipe[] = [
   { id: "matrix-s30-rice-cakes-hummus", name: "Gallette integrali con hummus, rucola e pomodorini", kicker: "Spuntino salato · matrice S30", course: "Spuntino", cuisine: "Mediterraneo", kind: "combination", image: photo("part-rice-cakes-whole-v11512"), time: 5, ingredients: [{ food: "Gallette di riso integrale", grams: 27 }, { food: "Hummus di ceci", grams: 40 }, { food: "Rucola", grams: 30 }, { food: "Pomodorini", grams: 100 }], parts: [{ category: "Carboidrato", food: "Gallette di riso integrale", grams: 27, label: "Gallette integrali · 3 circa", image: photo("part-rice-cakes-whole-v11512") }, { category: "Proteina", food: "Hummus di ceci", grams: 40, label: "Hummus di ceci", image: photo("part-hummus-v11512") }, { category: "Contorno", food: "Rucola", grams: 30, label: "Rucola", image: photo("part-rucola-v7") }, { category: "Contorno", food: "Pomodorini", grams: 100, label: "Pomodorini", image: photo("part-tomatoes-v8") }], steps: ["Lava rucola e pomodorini. Spalma l'hummus sulle gallette solo al momento e completa con le verdure."], alternatives: ["Trasporta hummus e verdure separati", "Contiene sesamo se presente nell'hummus"] },
   { id: "matrix-s31-orange-peanuts", name: "Arancia e arachidi non salate", kicker: "Spuntino pratico · matrice S31", course: "Spuntino", cuisine: "Italiano", kind: "combination", image: photo("part-orange-v7"), time: 2, ingredients: [{ food: "Arancia", grams: 150 }, { food: "Arachidi", grams: 15 }], parts: [{ category: "Frutta", food: "Arancia", grams: 150, label: "Arancia · parte edibile", image: photo("part-orange-v7") }, { category: "Extra", food: "Arachidi", grams: 15, label: "Arachidi non salate", image: photo("part-peanuts-v113") }], steps: ["Pesa 150 g di arancia pulita e abbinala a 15 g di arachidi non salate già porzionate."], alternatives: ["Trasportabile al lavoro", "Contiene arachidi"] },
   { id: "matrix-s32-cottage-carrot-cucumber", name: "Fiocchi di latte con carote crude e cetrioli", kicker: "Spuntino fresco · matrice S32", course: "Spuntino", cuisine: "Italiano", kind: "combination", image: photo("part-cottage-cheese-v11512"), time: 7, ingredients: [{ food: "Fiocchi di latte", grams: 80 }, { food: "Carote crude", grams: 100 }, { food: "Cetriolo", grams: 100 }], parts: [{ category: "Latticino", food: "Fiocchi di latte", grams: 80, label: "Fiocchi di latte", image: photo("part-cottage-cheese-v11512") }, { category: "Contorno", food: "Carote crude", grams: 100, label: "Carote crude a bastoncino", image: photo("part-carrots-raw-v11512") }, { category: "Contorno", food: "Cetriolo", grams: 100, label: "Cetriolo a bastoncino", image: photo("part-cucumber-v8") }], steps: ["Lava e pela le carote, lava il cetriolo e tagliali a bastoncino. Servi con i fiocchi di latte e erbe aromatiche."], alternatives: ["Conserva refrigerato", "Contiene latte"] },
-  { id: "matrix-s33-yogurt-pineapple-sesame", name: "Yogurt con ananas e sesamo", kicker: "Spuntino fresco · matrice S33", course: "Spuntino", cuisine: "Internazionale", kind: "combination", image: photo("part-pineapple-v11"), time: 3, ingredients: [{ food: "Yogurt greco 2%", grams: 125 }, { food: "Ananas", grams: 150 }, { food: "Semi di sesamo", grams: 5 }], parts: [{ category: "Latticino", food: "Yogurt greco 2%", grams: 125, label: "Yogurt bianco", image: photo("part-yogurt-v7") }, { category: "Frutta", food: "Ananas", grams: 150, label: "Ananas fresco · parte edibile", image: photo("part-pineapple-v11") }, { category: "Extra", food: "Semi di sesamo", grams: 5, label: "Semi di sesamo", image: photo("part-sesame-v11512") }], steps: ["Taglia l'ananas fresco a cubetti, uniscilo allo yogurt e completa con 5 g di semi di sesamo."], alternatives: ["Conserva refrigerato", "Contiene latte e sesamo"] },
+  { id: "matrix-s33-yogurt-pineapple-sesame", name: "Yogurt con ananas e sesamo", kicker: "Spuntino fresco · matrice S33", course: "Spuntino", cuisine: "Internazionale", kind: "combination", image: photo("part-pineapple-v11513"), time: 3, ingredients: [{ food: "Yogurt greco 2%", grams: 125 }, { food: "Ananas", grams: 150 }, { food: "Semi di sesamo", grams: 5 }], parts: [{ category: "Latticino", food: "Yogurt greco 2%", grams: 125, label: "Yogurt bianco", image: photo("part-yogurt-v7") }, { category: "Frutta", food: "Ananas", grams: 150, label: "Ananas fresco · parte edibile", image: photo("part-pineapple-v11513") }, { category: "Extra", food: "Semi di sesamo", grams: 5, label: "Semi di sesamo", image: photo("part-sesame-v11512") }], steps: ["Taglia l'ananas fresco a cubetti, uniscilo allo yogurt e completa con 5 g di semi di sesamo."], alternatives: ["Conserva refrigerato", "Contiene latte e sesamo"] },
   { id: "matrix-s34-rye-ricotta-radish", name: "Pane di segale con ricotta e ravanelli", kicker: "Spuntino salato · matrice S34", course: "Spuntino", cuisine: "Italiano", kind: "combination", image: photo("part-radishes-v11512"), time: 5, ingredients: [{ food: "Pane di segale", grams: 40 }, { food: "Ricotta vaccina", grams: 60 }, { food: "Ravanelli crudi", grams: 100 }], parts: [{ category: "Carboidrato", food: "Pane di segale", grams: 40, label: "Pane di segale", image: photo("part-bread-rye-v1156") }, { category: "Latticino", food: "Ricotta vaccina", grams: 60, label: "Ricotta vaccina", image: photo("part-ricotta-v7") }, { category: "Contorno", food: "Ravanelli crudi", grams: 100, label: "Ravanelli crudi", image: photo("part-radishes-v11512") }], steps: ["Lava e affetta sottilmente i ravanelli. Spalma la ricotta sul pane di segale e aggiungi i ravanelli."], alternatives: ["Trasportabile separando pane e farcitura", "Contiene latte e segale"] },];
 const matrixMainRecipes: Recipe[] = [
   {
+    id: "matrix-p41-whole-pasta-peas-ricotta", name: "Pasta integrale con piselli, ricotta e zucchine", kicker: "Pranzo vegetariano · matrice P41", course: "Piatto unico", cuisine: "Italiano", image: photo("recipe-p41-pasta-peas-ricotta-v11513"), time: 25,
+    ingredients: [{ food: "Pasta integrale secca", grams: 70 }, { food: "Piselli cotti", grams: 120 }, { food: "Ricotta vaccina", grams: 60 }, { food: "Zucchine", grams: 200 }, { food: "Olio extravergine", grams: 5 }],
+    parts: [{ category: "Carboidrato", food: "Pasta integrale secca", grams: 70, label: "Pasta integrale · peso a crudo", image: photo("simple-pasta-white-v5") }, { category: "Proteina", food: "Piselli cotti", grams: 120, label: "Piselli cotti", image: photo("part-peas-v8") }, { category: "Latticino", food: "Ricotta vaccina", grams: 60, label: "Ricotta vaccina", image: photo("part-ricotta-v7") }, { category: "Contorno", food: "Zucchine", grams: 200, label: "Zucchine cotte", image: photo("part-zucchini-v8") }, { category: "Extra", food: "Olio extravergine", grams: 5, label: "Olio EVO · 5 g", image: photo("part-olive-oil-v8") }],
+    steps: ["Porta a bollore l'acqua, sala moderatamente e cuoci la pasta per il tempo indicato in confezione.", "Cuoci le zucchine a mezze rondelle in padella antiaderente 8-10 minuti; aggiungi i piselli già cotti negli ultimi 3 minuti.", "Stempera la ricotta con poca acqua di cottura, scola la pasta e manteca tutto fuori dal fuoco; completa con 5 g di olio pesato, basilico e pepe."], alternatives: ["Adatto a casa; per il lavoro preparare la sera prima e conservare refrigerato", "Contiene glutine e latte", "Ogni componente resta sostituibile separatamente"]
+  },
+  {
+    id: "matrix-p42-basmati-cod-spinach", name: "Riso basmati con merluzzo, spinaci e carote", kicker: "Pranzo completo di pesce · matrice P42", course: "Piatto completo", cuisine: "Italiano", image: photo("recipe-p42-basmati-cod-spinach-v11513"), time: 30,
+    ingredients: [{ food: "Riso basmati secco", grams: 70 }, { food: "Merluzzo cotto", grams: 150 }, { food: "Spinaci", grams: 150 }, { food: "Carote cotte bollite", grams: 100 }, { food: "Olio extravergine", grams: 10 }],
+    parts: [{ category: "Carboidrato", food: "Riso basmati secco", grams: 70, label: "Riso basmati · peso a crudo", image: photo("part-rice-basmati-v7") }, { category: "Proteina", food: "Merluzzo cotto", grams: 150, label: "Merluzzo cotto al vapore", image: photo("part-cod-steamed-v8") }, { category: "Contorno", food: "Spinaci", grams: 150, label: "Spinaci cotti", image: photo("part-spinach-v7") }, { category: "Contorno", food: "Carote cotte bollite", grams: 100, label: "Carote cotte bollite", image: photo("part-carrots-cooked-v11512") }, { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") }],
+    steps: ["Sciacqua il riso e cuocilo secondo confezione, quindi scolalo o lascialo assorbire completamente.", "Cuoci il merluzzo al vapore fino a completa cottura; cuoci separatamente spinaci e carote senza grassi aggiunti.", "Servi le componenti distinguibili e condisci con 10 g di olio pesato, curcuma, zenzero e limone."], alternatives: ["Trasportabile in contenitore refrigerato", "Contiene pesce", "Ogni componente resta sostituibile separatamente"]
+  },
+  {
+    id: "matrix-p44-quinoa-cannellini-beet", name: "Quinoa con cannellini, barbabietole e rucola", kicker: "Pranzo vegetale · matrice P44", course: "Piatto unico", cuisine: "Mediterraneo", image: photo("recipe-p44-quinoa-cannellini-beet-v11513"), time: 25,
+    ingredients: [{ food: "Quinoa cotta", grams: 185 }, { food: "Fagioli cannellini cotti", grams: 150 }, { food: "Barbabietole cotte", grams: 150 }, { food: "Rucola", grams: 50 }, { food: "Olio extravergine", grams: 10 }],
+    parts: [{ category: "Carboidrato", food: "Quinoa cotta", grams: 185, label: "Quinoa cotta · da circa 70 g secca", image: photo("part-quinoa-v7") }, { category: "Proteina", food: "Fagioli cannellini cotti", grams: 150, label: "Cannellini cotti e sgocciolati", image: photo("part-cannellini-v1141") }, { category: "Contorno", food: "Barbabietole cotte", grams: 150, label: "Barbabietole cotte", image: photo("part-beetroot-v11513") }, { category: "Contorno", food: "Rucola", grams: 50, label: "Rucola fresca", image: photo("part-rucola-v7") }, { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") }],
+    steps: ["Sciacqua la quinoa e cuocila seguendo la confezione; falla intiepidire.", "Risciacqua e sgocciola i cannellini, taglia le barbabietole cotte a cubetti e lava la rucola.", "Unisci tutto e condisci con 10 g di olio pesato, limone, poco aceto di mele e pepe."], alternatives: ["Vegano e trasportabile", "Senza glutine se gli ingredienti sono certificati", "Ogni componente resta sostituibile separatamente"]
+  },  {
     id: "matrix-p43-farro-eggs-green-beans",
     name: "Farro con uova, fagiolini e pomodori",
     kicker: "Pranzo trasportabile · matrice P43",
@@ -3697,6 +3730,7 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       image: photo("part-plant-burger-v1154"),
     },
     { category: "Proteina", food: "Hummus di ceci", grams: 40, label: "Hummus di ceci", image: photo("part-hummus-v11512") },
+    { category: "Proteina", food: "Hummus di barbabietola", grams: 40, label: "Hummus di barbabietola", image: photo("part-beet-hummus-v11513") },
   ],
   Contorno: [
     {
@@ -3754,6 +3788,13 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       grams: 100,
       label: "Ravanelli crudi",
       image: photo("part-radishes-v11512"),
+    },
+    {
+      category: "Contorno",
+      food: "Barbabietole cotte",
+      grams: 150,
+      label: "Barbabietole cotte",
+      image: photo("part-beetroot-v11513"),
     },
     {
       category: "Contorno",
@@ -4006,7 +4047,7 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       image: photo("part-melon-v1152"),
     },
     { category: "Frutta", food: "More", grams: 150, label: "More fresche", image: photo("part-blackberries-v11512") },
-    { category: "Frutta", food: "Ananas", grams: 150, label: "Ananas fresco", image: photo("part-pineapple-v11") },
+    { category: "Frutta", food: "Ananas", grams: 150, label: "Ananas fresco", image: photo("part-pineapple-v11513") },
   ],
   Extra: [
     {
@@ -6613,8 +6654,8 @@ export function FoodPlanner() {
                 {weeklyPlannedKcal.map((kcal, index) => (
                   <span key={days[index].label}>
                     <small>G{index + 1}</small>
-                    <b>{kcal}</b>
-                    <i>kcal · {weeklyPlannedFiber[index]} g fibre</i>
+                    <b>{kcal} <em>kcal</em></b>
+                    <i>{weeklyPlannedFiber[index]} g fibre</i>
                   </span>
                 ))}
               </div>

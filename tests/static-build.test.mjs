@@ -16,7 +16,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.15\.12"/);
+  assert.match(app, /VERSION = "1\.15\.13"/);
   assert.match(app, /normalizeMealPart/);
   assert.match(app, /window\.location\.replace/);
   assert.match(app, /Seleziona tutto/);
@@ -30,6 +30,14 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /matrix-s11-banana-peanut/);
   assert.match(app, /matrix-s27-apricot-almond/);
   assert.match(app, /matrix-s34-rye-ricotta-radish/);
+  assert.match(app, /matrix-p41-whole-pasta-peas-ricotta/);
+  assert.match(app, /matrix-p42-basmati-cod-spinach/);
+  assert.match(app, /matrix-p44-quinoa-cannellini-beet/);
+  assert.match(app, /Hummus di barbabietola/);
+  assert.match(app, /weeklyPlannedFiber\[index\]\} g fibre/);
+  await access(new URL("../dist/food/part-pineapple-v11513.png", import.meta.url));
+  await access(new URL("../dist/food/part-beet-hummus-v11513.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-p41-pasta-peas-ricotta-v11513.png", import.meta.url));
   await access(new URL("../dist/food/part-carrots-raw-v11512.png", import.meta.url));
   await access(new URL("../dist/food/part-carrots-cooked-v11512.png", import.meta.url));
   await access(new URL("../dist/food/part-radishes-v11512.png", import.meta.url));

@@ -759,6 +759,11 @@ button {
 .week-kcal-summary b {
   font-size: 9px;
 }
+.week-kcal-summary b em {
+  color: var(--muted);
+  font-size: 6px;
+  font-style: normal;
+}
 .page-lead {
   font-size: 13px;
   color: var(--muted);

@@ -2,7 +2,14 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.15.12 — in verifica
+## v1.15.13 — in verifica
+
+- [x] P41, P42 e P44 collegati come pranzi completi con componenti modificabili e preparazione da zero.
+- [x] Foto finali specifiche per pasta con piselli e ricotta, riso con merluzzo e quinoa con cannellini e barbabietola.
+- [x] Hummus di barbabietola e barbabietole cotte inseriti con ruolo, porzione, valori e foto autonome.
+- [x] Ananas fresco riceve una fotografia dedicata realmente presente nel pacchetto.
+- [x] Riepilogo settimanale: quantità e unità kcal sulla stessa riga; fibre su riga separata.
+## v1.15.12 — pubblicata
 
 - [x] Spuntini S27–S34 collegati alle proposte reali di metà mattina e pomeriggio.
 - [x] Carote crude e carote cotte bollite distinte per dati, foto e alternative.
