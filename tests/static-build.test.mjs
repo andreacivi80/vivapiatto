@@ -16,7 +16,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.15\.21"/);
+  assert.match(app, /VERSION = "1\.15\.22"/);
   assert.match(app, /food: "Crescenza"/);
   assert.match(app, /food: "Primo sale"/);
   assert.match(app, /food: "Scamorza"/);
@@ -38,6 +38,12 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /Vedi ingredienti e preparazione/);
   assert.match(app, /Scegli questo piatto/);
   assert.match(app, /Note utili/);
+  assert.match(app, /italian-minestrone-complete/);
+  assert.match(app, /Peperoni crudi/);
+  assert.match(app, /Peperoni cotti senza olio/);
+  assert.match(app, /Mozzarella vaccina/);
+  assert.match(app, /Mozzarella light/);
+  assert.match(app, /Yogurt greco 0%/);
   assert.match(app, /food: "Quinoa cotta"/);
   assert.match(app, /recipe\.parts \|\| recipe\.ingredients\.map\(additionAsPart\)/);
   assert.match(app, /!recipe\.parts && !partSelections\[key\]/);
@@ -82,6 +88,12 @@ test("sorgente mobile con versione e fonti", async () => {
   await access(new URL("../dist/food/part-turbot-v11520.png", import.meta.url));
   await access(new URL("../dist/food/part-cuttlefish-v11520.png", import.meta.url));
   await access(new URL("../dist/food/part-sprouts-v11520.png", import.meta.url));
+  await access(new URL("../dist/food/part-peppers-raw-v11522.png", import.meta.url));
+  await access(new URL("../dist/food/part-peppers-cooked-v11522.png", import.meta.url));
+  await access(new URL("../dist/food/part-mozzarella-v11522.png", import.meta.url));
+  await access(new URL("../dist/food/part-mozzarella-light-v11522.png", import.meta.url));
+  await access(new URL("../dist/food/part-greek-yogurt-zero-v11522.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-minestrone-v11522.png", import.meta.url));
   await access(new URL("../dist/food/part-sole-baked-v11519.png", import.meta.url));
   await access(new URL("../dist/food/part-brown-rice-v11519.png", import.meta.url));
   await access(new URL("../dist/food/part-grass-peas-v11519.png", import.meta.url));

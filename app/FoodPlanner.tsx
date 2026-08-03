@@ -47,7 +47,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.15.21";
+const VERSION = "1.15.22";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -425,6 +425,18 @@ const foods: Record<string, Food> = {
   Zucchero: {
     kcal: 392, protein: 0, carbs: 100, fat: 0, fiber: 0, source: "CREA",
   },
+  "Mozzarella vaccina": {
+    kcal: 253, protein: 18.7, carbs: 0.7, fat: 19.5, fiber: 0, source: "CREA",
+  },
+  "Mozzarella light": {
+    kcal: 164, protein: 20, carbs: 1.5, fat: 8.7, fiber: 0, source: "ETICHETTA",
+  },
+  "Yogurt greco 0%": {
+    kcal: 59, protein: 10.3, carbs: 3.6, fat: 0.4, fiber: 0, source: "USDA",
+  },
+  "Minestrone cotto": {
+    kcal: 45, protein: 2, carbs: 7.8, fat: 0.4, fiber: 2.1, source: "CREA",
+  },
   "Sogliola · peso a crudo": {
     kcal: 83, protein: 16.9, carbs: 0.8, fat: 1.4, fiber: 0, source: "CREA",
   },
@@ -714,13 +726,11 @@ const foods: Record<string, Food> = {
     fiber: 3.3,
     source: "CREA",
   },
-  Peperoni: {
-    kcal: 31,
-    protein: 1,
-    carbs: 6,
-    fat: 0.3,
-    fiber: 2.1,
-    source: "CREA",
+  "Peperoni crudi": {
+    kcal: 26, protein: 0.9, carbs: 4.2, fat: 0.3, fiber: 1.9, source: "CREA",
+  },
+  "Peperoni cotti senza olio": {
+    kcal: 42, protein: 1.1, carbs: 7.4, fat: 0.4, fiber: 2.5, source: "CREA",
   },
   Cetriolo: {
     kcal: 16,
@@ -1349,7 +1359,7 @@ const recipes: Recipe[] = [
     ingredients: [
       { food: "Farro cotto", grams: 150 },
       { food: "Lenticchie cotte", grams: 110 },
-      { food: "Peperoni", grams: 120 },
+      { food: "Peperoni cotti senza olio", grams: 120 },
       { food: "Cetriolo", grams: 100 },
       { food: "Rucola", grams: 50 },
       { food: "Feta", grams: 45 },
@@ -1379,7 +1389,7 @@ const recipes: Recipe[] = [
       { food: "Riso basmati cotto", grams: 190 },
       { food: "Tonno al naturale sgocciolato", grams: 120 },
       { food: "Zucchine", grams: 150 },
-      { food: "Peperoni", grams: 100 },
+      { food: "Peperoni cotti senza olio", grams: 100 },
       { food: "Olio extravergine", grams: 9 },
     ],
     steps: [
@@ -1464,7 +1474,7 @@ const recipes: Recipe[] = [
     ingredients: [
       { food: "Petto di pollo cotto", grams: 130 },
       { food: "Farro cotto", grams: 160 },
-      { food: "Peperoni", grams: 150 },
+      { food: "Peperoni cotti senza olio", grams: 150 },
       { food: "Zucchine", grams: 120 },
       { food: "Rucola", grams: 40 },
       { food: "Olio extravergine", grams: 9 },
@@ -2649,9 +2659,9 @@ const matrixMainRecipes: Recipe[] = [
   { id:"matrix-p49-millet-chicken-pumpkin", name:"Miglio con pollo, zucca e cavolo nero", kicker:"Pranzo carne bianca · matrice P49", course:"Piatto unico", cuisine:"Italiano", image:photo("recipe-p49-millet-chicken-v11515"), time:35, ingredients:[{food:"Miglio cotto",grams:190},{food:"Petto di pollo cotto",grams:100},{food:"Zucca",grams:150},{food:"Cavolo nero cotto",grams:100},{food:"Olio extravergine",grams:10}], parts:[{category:"Carboidrato",food:"Miglio cotto",grams:190,label:"Miglio cotto · da circa 70 g secco",image:photo("part-millet-v11515")},{category:"Proteina",food:"Petto di pollo cotto",grams:100,label:"Petto di pollo alla piastra",image:photo("part-chicken-grilled-v7")},{category:"Contorno",food:"Zucca",grams:150,label:"Zucca arrostita",image:photo("part-pumpkin-v8")},{category:"Contorno",food:"Cavolo nero cotto",grams:100,label:"Cavolo nero cotto",image:photo("part-kale-v11515")},{category:"Extra",food:"Olio extravergine",grams:10,label:"Olio EVO · 10 g",image:photo("part-olive-oil-v8")}], steps:["Cuoci il miglio seguendo la confezione.","Arrostisci la zucca, cuoci il cavolo nero e griglia il pollo fino a completa cottura.","Unisci e completa con olio pesato, rosmarino, paprika e pepe."], alternatives:["Senza glutine se certificato","Preferibile a casa; trasportabile preparato prima","Componenti modificabili separatamente"] },
   { id:"matrix-p50-gnocchi-cannellini-chard", name:"Gnocchi con cannellini, pomodoro e bietole", kicker:"Pranzo vegetale · matrice P50", course:"Piatto unico", cuisine:"Italiano", image:photo("recipe-p50-gnocchi-cannellini-v11515"), time:25, ingredients:[{food:"Gnocchi di patate",grams:150},{food:"Fagioli cannellini cotti",grams:120},{food:"Pomodorini",grams:125},{food:"Bietole cotte",grams:125},{food:"Olio extravergine",grams:10}], parts:[{category:"Carboidrato",food:"Gnocchi di patate",grams:150,label:"Gnocchi di patate",image:photo("part-gnocchi-v7")},{category:"Proteina",food:"Fagioli cannellini cotti",grams:120,label:"Cannellini cotti e sgocciolati",image:photo("part-cannellini-v1141")},{category:"Contorno",food:"Pomodorini",grams:125,label:"Pomodoro cotto",image:photo("part-tomatoes-v8")},{category:"Contorno",food:"Bietole cotte",grams:125,label:"Bietole cotte",image:photo("part-chard-v11515")},{category:"Extra",food:"Olio extravergine",grams:10,label:"Olio EVO · 10 g",image:photo("part-olive-oil-v8")}], steps:["Cuoci pomodoro e bietole, quindi aggiungi i cannellini risciacquati.","Lessa gli gnocchi e scolali quando salgono in superficie.","Unisci al condimento e completa con 10 g di olio pesato, aglio e salvia."], alternatives:["Verificare glutine e uova negli gnocchi","Adatto a casa","Componenti modificabili separatamente"] },
   { id:"matrix-p51-polenta-rabbit-mushrooms", name:"Polenta con coniglio, funghi e radicchio", kicker:"Pranzo casa · matrice P51", course:"Piatto completo", cuisine:"Italiano", image:photo("recipe-p51-polenta-rabbit-v11515"), time:45, ingredients:[{food:"Polenta cotta",grams:300},{food:"Coniglio cotto in umido",grams:100},{food:"Funghi",grams:125},{food:"Radicchio cotto",grams:125},{food:"Olio extravergine",grams:10}], parts:[{category:"Carboidrato",food:"Polenta cotta",grams:300,label:"Polenta cotta · da circa 70 g farina",image:photo("part-polenta-v11515")},{category:"Proteina",food:"Coniglio cotto in umido",grams:100,label:"Coniglio cotto · parte edibile",image:photo("part-rabbit-v11515")},{category:"Contorno",food:"Funghi",grams:125,label:"Funghi cotti",image:photo("part-mushrooms-v8")},{category:"Contorno",food:"Radicchio cotto",grams:125,label:"Radicchio cotto",image:photo("part-radicchio-v11515")},{category:"Extra",food:"Olio extravergine",grams:10,label:"Olio EVO · 10 g",image:photo("part-olive-oil-v8")}], steps:["Cuoci il coniglio in umido con rosmarino e salvia fino a completa cottura.","Prepara la polenta secondo confezione e cuoci funghi e radicchio in padella antiaderente.","Servi le tre componenti e distribuisci i 10 g di olio pesato."], alternatives:["Pasto da casa","Polenta certificata per senza glutine","Componenti modificabili separatamente"] },
-  { id:"matrix-p52-bulgur-tofu-chickpeas", name:"Bulgur con tofu, ceci e verdure", kicker:"Pranzo vegano · matrice P52", course:"Piatto unico", cuisine:"Internazionale", image:photo("recipe-p52-bulgur-tofu-v11515"), time:30, ingredients:[{food:"Bulgur cotto",grams:130},{food:"Tofu alla piastra",grams:80},{food:"Ceci cotti",grams:100},{food:"Carote crude",grams:80},{food:"Zucchine",grams:85},{food:"Cavolo rosso crudo",grams:85},{food:"Olio extravergine",grams:10}], parts:[{category:"Carboidrato",food:"Bulgur cotto",grams:130,label:"Bulgur cotto · da circa 50 g secco",image:photo("part-bulgur-v11515")},{category:"Proteina",food:"Tofu alla piastra",grams:80,label:"Tofu alla piastra",image:photo("part-tofu-v11515")},{category:"Proteina",food:"Ceci cotti",grams:100,label:"Ceci cotti e sgocciolati",image:photo("part-chickpeas-v8")},{category:"Contorno",food:"Carote crude",grams:80,label:"Carote crude",image:photo("part-carrots-raw-v11512")},{category:"Contorno",food:"Zucchine",grams:85,label:"Zucchine cotte",image:photo("part-zucchini-v8")},{category:"Contorno",food:"Cavolo rosso crudo",grams:85,label:"Cavolo rosso",image:photo("part-red-cabbage-v11515")},{category:"Extra",food:"Olio extravergine",grams:10,label:"Olio EVO · 10 g",image:photo("part-olive-oil-v8")}], steps:["Cuoci il bulgur secondo confezione.","Griglia il tofu; cuoci carote e zucchine lasciando il cavolo rosso crudo e croccante; risciacqua i ceci.","Unisci e completa con olio pesato, zenzero, paprika e limone."], alternatives:["Contiene glutine e soia","Trasportabile refrigerato","Cereale, tofu e ceci restano in porzioni ridotte"] },  { id: "matrix-p45-couscous-shrimp-peppers", name: "Cous cous integrale con gamberi, piselli e peperoni", kicker: "Pranzo di pesce · matrice P45", course: "Piatto unico", cuisine: "Mediterraneo", image: photo("recipe-p45-couscous-shrimp-v11514"), time: 25, ingredients: [{ food: "Cous cous integrale cotto", grams: 180 }, { food: "Gamberi cotti", grams: 150 }, { food: "Piselli cotti", grams: 80 }, { food: "Peperoni", grams: 200 }, { food: "Olio extravergine", grams: 10 }], parts: [{ category: "Carboidrato", food: "Cous cous integrale cotto", grams: 180, label: "Cous cous cotto · da circa 70 g secco", image: photo("part-couscous-v11514") }, { category: "Proteina", food: "Gamberi cotti", grams: 150, label: "Gamberi cotti", image: photo("part-shrimp-v11514") }, { category: "Proteina", food: "Piselli cotti", grams: 80, label: "Piselli cotti", image: photo("part-peas-v8") }, { category: "Contorno", food: "Peperoni", grams: 200, label: "Peperoni cotti", image: photo("part-peppers-v11514") }, { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") }], steps: ["Reidrata il cous cous secondo confezione e sgranalo.", "Cuoci i peperoni in padella antiaderente e i gamberi fino a completa cottura; unisci i piselli già cotti.", "Mescola e completa con 10 g di olio pesato, paprika, limone e prezzemolo."], alternatives: ["Contiene glutine e crostacei", "Trasportabile refrigerato", "Componenti modificabili separatamente"] },
+  { id:"matrix-p52-bulgur-tofu-chickpeas", name:"Bulgur con tofu, ceci e verdure", kicker:"Pranzo vegano · matrice P52", course:"Piatto unico", cuisine:"Internazionale", image:photo("recipe-p52-bulgur-tofu-v11515"), time:30, ingredients:[{food:"Bulgur cotto",grams:130},{food:"Tofu alla piastra",grams:80},{food:"Ceci cotti",grams:100},{food:"Carote crude",grams:80},{food:"Zucchine",grams:85},{food:"Cavolo rosso crudo",grams:85},{food:"Olio extravergine",grams:10}], parts:[{category:"Carboidrato",food:"Bulgur cotto",grams:130,label:"Bulgur cotto · da circa 50 g secco",image:photo("part-bulgur-v11515")},{category:"Proteina",food:"Tofu alla piastra",grams:80,label:"Tofu alla piastra",image:photo("part-tofu-v11515")},{category:"Proteina",food:"Ceci cotti",grams:100,label:"Ceci cotti e sgocciolati",image:photo("part-chickpeas-v8")},{category:"Contorno",food:"Carote crude",grams:80,label:"Carote crude",image:photo("part-carrots-raw-v11512")},{category:"Contorno",food:"Zucchine",grams:85,label:"Zucchine cotte",image:photo("part-zucchini-v8")},{category:"Contorno",food:"Cavolo rosso crudo",grams:85,label:"Cavolo rosso",image:photo("part-red-cabbage-v11515")},{category:"Extra",food:"Olio extravergine",grams:10,label:"Olio EVO · 10 g",image:photo("part-olive-oil-v8")}], steps:["Cuoci il bulgur secondo confezione.","Griglia il tofu; cuoci carote e zucchine lasciando il cavolo rosso crudo e croccante; risciacqua i ceci.","Unisci e completa con olio pesato, zenzero, paprika e limone."], alternatives:["Contiene glutine e soia","Trasportabile refrigerato","Cereale, tofu e ceci restano in porzioni ridotte"] },  { id: "matrix-p45-couscous-shrimp-peppers", name: "Cous cous integrale con gamberi, piselli e peperoni", kicker: "Pranzo di pesce · matrice P45", course: "Piatto unico", cuisine: "Mediterraneo", image: photo("recipe-p45-couscous-shrimp-v11514"), time: 25, ingredients: [{ food: "Cous cous integrale cotto", grams: 180 }, { food: "Gamberi cotti", grams: 150 }, { food: "Piselli cotti", grams: 80 }, { food: "Peperoni cotti senza olio", grams: 200 }, { food: "Olio extravergine", grams: 10 }], parts: [{ category: "Carboidrato", food: "Cous cous integrale cotto", grams: 180, label: "Cous cous cotto · da circa 70 g secco", image: photo("part-couscous-v11514") }, { category: "Proteina", food: "Gamberi cotti", grams: 150, label: "Gamberi cotti", image: photo("part-shrimp-v11514") }, { category: "Proteina", food: "Piselli cotti", grams: 80, label: "Piselli cotti", image: photo("part-peas-v8") }, { category: "Contorno", food: "Peperoni cotti senza olio", grams: 200, label: "Peperoni cotti", image: photo("part-peppers-v11514") }, { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") }], steps: ["Reidrata il cous cous secondo confezione e sgranalo.", "Cuoci i peperoni in padella antiaderente e i gamberi fino a completa cottura; unisci i piselli già cotti.", "Mescola e completa con 10 g di olio pesato, paprika, limone e prezzemolo."], alternatives: ["Contiene glutine e crostacei", "Trasportabile refrigerato", "Componenti modificabili separatamente"] },
   { id: "matrix-p46-barley-turkey-asparagus", name: "Orzo con tacchino, asparagi e funghi", kicker: "Pranzo carne bianca · matrice P46", course: "Piatto unico", cuisine: "Italiano", image: photo("recipe-p46-barley-turkey-v11514"), time: 30, ingredients: [{ food: "Orzo perlato cotto", grams: 180 }, { food: "Petto di tacchino cotto alla piastra", grams: 100 }, { food: "Asparagi crudi", grams: 125 }, { food: "Funghi", grams: 125 }, { food: "Olio extravergine", grams: 10 }], parts: [{ category: "Carboidrato", food: "Orzo perlato cotto", grams: 180, label: "Orzo cotto · da circa 70 g secco", image: photo("part-barley-v11514") }, { category: "Proteina", food: "Petto di tacchino cotto alla piastra", grams: 100, label: "Petto di tacchino alla piastra", image: photo("part-turkey-grilled-v11514") }, { category: "Contorno", food: "Asparagi crudi", grams: 125, label: "Asparagi · peso a crudo", image: photo("part-asparagus-v113") }, { category: "Contorno", food: "Funghi", grams: 125, label: "Funghi", image: photo("part-mushrooms-v8") }, { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") }], steps: ["Cuoci l'orzo secondo confezione e scolalo.", "Cuoci asparagi e funghi in padella antiaderente; griglia il tacchino fino a completa cottura.", "Unisci e condisci con 10 g di olio pesato, timo, limone e pepe."], alternatives: ["Contiene glutine", "Adatto a casa o schiscetta", "Componenti modificabili separatamente"] },
-  { id: "matrix-p47-red-rice-lentils", name: "Riso rosso con lenticchie e verdure grigliate", kicker: "Pranzo vegetale · matrice P47", course: "Piatto unico", cuisine: "Mediterraneo", image: photo("recipe-p47-red-rice-lentils-v11514"), time: 35, ingredients: [{ food: "Riso rosso integrale cotto", grams: 180 }, { food: "Lenticchie cotte", grams: 150 }, { food: "Melanzane", grams: 85 }, { food: "Zucchine", grams: 85 }, { food: "Peperoni", grams: 80 }, { food: "Olio extravergine", grams: 10 }], parts: [{ category: "Carboidrato", food: "Riso rosso integrale cotto", grams: 180, label: "Riso rosso cotto · da circa 60 g secco", image: photo("part-red-rice-v11514") }, { category: "Proteina", food: "Lenticchie cotte", grams: 150, label: "Lenticchie cotte", image: photo("part-lentils-v1141") }, { category: "Contorno", food: "Melanzane", grams: 85, label: "Melanzane grigliate", image: photo("part-eggplant-v8") }, { category: "Contorno", food: "Zucchine", grams: 85, label: "Zucchine grigliate", image: photo("part-zucchini-v8") }, { category: "Contorno", food: "Peperoni", grams: 80, label: "Peperoni grigliati", image: photo("part-peppers-v11514") }, { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") }], steps: ["Cuoci il riso rosso secondo confezione e scolalo.", "Griglia melanzane, zucchine e peperoni; risciacqua le lenticchie già cotte.", "Unisci tutto e completa con 10 g di olio pesato, origano, basilico e limone."], alternatives: ["Vegano e senza glutine se certificato", "Trasportabile refrigerato", "Componenti modificabili separatamente"] },  {
+  { id: "matrix-p47-red-rice-lentils", name: "Riso rosso con lenticchie e verdure grigliate", kicker: "Pranzo vegetale · matrice P47", course: "Piatto unico", cuisine: "Mediterraneo", image: photo("recipe-p47-red-rice-lentils-v11514"), time: 35, ingredients: [{ food: "Riso rosso integrale cotto", grams: 180 }, { food: "Lenticchie cotte", grams: 150 }, { food: "Melanzane", grams: 85 }, { food: "Zucchine", grams: 85 }, { food: "Peperoni cotti senza olio", grams: 80 }, { food: "Olio extravergine", grams: 10 }], parts: [{ category: "Carboidrato", food: "Riso rosso integrale cotto", grams: 180, label: "Riso rosso cotto · da circa 60 g secco", image: photo("part-red-rice-v11514") }, { category: "Proteina", food: "Lenticchie cotte", grams: 150, label: "Lenticchie cotte", image: photo("part-lentils-v1141") }, { category: "Contorno", food: "Melanzane", grams: 85, label: "Melanzane grigliate", image: photo("part-eggplant-v8") }, { category: "Contorno", food: "Zucchine", grams: 85, label: "Zucchine grigliate", image: photo("part-zucchini-v8") }, { category: "Contorno", food: "Peperoni cotti senza olio", grams: 80, label: "Peperoni grigliati", image: photo("part-peppers-v11514") }, { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") }], steps: ["Cuoci il riso rosso secondo confezione e scolalo.", "Griglia melanzane, zucchine e peperoni; risciacqua le lenticchie già cotte.", "Unisci tutto e completa con 10 g di olio pesato, origano, basilico e limone."], alternatives: ["Vegano e senza glutine se certificato", "Trasportabile refrigerato", "Componenti modificabili separatamente"] },  {
     id: "matrix-p41-whole-pasta-peas-ricotta", name: "Pasta integrale con piselli, ricotta e zucchine", kicker: "Pranzo vegetariano · matrice P41", course: "Piatto unico", cuisine: "Italiano", image: photo("recipe-p41-pasta-peas-ricotta-v11513"), time: 25,
     ingredients: [{ food: "Pasta integrale secca", grams: 70 }, { food: "Piselli cotti", grams: 120 }, { food: "Ricotta vaccina", grams: 60 }, { food: "Zucchine", grams: 200 }, { food: "Olio extravergine", grams: 5 }],
     parts: [{ category: "Carboidrato", food: "Pasta integrale secca", grams: 70, label: "Pasta integrale · peso a crudo", image: photo("simple-pasta-white-v5") }, { category: "Proteina", food: "Piselli cotti", grams: 120, label: "Piselli cotti", image: photo("part-peas-v8") }, { category: "Latticino", food: "Ricotta vaccina", grams: 60, label: "Ricotta vaccina", image: photo("part-ricotta-v7") }, { category: "Contorno", food: "Zucchine", grams: 200, label: "Zucchine cotte", image: photo("part-zucchini-v8") }, { category: "Extra", food: "Olio extravergine", grams: 5, label: "Olio EVO · 5 g", image: photo("part-olive-oil-v8") }],
@@ -3563,11 +3573,11 @@ const balancedDinnerRecipes: Recipe[] = [
     kicker: "Cena completa di carne bianca",
     course: "Piatto unico", cuisine: "Italiano",
     image: photo("recipe-d42-chicken-brown-rice-v11519"), time: 30,
-    ingredients: [{ food: "Petto di pollo · peso a crudo", grams: 100 }, { food: "Riso integrale secco", grams: 60 }, { food: "Peperoni", grams: 150 }, { food: "Cipolle crude", grams: 100 }, { food: "Olio extravergine", grams: 10 }],
+    ingredients: [{ food: "Petto di pollo · peso a crudo", grams: 100 }, { food: "Riso integrale secco", grams: 60 }, { food: "Peperoni cotti senza olio", grams: 150 }, { food: "Cipolle crude", grams: 100 }, { food: "Olio extravergine", grams: 10 }],
     parts: [
       { category: "Proteina", food: "Petto di pollo · peso a crudo", grams: 100, label: "Petto di pollo alla piastra · 100 g a crudo", image: photo("part-chicken-grilled-v7") },
       { category: "Carboidrato", food: "Riso integrale secco", grams: 60, label: "Riso integrale · 60 g a crudo", image: photo("part-brown-rice-v11519") },
-      { category: "Contorno", food: "Peperoni", grams: 150, label: "Peperoni · 150 g", image: photo("part-peppers-v11514") },
+      { category: "Contorno", food: "Peperoni cotti senza olio", grams: 150, label: "Peperoni · 150 g", image: photo("part-peppers-v11514") },
       { category: "Contorno", food: "Cipolle crude", grams: 100, label: "Cipolle · 100 g a crudo", image: photo("part-onions-v11519") },
       { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") },
     ],
@@ -3708,6 +3718,34 @@ const balancedDinnerRecipes: Recipe[] = [
     ],
     steps: ["Cuoci il riso e sistemalo sul fondo della ciotola.", "Sbollenta i germogli e salta separatamente spinaci, carote e funghi. Cuoci completamente il manzo a striscioline.", "Disponi gli ingredienti a settori sul riso, aggiungi l'uovo cotto e servi con il gochujang dosato."],
     alternatives: ["Fonte ricetta: Korea Tourism Organization", "Contiene uova e soia", "Il piatto può essere diviso in componenti"],
+  },
+  {
+    id: "italian-minestrone-complete",
+    name: "Minestrone italiano con cannellini e pane integrale",
+    kicker: "Ricetta completa da zero · verdure e legumi pesati",
+    course: "Piatto unico", cuisine: "Italiano",
+    image: photo("recipe-minestrone-v11522"), time: 45,
+    ingredients: [
+      { food: "Patate lesse", grams: 50 }, { food: "Carote crude", grams: 30 },
+      { food: "Zucchine", grams: 50 }, { food: "Sedano crudo", grams: 15 },
+      { food: "Bietole cotte", grams: 30 }, { food: "Fagioli cannellini cotti", grams: 40 },
+      { food: "Piselli cotti", grams: 30 }, { food: "Zucca", grams: 40 },
+      { food: "Fagiolini", grams: 30 }, { food: "Cipolle crude", grams: 15 },
+      { food: "Passata di pomodoro", grams: 50 }, { food: "Pane integrale", grams: 50 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    parts: [
+      { category: "Contorno", food: "Minestrone cotto", grams: 350, label: "Minestrone cotto · 350 g", image: photo("recipe-minestrone-v11522") },
+      { category: "Carboidrato", food: "Pane integrale", grams: 50, label: "Pane integrale · 50 g", image: photo("part-bread-v7") },
+      { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") },
+    ],
+    steps: [
+      "Lava e pesa tutte le verdure. Taglia patata, carota, zucchina, sedano, zucca, fagiolini e cipolla in pezzi piccoli e regolari.",
+      "Metti cipolla, sedano, carota, patata e zucca in pentola con acqua sufficiente a coprire. Porta a bollore e cuoci dolcemente 15 minuti.",
+      "Aggiungi zucchina, fagiolini, bietole, piselli, passata e cannellini già cotti e risciacquati. Prosegui 15-20 minuti, finché le verdure sono tenere.",
+      "Pesa 350 g di minestrone nel piatto, completa con 10 g di olio a crudo e servi il pane separato.",
+    ],
+    alternatives: ["Fonte composizione minestrone: CREA", "Il pane resta sostituibile", "Cannellini e verdure sono visibili nella ricetta completa"],
   },
 ];const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
   Carboidrato: [
@@ -4036,6 +4074,9 @@ const balancedDinnerRecipes: Recipe[] = [
     { category: "Proteina", food: "Tofu alla piastra", grams: 100, label: "Tofu alla piastra", image: photo("part-tofu-v11515") },
   ],
   Contorno: [
+    { category: "Contorno", food: "Peperoni crudi", grams: 200, label: "Peperoni crudi · 200 g", image: photo("part-peppers-raw-v11522") },
+    { category: "Contorno", food: "Peperoni cotti senza olio", grams: 200, label: "Peperoni cotti senza olio · 200 g", image: photo("part-peppers-cooked-v11522") },
+    { category: "Contorno", food: "Minestrone cotto", grams: 350, label: "Minestrone cotto · 350 g", image: photo("recipe-minestrone-v11522") },
     { category: "Contorno", food: "Cipolle crude", grams: 100, label: "Cipolle · 100 g a crudo", image: photo("part-onions-v11519") },
     { category: "Contorno", food: "Carciofi cotti bolliti", grams: 200, label: "Carciofi cotti bolliti · 200 g", image: photo("part-artichokes-v11519") },
     {
@@ -4183,6 +4224,9 @@ const balancedDinnerRecipes: Recipe[] = [
     },
   ],
   Latticino: [
+    { category: "Latticino", food: "Mozzarella vaccina", grams: 100, label: "Mozzarella vaccina · 100 g", image: photo("part-mozzarella-v11522") },
+    { category: "Latticino", food: "Mozzarella light", grams: 100, label: "Mozzarella light · 100 g", image: photo("part-mozzarella-light-v11522") },
+    { category: "Latticino", food: "Yogurt greco 0%", grams: 150, label: "Yogurt greco 0% · 150 g", image: photo("part-greek-yogurt-zero-v11522") },
     {
       category: "Latticino",
       food: "Skyr bianco",
@@ -5293,7 +5337,7 @@ export function FoodPlanner() {
     profileHydrated,
   ]);
   const groupFoods: Record<string, string[]> = {
-    Latte: ["Yogurt greco 2%", "Ricotta vaccina", "Crescenza", "Primo sale", "Scamorza", "Provolone Dolce Auricchio", "Feta"],
+    Latte: ["Yogurt greco 2%", "Yogurt greco 0%", "Mozzarella vaccina", "Mozzarella light", "Ricotta vaccina", "Crescenza", "Primo sale", "Scamorza", "Provolone Dolce Auricchio", "Feta"],
     Uova: ["Uovo", "Uova sode", "Uova strapazzate o in frittata"],
     Pesce: ["Salmone cotto", "Tonno al naturale sgocciolato", "Sogliola · peso a crudo", "Rombo · peso a crudo", "Seppia · peso a crudo"],
     Glutine: [
