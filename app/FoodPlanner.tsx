@@ -47,7 +47,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.15.7";
+const VERSION = "1.15.8";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -4744,7 +4744,27 @@ export function FoodPlanner() {
     });
   };
   const targetAdditionsFor = (slot: number): RecipeIngredient[] =>
-      calories >= 2400
+      calories >= 3000
+        ? slot === 0
+          ? [{ food: "Yogurt greco 2%", grams: 125 }, { food: "Noci", grams: 35 }]
+          : slot === 1
+            ? [{ food: "Banana", grams: 150 }, { food: "Cracker integrali", grams: 25 }]
+            : slot === 2
+              ? [{ food: "Pane integrale", grams: 100 }, { food: "Olio extravergine", grams: 10 }]
+              : slot === 3
+                ? [{ food: "Yogurt greco 2%", grams: 125 }, { food: "Mela", grams: 150 }]
+                : [{ food: "Pane integrale", grams: 100 }, { food: "Olio extravergine", grams: 10 }]
+        : calories >= 2800
+          ? slot === 0
+            ? [{ food: "Yogurt greco 2%", grams: 125 }, { food: "Noci", grams: 20 }, { food: "Mela", grams: 150 }]
+            : slot === 1
+              ? [{ food: "Banana", grams: 150 }]
+              : slot === 2
+                ? [{ food: "Pane integrale", grams: 50 }, { food: "Olio extravergine", grams: 5 }]
+                : slot === 3
+                  ? [{ food: "Yogurt greco 2%", grams: 125 }, { food: "Cracker integrali", grams: 25 }]
+                  : [{ food: "Pane integrale", grams: 50 }, { food: "Olio extravergine", grams: 5 }]
+          : calories >= 2400
         ? slot === 0
           ? [
               {
@@ -4781,7 +4801,17 @@ export function FoodPlanner() {
                     },
                     { food: "Olio extravergine", grams: 5 },
                   ]
-        : calories >= 2000
+        : calories >= 2200
+          ? slot === 0
+            ? [{ food: "Yogurt greco 2%", grams: 125 }]
+            : slot === 1
+              ? [{ food: "Mela", grams: 150 }]
+              : slot === 2
+                ? [{ food: "Pane integrale", grams: 50 }]
+                : slot === 3
+                  ? [{ food: "Yogurt greco 2%", grams: 125 }]
+                  : [{ food: "Pane integrale", grams: 50 }]
+          : calories >= 2000
           ? slot === 0
             ? [
                 {
@@ -4802,6 +4832,34 @@ export function FoodPlanner() {
                   ]
                 : []
           : [];
+
+  const lowEnergyAdjusted = <T extends RecipeIngredient>(item: T): T => {
+    if (calories >= 1800) return item;
+    const name = item.food.toLowerCase();
+    const adjustable = [
+      "pasta", "riso", "pane", "fette biscottate", "biscotti", "cracker",
+      "avena", "farro", "quinoa", "gnocchi", "patate", "olio", "burro",
+      "confettura", "miele", "noci", "mandorle", "pistacchi", "arachidi",
+    ].some((term) => name.includes(term));
+    if (!adjustable) return item;
+    const factor = calories <= 1400 ? 0.7 : 0.85;
+    const minimum = item.grams >= 150 ? 100 : item.grams >= 50 ? 40 : 10;
+    const grams = Math.max(minimum, Math.round((item.grams * factor) / 5) * 5);
+    return { ...item, grams };
+  };
+
+  const mergeTargetAdditions = <T extends RecipeIngredient>(
+    items: T[],
+    additions: RecipeIngredient[],
+  ): RecipeIngredient[] => {
+    const merged: RecipeIngredient[] = items.map((item) => ({ ...item }));
+    additions.forEach((addition) => {
+      const existing = merged.find((item) => item.food === addition.food);
+      if (existing) existing.grams += addition.grams;
+      else merged.push({ ...addition });
+    });
+    return merged;
+  };
 
   const additionAsPart = (item: RecipeIngredient): MealPart => {
     const category: MealPart["category"] =
@@ -4826,17 +4884,20 @@ export function FoodPlanner() {
     if (!recipe.parts) return [];
     if (partSelections[key]) return partSelections[key].map(normalizeMealPart);
     const slot = Number(key.split("-")[1]);
-    const existingFoods = new Set(recipe.parts.map((part) => part.food));
-    const additions = targetAdditionsFor(slot)
-      .filter((item) => !existingFoods.has(item.food))
-      .map(additionAsPart);
-    return [...recipe.parts, ...additions].map(normalizeMealPart);
+    const merged = recipe.parts.map((part) => ({ ...part }));
+    targetAdditionsFor(slot).forEach((item) => {
+      const existing = merged.find((part) => part.food === item.food);
+      if (existing) existing.grams += item.grams;
+      else merged.push(additionAsPart(item));
+    });
+    return merged.map(lowEnergyAdjusted).map(normalizeMealPart);
   };
 
   const plannedIngredients = (key: string, recipe: Recipe) => {
     const slot = Number(key.split("-")[1]);
     const targetAdditions = targetAdditionsFor(slot);
-    if (!recipe.parts) return [...recipe.ingredients, ...targetAdditions];
+    if (!recipe.parts)
+      return mergeTargetAdditions(recipe.ingredients, targetAdditions).map(lowEnergyAdjusted);
     const activeParts = activeMealParts(key, recipe);
     const pastaSelected = activeParts.some((x) => x.food.includes("Pasta"));
     const extras = recipe.ingredients.filter(
@@ -4975,6 +5036,25 @@ export function FoodPlanner() {
     const key = `${dayIndex}-${slot}`;
     return completed[key] ? current[key] || getDayIds(dayIndex)[slot] : nextId;
   };
+  const profileRecipeKcal = (recipe: Recipe, slot: number) => {
+    const source = recipe.parts || recipe.ingredients;
+    return calc(
+      mergeTargetAdditions(source, targetAdditionsFor(slot)).map(lowEnergyAdjusted),
+    ).kcal;
+  };
+  const closestForSlot = (
+    pool: Recipe[],
+    slot: number,
+    target: number,
+    offset: number,
+  ) => {
+    const ranked = [...pool].sort(
+      (a, b) =>
+        Math.abs(profileRecipeKcal(a, slot) - target) -
+        Math.abs(profileRecipeKcal(b, slot) - target),
+    );
+    return ranked[offset % Math.min(5, ranked.length)];
+  };
   const applyCuisine = () => {
     const profileSeed =
       (calories >= 2400 ? 1 : calories >= 2000 ? 2 : 0) +
@@ -5019,34 +5099,34 @@ export function FoodPlanner() {
       !dinners.length
     )
       return;
-    setChoices((v) => ({
-      ...v,
-      [`${dayIndex}-0`]: keepRecordedChoice(
-        v,
-        0,
-        breakfasts[(dayIndex + profileSeed) % breakfasts.length].id,
-      ),
-      [`${dayIndex}-1`]: keepRecordedChoice(
-        v,
-        1,
-        snacks[(dayIndex + profileSeed) % snacks.length].id,
-      ),
-      [`${dayIndex}-2`]: keepRecordedChoice(
-        v,
-        2,
-        lunches[(dayIndex * 2 + profileSeed) % lunches.length].id,
-      ),
-      [`${dayIndex}-3`]: keepRecordedChoice(
-        v,
-        3,
-        snacks[(dayIndex + profileSeed + 1) % snacks.length].id,
-      ),
-      [`${dayIndex}-4`]: keepRecordedChoice(
-        v,
-        4,
-        dinners[(dayIndex * 2 + profileSeed + 1) % dinners.length].id,
-      ),
-    }));
+    const shares = [0.22, 0.09, 0.3, 0.09, 0.3];
+    const profileDays = weekLocked ? [dayIndex] : days.map((_, index) => index);
+    setChoices((current) => {
+      const next = { ...current };
+      profileDays.forEach((day) => {
+        const profileTarget = day === dayIndex ? plannedCalories : calories;
+        const offset = profileSeed + day;
+        const selectedForDay = [
+          closestForSlot(breakfasts, 0, profileTarget * shares[0], offset),
+          closestForSlot(snacks, 1, profileTarget * shares[1], offset),
+          closestForSlot(lunches, 2, profileTarget * shares[2], offset),
+          closestForSlot(snacks, 3, profileTarget * shares[3], offset + 1),
+          closestForSlot(dinners, 4, profileTarget * shares[4], offset + 1),
+        ];
+        if (selectedForDay[1].id === selectedForDay[3].id)
+          selectedForDay[3] = closestForSlot(
+            snacks.filter((recipe) => recipe.id !== selectedForDay[1].id),
+            3,
+            profileTarget * shares[3],
+            offset + 1,
+          );
+        selectedForDay.forEach((recipe, slot) => {
+          const key = `${day}-${slot}`;
+          if (!completed[key]) next[key] = recipe.id;
+        });
+      });
+      return next;
+    });
     setReplanNote(
       `Menu completo ${cuisineChoice.toLowerCase()} creato: 5 momenti e spesa aggiornata.`,
     );

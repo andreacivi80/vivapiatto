@@ -2,6 +2,15 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
+## v1.15.8 — pubblicata
+
+- [x] Otto basi caloriche gestite con differenze reali: riduzione proporzionata sotto 1800 e componenti interi visibili da 2000 a 3000 kcal.
+- [x] Nessuna micro-porzione artificiale: riduzioni arrotondate a 5 g con minimi pratici e aggiunte da vasetto, frutto, pane, cracker, frutta secca o olio.
+- [x] Se un alimento aggiunto è già nel pasto, la sua grammatura aumenta senza creare una tessera duplicata.
+- [x] Cambio di base e obiettivo seleziona cinque proposte vicine alla distribuzione 22/9/30/9/30, mantenendo distinti i due spuntini.
+- [x] Prima della conferma il cambio profilo ricalibra tutti i sette giorni; dopo la conferma modifica soltanto Oggi e non perturba la settimana salvata.
+- [x] Collaudo browser delle basi 1400, 1800, 2200, 2600 e 3000 kcal, compresi i sette giorni non ancora confermati.
+
 ## v1.15.7 — pubblicata
 
 - [x] Settimana italiana ricalibrata con combinazioni visibili e porzioni normali: niente compensazioni nascoste o grammature innaturali.
