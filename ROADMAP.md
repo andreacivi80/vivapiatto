@@ -2,7 +2,15 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.15.4 — in preparazione
+## v1.15.5 — in preparazione
+
+- [x] Rotazione pianificata calcolata prima della conferma, non soltanto sui pasti già registrati.
+- [x] Settimana italiana di base verificata nel browser: pesce 3, carne bianca 3, carne rossa 2, uova 2 e legumi 3, tutti negli intervalli mostrati.
+- [x] Porzione di legumi conteggiata solo da 100 g cotti o da un burger vegetale completo; una piccola aggiunta di piselli non vale come pasto di legumi.
+- [x] Spuntini generati con porzioni pratiche dedicate: pane 40 g, fette biscottate 20 g, biscotti/cracker 25 g e frutta secca 15 g.
+- [x] Il caricamento della nuova versione conserva le scelte salvate e non rigenera automaticamente il giorno aperto.
+
+## v1.15.4 — pubblicata
 
 - [x] Sedano e broccoli aggiunti come contorni con valori CREA, stagionalità e fotografie autonome.
 - [x] Yogurt HiPRO e budino Ehrmann aggiunti con valori da etichetta ufficiale, fotografie specifiche e priorità negli spuntini.

@@ -46,7 +46,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.15.4";
+const VERSION = "1.15.5";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -3981,14 +3981,30 @@ const catalogBreakfasts: Recipe[] = Array.from({ length: 36 }, (_, index) => {
 });
 catalogBreakfasts.forEach((recipe) => (recipe.kind = "combination"));
 
+const asPracticalSnackPortion = (part: MealPart): MealPart => {
+  const grams = part.food === "Pane integrale"
+    ? 40
+    : part.food === "Fette biscottate integrali"
+      ? 20
+      : part.food === "Biscotti secchi"
+        ? 25
+        : part.food === "Cracker integrali"
+          ? 25
+          : ["Noci", "Mandorle", "Pistacchi", "Noci pecan", "Arachidi"].includes(part.food)
+            ? 15
+            : part.grams;
+  return { ...part, grams };
+};
+
 const catalogSnacks: Recipe[] = Array.from({ length: 30 }, (_, index) => {
   const fruit = mealPartOptions.Frutta[index % mealPartOptions.Frutta.length];
-  const companion =
+  const companionBase =
     index % 3 === 0
       ? portableSnackDairy[index % portableSnackDairy.length]
       : index % 3 === 1
         ? rotationBreakfastExtras[index % rotationBreakfastExtras.length]
         : rotationBreakfastCarbs[index % rotationBreakfastCarbs.length];
+  const companion = asPracticalSnackPortion(companionBase);
   const parts = [{ ...fruit }, { ...companion }];
   return {
     id: `catalog-snack-${index + 1}`,
@@ -4163,7 +4179,7 @@ const days: Day[] = [
       "catalog-snack-1",
       "work-bresaola",
       "catalog-snack-2",
-      "dinner-three-italian",
+      "plant-burger-broccoli-bread",
     ],
   },
   {
@@ -4174,7 +4190,7 @@ const days: Day[] = [
       "catalog-snack-3",
       "work-rice-salad",
       "catalog-snack-4",
-      "salmon",
+      "dinner-three-italian",
     ],
   },
   {
@@ -4183,7 +4199,7 @@ const days: Day[] = [
     recipes: [
       "breakfast-crackers-ricotta",
       "catalog-snack-5",
-      "work-cotto",
+      "work-turkey",
       "catalog-snack-6",
       "dinner-three-eggs",
     ],
@@ -4196,7 +4212,7 @@ const days: Day[] = [
       "catalog-snack-7",
       "simple-pasta-tomato",
       "catalog-snack-8",
-      "lentil-quinoa",
+      "sweet-ricotta",
     ],
   },
   {
@@ -4227,7 +4243,7 @@ const days: Day[] = [
     recipes: [
       "apple-oats",
       "catalog-snack-13",
-      "lentil-quinoa",
+      "simple-pasta-tomato",
       "catalog-snack-14",
       "tuna-chickpeas",
     ],
@@ -4296,6 +4312,8 @@ export function FoodPlanner() {
   const [shoppingScope, setShoppingScope] = useState<"day" | "week">("day");
   const [weekLocked, setWeekLocked] = useState(false);
   const [weekEditingDay, setWeekEditingDay] = useState<number | null>(null);
+  const [profileHydrated, setProfileHydrated] = useState(false);
+  const skipFirstProfileApplyRef = useRef(true);
   const [groceryChecked, setGroceryChecked] = useState<Record<string, boolean>>(
     {},
   );
@@ -4398,8 +4416,10 @@ export function FoodPlanner() {
         setWeekLocked(Boolean(s.weekLocked));
       }
     } catch {}
+    setProfileHydrated(true);
   }, []);
   useEffect(() => {
+    if (!profileHydrated) return;
     localStorage.setItem(
       "vivapiatto-v1",
       JSON.stringify({
@@ -4442,6 +4462,7 @@ export function FoodPlanner() {
     plannedDrink,
     dayContext,
     weekLocked,
+    profileHydrated,
   ]);
   const groupFoods: Record<string, string[]> = {
     Latte: ["Yogurt greco 2%", "Ricotta vaccina", "Feta"],
@@ -4556,7 +4577,12 @@ export function FoodPlanner() {
         const pools = [breakfasts, snacks, lunches, snacks, dinners];
         pools.forEach((pool, slot) => {
           const key = `${day}-${slot}`;
-          if (!completed[key]) next[key] = pool[(day * 3 + slot) % pool.length].id;
+          if (completed[key]) return;
+          const balancedItalianId = days[day].recipes[slot];
+          next[key] =
+            cuisineChoice === "Italiano" && dayContext === "Lavoro" && recipeMap[balancedItalianId]
+              ? balancedItalianId
+              : pool[(day * 3 + slot) % pool.length].id;
         });
       }
       return next;
@@ -5070,8 +5096,13 @@ export function FoodPlanner() {
     }));
   };
   useEffect(() => {
+    if (!profileHydrated) return;
+    if (skipFirstProfileApplyRef.current) {
+      skipFirstProfileApplyRef.current = false;
+      return;
+    }
     applyCuisine();
-  }, [goal, calories, cuisineChoice, dayContext, plannedDrink]);
+  }, [goal, calories, cuisineChoice, dayContext, plannedDrink, profileHydrated]);
   const addDrink = (day: number, item: LogItem) =>
     setDrinks((v) => ({ ...v, [day]: [...(v[day] || []), item] }));
   const addExtra = (day = diaryDay) => {
@@ -5140,9 +5171,12 @@ export function FoodPlanner() {
     days.forEach((_, day) => {
       getDayIds(day).forEach((id, slot) => {
         const key = `${day}-${slot}`;
-        if (!weekLocked && !completed[key]) return;
-        const recipe = recipeMap[completedRecipes[key] || id];
-        const names = actualIngredients(key, recipe).map((item) => item.food);
+        const recordedId = completed[key] ? completedRecipes[key] || id : id;
+        const recipe = recipeMap[recordedId];
+        const items = completed[key]
+          ? actualIngredients(key, recipe)
+          : plannedIngredients(key, recipe);
+        const names = items.map((item) => item.food);
         const has = (terms: string[]) =>
           names.some((name) =>
             terms.some((term) => name.toLowerCase().includes(term)),
@@ -5150,10 +5184,17 @@ export function FoodPlanner() {
         if (has(["salmone", "tonno", "merluzzo", "orata", "pesce"]))
           counts.Pesce += 1;
         if (has(["pollo", "tacchino", "coniglio"])) counts["Carne bianca"] += 1;
-        if (has(["manzo", "bistecca", "vitello", "maiale", "lonza", "cavallo"]))
+        if (has(["manzo", "bistecca", "vitello", "maiale", "lonza", "cavallo", "bresaola", "prosciutto cotto", "prosciutto crudo"]))
           counts["Carne rossa"] += 1;
         if (has(["uovo"])) counts.Uova += 1;
-        if (has(["ceci", "lenticchie", "fagioli", "piselli", "legumi"]))
+        const legumeGrams = items
+          .filter((item) =>
+            ["ceci", "lenticchie", "fagioli", "piselli", "legumi"].some((term) =>
+              item.food.toLowerCase().includes(term),
+            ),
+          )
+          .reduce((sum, item) => sum + item.grams, 0);
+        if (has(["burger vegetale"]) || legumeGrams >= 100)
           counts.Legumi += 1;
       });
     });
@@ -5999,8 +6040,8 @@ export function FoodPlanner() {
             </button>
             <div className="weekly-frequency">
               <header>
-                <b>{weekLocked ? "Rotazione confermata" : "Rotazione consumata"}</b>
-                <span>porzioni · riferimento CREA</span>
+                <b>{weekLocked ? "Rotazione confermata" : "Rotazione pianificata"}</b>
+                <span>pasti della settimana · riferimento CREA</span>
               </header>
               <div>
                 {weeklyTargets.map((item) => (
