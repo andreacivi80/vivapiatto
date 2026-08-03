@@ -47,7 +47,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.15.16";
+const VERSION = "1.15.17";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -5025,6 +5025,8 @@ export function FoodPlanner() {
       : r.id.startsWith("snack-")
         ? "Spuntino"
         : "Piatto unico");
+  const cleanKicker = (text: string) =>
+    text.replace(/\s*·?\s*matrice\s+[cspd]\d+/gi, "").trim();
   const fitsSlot = (r: Recipe, slot: number) =>
     slot === 0
       ? recipeCourse(r) === "Colazione"
@@ -6889,7 +6891,7 @@ export function FoodPlanner() {
                         {r.time} min
                       </span>
                       <h3>{r.name}</h3>
-                      <p>{r.kicker}</p>
+                      <p>{cleanKicker(r.kicker)}</p>
                     </div>
                   </article>
                 );

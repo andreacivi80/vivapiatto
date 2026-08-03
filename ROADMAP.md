@@ -2,6 +2,11 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
+## v1.15.17 — in verifica
+
+- [x] Rimosse dall'interfaccia tutte le denominazioni tecniche “matrice C/P/S/D + numero”.
+- [x] I codici restano esclusivamente interni per preservare collegamenti, dati e rotazioni.
+
 ## v1.15.16 — in verifica
 
 - [x] Ricette complete collegate al pianificatore come piatti unici, non più isolate nella libreria.
