@@ -47,7 +47,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.15.10";
+const VERSION = "1.15.11";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -207,6 +207,54 @@ const foods: Record<string, Food> = {
     carbs: 70.6,
     fat: 3.1,
     fiber: 10,
+    source: "USDA",
+  },
+  "Pane di farro": {
+    kcal: 264,
+    protein: 8.9,
+    carbs: 43,
+    fat: 5.6,
+    fiber: 3.3,
+    source: "ETICHETTA",
+  },
+  "Pane ai cereali": {
+    kcal: 287,
+    protein: 10,
+    carbs: 47,
+    fat: 5.6,
+    fiber: 4.2,
+    source: "ETICHETTA",
+  },
+  "Skyr bianco": {
+    kcal: 53,
+    protein: 9.2,
+    carbs: 3.3,
+    fat: 0,
+    fiber: 0,
+    source: "ETICHETTA",
+  },
+  Nocciole: {
+    kcal: 671,
+    protein: 13.8,
+    carbs: 6.1,
+    fat: 64.1,
+    fiber: 8.1,
+    source: "CREA",
+  },
+  "Crema 100% nocciole": {
+    kcal: 712,
+    protein: 16,
+    carbs: 8.5,
+    fat: 66,
+    fiber: 8.6,
+    source: "ETICHETTA",
+  },
+  "Semi di chia": {
+    kcal: 486,
+    protein: 16.5,
+    carbs: 42.1,
+    fat: 30.7,
+    fiber: 34.4,
     source: "USDA",
   },
   "Frutti di bosco": {
@@ -751,22 +799,6 @@ const foods: Record<string, Food> = {
     carbs: 13.9,
     fat: 72,
     fiber: 9.6,
-    source: "USDA",
-  },
-  Nocciole: {
-    kcal: 628,
-    protein: 15,
-    carbs: 16.7,
-    fat: 60.8,
-    fiber: 9.7,
-    source: "CREA",
-  },
-  "Semi di chia": {
-    kcal: 486,
-    protein: 16.5,
-    carbs: 42.1,
-    fat: 30.7,
-    fiber: 34.4,
     source: "USDA",
   },
   "Cioccolato fondente 70%": {
@@ -2300,6 +2332,120 @@ const matrixBreakfasts: Recipe[] = [
       "Kefir, frutta, cereale e mandorle restano sostituibili separatamente",
     ],
   },
+  {
+    id: "matrix-c31-spelt-ricotta-apple",
+    name: "Pane di farro con ricotta, mela e nocciole",
+    kicker: "Colazione veloce · matrice C31",
+    course: "Colazione",
+    cuisine: "Italiano",
+    image: photo("recipe-c31-spelt-ricotta-apple-v11511"),
+    time: 5,
+    ingredients: [
+      { food: "Pane di farro", grams: 50 },
+      { food: "Ricotta vaccina", grams: 80 },
+      { food: "Mela", grams: 150 },
+      { food: "Nocciole", grams: 10 },
+    ],
+    parts: [
+      { category: "Carboidrato", food: "Pane di farro", grams: 50, label: "Pane di farro · 50 g", image: photo("part-bread-spelt-v11511") },
+      { category: "Latticino", food: "Ricotta vaccina", grams: 80, label: "Ricotta vaccina · 80 g", image: photo("part-ricotta-v7") },
+      { category: "Frutta", food: "Mela", grams: 150, label: "Mela · parte edibile", image: photo("part-apple-v7") },
+      { category: "Extra", food: "Nocciole", grams: 10, label: "Nocciole · 10 g", image: photo("part-hazelnuts-v11511") },
+    ],
+    steps: [
+      "Tosta il pane di farro 2-3 minuti, senza aggiungere grassi non registrati.",
+      "Spalma gli 80 g di ricotta sulle fette.",
+      "Lava la mela, elimina il torsolo, pesane 150 g di parte edibile e affettala.",
+      "Completa con 10 g di nocciole spezzettate; per il lavoro porta la mela separata.",
+    ],
+    alternatives: ["Pane di segale o ai cereali nella quantità equivalente", "Skyr o yogurt al posto della ricotta", "Contiene latte, glutine e nocciole"],
+  },
+  {
+    id: "matrix-c34-buckwheat-pancakes-pear",
+    name: "Pancake di grano saraceno con pera e yogurt",
+    kicker: "Colazione da casa · matrice C34",
+    course: "Colazione",
+    cuisine: "Italiano",
+    image: photo("recipe-c34-buckwheat-pancakes-v11511"),
+    time: 15,
+    ingredients: [
+      { food: "Farina di grano saraceno", grams: 40 },
+      { food: "Albume", grams: 100 },
+      { food: "Latte parzialmente scremato", grams: 50 },
+      { food: "Pera", grams: 150 },
+      { food: "Yogurt greco 2%", grams: 60 },
+    ],
+    parts: [
+      { category: "Carboidrato", food: "Farina di grano saraceno", grams: 40, label: "Farina di grano saraceno · peso a crudo", image: photo("part-buckwheat-flour-v9") },
+      { category: "Proteina", food: "Albume", grams: 100, label: "Albume · 100 g", image: photo("part-eggs-scrambled-v8") },
+      { category: "Latticino", food: "Latte parzialmente scremato", grams: 50, label: "Latte nell'impasto · 50 ml", image: photo("part-milk-v7") },
+      { category: "Frutta", food: "Pera", grams: 150, label: "Pera · parte edibile", image: photo("part-pear-v7") },
+      { category: "Latticino", food: "Yogurt greco 2%", grams: 60, label: "Yogurt bianco · 60 g", image: photo("part-yogurt-v7") },
+    ],
+    steps: [
+      "Mescola farina, albume e latte fino a ottenere una pastella liscia.",
+      "Scalda una padella antiaderente e forma tre piccoli pancake; cuoci 2-3 minuti per lato a fuoco medio-basso.",
+      "Lava la pera, elimina il torsolo e affetta 150 g di parte edibile.",
+      "Servi i pancake con la pera e 60 g di yogurt, senza sciroppi non registrati.",
+    ],
+    alternatives: ["Bevanda di soia senza zucchero al posto del latte", "Mela al posto della pera nella quantità proposta", "Da privilegiare a casa o nel weekend"],
+  },
+  {
+    id: "matrix-c35-skyr-melon-chia",
+    name: "Skyr con melone, chia e pane di segale",
+    kicker: "Colazione fresca e rapida · matrice C35",
+    course: "Colazione",
+    cuisine: "Italiano",
+    image: photo("recipe-c35-skyr-melon-chia-v11511"),
+    time: 5,
+    ingredients: [
+      { food: "Skyr bianco", grams: 170 },
+      { food: "Melone estivo", grams: 200 },
+      { food: "Semi di chia", grams: 10 },
+      { food: "Pane di segale", grams: 40 },
+    ],
+    parts: [
+      { category: "Latticino", food: "Skyr bianco", grams: 170, label: "Skyr bianco · 170 g", image: photo("part-skyr-v11511") },
+      { category: "Frutta", food: "Melone estivo", grams: 200, label: "Melone · polpa edibile", image: photo("part-melon-v1152") },
+      { category: "Extra", food: "Semi di chia", grams: 10, label: "Semi di chia · 10 g", image: photo("part-chia-v11511") },
+      { category: "Carboidrato", food: "Pane di segale", grams: 40, label: "Pane di segale · 40 g", image: photo("part-bread-rye-v1156") },
+    ],
+    steps: [
+      "Versa lo skyr in una ciotola.",
+      "Pulisci il melone, elimina buccia e semi e pesa 200 g di polpa a cubetti.",
+      "Aggiungi 10 g di semi di chia e servi il pane di segale a parte.",
+      "Se la prepari per il lavoro, conserva skyr e melone refrigerati e aggiungi la chia al momento.",
+    ],
+    alternatives: ["Yogurt greco o proteico al posto dello skyr", "Frutta di stagione nella quantità equivalente", "Contiene latte e segale"],
+  },
+  {
+    id: "matrix-c36-cereal-hazelnut-strawberry",
+    name: "Pane ai cereali con crema di nocciole, fragole e yogurt",
+    kicker: "Colazione veloce · matrice C36",
+    course: "Colazione",
+    cuisine: "Italiano",
+    image: photo("recipe-c36-cereal-hazelnut-strawberry-v11511"),
+    time: 5,
+    ingredients: [
+      { food: "Pane ai cereali", grams: 50 },
+      { food: "Crema 100% nocciole", grams: 15 },
+      { food: "Fragole", grams: 150 },
+      { food: "Yogurt greco 2%", grams: 125 },
+    ],
+    parts: [
+      { category: "Carboidrato", food: "Pane ai cereali", grams: 50, label: "Pane ai cereali · 50 g", image: photo("part-bread-cereals-v11511") },
+      { category: "Extra", food: "Crema 100% nocciole", grams: 15, label: "Crema 100% nocciole · 15 g", image: photo("part-hazelnut-paste-v11511") },
+      { category: "Frutta", food: "Fragole", grams: 150, label: "Fragole · parte edibile", image: photo("part-strawberries-v11") },
+      { category: "Latticino", food: "Yogurt greco 2%", grams: 125, label: "Yogurt bianco · 1 vasetto", image: photo("part-yogurt-v7") },
+    ],
+    steps: [
+      "Tosta leggermente il pane ai cereali.",
+      "Mescola la crema 100% nocciole nel vasetto e pesane 15 g prima di spalmarla.",
+      "Lava, asciuga e taglia le fragole; servi con lo yogurt bianco.",
+      "Per il lavoro porta pane e crema separati da yogurt e fragole fino al consumo.",
+    ],
+    alternatives: ["Crema 100% arachidi nella quantità equivalente", "Skyr al posto dello yogurt", "Contiene glutine, latte e nocciole"],
+  },
 ];
 const matrixSnacks: Recipe[] = [
   {
@@ -3316,6 +3462,20 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       label: "Pane di segale · 50 g",
       image: photo("part-bread-rye-v1156"),
     },
+    {
+      category: "Carboidrato",
+      food: "Pane di farro",
+      grams: 50,
+      label: "Pane di farro · 50 g",
+      image: photo("part-bread-spelt-v11511"),
+    },
+    {
+      category: "Carboidrato",
+      food: "Pane ai cereali",
+      grams: 50,
+      label: "Pane ai cereali · 50 g",
+      image: photo("part-bread-cereals-v11511"),
+    },
   ],
   Proteina: [
     {
@@ -3597,6 +3757,13 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
   Latticino: [
     {
       category: "Latticino",
+      food: "Skyr bianco",
+      grams: 150,
+      label: "Skyr bianco · 1 vasetto",
+      image: photo("part-skyr-v11511"),
+    },
+    {
+      category: "Latticino",
       food: "Kefir bianco magro",
       grams: 170,
       label: "Kefir bianco magro",
@@ -3832,6 +3999,27 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     },
     {
       category: "Extra",
+      food: "Nocciole",
+      grams: 15,
+      label: "Nocciole · 15 g",
+      image: photo("part-hazelnuts-v11511"),
+    },
+    {
+      category: "Extra",
+      food: "Crema 100% nocciole",
+      grams: 15,
+      label: "Crema 100% nocciole · 15 g",
+      image: photo("part-hazelnut-paste-v11511"),
+    },
+    {
+      category: "Extra",
+      food: "Semi di chia",
+      grams: 10,
+      label: "Semi di chia · 10 g",
+      image: photo("part-chia-v11511"),
+    },
+    {
+      category: "Extra",
       food: "Crema cacao e nocciole",
       grams: 15,
       label: "Crema cacao e nocciole",
@@ -3921,6 +4109,7 @@ const recommendedPartOptions = (part: MealPart, key: string) => {
         "Bevanda di soia senza zucchero",
         "Bevanda d'avena senza zucchero",
         "Yogurt proteico alla vaniglia",
+        "Skyr bianco",
         "Yogurt greco 2%",
         "Kefir bianco magro",
         "Ricotta vaccina",
@@ -3939,6 +4128,8 @@ const recommendedPartOptions = (part: MealPart, key: string) => {
           "Pane bianco tipo 0",
           "Pane semintegrale tipo 1",
           "Pane di segale",
+          "Pane di farro",
+          "Pane ai cereali",
         ].includes(x.food),
       );
     if (part.category === "Extra")
@@ -3950,8 +4141,11 @@ const recommendedPartOptions = (part: MealPart, key: string) => {
           "Mandorle",
           "Pistacchi",
           "Noci pecan",
+          "Nocciole",
           "Arachidi",
           "Crema 100% arachidi",
+          "Crema 100% nocciole",
+          "Semi di chia",
           "Crema cacao e nocciole",
         ].includes(x.food),
       );
@@ -3963,6 +4157,7 @@ const recommendedPartOptions = (part: MealPart, key: string) => {
         [
           "Yogurt proteico alla vaniglia",
           "Budino proteico al cioccolato",
+          "Skyr bianco",
           "Yogurt greco 2%",
           "Kefir bianco magro",
           "Ricotta vaccina",
@@ -4076,6 +4271,8 @@ const rotationBreakfastCarbs = mealPartOptions.Carboidrato.filter((part) =>
     "Pane bianco tipo 0",
     "Pane semintegrale tipo 1",
     "Pane di segale",
+    "Pane di farro",
+    "Pane ai cereali",
   ].includes(part.food),
 );
 const rotationBreakfastExtras = mealPartOptions.Extra.filter(
@@ -4086,7 +4283,10 @@ const rotationBreakfastExtras = mealPartOptions.Extra.filter(
       "Burro",
       "Noci",
       "Mandorle",
+      "Nocciole",
       "Crema cacao e nocciole",
+      "Crema 100% nocciole",
+      "Semi di chia",
     ].includes(part.food),
 );
 const portableSnackDairy = mealPartOptions.Latticino.filter(
@@ -4094,6 +4294,7 @@ const portableSnackDairy = mealPartOptions.Latticino.filter(
     [
       "Yogurt proteico alla vaniglia",
       "Budino proteico al cioccolato",
+      "Skyr bianco",
       "Yogurt greco 2%",
       "Kefir bianco magro",
     ].includes(part.food),
@@ -4134,7 +4335,7 @@ const asPracticalSnackPortion = (part: MealPart): MealPart => {
         ? 25
         : part.food === "Cracker integrali"
           ? 25
-          : ["Noci", "Mandorle", "Pistacchi", "Noci pecan", "Arachidi"].includes(part.food)
+          : ["Noci", "Mandorle", "Pistacchi", "Noci pecan", "Nocciole", "Arachidi"].includes(part.food)
             ? 15
             : part.grams;
   return { ...part, grams };
@@ -4180,15 +4381,24 @@ const rotationMainCarbs = mealPartOptions.Carboidrato.filter(
 const rotationMainExtras = mealPartOptions.Extra.filter((part) =>
   ["Olio extravergine", "Grana Padano DOP"].includes(part.food),
 );
+type MainBaseFamily = "pane" | "pasta" | "riso" | "tubero" | "altro";
+const mainCompatibilityMatrix: Record<MainBaseFamily, string[]> = {
+  pane: ["Fesa di tacchino", "Bresaola", "Tonno al naturale sgocciolato", "Prosciutto cotto", "Feta", "Uova sode", "Burger vegetale di soia"],
+  pasta: ["Tonno al naturale sgocciolato", "Salmone cotto", "Feta", "Ceci cotti", "Piselli cotti", "Lenticchie cotte", "Fagioli cannellini cotti"],
+  riso: ["Petto di pollo cotto", "Petto di pollo arrosto", "Salmone cotto", "Merluzzo cotto", "Orata cotta", "Tonno al naturale sgocciolato", "Uova sode", "Uova strapazzate o in frittata", "Ceci cotti", "Piselli cotti", "Lenticchie cotte", "Fagioli cannellini cotti"],
+  tubero: ["Bistecca di manzo · peso a crudo", "Bistecca di vitello · peso a crudo", "Lonza di maiale · peso a crudo", "Bistecca di cavallo magra · peso a crudo", "Petto di pollo cotto", "Merluzzo cotto", "Orata cotta", "Salmone cotto", "Uova sode", "Burger vegetale di soia"],
+  altro: ["Petto di pollo cotto", "Merluzzo cotto", "Orata cotta", "Salmone cotto", "Uova sode", "Uova strapazzate o in frittata", "Ceci cotti", "Lenticchie cotte", "Fagioli cannellini cotti", "Burger vegetale di soia"],
+};
+const mainBaseFamily = (food: string): MainBaseFamily => {
+  if (["Pane", "Cracker", "Grissini"].some((term) => food.includes(term))) return "pane";
+  if (["Pasta", "Gnocchi"].some((term) => food.includes(term))) return "pasta";
+  if (food.includes("Riso")) return "riso";
+  if (food.includes("Patate")) return "tubero";
+  return "altro";
+};
 const compatibleMainProteins = (base: MealPart) => {
-  const groups = base.food.includes("Pane") || base.food.includes("Cracker") || base.food.includes("Grissini")
-    ? ["Fesa di tacchino", "Bresaola", "Tonno al naturale sgocciolato", "Prosciutto cotto", "Feta", "Uova sode"]
-    : base.food.includes("Pasta") || base.food.includes("Gnocchi")
-      ? ["Tonno al naturale sgocciolato", "Salmone cotto", "Feta", "Ceci cotti", "Piselli cotti", "Lenticchie cotte", "Fagioli cannellini cotti"]
-      : base.food.includes("Riso")
-        ? ["Petto di pollo cotto", "Petto di pollo arrosto", "Salmone cotto", "Merluzzo cotto", "Orata cotta", "Tonno al naturale sgocciolato", "Uova sode", "Uova strapazzate o in frittata", "Ceci cotti", "Piselli cotti", "Lenticchie cotte", "Fagioli cannellini cotti"]
-        : ["Bistecca di manzo · peso a crudo", "Bistecca di vitello · peso a crudo", "Lonza di maiale · peso a crudo", "Bistecca di cavallo magra · peso a crudo", "Petto di pollo cotto", "Merluzzo cotto", "Orata cotta", "Salmone cotto", "Uova sode", "Uova strapazzate o in frittata", "Ceci cotti", "Lenticchie cotte", "Fagioli cannellini cotti"];
-  return mealPartOptions.Proteina.filter((part) => groups.includes(part.food));
+  const compatible = mainCompatibilityMatrix[mainBaseFamily(base.food)];
+  return mealPartOptions.Proteina.filter((part) => compatible.includes(part.food));
 };
 const catalogMains: Recipe[] = Array.from({ length: 84 }, (_, index) => {
   const base = rotationMainCarbs[index % rotationMainCarbs.length];

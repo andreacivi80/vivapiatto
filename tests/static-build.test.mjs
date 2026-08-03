@@ -16,7 +16,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.15\.10"/);
+  assert.match(app, /VERSION = "1\.15\.11"/);
   assert.match(app, /normalizeMealPart/);
   assert.match(app, /window\.location\.replace/);
   assert.match(app, /Seleziona tutto/);
@@ -30,6 +30,13 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /matrix-s11-banana-peanut/);
   await access(new URL("../dist/food/recipe-c21-porridge-banana-peanut-v113.png", import.meta.url));
   await access(new URL("../dist/food/part-peanuts-v113.png", import.meta.url));
+  assert.match(app, /matrix-c31-spelt-ricotta-apple/);
+  assert.match(app, /matrix-c34-buckwheat-pancakes-pear/);
+  assert.match(app, /matrix-c35-skyr-melon-chia/);
+  assert.match(app, /matrix-c36-cereal-hazelnut-strawberry/);
+  assert.match(app, /mainCompatibilityMatrix/);
+  await access(new URL("../dist/food/recipe-c31-spelt-ricotta-apple-v11511.png", import.meta.url));
+  await access(new URL("../dist/food/part-hazelnut-paste-v11511.png", import.meta.url));
   assert.match(app, /length:\s*284/);
   assert.match(app, /300\+ RICETTE GUIDATE/);
   assert.match(app, /CREA/);

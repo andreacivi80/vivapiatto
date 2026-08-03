@@ -2,6 +2,17 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
+## v1.15.11 — in verifica
+
+- [x] C31 pane di farro, ricotta, mela e nocciole collegata come colazione veloce completa.
+- [x] C34 pancake di grano saraceno con albume, pera e yogurt collegata come colazione da casa/weekend.
+- [x] C35 skyr, melone, chia e pane di segale collegata come colazione fresca e trasportabile.
+- [x] C36 pane ai cereali, crema 100% nocciole, fragole e yogurt collegata come colazione veloce.
+- [x] Quattro fotografie finali e sei fotografie atomiche nuove, specifiche e cache-bustate.
+- [x] Dati verificati per nocciole CREA; skyr, pani e crema 100% nocciole da etichette ufficiali; chia da USDA.
+- [x] Prima matrice strutturata di compatibilità tra famiglia della base e proteine per le combinazioni automatiche.
+- [ ] Continuare la matrice sugli abbinamenti base–verdura–condimento e sui diversi momenti della giornata.
+
 ## v1.15.10 — pubblicata
 
 - [x] Target calorico del giorno visibile nel riepilogo aggiornato.
