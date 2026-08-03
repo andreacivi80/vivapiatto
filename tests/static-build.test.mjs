@@ -16,7 +16,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.15\.14"/);
+  assert.match(app, /VERSION = "1\.15\.15"/);
   assert.match(app, /normalizeMealPart/);
   assert.match(app, /window\.location\.replace/);
   assert.match(app, /Seleziona tutto/);
@@ -33,6 +33,8 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /matrix-p41-whole-pasta-peas-ricotta/);
   assert.match(app, /matrix-p42-basmati-cod-spinach/);
   assert.match(app, /matrix-p44-quinoa-cannellini-beet/);
+  assert.match(app, /matrix-p48-legume-pasta-salmon/);
+  assert.match(app, /matrix-p52-bulgur-tofu-chickpeas/);
   assert.match(app, /Hummus di barbabietola/);
   assert.match(app, /weeklyPlannedFiber\[index\]\} g fibre/);
   await access(new URL("../dist/food/part-pineapple-v11513.png", import.meta.url));

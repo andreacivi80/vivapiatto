@@ -2,7 +2,13 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.15.13 — in verifica
+## v1.15.15 — in verifica
+
+- [x] P45–P52 collegati con preparazioni complete, componenti modificabili e foto finali specifiche.
+- [x] Dieci nuovi alimenti strutturati e inseriti nelle alternative per ruolo.
+- [x] Quindici fotografie nuove, atomiche o di piatto completo, senza riuso generico.
+
+## v1.15.13 — pubblicata
 
 - [x] P41, P42 e P44 collegati come pranzi completi con componenti modificabili e preparazione da zero.
 - [x] Foto finali specifiche per pasta con piselli e ricotta, riso con merluzzo e quinoa con cannellini e barbabietola.
