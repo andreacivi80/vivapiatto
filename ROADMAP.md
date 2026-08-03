@@ -2,6 +2,14 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
+## v1.15.7 — pubblicata
+
+- [x] Settimana italiana ricalibrata con combinazioni visibili e porzioni normali: niente compensazioni nascoste o grammature innaturali.
+- [x] Due spuntini proteici pratici aggiunti al piano: yogurt proteico con fragole e budino proteico con pera.
+- [x] Giorno di maggiore movimento riportato vicino al target usando una colazione quotidiana realistica.
+- [x] Giorno 5 completato con jar preparabile la sera e farro, uova, fagiolini e pomodori in porzioni standard.
+- [x] Collaudo mobile dei sette totali, della rotazione, della conferma e della persistenza dopo ricaricamento.
+
 ## v1.15.6 — pubblicata
 
 - [x] Fibre calcolate nel totale giornaliero, negli extra, nel confronto su 25 g EFSA e nella media dei sette giorni.

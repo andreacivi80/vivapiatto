@@ -47,7 +47,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.15.6";
+const VERSION = "1.15.7";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -2505,6 +2505,71 @@ const quickSnacks: Recipe[] = [
       "Biscotti secchi o cracker; verifica sempre l'etichetta della marca",
     ],
   },
+  {
+    id: "quick-protein-yogurt-strawberries",
+    name: "Yogurt proteico e fragole",
+    kicker: "Spuntino fresco · due confezioni pratiche",
+    course: "Spuntino",
+    cuisine: "Italiano",
+    image: photo("part-protein-yogurt-v1154"),
+    time: 2,
+    ingredients: [
+      { food: "Yogurt proteico alla vaniglia", grams: 160 },
+      { food: "Fragole", grams: 150 },
+    ],
+    parts: [
+      {
+        category: "Latticino",
+        food: "Yogurt proteico alla vaniglia",
+        grams: 160,
+        label: "Yogurt proteico · 1 vasetto",
+        image: photo("part-protein-yogurt-v1154"),
+      },
+      {
+        category: "Frutta",
+        food: "Fragole",
+        grams: 150,
+        label: "Fragole",
+        image: photo("part-strawberries-v11"),
+      },
+    ],
+    steps: [
+      "Lava e asciuga le fragole; portale in un contenitore separato dal vasetto.",
+      "Apri lo yogurt solo al momento dello spuntino e registra la confezione realmente consumata.",
+    ],
+    alternatives: ["Kiwi, pesca o ciliegie nella porzione equivalente proposta"],
+  },
+  {
+    id: "quick-protein-pudding-pear",
+    name: "Budino proteico e pera",
+    kicker: "Spuntino dolce · pronto da portare",
+    course: "Spuntino",
+    cuisine: "Italiano",
+    image: photo("part-protein-pudding-v1154"),
+    time: 1,
+    ingredients: [
+      { food: "Budino proteico al cioccolato", grams: 200 },
+      { food: "Pera", grams: 150 },
+    ],
+    parts: [
+      {
+        category: "Latticino",
+        food: "Budino proteico al cioccolato",
+        grams: 200,
+        label: "Budino proteico · 1 vasetto",
+        image: photo("part-protein-pudding-v1154"),
+      },
+      {
+        category: "Frutta",
+        food: "Pera",
+        grams: 150,
+        label: "Pera",
+        image: photo("part-pear-v7"),
+      },
+    ],
+    steps: ["Lava la pera e porta il vasetto refrigerato; non richiede preparazione."],
+    alternatives: ["Yogurt proteico oppure un altro frutto nella porzione equivalente"],
+  },
 ];
 quickSnacks.forEach((recipe) => (recipe.kind = "combination"));
 const portableRecipes: Recipe[] = [
@@ -4288,28 +4353,28 @@ const days: Day[] = [
     mood: "Mediterraneo",
     recipes: [
       "breakfast-rusks-butter",
-      "catalog-snack-7",
+      "matrix-s11-banana-peanut",
       "simple-pasta-tomato",
-      "catalog-snack-8",
+      "quick-wafer",
       "sweet-ricotta",
     ],
   },
   {
     label: "Giorno 5",
-    mood: "Veloce ma completo",
+    mood: "Completo e saziante",
     recipes: [
-      "breakfast-rusks-jam",
+      "jar",
       "catalog-snack-9",
       "work-turkey",
       "catalog-snack-10",
-      "eggs-quinoa",
+      "matrix-p43-farro-eggs-green-beans",
     ],
   },
   {
     label: "Giorno 6",
     mood: "Più movimento",
     recipes: [
-      "jar",
+      "breakfast-milk-biscuits",
       "catalog-snack-11",
       "chicken-farro",
       "catalog-snack-12",
@@ -4321,9 +4386,9 @@ const days: Day[] = [
     mood: "Equilibrio e varietà",
     recipes: [
       "apple-oats",
-      "catalog-snack-13",
+      "quick-protein-yogurt-strawberries",
       "simple-pasta-tomato",
-      "catalog-snack-14",
+      "quick-protein-pudding-pear",
       "tuna-chickpeas",
     ],
   },
