@@ -279,9 +279,9 @@ button {
 }
 .macro-strip {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   background: var(--lime);
-  padding: 15px 5px;
+  padding: 12px 4px;
   border-radius: 20px;
 }
 .macro-strip div {
@@ -753,6 +753,7 @@ button {
 .week-kcal-summary i {
   color: var(--muted);
   font-size: 6px;
+  line-height: 1.15;
   font-style: normal;
 }
 .week-kcal-summary b {

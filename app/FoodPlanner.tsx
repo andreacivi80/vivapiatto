@@ -37,6 +37,7 @@ type LogItem = {
   protein?: number;
   carbs?: number;
   fat?: number;
+  fiber?: number;
 };
 const SLOT_LABELS = [
   "Colazione",
@@ -46,7 +47,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.15.5";
+const VERSION = "1.15.6";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -281,12 +282,36 @@ const foods: Record<string, Food> = {
     source: "CREA",
   },
   "Pane integrale": {
-    kcal: 247,
-    protein: 13,
-    carbs: 41,
-    fat: 4.2,
-    fiber: 7,
-    source: "USDA",
+    kcal: 224,
+    protein: 8.5,
+    carbs: 44.1,
+    fat: 1.3,
+    fiber: 6.5,
+    source: "CREA",
+  },
+  "Pane bianco tipo 0": {
+    kcal: 268,
+    protein: 8.1,
+    carbs: 59.5,
+    fat: 0.5,
+    fiber: 3.8,
+    source: "CREA",
+  },
+  "Pane semintegrale tipo 1": {
+    kcal: 239,
+    protein: 8.3,
+    carbs: 52,
+    fat: 0.3,
+    fiber: 4.2,
+    source: "CREA",
+  },
+  "Pane di segale": {
+    kcal: 228,
+    protein: 8.3,
+    carbs: 45.4,
+    fat: 1.7,
+    fiber: 4.6,
+    source: "CREA",
   },
   "Ricotta vaccina": {
     kcal: 146,
@@ -303,6 +328,22 @@ const foods: Record<string, Food> = {
     fat: 9.5,
     fiber: 0,
     source: "USDA",
+  },
+  "Uova sode": {
+    kcal: 128,
+    protein: 12.4,
+    carbs: 0,
+    fat: 8.7,
+    fiber: 0,
+    source: "CREA",
+  },
+  "Uova strapazzate o in frittata": {
+    kcal: 150,
+    protein: 14.6,
+    carbs: 0,
+    fat: 10.2,
+    fiber: 0,
+    source: "CREA",
   },
   "Petto di pollo cotto": {
     kcal: 165,
@@ -1044,7 +1085,7 @@ const recipes: Recipe[] = [
     ingredients: [
       { food: "Pane integrale", grams: 90 },
       { food: "Ricotta vaccina", grams: 80 },
-      { food: "Uovo", grams: 60 },
+      { food: "Uova strapazzate o in frittata", grams: 60, label: "Uovo cotto in padella senza grassi aggiunti" },
       { food: "Pomodorini", grams: 120 },
     ],
     steps: [
@@ -1209,7 +1250,7 @@ const recipes: Recipe[] = [
     image: photo("eggs-quinoa-v3"),
     time: 14,
     ingredients: [
-      { food: "Uovo", grams: 120 },
+      { food: "Uova strapazzate o in frittata", grams: 120 },
       { food: "Quinoa cotta", grams: 110 },
       { food: "Spinaci", grams: 140 },
       { food: "Pomodorini", grams: 100 },
@@ -1404,7 +1445,7 @@ const mainCombos = [
   ["Petto di pollo cotto", "pollo dorato"],
   ["Salmone cotto", "salmone al limone"],
   ["Tonno al naturale sgocciolato", "tonno mediterraneo"],
-  ["Uovo", "uova morbide"],
+  ["Uova strapazzate o in frittata", "uova strapazzate"],
   ["Ceci cotti", "ceci speziati"],
   ["Lenticchie cotte", "lenticchie alle erbe"],
   ["Ricotta vaccina", "ricotta cremosa"],
@@ -1592,7 +1633,7 @@ const generatedRecipes: Recipe[] = Array.from({ length: 284 }, (_, index) => {
   const course = ["Piatto unico", "Primo", "Secondo", "Contorno"][index % 4];
   const profile = flavorProfiles[index % flavorProfiles.length];
   const proteinGrams =
-    protein[0] === "Uovo"
+    protein[0] === "Uova strapazzate o in frittata"
       ? 120
       : protein[0].includes("cotti")
         ? 140
@@ -1617,7 +1658,7 @@ const generatedRecipes: Recipe[] = Array.from({ length: 284 }, (_, index) => {
             ? photo("tuna-rice")
             : proteinKey.includes("pollo")
               ? photo("chicken-bowl")
-              : protein[0] === "Uovo"
+              : protein[0] === "Uova strapazzate o in frittata"
                 ? photo("eggs-quinoa-v3")
                 : photo("farro");
   const title =
@@ -1668,7 +1709,7 @@ const generatedRecipes: Recipe[] = Array.from({ length: 284 }, (_, index) => {
             ? "Taglia il pollo crudo a bocconcini uguali. Cuocilo in padella calda 6-8 minuti, girandolo spesso: deve raggiungere 74 °C al cuore."
             : proteinKey.includes("salmone")
               ? "Cuoci il salmone su carta forno a 190 °C per 12-15 minuti: è pronto quando è opaco e si separa in scaglie."
-              : protein[0] === "Uovo"
+            : protein[0] === "Uova strapazzate o in frittata"
                 ? "Per uova ben cotte, usa fuoco medio-basso per 4-5 minuti finché l'albume è rappreso; per uova sode, parti da acqua fredda e calcola 9 minuti dal bollore."
                 : `Scalda ${protein[1]} per 3-4 minuti a fuoco medio con spezie ed erbe, mescolando senza schiacciarlo.`,
         ]
@@ -1972,7 +2013,7 @@ const matrixBreakfasts: Recipe[] = [
     ingredients: [
       { food: "Farina d'avena", grams: 40 },
       { food: "Banana", grams: 100 },
-      { food: "Uovo", grams: 50 },
+      { food: "Uova strapazzate o in frittata", grams: 50, label: "1 uovo nell'impasto" },
       { food: "Yogurt greco 2%", grams: 60 },
       { food: "Fragole", grams: 100 },
     ],
@@ -1993,10 +2034,10 @@ const matrixBreakfasts: Recipe[] = [
       },
       {
         category: "Proteina",
-        food: "Uovo",
+        food: "Uova strapazzate o in frittata",
         grams: 50,
         label: "1 uovo medio",
-        image: photo("part-eggs-scrambled-v8"),
+        image: photo("part-eggs-scrambled-v1156"),
       },
       {
         category: "Latticino",
@@ -2209,12 +2250,12 @@ const matrixBreakfasts: Recipe[] = [
     image: photo("recipe-c32-omelette-v115"),
     time: 15,
     ingredients: [
-      { food: "Uovo", grams: 50 }, { food: "Albume", grams: 100 },
+      { food: "Uova strapazzate o in frittata", grams: 50 }, { food: "Albume", grams: 100 },
       { food: "Pomodorini", grams: 100 }, { food: "Funghi", grams: 100 },
       { food: "Pane integrale", grams: 50 }, { food: "Olio extravergine", grams: 5 },
     ],
     parts: [
-      { category: "Proteina", food: "Uovo", grams: 50, label: "1 uovo", image: photo("part-eggs-scrambled-v8") },
+      { category: "Proteina", food: "Uova strapazzate o in frittata", grams: 50, label: "1 uovo per omelette", image: photo("part-eggs-scrambled-v1156") },
       { category: "Proteina", food: "Albume", grams: 100, label: "Albume · 100 g", image: photo("part-eggs-scrambled-v8") },
       { category: "Contorno", food: "Pomodorini", grams: 100, label: "Pomodori", image: photo("part-tomatoes-v8") },
       { category: "Contorno", food: "Funghi", grams: 100, label: "Funghi", image: photo("part-mushrooms-v8") },
@@ -2305,7 +2346,7 @@ const matrixMainRecipes: Recipe[] = [
     time: 30,
     ingredients: [
       { food: "Farro cotto", grams: 175 },
-      { food: "Uovo", grams: 100 },
+      { food: "Uova sode", grams: 100 },
       { food: "Fagiolini", grams: 125 },
       { food: "Pomodorini", grams: 125 },
       { food: "Olio extravergine", grams: 10 },
@@ -2320,7 +2361,7 @@ const matrixMainRecipes: Recipe[] = [
       },
       {
         category: "Proteina",
-        food: "Uovo",
+        food: "Uova sode",
         grams: 100,
         label: "2 uova sode",
         image: photo("part-eggs-boiled-v7"),
@@ -2704,14 +2745,14 @@ const portableRecipes: Recipe[] = [
     image: photo("simple-eggs-v5"),
     time: 11,
     ingredients: [
-      { food: "Uovo", grams: 120 },
+      { food: "Uova sode", grams: 120 },
       { food: "Pane integrale", grams: 90 },
       { food: "Pomodorini", grams: 150 },
     ],
     parts: [
       {
         category: "Proteina",
-        food: "Uovo",
+        food: "Uova sode",
         grams: 120,
         label: "Due uova sode",
         image: photo("part-eggs-boiled-v7"),
@@ -2847,7 +2888,7 @@ const balancedDinnerRecipes: Recipe[] = [
     time: 25,
     ingredients: [
       { food: "Patate lesse", grams: 200 },
-      { food: "Uovo", grams: 100 },
+      { food: "Uova sode", grams: 100 },
       { food: "Fagiolini", grams: 200 },
       { food: "Olio extravergine", grams: 10 },
     ],
@@ -2861,7 +2902,7 @@ const balancedDinnerRecipes: Recipe[] = [
       },
       {
         category: "Proteina",
-        food: "Uovo",
+        food: "Uova sode",
         grams: 100,
         label: "Due uova sode",
         image: photo("simple-eggs-v5"),
@@ -3189,6 +3230,27 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       label: "Pane",
       image: photo("part-bread-v7"),
     },
+    {
+      category: "Carboidrato",
+      food: "Pane bianco tipo 0",
+      grams: 50,
+      label: "Pane bianco tipo 0 · 50 g",
+      image: photo("part-bread-white-v1156"),
+    },
+    {
+      category: "Carboidrato",
+      food: "Pane semintegrale tipo 1",
+      grams: 50,
+      label: "Pane semintegrale tipo 1 · 50 g",
+      image: photo("part-bread-semiwhole-v1156"),
+    },
+    {
+      category: "Carboidrato",
+      food: "Pane di segale",
+      grams: 50,
+      label: "Pane di segale · 50 g",
+      image: photo("part-bread-rye-v1156"),
+    },
   ],
   Proteina: [
     {
@@ -3263,10 +3325,17 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     },
     {
       category: "Proteina",
-      food: "Uovo",
+      food: "Uova sode",
       grams: 100,
-      label: "Due uova",
+      label: "Due uova sode",
       image: photo("part-eggs-boiled-v7"),
+    },
+    {
+      category: "Proteina",
+      food: "Uova strapazzate o in frittata",
+      grams: 100,
+      label: "Due uova strapazzate · senza grassi aggiunti",
+      image: photo("part-eggs-scrambled-v1156"),
     },
     {
       category: "Proteina",
@@ -3776,6 +3845,10 @@ const recommendedPartOptions = (part: MealPart, key: string) => {
   const options = ["Frutta", "Contorno"].includes(part.category)
     ? seasonalFirst(mealPartOptions[part.category])
     : mealPartOptions[part.category];
+  if (part.category === "Carboidrato" && part.food.startsWith("Pane"))
+    return options.filter((option) => option.food.startsWith("Pane"));
+  if (part.category === "Proteina" && part.food.startsWith("Uova"))
+    return options.filter((option) => option.food.startsWith("Uova"));
   if (slot === 0) {
     if (part.category === "Latticino") {
       const breakfastDairyOrder = [
@@ -3798,6 +3871,9 @@ const recommendedPartOptions = (part: MealPart, key: string) => {
           "Biscotti secchi",
           "Cracker integrali",
           "Pane integrale",
+          "Pane bianco tipo 0",
+          "Pane semintegrale tipo 1",
+          "Pane di segale",
         ].includes(x.food),
       );
     if (part.category === "Extra")
@@ -3899,7 +3975,7 @@ const equivalentPart = (option: MealPart, current: MealPart, role: MealPart["cat
       return { min: 120, max: 200, step: 10 };
     if (option.food === "Patate lesse")
       return { min: 150, max: 300, step: 25 };
-    if (option.food === "Pane integrale")
+    if (option.food.startsWith("Pane"))
       return { min: 50, max: 120, step: 10 };
     if (role === "Carboidrato")
       return { min: Math.min(option.grams, 30), max: Math.max(option.grams, 100), step: 10 };
@@ -3932,6 +4008,9 @@ const rotationBreakfastCarbs = mealPartOptions.Carboidrato.filter((part) =>
     "Biscotti secchi",
     "Cracker integrali",
     "Pane integrale",
+    "Pane bianco tipo 0",
+    "Pane semintegrale tipo 1",
+    "Pane di segale",
   ].includes(part.food),
 );
 const rotationBreakfastExtras = mealPartOptions.Extra.filter(
@@ -3982,7 +4061,7 @@ const catalogBreakfasts: Recipe[] = Array.from({ length: 36 }, (_, index) => {
 catalogBreakfasts.forEach((recipe) => (recipe.kind = "combination"));
 
 const asPracticalSnackPortion = (part: MealPart): MealPart => {
-  const grams = part.food === "Pane integrale"
+  const grams = part.food.startsWith("Pane")
     ? 40
     : part.food === "Fette biscottate integrali"
       ? 20
@@ -4038,12 +4117,12 @@ const rotationMainExtras = mealPartOptions.Extra.filter((part) =>
 );
 const compatibleMainProteins = (base: MealPart) => {
   const groups = base.food.includes("Pane") || base.food.includes("Cracker") || base.food.includes("Grissini")
-    ? ["Fesa di tacchino", "Bresaola", "Tonno al naturale sgocciolato", "Prosciutto cotto", "Feta", "Uovo"]
+    ? ["Fesa di tacchino", "Bresaola", "Tonno al naturale sgocciolato", "Prosciutto cotto", "Feta", "Uova sode"]
     : base.food.includes("Pasta") || base.food.includes("Gnocchi")
       ? ["Tonno al naturale sgocciolato", "Salmone cotto", "Feta", "Ceci cotti", "Piselli cotti", "Lenticchie cotte", "Fagioli cannellini cotti"]
       : base.food.includes("Riso")
-        ? ["Petto di pollo cotto", "Petto di pollo arrosto", "Salmone cotto", "Merluzzo cotto", "Orata cotta", "Tonno al naturale sgocciolato", "Uovo", "Ceci cotti", "Piselli cotti", "Lenticchie cotte", "Fagioli cannellini cotti"]
-        : ["Bistecca di manzo · peso a crudo", "Bistecca di vitello · peso a crudo", "Lonza di maiale · peso a crudo", "Bistecca di cavallo magra · peso a crudo", "Petto di pollo cotto", "Merluzzo cotto", "Orata cotta", "Salmone cotto", "Uovo", "Ceci cotti", "Lenticchie cotte", "Fagioli cannellini cotti"];
+        ? ["Petto di pollo cotto", "Petto di pollo arrosto", "Salmone cotto", "Merluzzo cotto", "Orata cotta", "Tonno al naturale sgocciolato", "Uova sode", "Uova strapazzate o in frittata", "Ceci cotti", "Piselli cotti", "Lenticchie cotte", "Fagioli cannellini cotti"]
+        : ["Bistecca di manzo · peso a crudo", "Bistecca di vitello · peso a crudo", "Lonza di maiale · peso a crudo", "Bistecca di cavallo magra · peso a crudo", "Petto di pollo cotto", "Merluzzo cotto", "Orata cotta", "Salmone cotto", "Uova sode", "Uova strapazzate o in frittata", "Ceci cotti", "Lenticchie cotte", "Fagioli cannellini cotti"];
   return mealPartOptions.Proteina.filter((part) => groups.includes(part.food));
 };
 const catalogMains: Recipe[] = Array.from({ length: 84 }, (_, index) => {
@@ -4466,10 +4545,13 @@ export function FoodPlanner() {
   ]);
   const groupFoods: Record<string, string[]> = {
     Latte: ["Yogurt greco 2%", "Ricotta vaccina", "Feta"],
-    Uova: ["Uovo"],
+    Uova: ["Uovo", "Uova sode", "Uova strapazzate o in frittata"],
     Pesce: ["Salmone cotto", "Tonno al naturale sgocciolato"],
     Glutine: [
       "Pane integrale",
+      "Pane bianco tipo 0",
+      "Pane semintegrale tipo 1",
+      "Pane di segale",
       "Farro cotto",
       "Cous cous integrale cotto",
       "Orzo perlato cotto",
@@ -4716,6 +4798,7 @@ export function FoodPlanner() {
             protein: s.protein + m.protein,
             carbs: s.carbs + m.carbs,
             fat: s.fat + m.fat,
+            fiber: s.fiber + m.fiber,
           };
         },
         {
@@ -4723,6 +4806,7 @@ export function FoodPlanner() {
           protein: plannedDrinkMacros.protein,
           carbs: plannedDrinkMacros.carbs,
           fat: plannedDrinkMacros.fat,
+          fiber: 0,
         },
       ),
     [
@@ -4744,6 +4828,7 @@ export function FoodPlanner() {
             protein: sum.protein + meal.protein,
             carbs: sum.carbs + meal.carbs,
             fat: sum.fat + meal.fat,
+            fiber: sum.fiber + meal.fiber,
           };
         },
         {
@@ -4751,6 +4836,7 @@ export function FoodPlanner() {
           protein: plannedDrinkMacros.protein,
           carbs: plannedDrinkMacros.carbs,
           fat: plannedDrinkMacros.fat,
+          fiber: 0,
         },
       ),
     [dayIndex, choices, plannedDrink],
@@ -4762,14 +4848,16 @@ export function FoodPlanner() {
         protein: sum.protein + (item.protein || 0),
         carbs: sum.carbs + (item.carbs || 0),
         fat: sum.fat + (item.fat || 0),
+        fiber: sum.fiber + (item.fiber || 0),
       }),
-      { kcal: 0, protein: 0, carbs: 0, fat: 0 },
+      { kcal: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 },
     );
     return {
       kcal: dayTotals.kcal + added.kcal,
       protein: dayTotals.protein + added.protein,
       carbs: dayTotals.carbs + added.carbs,
       fat: dayTotals.fat + added.fat,
+      fiber: dayTotals.fiber + added.fiber,
     };
   }, [dayTotals, extras, dayIndex]);
   const builderTotals = useMemo(() => calc(builder), [builder]);
@@ -5127,6 +5215,7 @@ export function FoodPlanner() {
           protein: foods[match].protein * factor,
           carbs: foods[match].carbs * factor,
           fat: foods[match].fat * factor,
+          fiber: foods[match].fiber * factor,
         },
       ],
     }));
@@ -5186,7 +5275,7 @@ export function FoodPlanner() {
         if (has(["pollo", "tacchino", "coniglio"])) counts["Carne bianca"] += 1;
         if (has(["manzo", "bistecca", "vitello", "maiale", "lonza", "cavallo", "bresaola", "prosciutto cotto", "prosciutto crudo"]))
           counts["Carne rossa"] += 1;
-        if (has(["uovo"])) counts.Uova += 1;
+        if (has(["uovo", "uova"])) counts.Uova += 1;
         const legumeGrams = items
           .filter((item) =>
             ["ceci", "lenticchie", "fagioli", "piselli", "legumi"].some((term) =>
@@ -5209,9 +5298,21 @@ export function FoodPlanner() {
       }, 0),
     ),
   );
+  const weeklyPlannedFiber = days.map((_, day) =>
+    fmt(
+      getDayIds(day).reduce((total, id, slot) => {
+        const key = `${day}-${slot}`;
+        return total + calc(plannedIngredients(key, recipeMap[id])).fiber;
+      }, 0),
+    ),
+  );
   const weeklyAverageKcal = round(
     weeklyPlannedKcal.reduce((sum, kcal) => sum + kcal, 0) /
       weeklyPlannedKcal.length,
+  );
+  const weeklyAverageFiber = fmt(
+    weeklyPlannedFiber.reduce((sum, fiber) => sum + fiber, 0) /
+      weeklyPlannedFiber.length,
   );
   const weeklyTargets = [
     { label: "Pesce", target: "2–3", count: weeklyCounts.Pesce },
@@ -5680,6 +5781,10 @@ export function FoodPlanner() {
                 <b>{round(dayTotals.fat)}g</b>
                 <span>grassi</span>
               </div>
+              <div>
+                <b>{fmt(dayTotals.fiber)}g</b>
+                <span>fibre</span>
+              </div>
             </section>
             {getDayIds(dayIndex).some(
               (_, slot) => completed[`${dayIndex}-${slot}`],
@@ -5934,6 +6039,7 @@ export function FoodPlanner() {
                   <span><b>{round(effectiveDayTotals.protein)}</b> g proteine</span>
                   <span><b>{round(effectiveDayTotals.carbs)}</b> g carboidrati</span>
                   <span><b>{round(effectiveDayTotals.fat)}</b> g grassi</span>
+                  <span><b>{fmt(effectiveDayTotals.fiber)}</b> g fibre</span>
                 </div>
                 <div className="actual-day-comparison">
                   <span>Rispetto al piano base</span>
@@ -5941,6 +6047,7 @@ export function FoodPlanner() {
                   <b>proteine {percentOf(effectiveDayTotals.protein, baseDayTotals.protein)}%</b>
                   <b>carboidrati {percentOf(effectiveDayTotals.carbs, baseDayTotals.carbs)}%</b>
                   <b>grassi {percentOf(effectiveDayTotals.fat, baseDayTotals.fat)}%</b>
+                  <b>fibre {percentOf(effectiveDayTotals.fiber, 25)}% di 25 g</b>
                 </div>
               </section>
               <details className="today-extra">
@@ -6017,14 +6124,14 @@ export function FoodPlanner() {
             <div className="week-kcal-summary">
               <header>
                 <b>Calorie pianificate</b>
-                <span>media {weeklyAverageKcal} kcal/giorno</span>
+                <span>media {weeklyAverageKcal} kcal · {weeklyAverageFiber} g fibre/giorno</span>
               </header>
               <div>
                 {weeklyPlannedKcal.map((kcal, index) => (
                   <span key={days[index].label}>
                     <small>G{index + 1}</small>
                     <b>{kcal}</b>
-                    <i>kcal</i>
+                    <i>kcal · {weeklyPlannedFiber[index]} g fibre</i>
                   </span>
                 ))}
               </div>

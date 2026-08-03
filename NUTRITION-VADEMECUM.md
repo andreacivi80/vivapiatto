@@ -2,6 +2,12 @@
 
 Questo documento è la base funzionale dell’app. Le fotografie e la grafica descrivono le proposte, ma non determinano il piano.
 
+## Fibre
+
+- Riferimento adulto visualizzato: 25 g al giorno, assunzione adeguata EFSA.
+- Il valore è orientativo: non è un limite rigido e non sostituisce un'indicazione clinica personale.
+- Il totale usa i grammi effettivamente selezionati e comprende gli alimenti aggiunti nel diario.
+
 ## Gerarchia delle regole
 
 1. Allergie, intolleranze, alimenti esclusi e indicazioni cliniche personali.

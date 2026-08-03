@@ -2,7 +2,15 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.15.5 — in preparazione
+## v1.15.6 — pubblicata
+
+- [x] Fibre calcolate nel totale giornaliero, negli extra, nel confronto su 25 g EFSA e nella media dei sette giorni.
+- [x] Pane integrale riallineato ai valori CREA e aggiunti pane bianco tipo 0, semintegrale tipo 1 e di segale con porzioni da 50 g.
+- [x] Tre fotografie autonome per i nuovi pani e priorità ai pani equivalenti quando si cambia una porzione di pane.
+- [x] Uova sode separate da uova strapazzate/frittata con dati CREA, metodi espliciti e fotografie diverse; olio e burro restano componenti separati.
+- [x] Controllo TypeScript completo aggiunto alla verifica della revisione.
+
+## v1.15.5 — pubblicata
 
 - [x] Rotazione pianificata calcolata prima della conferma, non soltanto sui pasti già registrati.
 - [x] Settimana italiana di base verificata nel browser: pesce 3, carne bianca 3, carne rossa 2, uova 2 e legumi 3, tutti negli intervalli mostrati.
