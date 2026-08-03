@@ -2,7 +2,14 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.15.3 — in preparazione
+## v1.15.4 — in preparazione
+
+- [x] Sedano e broccoli aggiunti come contorni con valori CREA, stagionalità e fotografie autonome.
+- [x] Yogurt HiPRO e budino Ehrmann aggiunti con valori da etichetta ufficiale, fotografie specifiche e priorità negli spuntini.
+- [x] Burger vegetale di soia aggiunto con valori da etichetta ufficiale, fotografia atomica e piatto completo con pane e broccoli.
+- [x] Lenticchie cotte riclassificate soltanto come proteina vegetale: eliminata la duplicazione impropria tra i contorni.
+
+## v1.15.3 — pubblicata
 
 - [x] Crash della pagina Ricette corretto all'origine: `Zucca cotta` riallineata alla voce nutrizionale `Zucca`.
 - [x] Protezione permanente: una ricetta con dati incompleti non può più azzerare l'intera libreria.
@@ -30,7 +37,7 @@ Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggior
 - [x] Barra “Chiudi / Chiudi e riequilibra” fissa sopra la navigazione e sempre visibile durante lo scorrimento.
 - [x] Miniature Settimana con immagine completa, senza taglio di olio, piselli o cracker.
 - [x] Combinazioni automatiche escluse dalla libreria delle ricette guidate.
-- [x] Lenticchie cotte disponibili anche come contorno con fotografia corretta.
+- [x] Lenticchie cotte rese disponibili nel paniere; la classificazione è stata poi corretta nella v1.15.4.
 - [x] Foto finali specifiche per cena patate/uova/fagiolini e riso/pollo/fagiolini.
 - [x] Foto wafer corretta e foto specifica per banana, yogurt e avena.
 - [x] C32 omelette con pomodori, funghi e pane integrale collegata con albume CREA.

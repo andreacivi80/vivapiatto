@@ -4,7 +4,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { portionOptions, STANDARD_SOURCES } from "./nutritionEngine";
 
 type Macro = { kcal: number; protein: number; carbs: number; fat: number };
-type Food = Macro & { fiber: number; source: "CREA" | "USDA" | "ETICHETTA" };
+type Food = Macro & {
+  fiber: number;
+  source: "CREA" | "USDA" | "FRIDA" | "ETICHETTA";
+};
 type RecipeIngredient = { food: string; grams: number; label?: string };
 type MealPart = RecipeIngredient & {
   category:
@@ -43,7 +46,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.15.3";
+const VERSION = "1.15.4";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -84,6 +87,46 @@ const foods: Record<string, Food> = {
     fat: 6,
     fiber: 6.4,
     source: "CREA",
+  },
+  "Sedano crudo": {
+    kcal: 23,
+    protein: 2.3,
+    carbs: 2.4,
+    fat: 0.2,
+    fiber: 1.6,
+    source: "CREA",
+  },
+  "Broccoli bolliti": {
+    kcal: 34,
+    protein: 3.1,
+    carbs: 3.2,
+    fat: 0.4,
+    fiber: 3.2,
+    source: "CREA",
+  },
+  "Yogurt proteico alla vaniglia": {
+    kcal: 53,
+    protein: 9.4,
+    carbs: 3.6,
+    fat: 0.1,
+    fiber: 0,
+    source: "ETICHETTA",
+  },
+  "Budino proteico al cioccolato": {
+    kcal: 76,
+    protein: 10,
+    carbs: 5.5,
+    fat: 1.5,
+    fiber: 0,
+    source: "ETICHETTA",
+  },
+  "Burger vegetale di soia": {
+    kcal: 158,
+    protein: 17,
+    carbs: 12,
+    fat: 3.7,
+    fiber: 4.4,
+    source: "ETICHETTA",
   },
   "Ciliegie fresche": {
     kcal: 48,
@@ -3004,6 +3047,33 @@ const balancedDinnerRecipes: Recipe[] = [
     ],
     alternatives: ["Pasto da casa", "Contiene pesce", "Ogni componente resta sostituibile separatamente"],
   },
+  {
+    id: "plant-burger-broccoli-bread",
+    name: "Burger vegetali con broccoli e pane integrale",
+    kicker: "Piatto completo vegetale · quattro componenti modificabili",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    image: photo("recipe-plant-burger-broccoli-v1154"),
+    time: 18,
+    ingredients: [
+      { food: "Pane integrale", grams: 80 },
+      { food: "Burger vegetale di soia", grams: 150 },
+      { food: "Broccoli bolliti", grams: 200 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    parts: [
+      { category: "Carboidrato", food: "Pane integrale", grams: 80, label: "Pane integrale · 80 g", image: photo("part-bread-v7") },
+      { category: "Proteina", food: "Burger vegetale di soia", grams: 150, label: "Burger vegetali di soia · 2 piccoli", image: photo("part-plant-burger-v1154") },
+      { category: "Contorno", food: "Broccoli bolliti", grams: 200, label: "Broccoli bolliti · 200 g", image: photo("part-broccoli-v1154") },
+      { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio extravergine · 10 g", image: photo("part-olive-oil-v8") },
+    ],
+    steps: [
+      "Dividi i broccoli in cimette, sciacquali e lessali in acqua bollente per 6-8 minuti, lasciandoli ancora consistenti; scolali bene.",
+      "Scalda una padella antiaderente e cuoci i burger vegetali seguendo i tempi della confezione, girandoli a metà cottura.",
+      "Servi burger, broccoli e pane separati nel piatto; pesa e aggiungi i 10 g di olio soltanto a fine cottura.",
+    ],
+    alternatives: ["Adatto a casa", "Controlla sempre l'etichetta del burger scelto", "Ogni componente resta sostituibile separatamente"],
+  },
 ];
 const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
   Carboidrato: [
@@ -3261,6 +3331,13 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       label: "Cannellini cotti",
       image: photo("part-cannellini-v1141"),
     },
+    {
+      category: "Proteina",
+      food: "Burger vegetale di soia",
+      grams: 150,
+      label: "Burger vegetali di soia · 2 piccoli",
+      image: photo("part-plant-burger-v1154"),
+    },
   ],
   Contorno: [
     {
@@ -3370,10 +3447,17 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     },
     {
       category: "Contorno",
-      food: "Lenticchie cotte",
-      grams: 120,
-      label: "Lenticchie cotte · contorno",
-      image: photo("part-lentils-v1141"),
+      food: "Sedano crudo",
+      grams: 200,
+      label: "Sedano crudo · parte edibile",
+      image: photo("part-celery-v1154"),
+    },
+    {
+      category: "Contorno",
+      food: "Broccoli bolliti",
+      grams: 200,
+      label: "Broccoli bolliti",
+      image: photo("part-broccoli-v1154"),
     },
   ],
   Latticino: [
@@ -3397,6 +3481,20 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       grams: 125,
       label: "Yogurt · 1 vasetto",
       image: photo("part-yogurt-v7"),
+    },
+    {
+      category: "Latticino",
+      food: "Yogurt proteico alla vaniglia",
+      grams: 160,
+      label: "Yogurt proteico · 1 vasetto",
+      image: photo("part-protein-yogurt-v1154"),
+    },
+    {
+      category: "Latticino",
+      food: "Budino proteico al cioccolato",
+      grams: 200,
+      label: "Budino proteico · 1 vasetto",
+      image: photo("part-protein-pudding-v1154"),
     },
     {
       category: "Latticino",
@@ -3654,10 +3752,11 @@ const seasonalMonths: Record<string, number[]> = {
   Kiwi: [11, 12, 1, 2, 3, 4],
   Mela: [9, 10, 11, 12, 1, 2, 3],
   Pera: [8, 9, 10, 11, 12, 1, 2],
-  Asparagi: [3, 4, 5, 6],
-  Broccoli: [10, 11, 12, 1, 2, 3],
+  "Asparagi crudi": [3, 4, 5, 6],
+  "Broccoli bolliti": [10, 11, 12, 1, 2, 3],
   Cavolfiore: [10, 11, 12, 1, 2, 3],
-  Finocchi: [10, 11, 12, 1, 2, 3, 4, 5],
+  "Finocchi crudi": [10, 11, 12, 1, 2, 3, 4, 5],
+  "Sedano crudo": [9, 10, 11, 12, 1, 2, 3, 4, 5],
   Zucca: [9, 10, 11, 12, 1, 2],
   Zucchine: [5, 6, 7, 8, 9],
   Pomodorini: [5, 6, 7, 8, 9],
@@ -3683,7 +3782,9 @@ const recommendedPartOptions = (part: MealPart, key: string) => {
         "Latte parzialmente scremato",
         "Bevanda di soia senza zucchero",
         "Bevanda d'avena senza zucchero",
+        "Yogurt proteico alla vaniglia",
         "Yogurt greco 2%",
+        "Kefir bianco magro",
         "Ricotta vaccina",
       ];
       return breakfastDairyOrder
@@ -3717,7 +3818,15 @@ const recommendedPartOptions = (part: MealPart, key: string) => {
   }
   if (slot === 1 || slot === 3) {
     if (part.category === "Latticino")
-      return options.filter((x) => x.food === "Yogurt greco 2%");
+      return options.filter((x) =>
+        [
+          "Yogurt proteico alla vaniglia",
+          "Budino proteico al cioccolato",
+          "Yogurt greco 2%",
+          "Kefir bianco magro",
+          "Ricotta vaccina",
+        ].includes(x.food),
+      );
     if (part.category === "Carboidrato")
       return options.filter((x) =>
         [
@@ -3837,7 +3946,13 @@ const rotationBreakfastExtras = mealPartOptions.Extra.filter(
     ].includes(part.food),
 );
 const portableSnackDairy = mealPartOptions.Latticino.filter(
-  (part) => part.food === "Yogurt greco 2%",
+  (part) =>
+    [
+      "Yogurt proteico alla vaniglia",
+      "Budino proteico al cioccolato",
+      "Yogurt greco 2%",
+      "Kefir bianco magro",
+    ].includes(part.food),
 );
 const catalogBreakfasts: Recipe[] = Array.from({ length: 36 }, (_, index) => {
   const parts = [
