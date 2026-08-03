@@ -16,7 +16,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.15\.13"/);
+  assert.match(app, /VERSION = "1\.15\.14"/);
   assert.match(app, /normalizeMealPart/);
   assert.match(app, /window\.location\.replace/);
   assert.match(app, /Seleziona tutto/);
