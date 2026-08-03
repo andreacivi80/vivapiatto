@@ -2392,3 +2392,41 @@ button {
   font-size: 9px;
   font-weight: 900;
 }
+
+.complete-meal-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  margin-bottom: 8px;
+}
+.complete-meal-grid button {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #d4b986;
+  border-radius: 13px;
+  background: #fffaf0;
+  padding: 6px;
+  text-align: left;
+}
+.complete-meal-grid img {
+  width: 100%;
+  height: 92px;
+  border-radius: 9px;
+  object-fit: cover;
+}
+.complete-meal-grid span,
+.complete-meal-grid b {
+  display: block;
+  overflow-wrap: anywhere;
+}
+.complete-meal-grid span {
+  margin-top: 5px;
+  font-size: 9px;
+  line-height: 1.25;
+  font-weight: 900;
+}
+.complete-meal-grid b {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 8px;
+}

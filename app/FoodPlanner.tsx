@@ -6,7 +6,7 @@ import { portionOptions, STANDARD_SOURCES } from "./nutritionEngine";
 type Macro = { kcal: number; protein: number; carbs: number; fat: number };
 type Food = Macro & {
   fiber: number;
-  source: "CREA" | "USDA" | "FRIDA" | "ETICHETTA" | "HUMANITAS" | "RICETTA CALCOLATA";
+  source: "CREA" | "USDA" | "FRIDA" | "ETICHETTA" | "HUMANITAS" | "IEO" | "RICETTA CALCOLATA";
 };
 type RecipeIngredient = { food: string; grams: number; label?: string };
 type MealPart = RecipeIngredient & {
@@ -47,7 +47,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.15.19";
+const VERSION = "1.15.20";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -400,6 +400,30 @@ const foods: Record<string, Food> = {
     fat: 30,
     fiber: 0,
     source: "ETICHETTA",
+  },
+  Tempeh: {
+    kcal: 173, protein: 20.7, carbs: 6.4, fat: 6.4, fiber: 4.1, source: "IEO",
+  },
+  "Rombo · peso a crudo": {
+    kcal: 81, protein: 16.3, carbs: 1.2, fat: 1.3, fiber: 0, source: "CREA",
+  },
+  "Seppia · peso a crudo": {
+    kcal: 72, protein: 14, carbs: 0.7, fat: 1.5, fiber: 0, source: "CREA",
+  },
+  "Germogli di soia": {
+    kcal: 30, protein: 3, carbs: 5.9, fat: 0.2, fiber: 1.8, source: "USDA",
+  },
+  "Salsa di soia": {
+    kcal: 53, protein: 8.1, carbs: 4.9, fat: 0.6, fiber: 0.8, source: "USDA",
+  },
+  Gochujang: {
+    kcal: 170, protein: 4, carbs: 35, fat: 2, fiber: 0, source: "ETICHETTA",
+  },
+  Mirin: {
+    kcal: 196, protein: 0, carbs: 43, fat: 0, fiber: 0, source: "ETICHETTA",
+  },
+  Zucchero: {
+    kcal: 392, protein: 0, carbs: 100, fat: 0, fiber: 0, source: "CREA",
   },
   "Sogliola · peso a crudo": {
     kcal: 83, protein: 16.9, carbs: 0.8, fat: 1.4, fiber: 0, source: "CREA",
@@ -1656,23 +1680,23 @@ const vegCombos = [
 ] as const;
 const flavorProfiles = [
   {
-    cuisine: "Asiatico",
+    cuisine: "Creativo",
     aroma:
       "zenzero, lime e un cucchiaino di salsa di soia a ridotto contenuto di sale",
     finish: "taglio ordinato, erbe fresche e semi di zucca tostati",
   },
   {
-    cuisine: "Asiatico",
+    cuisine: "Creativo",
     aroma: "lime, zenzero, peperoncino e coriandolo",
     finish: "verdure croccanti e una spremuta di lime",
   },
   {
-    cuisine: "Asiatico",
+    cuisine: "Creativo",
     aroma: "curry dolce, curcuma, cumino e limone",
     finish: "spezie tostate e una cucchiaiata fresca di yogurt se gradito",
   },
   {
-    cuisine: "Asiatico",
+    cuisine: "Creativo",
     aroma: "zenzero, aglio, peperoncino e aceto di riso",
     finish: "strisce sottili di verdura e semi tostati",
   },
@@ -1682,12 +1706,12 @@ const flavorProfiles = [
     finish: "erbe fresche, limone e verdure ben colorate",
   },
   {
-    cuisine: "Gourmet",
+    cuisine: "Creativo",
     aroma: "ras el hanout, cannella appena accennata e scorza di limone",
     finish: "contrasto caldo-fresco e impiattamento a mezzaluna",
   },
   {
-    cuisine: "Gourmet",
+    cuisine: "Creativo",
     aroma: "senape, pepe nero, timo e limone",
     finish:
       "base compatta, verdure appoggiate in altezza e salsa a piccoli punti",
@@ -1708,7 +1732,7 @@ const flavorProfiles = [
     finish: "ingredienti separati, feta sbriciolata se prevista ed erbe",
   },
   {
-    cuisine: "Gourmet",
+    cuisine: "Creativo",
     aroma: "aneto, scorza di limone, pepe e aceto delicato",
     finish: "linee pulite, verdure croccanti e ciuffi di aneto",
   },
@@ -1718,22 +1742,22 @@ const flavorProfiles = [
     finish: "molti colori, consistenze diverse e semi tostati",
   },
   {
-    cuisine: "Gourmet",
+    cuisine: "Creativo",
     aroma: "lime, peperoncino dolce, coriandolo e cipolla marinata",
     finish: "colori netti e una finitura fresca e acidula",
   },
   {
-    cuisine: "Gourmet",
+    cuisine: "Creativo",
     aroma: "lime, aglio, paprika e prezzemolo",
     finish: "base compatta e verdure vivaci disposte a spicchi",
   },
   {
-    cuisine: "Asiatico",
+    cuisine: "Creativo",
     aroma: "lime, zenzero, menta e coriandolo",
     finish: "erbe fresche, verdure sottili e parte calda separata",
   },
   {
-    cuisine: "Asiatico",
+    cuisine: "Creativo",
     aroma: "curcuma, zenzero, lime e peperoncino",
     finish: "contrasto dorato e verde con lime a lato",
   },
@@ -1743,7 +1767,7 @@ const flavorProfiles = [
     finish: "erbe, spezie rosse e ingredienti disposti a ventaglio",
   },
   {
-    cuisine: "Gourmet",
+    cuisine: "Creativo",
     aroma: "coriandolo, paprika, aglio e aceto",
     finish: "verdure ben arrostite e noci solo se consentite",
   },
@@ -1763,17 +1787,17 @@ const flavorProfiles = [
     finish: "base stesa, verdure ordinate e bordi ben dorati",
   },
   {
-    cuisine: "Gourmet",
+    cuisine: "Creativo",
     aroma: "lime, pimento, timo e peperoncino",
     finish: "colori tropicali e una finitura fresca",
   },
   {
-    cuisine: "Gourmet",
+    cuisine: "Creativo",
     aroma: "timo, senape delicata, limone e pepe",
     finish: "porzione raccolta, salsa leggera e verdure in altezza",
   },
   {
-    cuisine: "Gourmet",
+    cuisine: "Creativo",
     aroma: "paprika, origano, aglio e aceto",
     finish: "verdure arrostite, erbe e contrasti cremosi se consentiti",
   },
@@ -1924,7 +1948,7 @@ const snackRecipes: Recipe[] = Array.from({ length: 32 }, (_, index) => {
       : `${kind} · coppa di ${fruit.toLowerCase()}, yogurt e ${nuts.toLowerCase()}`,
     kicker: `${kind} ${kind === "Colazione" ? "bilanciata" : "bilanciato"} con quantità modificabili`,
     course: kind,
-    cuisine: "Gourmet",
+    cuisine: "Creativo",
     image: photo("fruit-breakfast-v2"),
     time: frozen ? 185 : 8,
     ingredients: [
@@ -3587,8 +3611,105 @@ const balancedDinnerRecipes: Recipe[] = [
     ],
     steps: ["Affetta la cipolla e scaldala con i carciofi già cotti in padella antiaderente.", "Sbatti due uova, versale sulle verdure e cuoci coperto a fuoco basso oppure in forno fino a completa coagulazione.", "Servi con insalata, pane di segale e l’olio totale pesato."],
     alternatives: ["Conta due uova nella rotazione settimanale", "Contiene uova e glutine", "Componenti modificabili separatamente"],
-  },];
-const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
+  },
+  {
+    id: "matrix-d45-tempeh-sweet-potato",
+    name: "Tempeh alla piastra con patata dolce e broccoli",
+    kicker: "Piatto vegetale completo · matrice D45", course: "Piatto unico", cuisine: "Vegetale",
+    image: photo("recipe-d45-tempeh-sweet-potato-v11520"), time: 30,
+    ingredients: [{ food: "Tempeh", grams: 120 }, { food: "Patata dolce cotta", grams: 220 }, { food: "Broccoli bolliti", grams: 200 }, { food: "Olio extravergine", grams: 10 }],
+    parts: [
+      { category: "Proteina", food: "Tempeh", grams: 120, label: "Tempeh alla piastra · 120 g", image: photo("part-tempeh-v11520") },
+      { category: "Carboidrato", food: "Patata dolce cotta", grams: 220, label: "Patata dolce cotta · 220 g", image: photo("part-sweet-potato-v8") },
+      { category: "Contorno", food: "Broccoli bolliti", grams: 200, label: "Broccoli · 200 g", image: photo("part-broccoli-v1154") },
+      { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") },
+    ],
+    steps: ["Taglia la patata dolce a cubetti e arrostiscila a 200 °C per 22-25 minuti.", "Dividi i broccoli in cimette e lessali o cuocili al vapore 6-8 minuti.", "Tampona il tempeh, taglialo e doralo su piastra 3-4 minuti per lato; servi con l'olio totale pesato."],
+    alternatives: ["Fonte tempeh: SmartFood IEO", "Piatto vegetale", "Componenti modificabili separatamente"],
+  },
+  {
+    id: "matrix-d46-turbot-quinoa-zucchini",
+    name: "Rombo al forno con quinoa, zucchine e pomodorini",
+    kicker: "Piatto di pesce completo · matrice D46", course: "Piatto unico", cuisine: "Gourmet",
+    image: photo("recipe-d46-turbot-quinoa-v11520"), time: 30,
+    ingredients: [{ food: "Rombo · peso a crudo", grams: 160 }, { food: "Quinoa cotta", grams: 185 }, { food: "Zucchine", grams: 160 }, { food: "Pomodorini", grams: 100 }, { food: "Olio extravergine", grams: 10 }],
+    parts: [
+      { category: "Proteina", food: "Rombo · peso a crudo", grams: 160, label: "Rombo al forno · 160 g a crudo", image: photo("part-turbot-v11520") },
+      { category: "Carboidrato", food: "Quinoa cotta", grams: 185, label: "Quinoa cotta · 185 g", image: photo("part-quinoa-v8") },
+      { category: "Contorno", food: "Zucchine", grams: 160, label: "Zucchine grigliate · 160 g", image: photo("part-zucchini-v7") },
+      { category: "Contorno", food: "Pomodorini", grams: 100, label: "Pomodorini arrostiti · 100 g", image: photo("part-tomatoes-v8") },
+      { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") },
+    ],
+    steps: ["Sciacqua la quinoa e cuocila secondo confezione; pesa 185 g dopo la cottura.", "Inforna il rombo a 190 °C per 12-15 minuti, finché la polpa è opaca e si separa facilmente.", "Griglia le zucchine, arrostisci i pomodorini e completa il piatto con limone, erbe e 10 g di olio pesato."],
+    alternatives: ["Fonte rombo: CREA", "Piatto da casa", "Componenti modificabili separatamente"],
+  },
+  {
+    id: "matrix-d47-ricotta-pumpkin-radicchio",
+    name: "Ricotta con zucca arrostita, radicchio e pane ai cereali",
+    kicker: "Piatto vegetariano composto · matrice D47", course: "Piatto unico", cuisine: "Gourmet",
+    image: photo("recipe-d47-ricotta-pumpkin-v11520"), time: 28,
+    ingredients: [{ food: "Ricotta vaccina", grams: 120 }, { food: "Zucca", grams: 220 }, { food: "Radicchio cotto", grams: 140 }, { food: "Pane ai cereali", grams: 60 }, { food: "Olio extravergine", grams: 10 }],
+    parts: [
+      { category: "Latticino", food: "Ricotta vaccina", grams: 120, label: "Ricotta vaccina · 120 g", image: photo("part-ricotta-v7") },
+      { category: "Contorno", food: "Zucca", grams: 220, label: "Zucca arrostita · 220 g", image: photo("part-pumpkin-v8") },
+      { category: "Contorno", food: "Radicchio cotto", grams: 140, label: "Radicchio grigliato · 140 g", image: photo("part-radicchio-v11515") },
+      { category: "Carboidrato", food: "Pane ai cereali", grams: 60, label: "Pane ai cereali · 60 g", image: photo("part-bread-cereals-v11511") },
+      { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") },
+    ],
+    steps: ["Taglia la zucca a cubetti e arrostiscila a 200 °C per 22-25 minuti.", "Taglia il radicchio in spicchi e griglialo 3-4 minuti per lato.", "Servi ricotta, verdure e pane ben distinti; completa con pepe, timo e l'olio pesato."],
+    alternatives: ["Contiene latte e glutine", "Piatto da casa", "Componenti modificabili separatamente"],
+  },
+  {
+    id: "matrix-d48-cuttlefish-chard-basmati",
+    name: "Seppia alla piastra con bietole, basmati e pomodoro",
+    kicker: "Piatto di mare completo · matrice D48", course: "Piatto unico", cuisine: "Gourmet",
+    image: photo("recipe-d48-cuttlefish-chard-v11520"), time: 30,
+    ingredients: [{ food: "Seppia · peso a crudo", grams: 160 }, { food: "Bietole cotte", grams: 180 }, { food: "Riso basmati cotto", grams: 170 }, { food: "Passata di pomodoro", grams: 100 }, { food: "Olio extravergine", grams: 10 }],
+    parts: [
+      { category: "Proteina", food: "Seppia · peso a crudo", grams: 160, label: "Seppia alla piastra · 160 g a crudo", image: photo("part-cuttlefish-v11520") },
+      { category: "Contorno", food: "Bietole cotte", grams: 180, label: "Bietole cotte · 180 g", image: photo("part-chard-v11515") },
+      { category: "Carboidrato", food: "Riso basmati cotto", grams: 170, label: "Riso basmati cotto · 170 g", image: photo("part-rice-basmati-v7") },
+      { category: "Contorno", food: "Passata di pomodoro", grams: 100, label: "Salsa di pomodoro · 100 g", image: photo("part-tomatoes-v8") },
+      { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") },
+    ],
+    steps: ["Cuoci il basmati secondo confezione e pesane 170 g cotto.", "Scalda la passata 8-10 minuti e cuoci le bietole finché sono tenere.", "Tampona la seppia e cuocila su piastra molto calda pochi minuti per lato; servi con l'olio pesato."],
+    alternatives: ["Fonte seppia: CREA", "Contiene molluschi", "Componenti modificabili separatamente"],
+  },
+  {
+    id: "asian-oyakodon-authentic",
+    name: "Oyakodon giapponese · pollo e uovo su riso",
+    kicker: "Ricetta giapponese verificata · MAFF", course: "Piatto unico", cuisine: "Asiatico",
+    image: photo("recipe-asian-oyakodon-v11520"), time: 25,
+    ingredients: [{ food: "Riso basmati cotto", grams: 150 }, { food: "Petto di pollo · peso a crudo", grams: 80 }, { food: "Uovo", grams: 100 }, { food: "Cipolle crude", grams: 40 }, { food: "Funghi", grams: 20 }, { food: "Salsa di soia", grams: 10 }, { food: "Mirin", grams: 10 }, { food: "Zucchero", grams: 5 }],
+    parts: [
+      { category: "Carboidrato", food: "Riso basmati cotto", grams: 150, label: "Riso cotto · 150 g", image: photo("part-rice-basmati-v7") },
+      { category: "Proteina", food: "Petto di pollo · peso a crudo", grams: 80, label: "Pollo · 80 g a crudo", image: photo("part-chicken-grilled-v7") },
+      { category: "Proteina", food: "Uovo", grams: 100, label: "Uova · 2", image: photo("part-eggs-scrambled-v1156") },
+      { category: "Contorno", food: "Cipolle crude", grams: 40, label: "Cipolla · 40 g", image: photo("part-onions-v11519") },
+      { category: "Contorno", food: "Funghi", grams: 20, label: "Shiitake o funghi · 20 g", image: photo("part-mushrooms-v8") },
+    ],
+    steps: ["Prepara il riso e tienilo caldo nella ciotola.", "Porta a leggero bollore poca acqua con soia, mirin e zucchero; aggiungi cipolla, funghi e pollo e cuoci completamente.", "Versa le uova appena sbattute in due riprese, copri brevemente e trasferisci il composto morbido sul riso."],
+    alternatives: ["Fonte ricetta: Ministero giapponese dell'Agricoltura (MAFF)", "Contiene uova e soia", "Il piatto può essere diviso in componenti"],
+  },
+  {
+    id: "asian-bibimbap-authentic",
+    name: "Bibimbap coreano con manzo, verdure e uovo",
+    kicker: "Ricetta coreana verificata · VisitKorea", course: "Piatto unico", cuisine: "Asiatico",
+    image: photo("recipe-asian-bibimbap-v11520"), time: 35,
+    ingredients: [{ food: "Riso basmati cotto", grams: 150 }, { food: "Bistecca di manzo · peso a crudo", grams: 70 }, { food: "Uovo", grams: 50 }, { food: "Spinaci", grams: 70 }, { food: "Carote crude", grams: 60 }, { food: "Germogli di soia", grams: 70 }, { food: "Funghi", grams: 60 }, { food: "Gochujang", grams: 15 }, { food: "Olio extravergine", grams: 5 }],
+    parts: [
+      { category: "Carboidrato", food: "Riso basmati cotto", grams: 150, label: "Riso cotto · 150 g", image: photo("part-rice-basmati-v7") },
+      { category: "Proteina", food: "Bistecca di manzo · peso a crudo", grams: 70, label: "Manzo a striscioline · 70 g a crudo", image: photo("part-steak-beef-v114") },
+      { category: "Proteina", food: "Uovo", grams: 50, label: "Uovo al tegamino · 1", image: photo("simple-eggs-v5") },
+      { category: "Contorno", food: "Spinaci", grams: 70, label: "Spinaci · 70 g", image: photo("part-spinach-v7") },
+      { category: "Contorno", food: "Carote crude", grams: 60, label: "Carote · 60 g", image: photo("part-carrots-raw-v11512") },
+      { category: "Contorno", food: "Germogli di soia", grams: 70, label: "Germogli di soia · 70 g", image: photo("part-sprouts-v11520") },
+      { category: "Contorno", food: "Funghi", grams: 60, label: "Funghi · 60 g", image: photo("part-mushrooms-v8") },
+    ],
+    steps: ["Cuoci il riso e sistemalo sul fondo della ciotola.", "Sbollenta i germogli e salta separatamente spinaci, carote e funghi. Cuoci completamente il manzo a striscioline.", "Disponi gli ingredienti a settori sul riso, aggiungi l'uovo cotto e servi con il gochujang dosato."],
+    alternatives: ["Fonte ricetta: Korea Tourism Organization", "Contiene uova e soia", "Il piatto può essere diviso in componenti"],
+  },
+];const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
   Carboidrato: [
     {
       category: "Carboidrato",
@@ -3747,6 +3868,9 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     { category: "Carboidrato", food: "Bulgur cotto", grams: 130, label: "Bulgur cotto", image: photo("part-bulgur-v11515") },
   ],
   Proteina: [
+    { category: "Proteina", food: "Tempeh", grams: 120, label: "Tempeh alla piastra · 120 g", image: photo("part-tempeh-v11520") },
+    { category: "Proteina", food: "Rombo · peso a crudo", grams: 160, label: "Rombo al forno · 160 g a crudo", image: photo("part-turbot-v11520") },
+    { category: "Proteina", food: "Seppia · peso a crudo", grams: 160, label: "Seppia alla piastra · 160 g a crudo", image: photo("part-cuttlefish-v11520") },
     { category: "Proteina", food: "Sogliola · peso a crudo", grams: 150, label: "Sogliola al forno · 150 g a crudo", image: photo("part-sole-baked-v11519") },
     { category: "Proteina", food: "Petto di pollo · peso a crudo", grams: 100, label: "Petto di pollo · 100 g a crudo", image: photo("part-chicken-grilled-v7") },
     { category: "Proteina", food: "Cicerchie cotte", grams: 150, label: "Cicerchie cotte · 150 g", image: photo("part-grass-peas-v11519") },
@@ -5171,7 +5295,7 @@ export function FoodPlanner() {
   const groupFoods: Record<string, string[]> = {
     Latte: ["Yogurt greco 2%", "Ricotta vaccina", "Crescenza", "Primo sale", "Scamorza", "Provolone Dolce Auricchio", "Feta"],
     Uova: ["Uovo", "Uova sode", "Uova strapazzate o in frittata"],
-    Pesce: ["Salmone cotto", "Tonno al naturale sgocciolato", "Sogliola · peso a crudo"],
+    Pesce: ["Salmone cotto", "Tonno al naturale sgocciolato", "Sogliola · peso a crudo", "Rombo · peso a crudo", "Seppia · peso a crudo"],
     Glutine: [
       "Pane integrale",
       "Pane bianco tipo 0",
@@ -5285,7 +5409,7 @@ export function FoodPlanner() {
       dayContext === "Lavoro"
         ? workLunchesFrom(mains)
         : mains;
-    const dinners = [...balancedDinnerRecipes, ...catalogMains].filter(isAllowed);
+    const dinners = mains;
     if (!breakfasts.length || !snacks.length || !lunches.length || !dinners.length)
       return;
     setChoices((current) => {
@@ -5632,6 +5756,35 @@ export function FoodPlanner() {
       setSelected(recipe);
     }
   };
+  const completeMealOptions = (key: string) => {
+    const [dayText, slotText] = key.split("-");
+    const slot = Number(slotText);
+    const current = recipeMap[getDayIds(Number(dayText))[slot]];
+    const target = calc(plannedIngredients(key, current)).kcal;
+    return allRecipes
+      .filter((recipe) => recipe.id !== current.id && recipe.kind !== "combination" && Boolean(recipe.parts?.length) && fitsSlot(recipe, slot) && isAllowed(recipe))
+      .sort((a, b) => {
+        const cuisineA = recipeCuisine(a) === cuisineChoice ? 0 : 1;
+        const cuisineB = recipeCuisine(b) === cuisineChoice ? 0 : 1;
+        if (cuisineA !== cuisineB) return cuisineA - cuisineB;
+        return Math.abs(calc(a.ingredients).kcal - target) - Math.abs(calc(b.ingredients).kcal - target);
+      })
+      .slice(0, 6);
+  };
+  const chooseCompleteMeal = (recipe: Recipe) => {
+    if (!partPicker) return;
+    const [dayText] = partPicker.key.split("-");
+    const changedDay = Number(dayText);
+    const key = partPicker.key;
+    setChoices((current) => ({ ...current, [key]: recipe.id }));
+    setMealView((current) => ({ ...current, [key]: "dish" }));
+    setPartSelections((current) => { const next = { ...current }; delete next[key]; return next; });
+    setActualWeights((current) => { const next = { ...current }; delete next[key]; return next; });
+    setRemovedIngredients((current) => { const next = { ...current }; delete next[key]; return next; });
+    setReplanNote("Pasto completo sostituito con " + recipe.name + ". Puoi tenerlo intero o dividerlo in componenti.");
+    replanFollowingDays(changedDay);
+    setPartPicker(null);
+  };
   const keepRecordedChoice = (
     current: Record<string, string>,
     slot: number,
@@ -5687,12 +5840,9 @@ export function FoodPlanner() {
         : homeMains.length
           ? homeMains
           : mains;
-    const dinners =
-      dayContext === "Lavoro"
-        ? [...balancedDinnerRecipes, ...catalogMains].filter(isAllowed)
-        : (homeMains.length ? homeMains : mains).filter(
-            (r) => r.id !== "sweet-ricotta",
-          );
+    const dinners = (homeMains.length ? homeMains : mains).filter(
+      (recipe) => recipe.id !== "sweet-ricotta",
+    );
     if (
       !breakfasts.length ||
       !snacks.length ||
@@ -5805,12 +5955,9 @@ export function FoodPlanner() {
         : homeMains.length
           ? homeMains
           : mains;
-    const dinners =
-      dayContext === "Lavoro"
-        ? [...balancedDinnerRecipes, ...catalogMains].filter(isAllowed)
-        : (homeMains.length ? homeMains : mains).filter(
-            (r) => r.id !== "sweet-ricotta",
-          );
+    const dinners = (homeMains.length ? homeMains : mains).filter(
+      (recipe) => recipe.id !== "sweet-ricotta",
+    );
     if (!lunches.length || !dinners.length) return;
     const offset =
       (next.yesterday === "molto" ? 1 : next.yesterday === "poco" ? 2 : 0) +
@@ -7417,6 +7564,22 @@ export function FoodPlanner() {
               <button className="remove-part-choice" onClick={removeMealPart}>
                 − Nessuno · togli questo elemento
               </button>
+              <details className="picker-group complete-meals" open>
+                <summary>Piatti completi consigliati</summary>
+                <p>Sostituisci l'intero pasto. Dopo puoi tenerlo unico o dividerlo nei suoi componenti.</p>
+                <div className="complete-meal-grid">
+                  {completeMealOptions(partPicker.key).map((recipe) => {
+                    const macros = calc(recipe.ingredients);
+                    return (
+                      <button key={recipe.id} onClick={() => chooseCompleteMeal(recipe)}>
+                        <img src={recipe.image} alt={recipe.name} />
+                        <span>{recipe.name}</span>
+                        <b>{round(macros.kcal)} kcal · {recipe.time} min</b>
+                      </button>
+                    );
+                  })}
+                </div>
+              </details>
               <details className="picker-group" open>
                 <summary>Alternative consigliate</summary>
                 <div className="part-choice-grid">
@@ -7566,7 +7729,7 @@ export function FoodPlanner() {
                   </li>
                 ))}
               </ol>
-              <h3>Alternative</h3>
+              <h3>Note utili</h3>
               <div className="alternatives">
                 {selected.alternatives.map((x) => (
                   <span key={x}>{x}</span>

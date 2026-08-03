@@ -16,7 +16,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.15\.19"/);
+  assert.match(app, /VERSION = "1\.15\.20"/);
   assert.match(app, /food: "Crescenza"/);
   assert.match(app, /food: "Primo sale"/);
   assert.match(app, /food: "Scamorza"/);
@@ -26,6 +26,15 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /matrix-d42-chicken-brown-rice-peppers/);
   assert.match(app, /matrix-d43-grass-pea-soup/);
   assert.match(app, /matrix-d44-artichoke-frittata/);
+  assert.match(app, /matrix-d45-tempeh-sweet-potato/);
+  assert.match(app, /matrix-d46-turbot-quinoa-zucchini/);
+  assert.match(app, /matrix-d47-ricotta-pumpkin-radicchio/);
+  assert.match(app, /matrix-d48-cuttlefish-chard-basmati/);
+  assert.match(app, /asian-oyakodon-authentic/);
+  assert.match(app, /asian-bibimbap-authentic/);
+  assert.match(app, /Piatti completi consigliati/);
+  assert.match(app, /chooseCompleteMeal/);
+  assert.match(app, /Note utili/);
   assert.match(app, /food: "Quinoa cotta"/);
   assert.match(app, /recipe\.parts \|\| recipe\.ingredients\.map\(additionAsPart\)/);
   assert.match(app, /!recipe\.parts && !partSelections\[key\]/);
@@ -60,6 +69,16 @@ test("sorgente mobile con versione e fonti", async () => {
   await access(new URL("../dist/food/recipe-d42-chicken-brown-rice-v11519.png", import.meta.url));
   await access(new URL("../dist/food/recipe-d43-grass-pea-soup-v11519.png", import.meta.url));
   await access(new URL("../dist/food/recipe-d44-artichoke-frittata-v11519.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-d45-tempeh-sweet-potato-v11520.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-d46-turbot-quinoa-v11520.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-d47-ricotta-pumpkin-v11520.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-d48-cuttlefish-chard-v11520.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-asian-oyakodon-v11520.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-asian-bibimbap-v11520.png", import.meta.url));
+  await access(new URL("../dist/food/part-tempeh-v11520.png", import.meta.url));
+  await access(new URL("../dist/food/part-turbot-v11520.png", import.meta.url));
+  await access(new URL("../dist/food/part-cuttlefish-v11520.png", import.meta.url));
+  await access(new URL("../dist/food/part-sprouts-v11520.png", import.meta.url));
   await access(new URL("../dist/food/part-sole-baked-v11519.png", import.meta.url));
   await access(new URL("../dist/food/part-brown-rice-v11519.png", import.meta.url));
   await access(new URL("../dist/food/part-grass-peas-v11519.png", import.meta.url));
