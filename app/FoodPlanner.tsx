@@ -47,7 +47,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.15.8";
+const VERSION = "1.15.9";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -4908,6 +4908,17 @@ export function FoodPlanner() {
     );
     return [...activeParts, ...extras];
   };
+  const actualIngredients = (key: string, recipe: Recipe) => {
+    const saved = actualWeights[key];
+    const removed = removedIngredients[key] || [];
+    return plannedIngredients(key, recipe)
+      .map((x, i) => ({
+        ...x,
+        grams: saved?.[i] ?? x.grams,
+        originalIndex: i,
+      }))
+      .filter((x) => !removed.includes(x.originalIndex));
+  };
   const scale = 1;
   const dayTotals = useMemo(
     () =>
@@ -4944,30 +4955,30 @@ export function FoodPlanner() {
       removedIngredients,
     ],
   );
-  const baseDayTotals = useMemo(
-    () =>
-      currentIds.reduce(
-        (sum, id) => {
-          const meal = calc(recipeMap[id].ingredients);
-          return {
-            kcal: sum.kcal + meal.kcal,
-            protein: sum.protein + meal.protein,
-            carbs: sum.carbs + meal.carbs,
-            fat: sum.fat + meal.fat,
-            fiber: sum.fiber + meal.fiber,
-          };
-        },
-        {
-          kcal: plannedDrinkMacros.kcal,
-          protein: plannedDrinkMacros.protein,
-          carbs: plannedDrinkMacros.carbs,
-          fat: plannedDrinkMacros.fat,
-          fiber: 0,
-        },
-      ),
-    [dayIndex, choices, plannedDrink],
-  );
   const effectiveDayTotals = useMemo(() => {
+    const meals = currentIds.reduce(
+      (sum, id, slot) => {
+        const key = `${dayIndex}-${slot}`;
+        const recipe = recipeMap[completedRecipes[key] || id];
+        const nutrients = completed[key]
+          ? calc(actualIngredients(key, recipe))
+          : calc(plannedIngredients(key, recipe));
+        return {
+          kcal: sum.kcal + nutrients.kcal,
+          protein: sum.protein + nutrients.protein,
+          carbs: sum.carbs + nutrients.carbs,
+          fat: sum.fat + nutrients.fat,
+          fiber: sum.fiber + nutrients.fiber,
+        };
+      },
+      {
+        kcal: plannedDrinkMacros.kcal,
+        protein: plannedDrinkMacros.protein,
+        carbs: plannedDrinkMacros.carbs,
+        fat: plannedDrinkMacros.fat,
+        fiber: 0,
+      },
+    );
     const added = (extras[dayIndex] || []).reduce(
       (sum, item) => ({
         kcal: sum.kcal + item.kcal,
@@ -4978,14 +4989,39 @@ export function FoodPlanner() {
       }),
       { kcal: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 },
     );
+    const consumedDrinks = (drinks[dayIndex] || []).reduce(
+      (sum, item) => ({
+        kcal: sum.kcal + item.kcal,
+        protein: sum.protein + (item.protein || 0),
+        carbs: sum.carbs + (item.carbs || 0),
+        fat: sum.fat + (item.fat || 0),
+        fiber: sum.fiber + (item.fiber || 0),
+      }),
+      { kcal: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 },
+    );
     return {
-      kcal: dayTotals.kcal + added.kcal,
-      protein: dayTotals.protein + added.protein,
-      carbs: dayTotals.carbs + added.carbs,
-      fat: dayTotals.fat + added.fat,
-      fiber: dayTotals.fiber + added.fiber,
+      kcal: meals.kcal + added.kcal + consumedDrinks.kcal,
+      protein: meals.protein + added.protein + consumedDrinks.protein,
+      carbs: meals.carbs + added.carbs + consumedDrinks.carbs,
+      fat: meals.fat + added.fat + consumedDrinks.fat,
+      fiber: meals.fiber + added.fiber + consumedDrinks.fiber,
     };
-  }, [dayTotals, extras, dayIndex]);
+  }, [
+    currentIds,
+    dayIndex,
+    completed,
+    completedRecipes,
+    actualWeights,
+    choices,
+    partSelections,
+    removedIngredients,
+    plannedDrink,
+    extras,
+    drinks,
+  ]);
+  const completedToday = currentIds.filter(
+    (_, slot) => completed[`${dayIndex}-${slot}`],
+  ).length;
   const builderTotals = useMemo(() => calc(builder), [builder]);
   const doneCount = Object.values(completed).filter(Boolean).length;
   const guidance =
@@ -5368,17 +5404,6 @@ export function FoodPlanner() {
     setExtraGrams("50");
   };
   const dayScale = (_day: number) => 1;
-  const actualIngredients = (key: string, recipe: Recipe) => {
-    const saved = actualWeights[key];
-    const removed = removedIngredients[key] || [];
-    return plannedIngredients(key, recipe)
-      .map((x, i) => ({
-        ...x,
-        grams: saved?.[i] ?? x.grams,
-        originalIndex: i,
-      }))
-      .filter((x) => !removed.includes(x.originalIndex));
-  };
   const loggedMealKcal = (day: number) =>
     getDayIds(day).reduce((sum, id, slot) => {
       const key = `${day}-${slot}`;
@@ -6175,9 +6200,13 @@ export function FoodPlanner() {
                 <header>
                   <div>
                     <span>DOPO CENA</span>
-                    <b>Totale aggiornato</b>
+                    <b>{completedToday === 5 ? "Totale consumato" : "Totale aggiornato"}</b>
                   </div>
-                  <small>grammi, sostituzioni ed extra inclusi</small>
+                  <small>
+                    {completedToday === 5
+                      ? "5 pasti registrati · bevande ed extra inclusi"
+                      : `${completedToday}/5 registrati · il resto è ancora pianificato`}
+                  </small>
                 </header>
                 <div className="actual-day-values">
                   <span><b>{round(effectiveDayTotals.kcal)}</b> kcal</span>
@@ -6187,11 +6216,11 @@ export function FoodPlanner() {
                   <span><b>{fmt(effectiveDayTotals.fiber)}</b> g fibre</span>
                 </div>
                 <div className="actual-day-comparison">
-                  <span>Rispetto al piano base</span>
-                  <b>kcal {percentOf(effectiveDayTotals.kcal, baseDayTotals.kcal)}%</b>
-                  <b>proteine {percentOf(effectiveDayTotals.protein, baseDayTotals.protein)}%</b>
-                  <b>carboidrati {percentOf(effectiveDayTotals.carbs, baseDayTotals.carbs)}%</b>
-                  <b>grassi {percentOf(effectiveDayTotals.fat, baseDayTotals.fat)}%</b>
+                  <span>Rispetto al piano previsto</span>
+                  <b>kcal {percentOf(effectiveDayTotals.kcal, dayTotals.kcal)}%</b>
+                  <b>proteine {percentOf(effectiveDayTotals.protein, dayTotals.protein)}%</b>
+                  <b>carboidrati {percentOf(effectiveDayTotals.carbs, dayTotals.carbs)}%</b>
+                  <b>grassi {percentOf(effectiveDayTotals.fat, dayTotals.fat)}%</b>
                   <b>fibre {percentOf(effectiveDayTotals.fiber, 25)}% di 25 g</b>
                 </div>
               </section>

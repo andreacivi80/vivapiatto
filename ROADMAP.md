@@ -2,6 +2,14 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
+## v1.15.9 — pubblicata
+
+- [x] Riepilogo dopo cena calcolato con grammature realmente registrate per i pasti spuntati e piano corrente per quelli ancora aperti.
+- [x] Bevande registrate ed extra inclusi nel totale effettivo.
+- [x] Confronto corretto contro il piano previsto dopo profilo, sostituzioni e porzioni, non contro la ricetta grezza originale.
+- [x] Stato esplicito: “x/5 registrati” oppure “Totale consumato” soltanto quando tutti i cinque momenti sono confermati.
+- [x] Collaudo mobile della registrazione e del deflag: il contatore passa 0/5 → 1/5 → 0/5 senza aprire schede indesiderate.
+
 ## v1.15.8 — pubblicata
 
 - [x] Otto basi caloriche gestite con differenze reali: riduzione proporzionata sotto 1800 e componenti interi visibili da 2000 a 3000 kcal.
