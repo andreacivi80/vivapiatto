@@ -70,7 +70,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.34";
+const VERSION = "1.16.35";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -6386,6 +6386,106 @@ const attachmentBaseMainsA: Recipe[] = [
   },
 ];
 
+const attachmentBaseMainsB: Recipe[] = [
+  {
+    id: "matrix-p06-brown-rice-salmon-broccoli",
+    name: "Riso integrale con salmone e broccoli",
+    kicker: "Pranzo di pesce completo · matrice P06",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    kind: "combination",
+    image: photo("moment-lunch-v1121"),
+    time: 35,
+    ingredients: [
+      { food: "Riso integrale secco", grams: 70 },
+      { food: "Salmone cotto", grams: 150 },
+      { food: "Broccoli bolliti", grams: 250 },
+      { food: "Olio extravergine", grams: 5 },
+    ],
+    steps: ["Cuoci il riso e i broccoli separatamente.", "Cuoci completamente il salmone al forno o al vapore e aggiungi olio, limone ed erbe a fine cottura."],
+    alternatives: ["Merluzzo cotto al posto del salmone", "Riso basmati secco al posto dell'integrale"],
+  },
+  {
+    id: "matrix-p07-bulgur-turkey-aubergines",
+    name: "Bulgur con tacchino, melanzane e pomodori",
+    kicker: "Pranzo trasportabile · matrice P07",
+    course: "Piatto unico",
+    cuisine: "Mediterraneo",
+    kind: "combination",
+    image: photo("moment-lunch-v1121"),
+    time: 30,
+    ingredients: [
+      { food: "Bulgur cotto", grams: 180 },
+      { food: "Petto di tacchino cotto alla piastra", grams: 100 },
+      { food: "Melanzane", grams: 125 },
+      { food: "Pomodorini", grams: 125 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    steps: ["Griglia le melanzane e cuoci completamente il tacchino.", "Unisci bulgur, pomodorini e componenti cotti; completa con l'olio misurato."],
+    alternatives: ["Petto di pollo cotto alla piastra al posto del tacchino", "Farro cotto al posto del bulgur"],
+  },
+  {
+    id: "matrix-p08-pasta-tuna-tomato",
+    name: "Pasta con tonno al naturale e pomodoro",
+    kicker: "Pranzo semplice da mensa o casa · matrice P08",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    kind: "combination",
+    image: photo("moment-lunch-v1121"),
+    time: 20,
+    ingredients: [
+      { food: "Pasta di semola secca", grams: 80 },
+      { food: "Tonno al naturale sgocciolato", grams: 50 },
+      { food: "Passata di pomodoro", grams: 200 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    steps: ["Cuoci la pasta al dente e scalda la passata.", "Unisci il tonno sgocciolato, condisci la pasta e aggiungi l'olio pesato a crudo."],
+    alternatives: ["Pasta integrale secca al posto della semola", "Sgombro cotto al posto del tonno"],
+  },
+  {
+    id: "matrix-p09-barley-cannellini-black-kale",
+    name: "Orzo con cannellini e cavolo nero",
+    kicker: "Zuppa densa vegetale · matrice P09",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    kind: "combination",
+    image: photo("moment-lunch-v1121"),
+    time: 35,
+    ingredients: [
+      { food: "Orzo perlato cotto", grams: 180 },
+      { food: "Fagioli cannellini cotti", grams: 150 },
+      { food: "Cavolo nero cotto", grams: 100 },
+      { food: "Carote cotte bollite", grams: 50 },
+      { food: "Sedano crudo", grams: 50 },
+      { food: "Cipolle crude", grams: 50 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    steps: ["Cuoci sedano, carota e cipolla con poca acqua, poi aggiungi cavolo, cannellini e orzo.", "Lascia restringere come zuppa densa e aggiungi l'olio a crudo."],
+    alternatives: ["Farro cotto al posto dell'orzo", "Lenticchie cotte al posto dei cannellini"],
+  },
+  {
+    id: "matrix-p10-greek-quinoa-salad",
+    name: "Insalata greca rivisitata con quinoa",
+    kicker: "Pranzo fresco completo · matrice P10",
+    course: "Piatto unico",
+    cuisine: "Mediterraneo",
+    kind: "combination",
+    image: photo("moment-lunch-v1121"),
+    time: 20,
+    ingredients: [
+      { food: "Quinoa cotta", grams: 180 },
+      { food: "Feta", grams: 80 },
+      { food: "Pomodorini", grams: 100 },
+      { food: "Cetrioli crudi", grams: 75 },
+      { food: "Peperoni crudi", grams: 50 },
+      { food: "Cipolle crude", grams: 25 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    steps: ["Raffredda la quinoa cotta e taglia tutte le verdure.", "Unisci feta e verdure, poi condisci con l'olio pesato e origano."],
+    alternatives: ["Primo sale al posto della feta", "Farro cotto al posto della quinoa"],
+  },
+];
+
 const rawRecipes: Recipe[] = [
   ...simpleBreakfasts,
   ...attachmentBaseBreakfasts,
@@ -6396,6 +6496,7 @@ const rawRecipes: Recipe[] = [
   ...matrixSnacks,
   ...attachmentMissingSnacks,
   ...attachmentBaseMainsA,
+  ...attachmentBaseMainsB,
   ...matrixMainRecipes,
   ...catalogSnacks,
   ...portableRecipes,
