@@ -10038,7 +10038,7 @@ export function FoodPlanner() {
                               <RecipeVisual recipe={recipe} />
                               <span>{recipe.name}</span>
                               <b>{round(macros.kcal)} kcal · {recipe.time} min</b>
-                              <strong>{recipe.id === "occasional-gelato" ? "Componi il gelato" : "Scegli questo sgarro"}</strong>
+                              
                             </button>
                             <button
                               className="complete-meal-info"
