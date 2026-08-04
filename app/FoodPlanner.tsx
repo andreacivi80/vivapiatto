@@ -74,7 +74,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.38";
+const VERSION = "1.16.39";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -1328,6 +1328,15 @@ foods["Edamame cotti"] = {
   carbs: 8.9,
   fat: 5.2,
   fiber: 5.2,
+  source: "USDA",
+};
+
+foods["Uovo in camicia"] = {
+  kcal: 143,
+  protein: 12.6,
+  carbs: 0.7,
+  fat: 9.5,
+  fiber: 0,
   source: "USDA",
 };
 
@@ -4428,6 +4437,13 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     },
     {
       category: "Proteina",
+      food: "Uovo in camicia",
+      grams: 50,
+      label: "Un uovo in camicia",
+      image: photo("part-poached-egg-v11639"),
+    },
+    {
+      category: "Proteina",
       food: "Uova strapazzate o in frittata",
       grams: 100,
       label: "Due uova strapazzate · senza grassi aggiunti",
@@ -6609,9 +6625,161 @@ const attachmentBaseMainsC: Recipe[] = [
   },
 ];
 
+const attachmentBreakfastsC13C20: Recipe[] = [
+  {
+    id: "matrix-c13-pear-cocoa-hazelnut-porridge",
+    name: "Porridge pera, cacao e nocciole",
+    kicker: "Colazione calda · matrice C13",
+    course: "Colazione",
+    cuisine: "Italiano",
+    kind: "combination",
+    image: photo("moment-breakfast-v1121"),
+    time: 10,
+    ingredients: [
+      { food: "Fiocchi d'avena", grams: 40 },
+      { food: "Latte parzialmente scremato", grams: 180 },
+      { food: "Pera", grams: 150 },
+      { food: "Nocciole", grams: 10 },
+      { food: "Cioccolato fondente 70%", grams: 5 },
+    ],
+    steps: ["Cuoci l'avena nel latte per 5-7 minuti.", "Aggiungi la pera a cubetti e completa con nocciole e cioccolato fondente grattugiato."],
+    alternatives: ["Mela al posto della pera", "Mandorle al posto delle nocciole"],
+  },
+  {
+    id: "matrix-c14-yogurt-pineapple-oats-pumpkin-seeds",
+    name: "Yogurt greco con ananas, avena e semi di zucca",
+    kicker: "Colazione rapida · matrice C14",
+    course: "Colazione",
+    cuisine: "Italiano",
+    kind: "combination",
+    image: photo("moment-breakfast-v1121"),
+    time: 5,
+    ingredients: [
+      { food: "Yogurt greco 2%", grams: 170 },
+      { food: "Ananas", grams: 150 },
+      { food: "Fiocchi d'avena", grams: 30 },
+      { food: "Semi di zucca", grams: 10 },
+    ],
+    steps: ["Taglia l'ananas a cubetti e uniscilo allo yogurt.", "Aggiungi avena e semi di zucca già pesati."],
+    alternatives: ["Yogurt greco 0% al posto del 2%", "Papaya al posto dell'ananas"],
+  },
+  {
+    id: "matrix-c15-poached-egg-toast",
+    name: "Toast con uovo in camicia, pomodorini e rucola",
+    kicker: "Colazione salata da weekend · matrice C15",
+    course: "Colazione",
+    cuisine: "Italiano",
+    kind: "combination",
+    image: photo("moment-breakfast-v1121"),
+    time: 15,
+    ingredients: [
+      { food: "Pane integrale", grams: 50 },
+      { food: "Uovo in camicia", grams: 50 },
+      { food: "Pomodorini", grams: 150 },
+      { food: "Rucola", grams: 30 },
+      { food: "Olio extravergine", grams: 5 },
+    ],
+    steps: ["Tosta il pane e cuoci l'uovo in acqua appena fremete finché l'albume è rappreso.", "Servilo sul pane con pomodorini e rucola e completa con olio pesato e pepe."],
+    alternatives: ["Uova strapazzate o in frittata al posto dell'uovo in camicia", "Pane di segale al posto dell'integrale"],
+  },
+  {
+    id: "matrix-c16-ricotta-blueberries-pistachios",
+    name: "Crema di ricotta, mirtilli e pistacchi",
+    kicker: "Colazione fresca · matrice C16",
+    course: "Colazione",
+    cuisine: "Italiano",
+    kind: "combination",
+    image: photo("moment-breakfast-v1121"),
+    time: 7,
+    ingredients: [
+      { food: "Ricotta vaccina", grams: 100 },
+      { food: "Mirtilli freschi", grams: 150 },
+      { food: "Pane di segale", grams: 50 },
+      { food: "Pistacchi", grams: 10 },
+    ],
+    steps: ["Lavora la ricotta fino a renderla cremosa.", "Aggiungi mirtilli e pistacchi tritati e servi con pane di segale tostato."],
+    alternatives: ["Fiocchi di latte al posto della ricotta", "Fragole al posto dei mirtilli"],
+  },
+  {
+    id: "matrix-c17-chia-kefir-mango-pudding",
+    name: "Budino di chia, kefir e mango",
+    kicker: "Colazione pronta dal giorno prima · matrice C17",
+    course: "Colazione",
+    cuisine: "Italiano",
+    kind: "combination",
+    image: photo("moment-breakfast-v1121"),
+    time: 5,
+    ingredients: [
+      { food: "Kefir bianco magro", grams: 170 },
+      { food: "Semi di chia", grams: 15 },
+      { food: "Mango", grams: 150 },
+      { food: "Fiocchi d'avena", grams: 25 },
+    ],
+    steps: ["Mescola kefir, chia e avena.", "Lascia riposare in frigorifero almeno tre ore e aggiungi il mango prima di mangiare."],
+    alternatives: ["Papaya al posto del mango", "Yogurt greco 0% al posto del kefir"],
+  },
+  {
+    id: "matrix-c18-whole-pancakes-ricotta-cherries",
+    name: "Pancake integrali con ricotta e ciliegie",
+    kicker: "Colazione da weekend · matrice C18",
+    course: "Colazione",
+    cuisine: "Italiano",
+    kind: "combination",
+    image: photo("moment-breakfast-v1121"),
+    time: 15,
+    ingredients: [
+      { food: "Farina di frumento integrale", grams: 40 },
+      { food: "Albume", grams: 100 },
+      { food: "Latte parzialmente scremato", grams: 50 },
+      { food: "Ricotta vaccina", grams: 60 },
+      { food: "Ciliegie fresche", grams: 150 },
+    ],
+    steps: ["Mescola farina, albume e latte fino a ottenere una pastella.", "Cuoci piccoli pancake in padella antiaderente e servi con ricotta e ciliegie denocciolate."],
+    alternatives: ["Farina d'avena al posto della farina integrale", "Fragole al posto delle ciliegie"],
+  },
+  {
+    id: "matrix-c19-cottage-melon-walnut-bowl",
+    name: "Bowl di fiocchi di latte, melone e noci",
+    kicker: "Colazione rapida · matrice C19",
+    course: "Colazione",
+    cuisine: "Italiano",
+    kind: "combination",
+    image: photo("moment-breakfast-v1121"),
+    time: 5,
+    ingredients: [
+      { food: "Fiocchi di latte", grams: 100 },
+      { food: "Melone estivo", grams: 200 },
+      { food: "Pane ai cereali", grams: 40 },
+      { food: "Noci", grams: 10 },
+    ],
+    steps: ["Taglia il melone a cubetti e servilo con i fiocchi di latte.", "Completa con noci tritate e pane ai cereali."],
+    alternatives: ["Pesca al posto del melone", "Mandorle al posto delle noci"],
+  },
+  {
+    id: "matrix-c20-cold-papaya-porridge",
+    name: "Porridge freddo con papaya, lino e mandorle",
+    kicker: "Colazione pronta in anticipo · matrice C20",
+    course: "Colazione",
+    cuisine: "Italiano",
+    kind: "combination",
+    image: photo("moment-breakfast-v1121"),
+    time: 5,
+    ingredients: [
+      { food: "Fiocchi d'avena", grams: 35 },
+      { food: "Yogurt greco 2%", grams: 125 },
+      { food: "Papaya", grams: 150 },
+      { food: "Semi di lino macinati", grams: 5 },
+      { food: "Mandorle", grams: 10 },
+    ],
+    steps: ["Mescola avena, yogurt, poca acqua e semi di lino.", "Lascia in frigorifero almeno due ore e aggiungi papaya e mandorle prima del consumo."],
+    alternatives: ["Mango al posto della papaya", "Yogurt greco 0% al posto del 2%"],
+  },
+];
+
 const rawRecipes: Recipe[] = [
   ...simpleBreakfasts,
   ...attachmentBaseBreakfasts,
+  ...attachmentBreakfastsC13C20,
   ...matrixBreakfasts,
   ...catalogBreakfasts,
   ...quickSnacks,
@@ -9797,7 +9965,6 @@ export function FoodPlanner() {
                           <RecipeVisual recipe={recipe} />
                           <span>{recipe.name}</span>
                           <b>{round(macros.kcal)} kcal · {recipe.time} min</b>
-                          <strong>Scegli questo piatto</strong>
                         </button>
                         <button
                           className="complete-meal-info"
