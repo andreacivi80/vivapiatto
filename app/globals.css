@@ -2651,28 +2651,44 @@ button {
 }
 
 
-.swap-back {
+.swap-back-bar {
   position: sticky;
-  top: 0.45rem;
+  top: 54px;
   z-index: 30;
-  display: inline-flex;
+  display: flex;
+  height: 46px;
+  margin: -2px 0 4px;
   align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  min-height: 40px;
-  margin: 0 0 0.65rem;
-  padding: 0.48rem 0.78rem;
-  border: 1px solid rgba(35, 88, 66, 0.28);
-  border-radius: 999px;
-  background: rgba(252, 250, 244, 0.96);
+  justify-content: flex-end;
+  pointer-events: none;
+  background: linear-gradient(180deg, var(--cream) 72%, rgba(247, 242, 231, 0));
+}
+.swap-back {
+  position: static;
+  display: grid;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  place-items: center;
+  pointer-events: auto;
+  border: 1px solid rgba(35, 88, 66, 0.34);
+  border-radius: 50%;
+  background: rgba(252, 250, 244, 0.82);
   color: #235842;
   font: inherit;
-  font-weight: 800;
-  box-shadow: 0 5px 18px rgba(31, 63, 51, 0.14);
-  backdrop-filter: blur(8px);
+  font-weight: 900;
+  box-shadow: 0 4px 14px rgba(31, 63, 51, 0.12);
+  backdrop-filter: blur(10px);
 }
-
 .swap-back span {
-  font-size: 1.15rem;
+  transform: translateY(-1px);
+  font-size: 1.35rem;
   line-height: 1;
+}
+.library-section.swapping .library-tools {
+  top: 100px;
+}
+img[alt*="Pasta integrale"],
+img[alt*="pasta integrale"] {
+  filter: sepia(0.34) saturate(1.18) brightness(0.84) contrast(1.06);
 }
