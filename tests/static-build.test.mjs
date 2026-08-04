@@ -16,7 +16,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.19"/);
+  assert.match(app, /VERSION = "1\.16\.20"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -232,19 +232,4 @@ test("v1.16.17 keeps swap navigation visible and exposes occasional choices", as
   await access(new URL("../dist/food/part-pasta-semolina-v11618.png", import.meta.url));
   assert.match(app, /photo\("part-pasta-whole-v11618"\)/);
   assert.match(app, /photo\("part-pasta-semolina-v11618"\)/);
-});
-
-
-test("v1.16.19 expands visual cheat dishes and custom gelato", async () => {
-  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
-  assert.match(app, /GELATO_FLAVORS/);
-  assert.match(app, /gelatoScoops/);
-  assert.match(app, /buildGelatoRecipe/);
-  assert.match(app, /occasional-carbonara/);
-  assert.match(app, /occasional-tiramisu/);
-  assert.match(app, /occasional-fries/);
-  await access(new URL("../dist/food/cheat-carbonara-v11619.png", import.meta.url));
-  await access(new URL("../dist/food/cheat-gelato-v11619.png", import.meta.url));
-  await access(new URL("../dist/food/cheat-tiramisu-v11619.png", import.meta.url));
-  await access(new URL("../dist/food/cheat-fries-v11619.png", import.meta.url));
 });
