@@ -2877,3 +2877,12 @@ button {
   object-fit: contain !important;
   object-position: 50% 50% !important;
 }
+
+
+/* v1.16.37: lo spazio riservato a Scegli riguarda solo il testo, mai le fotografie. */
+.recipe-grid article > .recipe-visual-parts {
+  padding-right: 0 !important;
+}
+.recipe-grid article > div:not(.recipe-visual-parts) {
+  padding-right: 52px;
+}
