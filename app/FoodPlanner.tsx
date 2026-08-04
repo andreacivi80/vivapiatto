@@ -70,7 +70,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.15";
+const VERSION = "1.16.16";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -5940,6 +5940,7 @@ export function FoodPlanner() {
     todayActivity: "no",
     tomorrowActivity: "no",
     feeling: "bene",
+    sleep: "bene",
   });
   const [builder, setBuilder] = useState<RecipeIngredient[]>([
     { food: "Rucola", grams: 60 },
@@ -6074,7 +6075,7 @@ export function FoodPlanner() {
         setRemovedIngredients(s.removedIngredients || {});
         setPartSelections(s.partSelections || {});
         setMealView(s.mealView || {});
-        setCheck(s.check || check);
+        setCheck({ ...check, ...(s.check || {}) });
         setExcludedGroups(s.excludedGroups || []);
         setDislikedFoods(s.dislikedFoods || []);
         setChoices(s.choices || {});
@@ -6706,8 +6707,8 @@ export function FoodPlanner() {
       ? "Ieri hai mangiato più del previsto: oggi torna alla regolarità, senza saltare pasti. Scegli acqua, verdure e porzioni già pesate."
       : check.feeling === "gonfio"
         ? "Oggi ti senti gonfio: preferisci pasti regolari e non enormi, mangia lentamente e registra i cibi che sembrano associati al sintomo."
-        : check.feeling === "stanco"
-          ? "Giornata stanca: mantieni carboidrati e proteine distribuiti nei pasti. Non ridurre automaticamente il cibo."
+        : check.feeling === "stanco" || check.sleep === "scarso"
+          ? "Stanchezza o poco sonno: mantieni pasti regolari, acqua, carboidrati e proteine distribuiti. Non compensare saltando pasti."
           : check.todayActivity === "intensa"
             ? "Attività intensa oggi: usa lo spuntino banana e yogurt vicino all'allenamento e cura l'idratazione."
             : "Giornata regolare: segui le porzioni proposte e ascolta fame e sazietà.";
@@ -6976,7 +6977,11 @@ export function FoodPlanner() {
       snacks = [...snacks].sort(
         (a, b) => calc(b.ingredients).kcal - calc(a.ingredients).kcal,
       );
-    } else if (next.feeling === "stanco" || next.todayActivity === "intensa") {
+    } else if (
+      next.feeling === "stanco" ||
+      next.sleep === "scarso" ||
+      next.todayActivity === "intensa"
+    ) {
       mains = [...mains].sort(
         (a, b) => calc(b.ingredients).carbs - calc(a.ingredients).carbs,
       );
@@ -7008,40 +7013,95 @@ export function FoodPlanner() {
     if (!lunches.length || !dinners.length) return;
     const offset =
       (next.yesterday === "molto" ? 1 : next.yesterday === "poco" ? 2 : 0) +
+      (next.feeling === "gonfio"
+        ? 1
+        : next.feeling === "stanco"
+          ? 2
+          : next.feeling === "fame"
+            ? 3
+            : 0) +
+      (next.sleep === "scarso" ? 2 : next.sleep === "medio" ? 1 : 0) +
+      (next.todayActivity === "intensa"
+        ? 3
+        : next.todayActivity === "leggera"
+          ? 1
+          : 0) +
       profileSeed;
-    setChoices((v) => ({
-      ...v,
-      [`${dayIndex}-0`]: keepRecordedChoice(
-        v,
-        0,
-        breakfasts[(dayIndex + offset) % breakfasts.length].id,
-      ),
-      [`${dayIndex}-1`]: keepRecordedChoice(
-        v,
-        1,
-        snacks[(dayIndex + offset) % snacks.length].id,
-      ),
-      [`${dayIndex}-2`]: keepRecordedChoice(
-        v,
-        2,
-        lunches[(dayIndex + offset) % lunches.length].id,
-      ),
-      [`${dayIndex}-3`]: keepRecordedChoice(
-        v,
-        3,
-        snacks[(dayIndex + offset + 1) % snacks.length].id,
-      ),
-      [`${dayIndex}-4`]: keepRecordedChoice(
-        v,
-        4,
-        dinners[(dayIndex + offset + 1) % dinners.length].id,
-      ),
-    }));
+    const morningSnack = snacks[(dayIndex + offset) % snacks.length];
+    const afternoonCandidates = snacks.filter(
+      (recipe) =>
+        recipe.id !== morningSnack.id && !sharesFruit(morningSnack, recipe),
+    );
+    const afternoonPool = afternoonCandidates.length
+      ? afternoonCandidates
+      : snacks.filter((recipe) => recipe.id !== morningSnack.id);
+    const afternoonSnack =
+      afternoonPool[(dayIndex + offset + 1) % afternoonPool.length] ||
+      morningSnack;
+    setChoices((v) => {
+      const updated: Record<string, string> = {
+        ...v,
+        [`${dayIndex}-0`]: keepRecordedChoice(
+          v,
+          0,
+          breakfasts[(dayIndex + offset) % breakfasts.length].id,
+        ),
+        [`${dayIndex}-1`]: keepRecordedChoice(v, 1, morningSnack.id),
+        [`${dayIndex}-2`]: keepRecordedChoice(
+          v,
+          2,
+          lunches[(dayIndex + offset) % lunches.length].id,
+        ),
+        [`${dayIndex}-3`]: keepRecordedChoice(v, 3, afternoonSnack.id),
+        [`${dayIndex}-4`]: keepRecordedChoice(
+          v,
+          4,
+          dinners[(dayIndex + offset + 1) % dinners.length].id,
+        ),
+      };
+      const tomorrow = dayIndex + 1;
+      if (
+        !weekLocked &&
+        tomorrow < days.length &&
+        next.tomorrowActivity !== "no"
+      ) {
+        const bonus = next.tomorrowActivity === "intensa" ? 200 : 75;
+        const tomorrowTarget = calories + bonus;
+        const highCarbSnacks = [...snacks].sort(
+          (a, b) => calc(b.ingredients).carbs - calc(a.ingredients).carbs,
+        );
+        const highCarbLunches = [...lunches].sort(
+          (a, b) => calc(b.ingredients).carbs - calc(a.ingredients).carbs,
+        );
+        const highCarbDinners = [...dinners].sort(
+          (a, b) => calc(b.ingredients).carbs - calc(a.ingredients).carbs,
+        );
+        const pools = [
+          breakfasts,
+          highCarbSnacks,
+          highCarbLunches,
+          highCarbSnacks.filter((recipe) => recipe.id !== highCarbSnacks[0]?.id),
+          highCarbDinners,
+        ];
+        pools.forEach((pool, slot) => {
+          const key = `${tomorrow}-${slot}`;
+          if (completed[key] || !pool.length) return;
+          const target = tomorrowTarget * mealCalorieShares[slot];
+          updated[key] = closestForSlot(
+            pool,
+            slot,
+            target,
+            offset + tomorrow + slot,
+          ).id;
+        });
+      }
+      return updated;
+    });
     setReplanNote(
       next.feeling === "gonfio"
         ? "Gonfio: menu semplice, senza legumi e bibite gassate. Sintomi persistenti o dolore: medico."
-        : next.feeling === "stanco"
-          ? "Stanco: pasti regolari, carboidrati distribuiti e frutta."
+        : next.feeling === "stanco" || next.sleep === "scarso"
+          ? "Stanco o poco riposato: pasti regolari, carboidrati distribuiti, frutta e acqua."
           : next.feeling === "fame"
             ? "Fame: più proteine e fibre per la sazietà."
             : next.todayActivity === "intensa"
@@ -7689,6 +7749,24 @@ export function FoodPlanner() {
                           className={check.feeling === v ? "active" : ""}
                           key={v}
                           onClick={() => answerCheck("feeling", v)}
+                        >
+                          {l}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="question">
+                    <span>Riposo</span>
+                    <div className="chips">
+                      {[
+                        ["bene", "Bene"],
+                        ["medio", "Poco"],
+                        ["scarso", "Male"],
+                      ].map(([v, l]) => (
+                        <button
+                          className={check.sleep === v ? "active" : ""}
+                          key={v}
+                          onClick={() => answerCheck("sleep", v)}
                         >
                           {l}
                         </button>
