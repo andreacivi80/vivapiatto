@@ -87,7 +87,7 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /workLunchesFrom/);
   assert.match(app, /mealView/);
   assert.match(app, /normalizeMealPart/);
-  assert.match(app, /window\.location\.replace/);
+  assert.match(app, /window\.location\.reload/);
   assert.match(app, /Seleziona tutto/);
   assert.match(app, /Deseleziona tutto/);
   assert.match(app, /week-kcal-summary/);
