@@ -16,12 +16,16 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.13"/);
+  assert.match(app, /VERSION = "1\.16\.14"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
   assert.match(app, /slot !== 2 && slot !== 4/);
   assert.match(app, /sameCuisineFamily/);
+  assert.match(app, /const uniqueRecipes/);
+  assert.match(app, /sameCuisine\.length/);
+  assert.match(app, /setCuisineFilter\("Tutte"\)/);
+  assert.match(app, /recipeCuisine\(b\) === cuisineChoice/);
   assert.match(app, /calibratePlannedIngredients/);
   assert.match(app, /mealCalorieShares/);
   assert.match(app, /max: 100, step: 10/);
