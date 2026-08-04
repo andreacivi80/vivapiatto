@@ -70,7 +70,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.22";
+const VERSION = "1.16.23";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -1405,6 +1405,24 @@ const occasionalFoods: Record<string, Food> = Object.fromEntries(
   occasionalFoodRows.map(([name,kcal,protein,carbs,fat,fiber,source]) => [name,{kcal,protein,carbs,fat,fiber,source}]),
 );
 const foodSearchDatabase: Record<string, Food> = { ...foods, ...occasionalFoods };
+const GELATO_FLAVORS = [
+  "Gelato fiordilatte",
+  "Gelato alla crema",
+  "Gelato al cioccolato",
+  "Gelato stracciatella",
+  "Gelato al pistacchio",
+  "Gelato alla nocciola",
+  "Gelato alla vaniglia",
+  "Gelato al caffe",
+  "Gelato alla fragola",
+  "Gelato al limone",
+  "Gelato al mango",
+  "Gelato allo yogurt",
+  "Gelato al cocco",
+  "Gelato al caramello",
+  "Gelato al tiramisu",
+  "Gelato all'amarena",
+] as const;
 const calc = (
   ingredients: RecipeIngredient[],
   scale = 1,
@@ -5515,7 +5533,7 @@ const occasionalRecipes: Recipe[] = [
   },
   {
     id: "occasional-gelato",
-    name: "Gelato artigianale · 2 palline",
+    name: "Gelato artigianale personalizzabile",
     kicker: "Dolce occasionale conteggiato",
     course: "Dolce",
     cuisine: "Italiano",
@@ -5988,6 +6006,12 @@ export function FoodPlanner() {
   const [diaryDay, setDiaryDay] = useState(0);
   const [extraName, setExtraName] = useState("");
   const [extraGrams, setExtraGrams] = useState("50");
+  const [gelatoScoops, setGelatoScoops] = useState<2 | 3>(2);
+  const [gelatoFlavors, setGelatoFlavors] = useState<string[]>([
+    "Gelato fiordilatte",
+    "Gelato al cioccolato",
+    "Gelato al pistacchio",
+  ]);
   const [replanNote, setReplanNote] = useState("");
   const [shoppingOpen, setShoppingOpen] = useState(false);
   const [shoppingScope, setShoppingScope] = useState<"day" | "week">("day");
@@ -6033,6 +6057,8 @@ export function FoodPlanner() {
     choices,
     drinks,
     extras,
+    gelatoScoops,
+    gelatoFlavors,
     groceryChecked,
     groceryAmounts,
     plannedDrink,
@@ -6826,6 +6852,28 @@ export function FoodPlanner() {
         return Math.abs(calc(a.ingredients).kcal - target) - Math.abs(calc(b.ingredients).kcal - target);
       })
       .slice(0, 6);
+  };
+  const chooseConfiguredGelato = () => {
+    if (!partPicker) return;
+    const [dayText] = partPicker.key.split("-");
+    const changedDay = Number(dayText);
+    const key = partPicker.key;
+    const chosen = gelatoFlavors.slice(0, gelatoScoops);
+    const scoops: MealPart[] = chosen.map((food, index) => ({
+      category: "Extra",
+      food,
+      grams: 60,
+      label: `Pallina ${index + 1} · ${food.replace("Gelato ", "")}`,
+      image: photo("cheat-gelato-v11619"),
+    }));
+    setChoices((current) => ({ ...current, [key]: "occasional-gelato" }));
+    setMealView((current) => ({ ...current, [key]: "components" }));
+    setPartSelections((current) => ({ ...current, [key]: scoops }));
+    setActualWeights((current) => { const next = { ...current }; delete next[key]; return next; });
+    setRemovedIngredients((current) => { const next = { ...current }; delete next[key]; return next; });
+    setReplanNote(`Gelato inserito: ${gelatoScoops} palline. Il totale usa 60 g per gusto e resta modificabile.`);
+    replanFollowingDays(changedDay);
+    setPartPicker(null);
   };
   const chooseCompleteMeal = (recipe: Recipe) => {
     if (!partPicker) return;
@@ -8961,6 +9009,46 @@ export function FoodPlanner() {
                         );
                       })}
                   </div>
+                  {[1, 3].includes(Number(partPicker.key.split("-")[1])) && (
+                    <div className="gelato-builder">
+                      <b>Componi il gelato</b>
+                      <div className="gelato-scoops">
+                        {[2, 3].map((count) => (
+                          <button
+                            type="button"
+                            className={gelatoScoops === count ? "active" : ""}
+                            key={count}
+                            onClick={() => setGelatoScoops(count as 2 | 3)}
+                          >
+                            {count} palline
+                          </button>
+                        ))}
+                      </div>
+                      {Array.from({ length: gelatoScoops }).map((_, index) => (
+                        <select
+                          aria-label={`Gusto pallina ${index + 1}`}
+                          key={index}
+                          value={gelatoFlavors[index]}
+                          onChange={(event) =>
+                            setGelatoFlavors((current) => {
+                              const next = [...current];
+                              next[index] = event.target.value;
+                              return next;
+                            })
+                          }
+                        >
+                          {GELATO_FLAVORS.map((flavor) => (
+                            <option key={flavor} value={flavor}>
+                              {flavor.replace("Gelato ", "")}
+                            </option>
+                          ))}
+                        </select>
+                      ))}
+                      <button type="button" className="gelato-choose" onClick={chooseConfiguredGelato}>
+                        Scegli · {round(calc(gelatoFlavors.slice(0, gelatoScoops).map((food) => ({ food, grams: 60 }))).kcal)} kcal
+                      </button>
+                    </div>
+                  )}
                 </details>
               )}
               <details className="picker-group">
