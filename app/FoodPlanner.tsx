@@ -70,7 +70,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.28";
+const VERSION = "1.16.29";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -5644,6 +5644,23 @@ const occasionalRecipes: Recipe[] = [
       "Sforma e aggiungi una quantità contenuta di coulis e frutti rossi; registra eventuali aggiunte.",
     ],
     alternatives: ["Cheesecake ai frutti rossi", "Cannolo siciliano", "Gelato personalizzato"],
+  },
+  {
+    id: "occasional-pastiera",
+    name: "Pastiera napoletana",
+    kicker: "Dolce occasionale con porzione e valori visibili",
+    course: "Dolce",
+    cuisine: "Italiano",
+    image: photo("cheat-pastiera-v11629"),
+    time: 15,
+    ingredients: [{ food: "Pastiera", grams: 100 }],
+    steps: [
+      "Prepara il guscio di pasta frolla e rivesti uno stampo, tenendo da parte alcune strisce.",
+      "Mescola ricotta, grano cotto, uova, zucchero e una piccola quantità di canditi e aroma di fiori d'arancio.",
+      "Versa il ripieno, completa con le strisce e cuoci finché la superficie è dorata; lascia raffreddare bene.",
+      "Taglia e registra la porzione realmente mangiata.",
+    ],
+    alternatives: ["Cannolo siciliano", "Cheesecake ai frutti rossi", "Panna cotta ai frutti rossi"],
   },
 ];
 const verifiedWorldRecipeExpansion: Recipe[] = [
