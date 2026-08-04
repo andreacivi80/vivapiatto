@@ -70,7 +70,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.27";
+const VERSION = "1.16.28";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -5628,6 +5628,22 @@ const occasionalRecipes: Recipe[] = [
       "Registra la quantità realmente mangiata: non serve compensare saltando il pasto successivo.",
     ],
     alternatives: ["Cheesecake ai frutti rossi", "Tiramisù", "Gelato personalizzato"],
+  },
+  {
+    id: "occasional-panna-cotta",
+    name: "Panna cotta ai frutti rossi",
+    kicker: "Dolce occasionale con porzione e valori visibili",
+    course: "Dolce",
+    cuisine: "Italiano",
+    image: photo("cheat-panna-cotta-v11628"),
+    time: 10,
+    ingredients: [{ food: "Panna cotta", grams: 120 }],
+    steps: [
+      "Scalda panna, zucchero e vaniglia senza far bollire; sciogli la gelatina già ammollata.",
+      "Versa nello stampo, raffredda e lascia rassodare in frigorifero per almeno quattro ore.",
+      "Sforma e aggiungi una quantità contenuta di coulis e frutti rossi; registra eventuali aggiunte.",
+    ],
+    alternatives: ["Cheesecake ai frutti rossi", "Cannolo siciliano", "Gelato personalizzato"],
   },
 ];
 const verifiedWorldRecipeExpansion: Recipe[] = [
