@@ -16,7 +16,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.9"/);
+  assert.match(app, /VERSION = "1\.16\.10"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -96,6 +96,8 @@ test("sorgente mobile con versione e fonti", async () => {
   const realRecipeIndex = app.slice(app.indexOf("const rawRecipes"), app.indexOf("const pantryPartByFood"));
   assert.match(realRecipeIndex, /catalogMains/);
   assert.doesNotMatch(realRecipeIndex, /generatedRecipes|snackRecipes/);
+  assert.match(app, /const RecipeVisual/);
+  assert.match(app, /recipe-visual-parts/);
   assert.match(app, /version\.json/);
   assert.match(app, /part-grissini-v112/);
   assert.match(app, /matrix-c21-porridge-banana-peanut/);
