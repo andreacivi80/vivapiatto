@@ -16,11 +16,12 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.2"/);
+  assert.match(app, /VERSION = "1\.16\.3"/);
   assert.match(app, /Cambia piatto pronto/);
   assert.match(app, /setCuisineFilter\(recipeCuisine\(r\)\)/);
   assert.match(app, /startAddingMealPart/);
-  assert.match(app, /Aggiungi un elemento/);
+  assert.match(app, /className="add-part-compact"/);
+  assert.match(app, /title="Aggiungi elemento"/);
   assert.match(app, /partPicker\.adding/);
   assert.match(app, /filter\(\(\{ part \}\) => part\.grams > 0\)/);
   assert.match(css, /\.week-part-add/);
@@ -39,6 +40,11 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /matrix-d48-cuttlefish-chard-basmati/);
   assert.match(app, /asian-oyakodon-authentic/);
   assert.match(app, /asian-bibimbap-authentic/);
+  assert.match(app, /asian-negima-nabe-authentic/);
+  assert.match(app, /asian-japchae-authentic/);
+  assert.match(app, /asian-phat-thai-authentic/);
+  assert.match(app, /Fonte verificata:/);
+  assert.match(app, /sourceUrl/);
   assert.match(app, /Piatti completi consigliati/);
   assert.match(app, /chooseCompleteMeal/);
   assert.match(app, /complete-meal-info/);
@@ -161,4 +167,16 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /USDA/);
   assert.match(css, /overflow-x:\s*hidden/);
   assert.match(css, /max-width:\s*520px/);
+  await access(new URL("../dist/food/recipe-asian-negima-v1163.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-asian-japchae-v1163.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-asian-phat-thai-v1163.png", import.meta.url));
+  await access(new URL("../dist/food/part-lime-v1163.png", import.meta.url));
+  await access(new URL("../dist/food/part-leek-v1163.png", import.meta.url));
+  await access(new URL("../dist/food/part-garlic-chives-v1163.png", import.meta.url));
+  const referencedPhotos = [...app.matchAll(/photo\("([^"]+)"\)/g)].map((match) => match[1]);
+  await Promise.all(
+    [...new Set(referencedPhotos)].map((name) =>
+      access(new URL(`../dist/food/${name}.png`, import.meta.url)),
+    ),
+  );
 });

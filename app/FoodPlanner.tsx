@@ -27,6 +27,8 @@ type Recipe = {
   course?: string;
   parts?: MealPart[];
   kind?: "recipe" | "combination";
+  sourceLabel?: string;
+  sourceUrl?: string;
 };
 type Day = { label: string; mood: string; recipes: string[] };
 type Tab = "today" | "week" | "library" | "builder" | "progress";
@@ -48,7 +50,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.2";
+const VERSION = "1.16.3";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -535,6 +537,22 @@ const foods: Record<string, Food> = {
     fiber: 0,
     source: "CREA",
   },
+  "Tonno fresco cotto": {
+    kcal: 184,
+    protein: 29.9,
+    carbs: 0,
+    fat: 6.3,
+    fiber: 0,
+    source: "USDA",
+  },
+  "Porro cotto": {
+    kcal: 31,
+    protein: 0.8,
+    carbs: 7.6,
+    fat: 0.2,
+    fiber: 1,
+    source: "USDA",
+  },
   "Quinoa cotta": {
     kcal: 120,
     protein: 4.4,
@@ -598,6 +616,46 @@ const foods: Record<string, Food> = {
     fat: 0.2,
     fiber: 1,
     source: "USDA",
+  },
+  "Vermicelli di patata dolce cotti": {
+    kcal: 84,
+    protein: 0.1,
+    carbs: 20.5,
+    fat: 0.1,
+    fiber: 0.7,
+    source: "ETICHETTA",
+  },
+  "Erba cipollina fresca": {
+    kcal: 30,
+    protein: 3.3,
+    carbs: 4.4,
+    fat: 0.7,
+    fiber: 2.5,
+    source: "USDA",
+  },
+  Lime: {
+    kcal: 30,
+    protein: 0.7,
+    carbs: 10.5,
+    fat: 0.2,
+    fiber: 2.8,
+    source: "USDA",
+  },
+  "Salsa di tamarindo": {
+    kcal: 70,
+    protein: 0.5,
+    carbs: 17,
+    fat: 0.1,
+    fiber: 1,
+    source: "ETICHETTA",
+  },
+  "Olio di arachidi": {
+    kcal: 900,
+    protein: 0,
+    carbs: 0,
+    fat: 100,
+    fiber: 0,
+    source: "ETICHETTA",
   },
   "Ceci cotti": {
     kcal: 164,
@@ -3906,6 +3964,8 @@ const balancedDinnerRecipes: Recipe[] = [
     ],
     steps: ["Prepara il riso e tienilo caldo nella ciotola.", "Porta a leggero bollore poca acqua con soia, mirin e zucchero; aggiungi cipolla, funghi e pollo e cuoci completamente.", "Versa le uova appena sbattute in due riprese, copri brevemente e trasferisci il composto morbido sul riso."],
     alternatives: ["Fonte ricetta: Ministero giapponese dell'Agricoltura (MAFF)", "Contiene uova e soia", "Il piatto può essere diviso in componenti"],
+    sourceLabel: "MAFF · Ministero giapponese dell'Agricoltura",
+    sourceUrl: "https://www.maff.go.jp/e/policies/market/japan-cuisine/japan/9/index.html",
   },
   {
     id: "asian-bibimbap-authentic",
@@ -3924,6 +3984,110 @@ const balancedDinnerRecipes: Recipe[] = [
     ],
     steps: ["Cuoci il riso e sistemalo sul fondo della ciotola.", "Sbollenta i germogli e salta separatamente spinaci, carote e funghi. Cuoci completamente il manzo a striscioline.", "Disponi gli ingredienti a settori sul riso, aggiungi l'uovo cotto e servi con il gochujang dosato."],
     alternatives: ["Fonte ricetta: Korea Tourism Organization", "Contiene uova e soia", "Il piatto può essere diviso in componenti"],
+    sourceLabel: "VisitKorea · Korea Tourism Organization",
+    sourceUrl: "https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=224166",
+  },
+  {
+    id: "asian-negima-nabe-authentic",
+    name: "Negima-nabe giapponese con tonno, porro e riso",
+    kicker: "Pentola tradizionale di Tokyo · ricetta verificata MAFF",
+    course: "Piatto unico",
+    cuisine: "Asiatico",
+    image: photo("recipe-asian-negima-v1163"),
+    time: 30,
+    ingredients: [
+      { food: "Riso basmati cotto", grams: 150 },
+      { food: "Tonno fresco cotto", grams: 150 },
+      { food: "Porro cotto", grams: 120 },
+      { food: "Funghi", grams: 80 },
+      { food: "Salsa di soia", grams: 15 },
+      { food: "Zucchero", grams: 3 },
+    ],
+    parts: [
+      { category: "Carboidrato", food: "Riso basmati cotto", grams: 150, label: "Riso cotto · 150 g", image: photo("part-rice-basmati-v7") },
+      { category: "Proteina", food: "Tonno fresco cotto", grams: 150, label: "Tonno fresco a cubi · 150 g cotti", image: photo("part-tuna-v7") },
+      { category: "Contorno", food: "Porro cotto", grams: 120, label: "Porro cotto · 120 g", image: photo("part-leek-v1163") },
+      { category: "Contorno", food: "Funghi", grams: 80, label: "Funghi shiitake · 80 g", image: photo("part-mushrooms-v8") },
+    ],
+    steps: [
+      "Cuoci il riso secondo confezione e tienine 150 g cotti al caldo, separati dalla pentola.",
+      "Taglia il tonno fresco a cubi regolari, il porro in diagonale e i funghi a fette. Porta a leggero bollore 250 ml di acqua con salsa di soia e zucchero.",
+      "Cuoci prima porro e funghi finché teneri; aggiungi il tonno solo alla fine e portalo a cottura completa senza sfaldarlo. Servi subito con il riso.",
+    ],
+    alternatives: ["Contiene pesce e soia", "Il riso è separato e sostituibile", "Componenti modificabili singolarmente"],
+    sourceLabel: "MAFF · Our Regional Cuisines, Negima-nabe",
+    sourceUrl: "https://www.maff.go.jp/e/policies/market/k_ryouri/search_menu/6628/index.html",
+  },
+  {
+    id: "asian-japchae-authentic",
+    name: "Japchae coreano con manzo e verdure",
+    kicker: "Noodles di patata dolce · ricetta verificata VisitKorea",
+    course: "Piatto unico",
+    cuisine: "Asiatico",
+    image: photo("recipe-asian-japchae-v1163"),
+    time: 35,
+    ingredients: [
+      { food: "Vermicelli di patata dolce cotti", grams: 180 },
+      { food: "Bistecca di manzo · peso a crudo", grams: 100 },
+      { food: "Spinaci", grams: 80 },
+      { food: "Carote crude", grams: 60 },
+      { food: "Funghi", grams: 60 },
+      { food: "Salsa di soia", grams: 12 },
+      { food: "Semi di sesamo", grams: 5 },
+      { food: "Olio di arachidi", grams: 5 },
+    ],
+    parts: [
+      { category: "Carboidrato", food: "Vermicelli di patata dolce cotti", grams: 180, label: "Vermicelli traslucidi cotti · 180 g", image: photo("rice-noodles-veg-v3") },
+      { category: "Proteina", food: "Bistecca di manzo · peso a crudo", grams: 100, label: "Manzo a striscioline · 100 g a crudo", image: photo("part-steak-beef-v114") },
+      { category: "Contorno", food: "Spinaci", grams: 80, label: "Spinaci cotti · 80 g", image: photo("part-spinach-v7") },
+      { category: "Contorno", food: "Carote crude", grams: 60, label: "Carote a julienne · 60 g", image: photo("part-carrots-raw-v11512") },
+      { category: "Contorno", food: "Funghi", grams: 60, label: "Funghi shiitake · 60 g", image: photo("part-mushrooms-v8") },
+      { category: "Extra", food: "Semi di sesamo", grams: 5, label: "Sesamo · 5 g", image: photo("part-sesame-v11512") },
+    ],
+    steps: [
+      "Cuoci i vermicelli in acqua bollente per il tempo indicato in confezione, scolali e sciacquali brevemente.",
+      "Taglia manzo, carote e funghi a strisce sottili. Cuoci separatamente manzo e verdure; sbollenta gli spinaci e strizzali.",
+      "Rimetti i vermicelli in padella con soia e olio, poi unisci manzo e verdure. Mescola finché il condimento è assorbito e completa con sesamo.",
+    ],
+    alternatives: ["Contiene soia e sesamo", "Piatto autentico, non un nome geografico inventato", "Componenti modificabili singolarmente"],
+    sourceLabel: "VisitKorea · Japchae",
+    sourceUrl: "https://english.visitkorea.or.kr/svc/contents/contentsView.do?menuSn=181&vcontsId=179814",
+  },
+  {
+    id: "asian-phat-thai-authentic",
+    name: "Phat Thai con gamberi, uovo e germogli",
+    kicker: "Noodles thailandesi · riferimento ufficiale TAT",
+    course: "Piatto unico",
+    cuisine: "Asiatico",
+    image: photo("recipe-asian-phat-thai-v1163"),
+    time: 30,
+    ingredients: [
+      { food: "Noodles di riso cotti", grams: 180 },
+      { food: "Gamberi cotti", grams: 130 },
+      { food: "Uovo", grams: 50 },
+      { food: "Germogli di soia", grams: 80 },
+      { food: "Erba cipollina fresca", grams: 20 },
+      { food: "Arachidi", grams: 10 },
+      { food: "Salsa di tamarindo", grams: 15 },
+      { food: "Salsa di soia", grams: 8 },
+      { food: "Olio di arachidi", grams: 5 },
+      { food: "Lime", grams: 30 },
+    ],
+    parts: [
+      { category: "Carboidrato", food: "Noodles di riso cotti", grams: 180, label: "Noodles di riso cotti · 180 g", image: photo("rice-noodles-veg-v3") },
+      { category: "Proteina", food: "Gamberi cotti", grams: 130, label: "Gamberi cotti · 130 g", image: photo("part-shrimp-v11514") },
+      { category: "Proteina", food: "Uovo", grams: 50, label: "Uovo strapazzato · 1", image: photo("part-eggs-scrambled-v1156") },
+      { category: "Contorno", food: "Germogli di soia", grams: 80, label: "Germogli di soia · 80 g", image: photo("part-sprouts-v11520") },
+      { category: "Extra", food: "Arachidi", grams: 10, label: "Arachidi tritate · 10 g", image: photo("part-peanuts-v113") },
+    ],
+    steps: [
+      "Prepara i noodles secondo confezione e scolali ancora elastici. Mescola tamarindo e salsa di soia in una ciotolina.",
+      "Scalda l'olio nel wok, porta l'uovo a completa cottura mescolandolo e aggiungi gamberi, noodles e salsa. Salta a fuoco vivo senza asciugare troppo.",
+      "Unisci germogli ed erba cipollina negli ultimi minuti. Servi con arachidi pesate e spicchio di lime.",
+    ],
+    alternatives: ["Contiene crostacei, uova, soia e arachidi", "La salsa può variare per marca: controlla l'etichetta", "Componenti modificabili singolarmente"],
+    sourceLabel: "Tourism Authority of Thailand · Phat Thai",
+    sourceUrl: "https://www.tatnews.org/2020/11/tat-and-rosas-thai-cafe-launch-phat-thai-party-to-celebrate-thailands-national-dish/",
   },
   {
     id: "italian-minestrone-complete",
@@ -3953,8 +4117,16 @@ const balancedDinnerRecipes: Recipe[] = [
     ],
     alternatives: ["Fonte composizione minestrone: CREA", "Il pane resta sostituibile", "Cannellini e verdure sono visibili nella ricetta completa"],
   },
-];const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
+];
+const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
   Carboidrato: [
+    {
+      category: "Carboidrato",
+      food: "Vermicelli di patata dolce cotti",
+      grams: 180,
+      label: "Vermicelli coreani cotti · 180 g",
+      image: photo("rice-noodles-veg-v3"),
+    },
     {
       category: "Carboidrato",
       food: "Muesli",
@@ -4112,6 +4284,13 @@ const balancedDinnerRecipes: Recipe[] = [
     { category: "Carboidrato", food: "Bulgur cotto", grams: 130, label: "Bulgur cotto", image: photo("part-bulgur-v11515") },
   ],
   Proteina: [
+    {
+      category: "Proteina",
+      food: "Tonno fresco cotto",
+      grams: 150,
+      label: "Tonno fresco cotto · 150 g",
+      image: photo("part-tuna-v7"),
+    },
     { category: "Proteina", food: "Tempeh", grams: 120, label: "Tempeh alla piastra · 120 g", image: photo("part-tempeh-v11520") },
     { category: "Proteina", food: "Rombo · peso a crudo", grams: 160, label: "Rombo al forno · 160 g a crudo", image: photo("part-turbot-v11520") },
     { category: "Proteina", food: "Seppia · peso a crudo", grams: 160, label: "Seppia alla piastra · 160 g a crudo", image: photo("part-cuttlefish-v11520") },
@@ -4280,6 +4459,20 @@ const balancedDinnerRecipes: Recipe[] = [
     { category: "Proteina", food: "Tofu alla piastra", grams: 100, label: "Tofu alla piastra", image: photo("part-tofu-v11515") },
   ],
   Contorno: [
+    {
+      category: "Contorno",
+      food: "Porro cotto",
+      grams: 120,
+      label: "Porro cotto · 120 g",
+      image: photo("part-leek-v1163"),
+    },
+    {
+      category: "Contorno",
+      food: "Erba cipollina fresca",
+      grams: 20,
+      label: "Erba cipollina fresca · 20 g",
+      image: photo("part-garlic-chives-v1163"),
+    },
     { category: "Contorno", food: "Peperoni crudi", grams: 200, label: "Peperoni crudi · 200 g", image: photo("part-peppers-raw-v11522") },
     { category: "Contorno", food: "Peperoni cotti senza olio", grams: 200, label: "Peperoni cotti senza olio · 200 g", image: photo("part-peppers-cooked-v11522") },
     { category: "Contorno", food: "Minestrone cotto", grams: 350, label: "Minestrone cotto · 350 g", image: photo("recipe-minestrone-v11522") },
@@ -4529,6 +4722,13 @@ const balancedDinnerRecipes: Recipe[] = [
   Frutta: [
     {
       category: "Frutta",
+      food: "Lime",
+      grams: 80,
+      label: "Lime · parte edibile",
+      image: photo("part-lime-v1163"),
+    },
+    {
+      category: "Frutta",
       food: "Mela",
       grams: 150,
       label: "Mela",
@@ -4639,6 +4839,20 @@ const balancedDinnerRecipes: Recipe[] = [
     { category: "Frutta", food: "Melagrana fresca", grams: 150, label: "Melagrana · parte edibile", image: photo("part-pomegranate-v1160") },
   ],
   Extra: [
+    {
+      category: "Extra",
+      food: "Salsa di tamarindo",
+      grams: 15,
+      label: "Salsa di tamarindo · 15 g",
+      image: photo("part-tomatoes-v8"),
+    },
+    {
+      category: "Extra",
+      food: "Olio di arachidi",
+      grams: 5,
+      label: "Olio di arachidi · 5 g",
+      image: photo("part-olive-oil-v8"),
+    },
     {
       category: "Extra",
       food: "Caffè senza zucchero",
@@ -7196,15 +7410,6 @@ export function FoodPlanner() {
                             )}
                           </div>
                         ) : null}
-                        <button
-                          className="add-meal-part"
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            startAddingMealPart(key, r, i);
-                          }}
-                        >
-                          ＋ Aggiungi un elemento
-                        </button>
                         <p>
                           {caution
                             ? "Sconsigliato oggi: possibile alimento fermentabile"
@@ -7226,6 +7431,17 @@ export function FoodPlanner() {
                           }}
                         >
                           ↻
+                        </button>
+                        <button
+                          className="add-part-compact"
+                          aria-label={`Aggiungi elemento a ${SLOT_LABELS[i]}`}
+                          title="Aggiungi elemento"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            startAddingMealPart(key, r, i);
+                          }}
+                        >
+                          ＋
                         </button>
                         <button
                           aria-label={
@@ -7501,7 +7717,6 @@ export function FoodPlanner() {
                               onClick={() => startAddingMealPart(key, r, slot)}
                             >
                               <i>＋</i>
-                              <span>Aggiungi</span>
                             </button>
                           </div>
                         )}
@@ -7510,7 +7725,7 @@ export function FoodPlanner() {
                             className="week-empty-add"
                             onClick={() => startAddingMealPart(key, r, slot)}
                           >
-                            ＋ Aggiungi elemento
+                            ＋
                           </button>
                         )}
                       </div>
@@ -8186,6 +8401,16 @@ export function FoodPlanner() {
                   <span key={x}>{x}</span>
                 ))}
               </div>
+              {selected.sourceUrl && selected.sourceLabel && (
+                <a
+                  className="recipe-source"
+                  href={selected.sourceUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Fonte verificata: {selected.sourceLabel} ↗
+                </a>
+              )}
             </div>
           </article>
         </div>
