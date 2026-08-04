@@ -70,7 +70,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.19";
+const VERSION = "1.16.20";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -1376,20 +1376,6 @@ const occasionalFoodRows: OccasionalFoodRow[] = [
   ["Panna cotta",300,4,25,20,0,"RICETTA CALCOLATA"],
   ["Gelato alla crema",210,4,25,11,0,"ETICHETTA"],
   ["Gelato al cioccolato",220,4,27,11,1.5,"ETICHETTA"],
-  ["Gelato fiordilatte",218,4.2,24,12,0,"ETICHETTA"],
-  ["Gelato stracciatella",235,4.3,27,13,0.6,"ETICHETTA"],
-  ["Gelato al pistacchio",245,5.2,25,14,1.2,"ETICHETTA"],
-  ["Gelato alla nocciola",240,5,25,14,1.1,"ETICHETTA"],
-  ["Gelato alla vaniglia",207,3.8,24,11,0,"ETICHETTA"],
-  ["Gelato al caffe",220,4,25,12,0,"ETICHETTA"],
-  ["Gelato alla fragola",155,2.5,30,3,1.1,"ETICHETTA"],
-  ["Gelato al limone",135,1,31,1,0.5,"ETICHETTA"],
-  ["Gelato al mango",150,1.5,32,2,0.8,"ETICHETTA"],
-  ["Gelato allo yogurt",175,4.2,28,5,0,"ETICHETTA"],
-  ["Gelato al cocco",230,3,25,14,1,"ETICHETTA"],
-  ["Gelato al caramello",235,4,31,11,0,"ETICHETTA"],
-  ["Gelato al tiramisu",245,4.5,28,13,0.5,"ETICHETTA"],
-  ["Gelato all'amarena",180,2.5,34,4,0.6,"ETICHETTA"],
   ["Torta al cioccolato",385,6,50,19,2.5,"RICETTA CALCOLATA"],
   ["Crostata alla confettura",350,5,55,13,2,"RICETTA CALCOLATA"],
   ["Cannolo siciliano",350,9,38,18,1,"RICETTA CALCOLATA"],
@@ -1419,31 +1405,13 @@ const occasionalFoods: Record<string, Food> = Object.fromEntries(
   occasionalFoodRows.map(([name,kcal,protein,carbs,fat,fiber,source]) => [name,{kcal,protein,carbs,fat,fiber,source}]),
 );
 const foodSearchDatabase: Record<string, Food> = { ...foods, ...occasionalFoods };
-const GELATO_FLAVORS = [
-  "Gelato fiordilatte",
-  "Gelato alla crema",
-  "Gelato al cioccolato",
-  "Gelato stracciatella",
-  "Gelato al pistacchio",
-  "Gelato alla nocciola",
-  "Gelato alla vaniglia",
-  "Gelato al caffe",
-  "Gelato alla fragola",
-  "Gelato al limone",
-  "Gelato al mango",
-  "Gelato allo yogurt",
-  "Gelato al cocco",
-  "Gelato al caramello",
-  "Gelato al tiramisu",
-  "Gelato all'amarena",
-] as const;
 const calc = (
   ingredients: RecipeIngredient[],
   scale = 1,
 ): Macro & { fiber: number; weight: number } =>
   ingredients.reduce(
     (sum, item) => {
-      const food = foodSearchDatabase[item.food];
+      const food = foods[item.food];
       const grams = item.grams * scale;
       const f = grams / 100;
       if (!food) return { ...sum, weight: sum.weight + grams };
@@ -5527,73 +5495,7 @@ const occasionalRecipes: Recipe[] = [
       "Pollo alla piastra al posto del manzo",
       "Pane 50 g per una porzione più piccola",
     ],
-  },,
-  {
-    id: "occasional-carbonara",
-    name: "Spaghetti alla carbonara",
-    kicker: "Sgarro salato conteggiato",
-    course: "Piatto unico",
-    cuisine: "Italiano",
-    image: photo("cheat-carbonara-v11619"),
-    time: 25,
-    ingredients: [{ food: "Pasta alla carbonara", grams: 350 }],
-    steps: [
-      "Cuoci gli spaghetti al dente e conserva poca acqua di cottura.",
-      "Rosola il guanciale senza aggiungere olio. Mescola a parte tuorli, pecorino e pepe.",
-      "Spegni il fuoco, unisci pasta, crema d'uovo e poca acqua: manteca senza far rapprendere l'uovo.",
-      "Registra la quantità realmente mangiata; il valore è una stima da ricetta completa.",
-    ],
-    alternatives: ["Porzione più piccola", "Amatriciana", "Pasta al forno"],
   },
-  {
-    id: "occasional-gelato",
-    name: "Gelato artigianale personalizzabile",
-    kicker: "Scegli 2 o 3 palline e i gusti",
-    course: "Gelato",
-    cuisine: "Italiano",
-    image: photo("cheat-gelato-v11619"),
-    time: 2,
-    ingredients: [
-      { food: "Gelato fiordilatte", grams: 60 },
-      { food: "Gelato al cioccolato", grams: 60 },
-    ],
-    steps: [
-      "Scegli due o tre gusti dal selettore Sgarri.",
-      "Una pallina è stimata a 60 g; se conosci il peso reale, correggilo nel pasto registrato.",
-      "Le calorie e i macro vengono sommati in base ai gusti scelti.",
-    ],
-    alternatives: ["Coppetta", "Cono da registrare separatamente", "Sorbetti alla frutta"],
-  },
-  {
-    id: "occasional-tiramisu",
-    name: "Tiramisù",
-    kicker: "Dolce occasionale con porzione chiara",
-    course: "Dolce",
-    cuisine: "Italiano",
-    image: photo("cheat-tiramisu-v11619"),
-    time: 2,
-    ingredients: [{ food: "Tiramisu", grams: 120 }],
-    steps: [
-      "Pesa o stima una fetta da circa 120 g.",
-      "Registrala come extra o come sostituzione dello spuntino; il resto del piano non viene trasformato in punizione.",
-    ],
-    alternatives: ["Panna cotta", "Cheesecake", "Cannolo siciliano"],
-  },
-  {
-    id: "occasional-fries",
-    name: "Patatine fritte",
-    kicker: "Porzione occasionale conteggiata",
-    course: "Spuntino",
-    cuisine: "Italiano",
-    image: photo("cheat-fries-v11619"),
-    time: 15,
-    ingredients: [{ food: "Patatine fritte", grams: 120 }],
-    steps: [
-      "Pesa la porzione pronta, senza includere il contenitore.",
-      "Registra separatamente eventuali salse, hamburger o bevande.",
-    ],
-    alternatives: ["Crocchette di patate", "Patatine chips", "Patate al forno"],
-  }
 ];
 const verifiedWorldRecipeExpansion: Recipe[] = [
   {
@@ -6020,12 +5922,6 @@ export function FoodPlanner() {
   const [diaryDay, setDiaryDay] = useState(0);
   const [extraName, setExtraName] = useState("");
   const [extraGrams, setExtraGrams] = useState("50");
-  const [gelatoScoops, setGelatoScoops] = useState<2 | 3>(2);
-  const [gelatoFlavors, setGelatoFlavors] = useState<string[]>([
-    "Gelato fiordilatte",
-    "Gelato al cioccolato",
-    "Gelato al pistacchio",
-  ]);
   const [replanNote, setReplanNote] = useState("");
   const [shoppingOpen, setShoppingOpen] = useState(false);
   const [shoppingScope, setShoppingScope] = useState<"day" | "week">("day");
@@ -6372,7 +6268,7 @@ export function FoodPlanner() {
       (r) =>
         r.kind !== "combination" &&
         isSubstantialRecipe(r) &&
-        r.ingredients.every((item) => Boolean(foodSearchDatabase[item.food])) &&
+        r.ingredients.every((item) => Boolean(foods[item.food])) &&
         isAllowed(r) &&
         compatibleWithSlot(r) &&
         compatibleWithPlace(r) &&
@@ -6864,25 +6760,6 @@ export function FoodPlanner() {
         return Math.abs(calc(a.ingredients).kcal - target) - Math.abs(calc(b.ingredients).kcal - target);
       })
       .slice(0, 6);
-  };
-  const buildGelatoRecipe = (): Recipe => {
-    const chosen = gelatoFlavors.slice(0, gelatoScoops);
-    return {
-      id: `custom-gelato-${gelatoScoops}-${chosen.join("-").toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
-      name: `Gelato · ${gelatoScoops} palline · ${chosen.map((x) => x.replace("Gelato ", "")).join(", ")}`,
-      kicker: "Sgarro personalizzato e conteggiato",
-      course: "Gelato",
-      cuisine: "Italiano",
-      image: photo("cheat-gelato-v11619"),
-      time: 2,
-      ingredients: chosen.map((food) => ({ food, grams: 60 })),
-      steps: [
-        "Scegli i gusti e il numero di palline.",
-        "Ogni pallina è stimata a 60 g; modifica poi il peso se la gelateria indica una quantità diversa.",
-        "Il totale viene calcolato dalla somma dei gusti scelti.",
-      ],
-      alternatives: ["Coppetta", "Cono da aggiungere separatamente", "Cambia uno o più gusti"],
-    };
   };
   const chooseCompleteMeal = (recipe: Recipe) => {
     if (!partPicker) return;
@@ -9018,50 +8895,6 @@ export function FoodPlanner() {
                         );
                       })}
                   </div>
-                  {[1, 3].includes(Number(partPicker.key.split("-")[1])) && (
-                    <div className="gelato-builder">
-                      <b>Componi il gelato</b>
-                      <div className="gelato-scoops">
-                        {[2, 3].map((count) => (
-                          <button
-                            type="button"
-                            className={gelatoScoops === count ? "active" : ""}
-                            key={count}
-                            onClick={() => setGelatoScoops(count as 2 | 3)}
-                          >
-                            {count} palline
-                          </button>
-                        ))}
-                      </div>
-                      {Array.from({ length: gelatoScoops }).map((_, index) => (
-                        <select
-                          aria-label={`Gusto pallina ${index + 1}`}
-                          key={index}
-                          value={gelatoFlavors[index]}
-                          onChange={(event) =>
-                            setGelatoFlavors((current) => {
-                              const next = [...current];
-                              next[index] = event.target.value;
-                              return next;
-                            })
-                          }
-                        >
-                          {GELATO_FLAVORS.map((flavor) => (
-                            <option key={flavor} value={flavor}>
-                              {flavor.replace("Gelato ", "")}
-                            </option>
-                          ))}
-                        </select>
-                      ))}
-                      <button
-                        type="button"
-                        className="gelato-choose"
-                        onClick={() => chooseCompleteMeal(buildGelatoRecipe())}
-                      >
-                        Scegli · {round(calc(buildGelatoRecipe().ingredients).kcal)} kcal
-                      </button>
-                    </div>
-                  )}
                 </details>
               )}
               <details className="picker-group">
