@@ -227,7 +227,7 @@ test("v1.16.17 keeps swap navigation visible and exposes occasional choices", as
   assert.match(app, /aria-label="Torna indietro senza cambiare piatto"/);
   assert.match(app, /<summary>Sgarri<\/summary>/);
   assert.match(app, /r\.id\.startsWith\("occasional-"\)/);
-  assert.match(css, /\.swap-back-bar\s*\{[\s\S]*position:\s*sticky/);
+  assert.match(css, /\.swap-back-bar\s*\{[\s\S]*position:\s*fixed/);
   await access(new URL("../dist/food/part-pasta-whole-v11618.png", import.meta.url));
   await access(new URL("../dist/food/part-pasta-semolina-v11618.png", import.meta.url));
   assert.match(app, /photo\("part-pasta-whole-v11618"\)/);
