@@ -16,7 +16,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.38"/);
+  assert.match(app, /VERSION = "1\.16\.39"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -72,6 +72,8 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /complete-meal-info/);
   assert.match(app, /Vedi ingredienti e preparazione/);
   assert.match(app, /Scegli questo piatto/);
+  assert.doesNotMatch(app, /Scegli questo sgarro/);
+  assert.doesNotMatch(app, /<strong>Scegli questo piatto<\/strong>/);
   assert.match(app, /Cambia ricetta/);
   assert.match(app, /Cambia un elemento/);
   assert.match(app, /recipe-mode-actions/);
@@ -119,6 +121,11 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /Harvard T\.H\. Chan · Healthy Eating Plate/);
   assert.match(app, /version\.json/);
   assert.match(app, /part-grissini-v112/);
+  assert.match(app, /attachmentBreakfastsC13C20/);
+  assert.match(app, /matrix-c13-pear-cocoa-hazelnut-porridge/);
+  assert.match(app, /matrix-c20-cold-papaya-porridge/);
+  assert.match(app, /Uovo in camicia/);
+  assert.match(app, /part-poached-egg-v11639/);
   assert.match(app, /matrix-c21-porridge-banana-peanut/);
   assert.match(app, /matrix-s11-banana-peanut/);
   assert.match(app, /matrix-s27-apricot-almond/);
