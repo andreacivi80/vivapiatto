@@ -16,7 +16,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.10"/);
+  assert.match(app, /VERSION = "1\.16\.11"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -98,6 +98,12 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.doesNotMatch(realRecipeIndex, /generatedRecipes|snackRecipes/);
   assert.match(app, /const RecipeVisual/);
   assert.match(app, /recipe-visual-parts/);
+  assert.match(app, /verifiedWorldRecipeExpansion/);
+  assert.match(app, /catalog-verified-bulgogi-rice/);
+  assert.match(app, /catalog-verified-keihan/);
+  assert.match(app, /catalog-verified-lentil-pumpkin-bulgur/);
+  assert.match(app, /VisitKorea · Bulgogi with rice/);
+  assert.match(app, /Harvard T\.H\. Chan · Healthy Eating Plate/);
   assert.match(app, /version\.json/);
   assert.match(app, /part-grissini-v112/);
   assert.match(app, /matrix-c21-porridge-banana-peanut/);
