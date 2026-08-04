@@ -16,7 +16,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.27"/);
+  assert.match(app, /VERSION = "1\.16\.28"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -256,4 +256,6 @@ test("v1.16.17 keeps swap navigation visible and exposes occasional choices", as
   assert.match(app, /cheat-cheesecake-v11626/);
   assert.match(app, /occasional-cannolo/);
   assert.match(app, /cheat-cannolo-v11627/);
+  assert.match(app, /occasional-panna-cotta/);
+  assert.match(app, /cheat-panna-cotta-v11628/);
 });
