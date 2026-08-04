@@ -2649,3 +2649,30 @@ button {
   .meal-card .recipe-visual-parts { width: 76px; height: 76px; border-radius: 12px; }
   .recipe-sheet > .recipe-visual-parts { height: 200px; }
 }
+
+
+.swap-back {
+  position: sticky;
+  top: 0.45rem;
+  z-index: 30;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 40px;
+  margin: 0 0 0.65rem;
+  padding: 0.48rem 0.78rem;
+  border: 1px solid rgba(35, 88, 66, 0.28);
+  border-radius: 999px;
+  background: rgba(252, 250, 244, 0.96);
+  color: #235842;
+  font: inherit;
+  font-weight: 800;
+  box-shadow: 0 5px 18px rgba(31, 63, 51, 0.14);
+  backdrop-filter: blur(8px);
+}
+
+.swap-back span {
+  font-size: 1.15rem;
+  line-height: 1;
+}
