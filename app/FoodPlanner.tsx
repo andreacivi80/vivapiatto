@@ -70,7 +70,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.16";
+const VERSION = "1.16.17";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -6272,7 +6272,10 @@ export function FoodPlanner() {
         isAllowed(r) &&
         compatibleWithSlot(r) &&
         compatibleWithPlace(r) &&
-        (cuisineFilter === "Tutte" || recipeCuisine(r) === cuisineFilter) &&
+        (cuisineFilter === "Tutte" ||
+          (cuisineFilter === "Sgarri"
+            ? r.id.startsWith("occasional-")
+            : !r.id.startsWith("occasional-") && recipeCuisine(r) === cuisineFilter)) &&
         r.name.toLowerCase().includes(libraryQuery.toLowerCase()),
     )
     .sort((a, b) => {
@@ -8344,22 +8347,24 @@ export function FoodPlanner() {
           </section>
         )}
         {tab === "library" && (
-          <section>
+          <section className={swapTarget ? "library-section swapping" : "library-section"}>
             {swapTarget && (
-              <button
-                type="button"
-                className="swap-back"
-                aria-label="Torna indietro senza cambiare piatto"
-                onClick={() => {
-                  setSwapTarget(null);
-                  setLibraryQuery("");
-                  setTab(swapReturnTab);
-                  scrollTo({ top: 0, behavior: "smooth" });
-                }}
-              >
-                <span aria-hidden="true">←</span>
-                Torna indietro
-              </button>
+              <div className="swap-back-bar">
+                <button
+                  type="button"
+                  className="swap-back"
+                  aria-label="Torna indietro senza cambiare piatto"
+                  title="Torna indietro"
+                  onClick={() => {
+                    setSwapTarget(null);
+                    setLibraryQuery("");
+                    setTab(swapReturnTab);
+                    scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                >
+                  <span aria-hidden="true">←</span>
+                </button>
+              </div>
             )}
             <span className="eyebrow">300+ RICETTE GUIDATE</span>
             <h1 className="page-title">
@@ -8373,6 +8378,7 @@ export function FoodPlanner() {
                 "Gourmet",
                 "Mediterraneo",
                 "Vegetale",
+                "Sgarri",
               ].map((x) => (
                 <button
                   className={cuisineFilter === x ? "active" : ""}
@@ -8854,6 +8860,43 @@ export function FoodPlanner() {
                   })}
                 </div>
               </details>
+              {!partPicker.adding && (
+                <details className="picker-group cheat-picker-group">
+                  <summary>Sgarri</summary>
+                  <p>Scelte occasionali: restano conteggiate nel totale reale, senza punizioni.</p>
+                  <div className="complete-meal-grid">
+                    {occasionalRecipes
+                      .filter((recipe) => fitsSlot(recipe, Number(partPicker.key.split("-")[1])))
+                      .map((recipe) => {
+                        const macros = calc(recipe.ingredients);
+                        return (
+                          <article key={recipe.id}>
+                            <button
+                              className="complete-meal-select"
+                              onClick={() => chooseCompleteMeal(recipe)}
+                            >
+                              <RecipeVisual recipe={recipe} />
+                              <span>{recipe.name}</span>
+                              <b>{round(macros.kcal)} kcal · {recipe.time} min</b>
+                              <strong>Scegli questo sgarro</strong>
+                            </button>
+                            <button
+                              className="complete-meal-info"
+                              aria-label={"Vedi ricetta " + recipe.name}
+                              title="Vedi ingredienti e preparazione"
+                              onClick={() => {
+                                setSelectedMealKey(null);
+                                setSelected(recipe);
+                              }}
+                            >
+                              i
+                            </button>
+                          </article>
+                        );
+                      })}
+                  </div>
+                </details>
+              )}
               <details className="picker-group">
                 <summary>Scelta libera</summary>
                 <p>
