@@ -70,7 +70,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.24";
+const VERSION = "1.16.25";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -5580,6 +5580,23 @@ const occasionalRecipes: Recipe[] = [
     ],
     alternatives: ["Crocchette di patate", "Patatine chips", "Patate al forno"],
   },
+  {
+    id: "occasional-amatriciana",
+    name: "Bucatini all'amatriciana",
+    kicker: "Piatto occasionale italiano con porzione conteggiata",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    image: photo("cheat-amatriciana-v11625"),
+    time: 25,
+    ingredients: [{ food: "Pasta all'amatriciana", grams: 350 }],
+    steps: [
+      "Rosola il guanciale senza aggiungere olio e tienilo da parte.",
+      "Cuoci il pomodoro nel grasso rilasciato, poi unisci i bucatini scolati al dente.",
+      "Manteca con pecorino e completa con il guanciale croccante.",
+      "Registra la quantità realmente mangiata; il valore deriva dalla ricetta completa.",
+    ],
+    alternatives: ["Carbonara", "Gricia", "Porzione più piccola"],
+  },
 ];
 const verifiedWorldRecipeExpansion: Recipe[] = [
   {
@@ -6360,11 +6377,11 @@ export function FoodPlanner() {
   const filteredRecipes = allRecipes
     .filter(
       (r) =>
-        r.kind !== "combination" &&
-        isSubstantialRecipe(r) &&
-        r.ingredients.every((item) => Boolean(foods[item.food])) &&
+        (swapTarget || r.kind !== "combination") &&
+        (swapTarget || isSubstantialRecipe(r)) &&
+        r.ingredients.every((item) => Boolean(foodSearchDatabase[item.food])) &&
         isAllowed(r) &&
-        compatibleWithSlot(r) &&
+        (swapTarget || compatibleWithSlot(r)) &&
         compatibleWithPlace(r) &&
         (cuisineFilter === "Tutte" ||
           (cuisineFilter === "Sgarri"
@@ -6392,6 +6409,46 @@ export function FoodPlanner() {
       }
       return 0;
     });
+  const swapFoodOptions: MealPart[] = swapTarget
+    ? Array.from(
+        new Map(
+          (Object.values(mealPartOptions).flat() as MealPart[]).map((part) => [
+            part.food,
+            part,
+          ]),
+        ).values(),
+      )
+        .filter((part) =>
+          (part.label || part.food)
+            .toLowerCase()
+            .includes(libraryQuery.toLowerCase()),
+        )
+        .sort((left, right) => {
+          const slot = swapTarget.slot;
+          const preferred =
+            slot === 0
+              ? ["Latticino", "Frutta", "Carboidrato", "Extra", "Proteina", "Contorno"]
+              : slot === 1 || slot === 3
+                ? ["Frutta", "Latticino", "Extra", "Carboidrato", "Proteina", "Contorno"]
+                : ["Proteina", "Carboidrato", "Contorno", "Latticino", "Extra", "Frutta"];
+          return preferred.indexOf(left.category) - preferred.indexOf(right.category);
+        })
+    : [];
+  const chooseSingleFoodFromLibrary = (part: MealPart) => {
+    if (!swapTarget) return;
+    const key = `${swapTarget.day}-${swapTarget.slot}`;
+    const changedDay = swapTarget.day;
+    setPartSelections((current) => ({ ...current, [key]: [{ ...part }] }));
+    setMealView((current) => ({ ...current, [key]: "parts" }));
+    setActualWeights((current) => { const next = { ...current }; delete next[key]; return next; });
+    setRemovedIngredients((current) => { const next = { ...current }; delete next[key]; return next; });
+    setReplanNote(`Pasto sostituito liberamente con ${part.label || part.food}. Puoi aggiungere altri elementi con il pulsante più.`);
+    replanFollowingDays(changedDay);
+    setSwapTarget(null);
+    setLibraryQuery("");
+    setTab(swapReturnTab);
+    scrollTo({ top: 0, behavior: "smooth" });
+  };
   useEffect(() => {
     if (!swapTarget) return;
     setCuisineFilter("Tutte");
@@ -8035,10 +8092,16 @@ export function FoodPlanner() {
                           </div>
                         ) : r.parts ? (
                           <>
-                            {r.kind !== "combination" && (
+                            {(!partSelections[key] || r.kind !== "combination") && (
                               <div className="dish-view-actions" onClick={(e) => e.stopPropagation()}>
-                                <button onClick={() => setMealView((current) => ({ ...current, [key]: "dish" }))}>Piatto unico</button>
-                                <button onClick={() => { setSelectedMealKey(key); setSelected(r); }}>ⓘ Ricetta</button>
+                                {!partSelections[key] && (
+                                  <button onClick={() => setMealView((current) => ({ ...current, [key]: "dish" }))}>
+                                    Ricomponi piatto
+                                  </button>
+                                )}
+                                {r.kind !== "combination" && (
+                                  <button onClick={() => { setSelectedMealKey(key); setSelected(r); }}>ⓘ Ricetta</button>
+                                )}
                               </div>
                             )}
                             <div className="meal-parts">
@@ -8582,6 +8645,24 @@ export function FoodPlanner() {
                 );
               })}
             </div>
+            {swapTarget && (
+              <div className="swap-food-catalog">
+                <div className="swap-food-heading">
+                  <span>CATALOGO COMPLETO</span>
+                  <b>{swapFoodOptions.length} alimenti</b>
+                </div>
+                <p>Scegli anche un singolo alimento; dopo puoi aggiungere liberamente gli altri componenti.</p>
+                <div className="swap-food-grid">
+                  {swapFoodOptions.map((part) => (
+                    <button key={part.food} onClick={() => chooseSingleFoodFromLibrary(part)}>
+                      <img src={part.image} alt={part.label || part.food} />
+                      <span>{part.label || part.food}</span>
+                      <b>{part.grams} g · {round(calc([part]).kcal)} kcal</b>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </section>
         )}
         {tab === "builder" && (
