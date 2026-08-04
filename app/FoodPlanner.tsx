@@ -33,14 +33,18 @@ type Recipe = {
 type Day = { label: string; mood: string; recipes: string[] };
 
 const RecipeVisual = ({ recipe }: { recipe: Recipe }) => {
-  const componentPhotos = recipe.id.startsWith("catalog-")
-    ? (recipe.parts || []).filter((part) => part.grams > 0).slice(0, 4)
-    : [];
+  const componentPhotos = (recipe.parts || [])
+    .filter((part) => part.grams > 0)
+    .slice(0, 4);
   if (componentPhotos.length < 2) {
     return <img className="recipe-visual-single" src={recipe.image} alt={recipe.name} />;
   }
   return (
-    <div className="recipe-visual-parts" role="img" aria-label={`Componenti di ${recipe.name}`}>
+    <div
+      className={`recipe-visual-parts recipe-visual-count-${componentPhotos.length}`}
+      role="img"
+      aria-label={`Componenti di ${recipe.name}`}
+    >
       {componentPhotos.map((part, index) => (
         <img
           key={`${part.food}-${index}`}
@@ -70,7 +74,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.35";
+const VERSION = "1.16.36";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
