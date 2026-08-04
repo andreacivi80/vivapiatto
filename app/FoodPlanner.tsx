@@ -70,7 +70,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.33";
+const VERSION = "1.16.34";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -1318,6 +1318,15 @@ const foods: Record<string, Food> = {
 // Banca dati separata per sgarri ed extra: ricercabile nel diario ma esclusa
 // dalle proposte automatiche del piano quotidiano.
 type OccasionalFoodRow = [string, number, number, number, number, number, Food["source"]];
+foods["Edamame cotti"] = {
+  kcal: 121,
+  protein: 11.9,
+  carbs: 8.9,
+  fat: 5.2,
+  fiber: 5.2,
+  source: "USDA",
+};
+
 const occasionalFoodRows: OccasionalFoodRow[] = [
   ["Pizza margherita da pizzeria",266,11,33,10,2.3,"RICETTA CALCOLATA"],
   ["Pizza quattro formaggi",330,15,31,17,1.8,"RICETTA CALCOLATA"],
@@ -3932,6 +3941,7 @@ const balancedDinnerRecipes: Recipe[] = [
     ingredients: [{ food: "Tempeh", grams: 120 }, { food: "Patata dolce cotta", grams: 220 }, { food: "Broccoli bolliti", grams: 200 }, { food: "Olio extravergine", grams: 10 }],
     parts: [
       { category: "Proteina", food: "Tempeh", grams: 120, label: "Tempeh alla piastra · 120 g", image: photo("part-tempeh-v11520") },
+    { category: "Proteina", food: "Edamame cotti", grams: 120, label: "Edamame cotti · 120 g", image: photo("part-edamame-v11634") },
       { category: "Carboidrato", food: "Patata dolce cotta", grams: 220, label: "Patata dolce cotta · 220 g", image: photo("part-sweet-potato-v8") },
       { category: "Contorno", food: "Broccoli bolliti", grams: 200, label: "Broccoli · 200 g", image: photo("part-broccoli-v1154") },
       { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") },
@@ -6273,6 +6283,109 @@ const attachmentBaseSnacks: Recipe[] = [
   },
 ];
 
+const attachmentBaseMainsA: Recipe[] = [
+  {
+    id: "matrix-p01-whole-pasta-chickpeas",
+    name: "Pasta integrale con ceci, pomodorini e rucola",
+    kicker: "Pranzo vegetale completo · matrice P01",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    kind: "combination",
+    image: photo("moment-lunch-v1121"),
+    time: 20,
+    ingredients: [
+      { food: "Pasta integrale secca", grams: 70 },
+      { food: "Ceci cotti", grams: 120 },
+      { food: "Pomodorini", grams: 150 },
+      { food: "Rucola", grams: 50 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    steps: ["Cuoci la pasta e scola al dente.", "Scalda ceci e pomodorini con poca acqua, unisci la pasta e completa con rucola e olio pesato a crudo."],
+    alternatives: ["Fagioli cannellini cotti al posto dei ceci", "Pasta di lenticchie secca al posto della pasta integrale"],
+  },
+  {
+    id: "matrix-p02-farro-lentils-roasted-vegetables",
+    name: "Farro con lenticchie e verdure arrosto",
+    kicker: "Pranzo vegetale trasportabile · matrice P02",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    kind: "combination",
+    image: photo("moment-lunch-v1121"),
+    time: 35,
+    ingredients: [
+      { food: "Farro cotto", grams: 180 },
+      { food: "Lenticchie cotte", grams: 120 },
+      { food: "Zucchine", grams: 100 },
+      { food: "Peperoni cotti", grams: 75 },
+      { food: "Cipolle crude", grams: 75 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    steps: ["Arrostisci zucchine, peperoni e cipolla finché sono morbidi.", "Unisci farro e lenticchie già cotti e completa con limone ed olio pesato."],
+    alternatives: ["Orzo perlato cotto al posto del farro", "Ceci cotti al posto delle lenticchie"],
+  },
+  {
+    id: "matrix-p03-quinoa-edamame-ginger",
+    name: "Quinoa, edamame e verdure allo zenzero",
+    kicker: "Pranzo vegetale di ispirazione asiatica · matrice P03",
+    course: "Piatto unico",
+    cuisine: "Asiatico",
+    kind: "combination",
+    image: photo("moment-lunch-v1121"),
+    time: 25,
+    ingredients: [
+      { food: "Quinoa cotta", grams: 180 },
+      { food: "Edamame cotti", grams: 120 },
+      { food: "Broccoli bolliti", grams: 100 },
+      { food: "Carote cotte bollite", grams: 75 },
+      { food: "Zucchine", grams: 75 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    steps: ["Cuoci le verdure mantenendole consistenti e profumale con zenzero.", "Unisci quinoa ed edamame già cotti e completa con l'olio misurato."],
+    alternatives: ["Tofu alla piastra al posto degli edamame", "Riso basmati secco al posto della quinoa rispettando la porzione proposta"],
+  },
+  {
+    id: "matrix-p04-basmati-light-chicken-curry",
+    name: "Riso basmati con pollo al curry leggero",
+    kicker: "Pranzo completo · matrice P04",
+    course: "Piatto unico",
+    cuisine: "Asiatico",
+    kind: "combination",
+    image: photo("moment-lunch-v1121"),
+    time: 30,
+    ingredients: [
+      { food: "Riso basmati secco", grams: 70 },
+      { food: "Petto di pollo · peso a crudo", grams: 100 },
+      { food: "Zucchine", grams: 100 },
+      { food: "Carote cotte bollite", grams: 75 },
+      { food: "Cipolle crude", grams: 75 },
+      { food: "Yogurt greco 2%", grams: 60 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    steps: ["Cuoci il riso e tienilo sgranato.", "Cuoci completamente il pollo con verdure e curry; a fuoco spento incorpora lo yogurt e servi con il riso."],
+    alternatives: ["Petto di tacchino cotto alla piastra al posto del pollo", "Yogurt greco 0% al posto del 2%"],
+  },
+  {
+    id: "matrix-p05-couscous-chickpeas-vegetables",
+    name: "Cous cous integrale con ceci e verdure",
+    kicker: "Pranzo vegetale trasportabile · matrice P05",
+    course: "Piatto unico",
+    cuisine: "Mediterraneo",
+    kind: "combination",
+    image: photo("moment-lunch-v1121"),
+    time: 25,
+    ingredients: [
+      { food: "Cous cous integrale cotto", grams: 180 },
+      { food: "Ceci cotti", grams: 120 },
+      { food: "Peperoni cotti", grams: 80 },
+      { food: "Zucchine", grams: 90 },
+      { food: "Carote cotte bollite", grams: 80 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    steps: ["Prepara il cous cous e sgrana bene i chicchi.", "Cuoci le verdure, unisci ceci e cous cous e completa con spezie ed olio pesato."],
+    alternatives: ["Lenticchie cotte al posto dei ceci", "Bulgur cotto al posto del cous cous"],
+  },
+];
+
 const rawRecipes: Recipe[] = [
   ...simpleBreakfasts,
   ...attachmentBaseBreakfasts,
@@ -6282,6 +6395,7 @@ const rawRecipes: Recipe[] = [
   ...attachmentBaseSnacks,
   ...matrixSnacks,
   ...attachmentMissingSnacks,
+  ...attachmentBaseMainsA,
   ...matrixMainRecipes,
   ...catalogSnacks,
   ...portableRecipes,
