@@ -50,7 +50,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.4";
+const VERSION = "1.16.5";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -6391,8 +6391,33 @@ export function FoodPlanner() {
         offset: number,
       ) => {
         const unused = pool.filter((recipe) => !usedRecipes.has(recipe.id));
-        const byFamily = unused.filter((recipe) => recipeProteinFamily(recipe) === family);
-        const candidates = byFamily.length ? byFamily : unused.length ? unused : pool;
+        const byFamily = unused.filter(
+          (recipe) => recipeProteinFamily(recipe) === family,
+        );
+        const sameCuisineFamily = allRecipes.filter(
+          (recipe) =>
+            isAllowed(recipe) &&
+            fitsSlot(recipe, slot) &&
+            recipeCuisine(recipe) === cuisineChoice &&
+            recipeProteinFamily(recipe) === family &&
+            !usedRecipes.has(recipe.id),
+        );
+        const anyCuisineFamily = allRecipes.filter(
+          (recipe) =>
+            isAllowed(recipe) &&
+            fitsSlot(recipe, slot) &&
+            recipeProteinFamily(recipe) === family &&
+            !usedRecipes.has(recipe.id),
+        );
+        const candidates = byFamily.length
+          ? byFamily
+          : sameCuisineFamily.length
+            ? sameCuisineFamily
+            : anyCuisineFamily.length
+              ? anyCuisineFamily
+              : unused.length
+                ? unused
+                : pool;
         const chosen = closestForSlot(candidates, slot, target, offset);
         usedRecipes.add(chosen.id);
         return chosen;
@@ -6717,6 +6742,7 @@ export function FoodPlanner() {
     };
     days.forEach((_, day) => {
       getDayIds(day).forEach((id, slot) => {
+        if (slot !== 2 && slot !== 4) return;
         const key = `${day}-${slot}`;
         const recordedId = completed[key] ? completedRecipes[key] || id : id;
         const recipe = recipeMap[recordedId];
@@ -6727,13 +6753,10 @@ export function FoodPlanner() {
         if (family === "pesce") counts.Pesce += 1;
         if (family === "carne-bianca") counts["Carne bianca"] += 1;
         if (family === "carne-rossa") counts["Carne rossa"] += 1;
+        if (family === "uova") counts.Uova += 1;
         if (family === "legumi") counts["Legumi e vegetali"] += 1;
         if (family === "latticini") counts.Formaggi += 1;
         if (family === "salumi") counts.Salumi += 1;
-        const eggGrams = items
-          .filter((item) => /uovo|uova/i.test(item.food))
-          .reduce((sum, item) => sum + item.grams, 0);
-        counts.Uova += Math.round(eggGrams / 50);
       });
     });
     return counts;
