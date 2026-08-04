@@ -50,7 +50,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.5";
+const VERSION = "1.16.6";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -5882,6 +5882,7 @@ export function FoodPlanner() {
   const plannedDrinkMacros = calc(plannedDrinkMap[plannedDrink] || []);
   const targetForDay = (day: number) =>
     day === dayIndex ? plannedCalories : calories;
+  const mealCalorieShares = [0.22, 0.09, 0.3, 0.09, 0.3];
   const compatibleWithSlot = (r: Recipe) =>
     !swapTarget || fitsSlot(r, swapTarget.slot);
   const isWorkFriendly = (r: Recipe) =>
@@ -6101,11 +6102,69 @@ export function FoodPlanner() {
     return merged.map(lowEnergyAdjusted).map(normalizeMealPart);
   };
 
+  const calibratePlannedIngredients = (
+    key: string,
+    items: RecipeIngredient[],
+  ): RecipeIngredient[] => {
+    if (partSelections[key]) return items;
+    const [dayText, slotText] = key.split("-");
+    const day = Number(dayText);
+    const slot = Number(slotText);
+    const target = targetForDay(day) * mealCalorieShares[slot];
+    const current = calc(items).kcal;
+    if (!current || Math.abs(current - target) <= target * 0.08) return items;
+    const adjustableFoods = new Set(
+      [...mealPartOptions.Carboidrato, ...mealPartOptions.Extra].map(
+        (part) => part.food,
+      ),
+    );
+    const adjustable = items.filter((item) => adjustableFoods.has(item.food));
+    const fixed = items.filter((item) => !adjustableFoods.has(item.food));
+    const adjustableKcal = calc(adjustable).kcal;
+    const fixedKcal = calc(fixed).kcal;
+    if (!adjustableKcal || target <= fixedKcal) return items;
+    const factor = Math.max(
+      0.72,
+      Math.min(1.35, (target - fixedKcal) / adjustableKcal),
+    );
+    const practicalGrams = (item: RecipeIngredient) => {
+      const raw = item.grams * factor;
+      const food = item.food.toLowerCase();
+      const limits =
+        food.includes("pasta") || food.includes("riso")
+          ? { min: 50, max: 100, step: 10 }
+          : food.includes("gnocchi")
+            ? { min: 120, max: 200, step: 10 }
+            : food.includes("patate")
+              ? { min: 150, max: 300, step: 25 }
+              : food.includes("pane")
+                ? { min: 30, max: 120, step: 10 }
+                : food.includes("olio") || food.includes("burro")
+                  ? { min: 5, max: 15, step: 5 }
+                  : /noci|mandorle|pistacchi|arachidi|nocciole|semi/.test(food)
+                    ? { min: 5, max: 30, step: 5 }
+                    : { min: 10, max: 100, step: 5 };
+      return Math.max(
+        limits.min,
+        Math.min(limits.max, Math.round(raw / limits.step) * limits.step),
+      );
+    };
+    return items.map((item) =>
+      adjustableFoods.has(item.food)
+        ? { ...item, grams: practicalGrams(item) }
+        : item,
+    );
+  };
   const plannedIngredients = (key: string, recipe: Recipe) => {
     const slot = Number(key.split("-")[1]);
     const targetAdditions = targetAdditionsFor(slot);
     if (!recipe.parts && !partSelections[key])
-      return mergeTargetAdditions(recipe.ingredients, targetAdditions).map(lowEnergyAdjusted);
+      return calibratePlannedIngredients(
+        key,
+        mergeTargetAdditions(recipe.ingredients, targetAdditions).map(
+          lowEnergyAdjusted,
+        ),
+      );
     const activeParts = activeMealParts(key, recipe);
     const pastaSelected = activeParts.some((x) => x.food.includes("Pasta"));
     const sourceParts = recipe.parts || recipe.ingredients.map(additionAsPart);
@@ -6115,7 +6174,7 @@ export function FoodPlanner() {
         (x.food === "Olio extravergine" ||
           (pastaSelected && x.food === "Passata di pomodoro")),
     );
-    return [...activeParts, ...extras];
+    return calibratePlannedIngredients(key, [...activeParts, ...extras]);
   };
   const actualIngredients = (key: string, recipe: Recipe) => {
     const saved = actualWeights[key];
@@ -6378,7 +6437,7 @@ export function FoodPlanner() {
       !dinners.length
     )
       return;
-    const shares = [0.22, 0.09, 0.3, 0.09, 0.3];
+    const shares = mealCalorieShares;
     const profileDays = weekLocked ? [dayIndex] : days.map((_, index) => index);
     setChoices((current) => {
       const next = { ...current };
