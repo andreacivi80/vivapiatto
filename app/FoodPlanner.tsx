@@ -50,7 +50,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.8";
+const VERSION = "1.16.9";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -5491,8 +5491,6 @@ const rawRecipes: Recipe[] = [
   ...catalogMains,
   ...occasionalRecipes,
   ...recipes,
-  ...generatedRecipes,
-  ...snackRecipes,
 ];
 const pantryPartByFood = new Map(
   (Object.values(mealPartOptions).flat() as MealPart[]).map(
