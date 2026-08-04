@@ -70,7 +70,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.13";
+const VERSION = "1.16.14";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -5526,7 +5526,7 @@ const verifiedWorldRecipeExpansion: Recipe[] = [
       "Cuoci il manzo in padella molto calda fino a cottura completa; scalda separatamente carote e spinaci.",
       "Servi con 150 g di riso già cotto e aggiungi l'olio pesato soltanto alla fine.",
     ],
-    alternatives: ["Ricetta adattata alle quantità del piano", "Contiene soia", "Componenti modificabili separatamente"],
+    alternatives: ["Ricetta adattata alle quantità del piano", "Contiene soia", "Preparabile la sera per il pranzo al lavoro", "Componenti modificabili separatamente"],
     sourceLabel: "VisitKorea · Bulgogi with rice",
     sourceUrl: "https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=181830",
   },
@@ -5617,7 +5617,7 @@ const verifiedWorldRecipeExpansion: Recipe[] = [
       "Scalda lenticchie e bulgur già cotti; salta brevemente gli spinaci con poca acqua.",
       "Componi il piatto e aggiungi l'olio extravergine pesato a crudo.",
     ],
-    alternatives: ["Piatto vegetale ricco di fibre", "Componenti modificabili separatamente"],
+    alternatives: ["Piatto vegetale ricco di fibre", "Preparabile la sera e trasportabile al lavoro", "Componenti modificabili separatamente"],
     sourceLabel: "Harvard T.H. Chan · Healthy Eating Plate",
     sourceUrl: "https://nutritionsource.hsph.harvard.edu/healthy-eating-plate/",
   },
@@ -5705,7 +5705,7 @@ const verifiedWorldRecipeExpansion: Recipe[] = [
       "Tampona il tofu, taglialo a cubi e doralo su piastra calda su tutti i lati.",
       "Servi con il bulgur caldo e aggiungi l'olio pesato alla fine.",
     ],
-    alternatives: ["Piatto completamente vegetale", "Contiene soia", "Componenti modificabili separatamente"],
+    alternatives: ["Piatto completamente vegetale", "Contiene soia", "Preparabile la sera e trasportabile al lavoro", "Componenti modificabili separatamente"],
     sourceLabel: "Harvard T.H. Chan · Vegetarian Healthy Eating Plate",
     sourceUrl: "https://nutritionsource.hsph.harvard.edu/vegetarian-healthy-eating-plate-recipes/",
   },
@@ -6230,15 +6230,33 @@ export function FoodPlanner() {
   const isWorkFriendly = (r: Recipe) =>
     portableRecipes.some((x) => x.id === r.id) ||
     (r.time <= 35 &&
-      r.alternatives.some((text) => /trasport|schiscetta|lavoro/i.test(text)) &&
+      r.alternatives.some((text) => /trasport|schiscetta|lavoro|preparabile la sera|buona anche fredda/i.test(text)) &&
       !r.alternatives.some((text) => /pasto da casa|preferibile a casa/i.test(text)));
-  const workLunchesFrom = (recipes: Recipe[]) =>
-    [...recipes.filter(isWorkFriendly), ...portableRecipes, ...catalogWorkMains]
-      .filter(isAllowed)
-      .filter(
-        (recipe, index, list) =>
-          list.findIndex((candidate) => candidate.id === recipe.id) === index,
-      );
+  const uniqueRecipes = (recipes: Recipe[]) =>
+    recipes.filter(
+      (recipe, index, list) =>
+        list.findIndex((candidate) => candidate.id === recipe.id) === index,
+    );
+  const workLunchesFrom = (recipes: Recipe[]) => {
+    const sameCuisine = uniqueRecipes([
+      ...recipes.filter(
+        (recipe) =>
+          recipeCuisine(recipe) === cuisineChoice && isWorkFriendly(recipe),
+      ),
+      ...portableRecipes.filter(
+        (recipe) => recipeCuisine(recipe) === cuisineChoice,
+      ),
+      ...catalogWorkMains.filter(
+        (recipe) => recipeCuisine(recipe) === cuisineChoice,
+      ),
+    ]).filter(isAllowed);
+    if (sameCuisine.length) return sameCuisine;
+    return uniqueRecipes([
+      ...recipes.filter(isWorkFriendly),
+      ...portableRecipes,
+      ...catalogWorkMains,
+    ]).filter(isAllowed);
+  };
   const compatibleWithPlace = (_r: Recipe) => true;
   const isSubstantialRecipe = (recipe: Recipe) =>
     recipe.steps.length >= 2 &&
@@ -6256,11 +6274,31 @@ export function FoodPlanner() {
         (cuisineFilter === "Tutte" || recipeCuisine(r) === cuisineFilter) &&
         r.name.toLowerCase().includes(libraryQuery.toLowerCase()),
     )
-    .sort((a, b) =>
-      dayContext === "Lavoro" && swapTarget?.slot === 2
-        ? Number(isWorkFriendly(b)) - Number(isWorkFriendly(a))
-        : 0,
-    );
+    .sort((a, b) => {
+      const cuisineDelta =
+        Number(recipeCuisine(b) === cuisineChoice) -
+        Number(recipeCuisine(a) === cuisineChoice);
+      if (cuisineDelta) return cuisineDelta;
+      if (dayContext === "Lavoro" && swapTarget?.slot === 2) {
+        const workDelta =
+          Number(isWorkFriendly(b)) - Number(isWorkFriendly(a));
+        if (workDelta) return workDelta;
+      }
+      if (swapTarget) {
+        const target =
+          targetForDay(swapTarget.day) * mealCalorieShares[swapTarget.slot];
+        return (
+          Math.abs(calc(a.ingredients).kcal - target) -
+          Math.abs(calc(b.ingredients).kcal - target)
+        );
+      }
+      return 0;
+    });
+  useEffect(() => {
+    if (!swapTarget) return;
+    setCuisineFilter("Tutte");
+    setLibraryQuery("");
+  }, [swapTarget]);
   const replanFollowingDays = (changedDay: number) => {
     if (weekLocked) return;
     const breakfasts = availableBreakfasts();
