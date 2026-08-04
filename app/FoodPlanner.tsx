@@ -48,7 +48,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.0";
+const VERSION = "1.16.1";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -7041,6 +7041,18 @@ export function FoodPlanner() {
                         {r.parts && r.kind !== "combination" && fullDishView ? (
                           <div className="dish-view-actions" onClick={(e) => e.stopPropagation()}>
                             <button onClick={() => { setSelectedMealKey(key); setSelected(r); }}>ⓘ Ricetta e preparazione</button>
+                            <button
+                              onClick={() => {
+                                setSwapReturnTab("today");
+                                setSwapTarget({ day: dayIndex, slot: i });
+                                setCuisineFilter(recipeCuisine(r));
+                                setLibraryQuery("");
+                                setTab("library");
+                                scrollTo({ top: 0, behavior: "smooth" });
+                              }}
+                            >
+                              ↻ Cambia piatto pronto
+                            </button>
                             <button onClick={() => setMealView((current) => ({ ...current, [key]: "parts" }))}>Dividi in componenti</button>
                           </div>
                         ) : r.parts ? (
