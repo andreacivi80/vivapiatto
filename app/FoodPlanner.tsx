@@ -70,7 +70,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.17";
+const VERSION = "1.16.18";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -2948,7 +2948,7 @@ const matrixMainRecipes: Recipe[] = [
   { id: "matrix-p47-red-rice-lentils", name: "Riso rosso con lenticchie e verdure grigliate", kicker: "Pranzo vegetale · matrice P47", course: "Piatto unico", cuisine: "Mediterraneo", image: photo("recipe-p47-red-rice-lentils-v11514"), time: 35, ingredients: [{ food: "Riso rosso integrale cotto", grams: 180 }, { food: "Lenticchie cotte", grams: 150 }, { food: "Melanzane", grams: 85 }, { food: "Zucchine", grams: 85 }, { food: "Peperoni cotti senza olio", grams: 80 }, { food: "Olio extravergine", grams: 10 }], parts: [{ category: "Carboidrato", food: "Riso rosso integrale cotto", grams: 180, label: "Riso rosso cotto · da circa 60 g secco", image: photo("part-red-rice-v11514") }, { category: "Proteina", food: "Lenticchie cotte", grams: 150, label: "Lenticchie cotte", image: photo("part-lentils-v1141") }, { category: "Contorno", food: "Melanzane", grams: 85, label: "Melanzane grigliate", image: photo("part-eggplant-v8") }, { category: "Contorno", food: "Zucchine", grams: 85, label: "Zucchine grigliate", image: photo("part-zucchini-v8") }, { category: "Contorno", food: "Peperoni cotti senza olio", grams: 80, label: "Peperoni grigliati", image: photo("part-peppers-v11514") }, { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") }], steps: ["Cuoci il riso rosso secondo confezione e scolalo.", "Griglia melanzane, zucchine e peperoni; risciacqua le lenticchie già cotte.", "Unisci tutto e completa con 10 g di olio pesato, origano, basilico e limone."], alternatives: ["Vegano e senza glutine se certificato", "Trasportabile refrigerato", "Componenti modificabili separatamente"] },  {
     id: "matrix-p41-whole-pasta-peas-ricotta", name: "Pasta integrale con piselli, ricotta e zucchine", kicker: "Pranzo vegetariano · matrice P41", course: "Piatto unico", cuisine: "Italiano", image: photo("recipe-p41-pasta-peas-ricotta-v11513"), time: 25,
     ingredients: [{ food: "Pasta integrale secca", grams: 70 }, { food: "Piselli cotti", grams: 120 }, { food: "Ricotta vaccina", grams: 60 }, { food: "Zucchine", grams: 200 }, { food: "Olio extravergine", grams: 5 }],
-    parts: [{ category: "Carboidrato", food: "Pasta integrale secca", grams: 70, label: "Pasta integrale · peso a crudo", image: photo("simple-pasta-white-v5") }, { category: "Proteina", food: "Piselli cotti", grams: 120, label: "Piselli cotti", image: photo("part-peas-v8") }, { category: "Latticino", food: "Ricotta vaccina", grams: 60, label: "Ricotta vaccina", image: photo("part-ricotta-v7") }, { category: "Contorno", food: "Zucchine", grams: 200, label: "Zucchine cotte", image: photo("part-zucchini-v8") }, { category: "Extra", food: "Olio extravergine", grams: 5, label: "Olio EVO · 5 g", image: photo("part-olive-oil-v8") }],
+    parts: [{ category: "Carboidrato", food: "Pasta integrale secca", grams: 70, label: "Pasta integrale · peso a crudo", image: photo("part-pasta-whole-v11618") }, { category: "Proteina", food: "Piselli cotti", grams: 120, label: "Piselli cotti", image: photo("part-peas-v8") }, { category: "Latticino", food: "Ricotta vaccina", grams: 60, label: "Ricotta vaccina", image: photo("part-ricotta-v7") }, { category: "Contorno", food: "Zucchine", grams: 200, label: "Zucchine cotte", image: photo("part-zucchini-v8") }, { category: "Extra", food: "Olio extravergine", grams: 5, label: "Olio EVO · 5 g", image: photo("part-olive-oil-v8") }],
     steps: ["Porta a bollore l'acqua, sala moderatamente e cuoci la pasta per il tempo indicato in confezione.", "Cuoci le zucchine a mezze rondelle in padella antiaderente 8-10 minuti; aggiungi i piselli già cotti negli ultimi 3 minuti.", "Stempera la ricotta con poca acqua di cottura, scola la pasta e manteca tutto fuori dal fuoco; completa con 5 g di olio pesato, basilico e pepe."], alternatives: ["Adatto a casa; per il lavoro preparare la sera prima e conservare refrigerato", "Contiene glutine e latte", "Ogni componente resta sostituibile separatamente"]
   },
   {
@@ -3354,7 +3354,7 @@ const portableRecipes: Recipe[] = [
     kicker: "Semplice, disponibile anche in mensa",
     course: "Primo",
     cuisine: "Italiano",
-    image: photo("simple-pasta-white-v5"),
+    image: photo("part-pasta-semolina-v11618"),
     time: 12,
     ingredients: [
       { food: "Pasta cotta", grams: 220 },
@@ -3740,7 +3740,7 @@ const balancedDinnerRecipes: Recipe[] = [
       { food: "Olio extravergine", grams: 10 },
     ],
     parts: [
-      { category: "Carboidrato", food: "Pasta integrale secca", grams: 80, label: "Pasta integrale · peso a crudo", image: photo("simple-pasta-white-v5") },
+      { category: "Carboidrato", food: "Pasta integrale secca", grams: 80, label: "Pasta integrale · peso a crudo", image: photo("part-pasta-whole-v11618") },
       { category: "Proteina", food: "Lenticchie cotte", grams: 120, label: "Lenticchie cotte", image: photo("part-lentils-v1141") },
       { category: "Contorno", food: "Zucca", grams: 200, label: "Zucca cotta", image: photo("part-pumpkin-v8") },
       { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio extravergine", image: photo("part-olive-oil-v8") },
@@ -4215,14 +4215,14 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       food: "Pasta integrale secca",
       grams: 80,
       label: "Pasta integrale secca",
-      image: photo("simple-pasta-white-v5"),
+      image: photo("part-pasta-whole-v11618"),
     },
     {
       category: "Carboidrato",
       food: "Pasta di semola secca",
       grams: 80,
       label: "Pasta secca",
-      image: photo("simple-pasta-white-v5"),
+      image: photo("part-pasta-semolina-v11618"),
     },
     {
       category: "Carboidrato",
