@@ -50,7 +50,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.6";
+const VERSION = "1.16.7";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -5663,6 +5663,34 @@ export function FoodPlanner() {
     { food: "Olio extravergine", grams: 8 },
   ]);
   const updateBlockedRef = useRef(false);
+  const userInteractionUntilRef = useRef(0);
+  const refreshSnapshotRef = useRef("");
+  refreshSnapshotRef.current = JSON.stringify({
+    calories,
+    goal,
+    completed,
+    completedRecipes,
+    actualWeights,
+    removedIngredients,
+    partSelections,
+    mealView,
+    check,
+    excludedGroups,
+    dislikedFoods,
+    choices,
+    drinks,
+    extras,
+    groceryChecked,
+    groceryAmounts,
+    plannedDrink,
+    dayContext,
+    weekLocked,
+    cuisineChoice,
+    dayIndex,
+    diaryDay,
+    tab,
+    builder,
+  });
   updateBlockedRef.current = Boolean(
     selected ||
       partPicker ||
@@ -5682,11 +5710,11 @@ export function FoodPlanner() {
       if (
         !disposed &&
         updateWaiting &&
-        !updateBlockedRef.current
+        !updateBlockedRef.current &&
+        Date.now() >= userInteractionUntilRef.current
       ) {
-        const nextUrl = new URL(window.location.href);
-        nextUrl.searchParams.set("v", pendingVersion || String(Date.now()));
-        window.location.replace(nextUrl.toString());
+        localStorage.setItem("vivapiatto-v1", refreshSnapshotRef.current);
+        window.location.reload();
       }
     };
     const checkVersion = async () => {
@@ -5708,16 +5736,25 @@ export function FoodPlanner() {
     const onVisibility = () => {
       if (document.visibilityState === "visible") checkVersion();
     };
+    const markInteraction = () => {
+      userInteractionUntilRef.current = Date.now() + 5000;
+    };
     checkVersion();
     const versionTimer = window.setInterval(checkVersion, 5000);
     const safeTimer = window.setInterval(applyWhenSafe, 500);
     window.addEventListener("focus", checkVersion);
+    window.addEventListener("scroll", markInteraction, { passive: true });
+    window.addEventListener("pointerdown", markInteraction, { passive: true });
+    window.addEventListener("touchstart", markInteraction, { passive: true });
     document.addEventListener("visibilitychange", onVisibility);
     return () => {
       disposed = true;
       window.clearInterval(versionTimer);
       window.clearInterval(safeTimer);
       window.removeEventListener("focus", checkVersion);
+      window.removeEventListener("scroll", markInteraction);
+      window.removeEventListener("pointerdown", markInteraction);
+      window.removeEventListener("touchstart", markInteraction);
       document.removeEventListener("visibilitychange", onVisibility);
     };
   }, []);
@@ -5734,6 +5771,7 @@ export function FoodPlanner() {
         setActualWeights(s.actualWeights || {});
         setRemovedIngredients(s.removedIngredients || {});
         setPartSelections(s.partSelections || {});
+        setMealView(s.mealView || {});
         setCheck(s.check || check);
         setExcludedGroups(s.excludedGroups || []);
         setDislikedFoods(s.dislikedFoods || []);
@@ -5766,6 +5804,7 @@ export function FoodPlanner() {
         actualWeights,
         removedIngredients,
         partSelections,
+        mealView,
         check,
         excludedGroups,
         dislikedFoods,
@@ -5792,6 +5831,7 @@ export function FoodPlanner() {
     actualWeights,
     removedIngredients,
     partSelections,
+    mealView,
     check,
     excludedGroups,
     dislikedFoods,
