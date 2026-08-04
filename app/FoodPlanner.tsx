@@ -50,7 +50,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.3";
+const VERSION = "1.16.4";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -5043,6 +5043,28 @@ const recommendedPartOptions = (part: MealPart, key: string) => {
   const options = ["Frutta", "Contorno"].includes(part.category)
     ? seasonalFirst(mealPartOptions[part.category])
     : mealPartOptions[part.category];
+  const breakfastMilkAlternatives = [
+    "Latte parzialmente scremato",
+    "Bevanda di soia senza zucchero",
+    "Bevanda d'avena senza zucchero",
+  ];
+  const recipeFlours = [
+    "Farina d'avena",
+    "Farina di frumento integrale",
+    "Farina di grano saraceno",
+  ];
+  if (
+    slot === 0 &&
+    part.category === "Latticino" &&
+    breakfastMilkAlternatives.includes(part.food)
+  )
+    return breakfastMilkAlternatives
+      .map((food) => options.find((option) => option.food === food))
+      .filter((option): option is MealPart => Boolean(option));
+  if (part.category === "Carboidrato" && recipeFlours.includes(part.food))
+    return recipeFlours
+      .map((food) => options.find((option) => option.food === food))
+      .filter((option): option is MealPart => Boolean(option));
   if (part.category === "Carboidrato" && part.food.startsWith("Pane"))
     return options.filter((option) => option.food.startsWith("Pane"));
   if (part.category === "Proteina" && part.food.startsWith("Uova"))
@@ -6308,6 +6330,15 @@ export function FoodPlanner() {
     );
     return ranked[offset % Math.min(5, ranked.length)];
   };
+  const sharesFruit = (left: Recipe, right: Recipe) => {
+    const fruitFoods = new Set(mealPartOptions.Frutta.map((part) => part.food));
+    const leftFruit = new Set(
+      left.ingredients
+        .filter((ingredient) => fruitFoods.has(ingredient.food))
+        .map((ingredient) => ingredient.food),
+    );
+    return right.ingredients.some((ingredient) => leftFruit.has(ingredient.food));
+  };
   const applyCuisine = () => {
     const profileSeed =
       (calories >= 2400 ? 1 : calories >= 2000 ? 2 : 0) +
@@ -6371,7 +6402,14 @@ export function FoodPlanner() {
         const offset = profileSeed + day;
         const breakfast = closestForSlot(breakfasts, 0, profileTarget * shares[0], offset);
         const morningSnack = closestForSlot(snacks, 1, profileTarget * shares[1], offset);
-        const afternoonPool = snacks.filter((recipe) => recipe.id !== morningSnack.id);
+        const differentFruitSnacks = snacks.filter(
+          (recipe) =>
+            recipe.id !== morningSnack.id &&
+            !sharesFruit(morningSnack, recipe),
+        );
+        const afternoonPool = differentFruitSnacks.length
+          ? differentFruitSnacks
+          : snacks.filter((recipe) => recipe.id !== morningSnack.id);
         const afternoonSnack = closestForSlot(afternoonPool, 3, profileTarget * shares[3], offset + 1);
         const lunch = chooseMain(
           lunches,
