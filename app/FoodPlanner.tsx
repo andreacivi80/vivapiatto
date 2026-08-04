@@ -70,7 +70,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.25";
+const VERSION = "1.16.26";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -5596,6 +5596,22 @@ const occasionalRecipes: Recipe[] = [
       "Registra la quantità realmente mangiata; il valore deriva dalla ricetta completa.",
     ],
     alternatives: ["Carbonara", "Gricia", "Porzione più piccola"],
+  },
+  {
+    id: "occasional-cheesecake",
+    name: "Cheesecake ai frutti rossi",
+    kicker: "Dolce occasionale con porzione e valori visibili",
+    course: "Dolce",
+    cuisine: "Internazionale",
+    image: photo("cheat-cheesecake-v11626"),
+    time: 5,
+    ingredients: [{ food: "Cheesecake", grams: 120 }],
+    steps: [
+      "Taglia una fetta regolare e pesala, oppure usa come riferimento una porzione da 120 g.",
+      "Servila senza aggiungere automaticamente panna o altre guarnizioni.",
+      "Registra a parte eventuali salse o una porzione più grande.",
+    ],
+    alternatives: ["Tiramisù", "Panna cotta", "Gelato personalizzato"],
   },
 ];
 const verifiedWorldRecipeExpansion: Recipe[] = [
