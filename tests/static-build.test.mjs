@@ -240,7 +240,7 @@ test("v1.16.17 keeps swap navigation visible and exposes occasional choices", as
   assert.doesNotMatch(app, /},,/);
   assert.match(app, /const GELATO_FLAVORS/);
   assert.match(app, /chooseConfiguredGelato/);
-  assert.match(app, /2 palline/);
-  assert.match(app, /3 palline/);
+  assert.match(app, /gelatoScoops === count/);
+  assert.match(app, /Gusto pallina/);
   assert.match(css, /\.gelato-builder/);
 });
