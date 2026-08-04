@@ -31,6 +31,26 @@ type Recipe = {
   sourceUrl?: string;
 };
 type Day = { label: string; mood: string; recipes: string[] };
+
+const RecipeVisual = ({ recipe }: { recipe: Recipe }) => {
+  const componentPhotos = recipe.id.startsWith("catalog-")
+    ? (recipe.parts || []).filter((part) => part.grams > 0).slice(0, 4)
+    : [];
+  if (componentPhotos.length < 2) {
+    return <img className="recipe-visual-single" src={recipe.image} alt={recipe.name} />;
+  }
+  return (
+    <div className="recipe-visual-parts" role="img" aria-label={`Componenti di ${recipe.name}`}>
+      {componentPhotos.map((part, index) => (
+        <img
+          key={`${part.food}-${index}`}
+          src={part.image}
+          alt={part.label || part.food}
+        />
+      ))}
+    </div>
+  );
+};
 type Tab = "today" | "week" | "library" | "builder" | "progress";
 type LogItem = {
   label: string;
@@ -50,7 +70,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.9";
+const VERSION = "1.16.10";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -7446,7 +7466,7 @@ export function FoodPlanner() {
                         setSelected(r);
                       }}
                     >
-                      {(!r.parts || fullDishView) && <img src={r.image} alt={r.name} />}
+                      {(!r.parts || fullDishView) && <RecipeVisual recipe={r} />}
                       <div className="meal-body">
                         <span>{SLOT_LABELS[i]}</span>
                         <h3>
@@ -7982,7 +8002,7 @@ export function FoodPlanner() {
                       } else chooseRecipe(r);
                     }}
                   >
-                    <img src={r.image} alt={r.name} />
+                    <RecipeVisual recipe={r} />
                     <div>
                       <span>
                         {r.course || recipeCuisine(r)} · {round(m.kcal)} kcal ·{" "}
@@ -8365,7 +8385,7 @@ export function FoodPlanner() {
                           className="complete-meal-select"
                           onClick={() => chooseCompleteMeal(recipe)}
                         >
-                          <img src={recipe.image} alt={recipe.name} />
+                          <RecipeVisual recipe={recipe} />
                           <span>{recipe.name}</span>
                           <b>{round(macros.kcal)} kcal · {recipe.time} min</b>
                           <strong>Scegli questo piatto</strong>
@@ -8463,7 +8483,7 @@ export function FoodPlanner() {
             <button className="close" onClick={() => setSelected(null)}>
               ×
             </button>
-            <img src={selected.image} alt={selected.name} />
+            <RecipeVisual recipe={selected} />
             <div className="recipe-content">
               <span className="eyebrow">DA ZERO · {selected.time} MIN</span>
               <h2>{selected.name}</h2>
