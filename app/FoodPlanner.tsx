@@ -70,7 +70,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.21";
+const VERSION = "1.16.22";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -1411,7 +1411,7 @@ const calc = (
 ): Macro & { fiber: number; weight: number } =>
   ingredients.reduce(
     (sum, item) => {
-      const food = foods[item.food];
+      const food = foods[item.food] ?? occasionalFoods[item.food];
       const grams = item.grams * scale;
       const f = grams / 100;
       if (!food) return { ...sum, weight: sum.weight + grams };
@@ -5495,6 +5495,72 @@ const occasionalRecipes: Recipe[] = [
       "Pollo alla piastra al posto del manzo",
       "Pane 50 g per una porzione più piccola",
     ],
+  },
+  {
+    id: "occasional-carbonara",
+    name: "Spaghetti alla carbonara",
+    kicker: "Sgarro salato conteggiato",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    image: photo("cheat-carbonara-v11619"),
+    time: 25,
+    ingredients: [{ food: "Pasta alla carbonara", grams: 350 }],
+    steps: [
+      "Cuoci gli spaghetti al dente e conserva poca acqua di cottura.",
+      "Rosola il guanciale senza olio. Mescola a parte tuorli, pecorino e pepe.",
+      "Spegni il fuoco, unisci pasta, crema d'uovo e poca acqua; manteca senza far rapprendere l'uovo.",
+      "Registra la quantità realmente mangiata: i valori derivano dalla ricetta completa.",
+    ],
+    alternatives: ["Porzione più piccola", "Amatriciana", "Pasta al forno"],
+  },
+  {
+    id: "occasional-gelato",
+    name: "Gelato artigianale · 2 palline",
+    kicker: "Dolce occasionale conteggiato",
+    course: "Dolce",
+    cuisine: "Italiano",
+    image: photo("cheat-gelato-v11619"),
+    time: 2,
+    ingredients: [
+      { food: "Gelato fiordilatte", grams: 60 },
+      { food: "Gelato al cioccolato", grams: 60 },
+    ],
+    steps: [
+      "Scegli due gusti e chiedi una coppetta o un cono.",
+      "Una pallina è stimata a 60 g; correggi il peso se conosci la quantità reale.",
+      "Registra separatamente il cono e le guarnizioni.",
+    ],
+    alternatives: ["Tre palline", "Sorbetto alla frutta", "Yogurt gelato"],
+  },
+  {
+    id: "occasional-tiramisu",
+    name: "Tiramisù",
+    kicker: "Porzione occasionale chiara",
+    course: "Dolce",
+    cuisine: "Italiano",
+    image: photo("cheat-tiramisu-v11619"),
+    time: 2,
+    ingredients: [{ food: "Tiramisu", grams: 120 }],
+    steps: [
+      "Pesa o stima una fetta da circa 120 g.",
+      "Registrala nel pasto o negli extra senza trasformare il pasto successivo in una punizione.",
+    ],
+    alternatives: ["Panna cotta", "Cheesecake", "Cannolo siciliano"],
+  },
+  {
+    id: "occasional-fries",
+    name: "Patatine fritte",
+    kicker: "Porzione occasionale conteggiata",
+    course: "Contorno",
+    cuisine: "Internazionale",
+    image: photo("cheat-fries-v11619"),
+    time: 15,
+    ingredients: [{ food: "Patatine fritte", grams: 120 }],
+    steps: [
+      "Pesa la porzione pronta senza includere il contenitore.",
+      "Registra separatamente salse, hamburger e bevande.",
+    ],
+    alternatives: ["Crocchette di patate", "Patatine chips", "Patate al forno"],
   },
 ];
 const verifiedWorldRecipeExpansion: Recipe[] = [
