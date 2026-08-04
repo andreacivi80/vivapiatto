@@ -70,7 +70,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.29";
+const VERSION = "1.16.30";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -5661,6 +5661,23 @@ const occasionalRecipes: Recipe[] = [
       "Taglia e registra la porzione realmente mangiata.",
     ],
     alternatives: ["Cannolo siciliano", "Cheesecake ai frutti rossi", "Panna cotta ai frutti rossi"],
+  },
+  {
+    id: "occasional-arancino",
+    name: "Arancino siciliano al ragù",
+    kicker: "Piatto occasionale con porzione e valori visibili",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    image: photo("cheat-arancino-v11630"),
+    time: 35,
+    ingredients: [{ food: "Arancino di riso", grams: 180 }],
+    steps: [
+      "Cuoci il riso e lascialo raffreddare; prepara un ragù denso con carne, pomodoro e piselli.",
+      "Forma una conca di riso, inserisci ragù e un piccolo cubetto di mozzarella, poi richiudi bene.",
+      "Passa l'arancino in pastella e pangrattato e friggilo fino a doratura uniforme.",
+      "Scola bene e registra il peso della porzione realmente mangiata.",
+    ],
+    alternatives: ["Supplì al telefono", "Panzerotto fritto", "Pizza margherita"],
   },
 ];
 const verifiedWorldRecipeExpansion: Recipe[] = [
