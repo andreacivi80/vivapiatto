@@ -2688,7 +2688,3 @@ button {
 .library-section.swapping .library-tools {
   top: 100px;
 }
-img[alt*="Pasta integrale"],
-img[alt*="pasta integrale"] {
-  filter: sepia(0.34) saturate(1.18) brightness(0.84) contrast(1.06);
-}
