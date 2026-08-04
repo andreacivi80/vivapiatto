@@ -70,7 +70,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.14";
+const VERSION = "1.16.15";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -6341,8 +6341,8 @@ export function FoodPlanner() {
       return next;
     });
   };
-  const targetAdditionsFor = (slot: number): RecipeIngredient[] =>
-      calories >= 3000
+  const targetAdditionsFor = (slot: number, dailyTarget = calories): RecipeIngredient[] =>
+      dailyTarget >= 3000
         ? slot === 0
           ? [{ food: "Yogurt greco 2%", grams: 125 }, { food: "Noci", grams: 35 }]
           : slot === 1
@@ -6352,7 +6352,7 @@ export function FoodPlanner() {
               : slot === 3
                 ? [{ food: "Yogurt greco 2%", grams: 125 }, { food: "Mela", grams: 150 }]
                 : [{ food: "Pane integrale", grams: 100 }, { food: "Olio extravergine", grams: 10 }]
-        : calories >= 2800
+        : dailyTarget >= 2800
           ? slot === 0
             ? [{ food: "Yogurt greco 2%", grams: 125 }, { food: "Noci", grams: 20 }, { food: "Mela", grams: 150 }]
             : slot === 1
@@ -6362,7 +6362,7 @@ export function FoodPlanner() {
                 : slot === 3
                   ? [{ food: "Yogurt greco 2%", grams: 125 }, { food: "Cracker integrali", grams: 25 }]
                   : [{ food: "Pane integrale", grams: 50 }, { food: "Olio extravergine", grams: 5 }]
-          : calories >= 2400
+          : dailyTarget >= 2400
         ? slot === 0
           ? [
               {
@@ -6399,7 +6399,7 @@ export function FoodPlanner() {
                     },
                     { food: "Olio extravergine", grams: 5 },
                   ]
-        : calories >= 2200
+        : dailyTarget >= 2200
           ? slot === 0
             ? [{ food: "Yogurt greco 2%", grams: 125 }]
             : slot === 1
@@ -6409,7 +6409,7 @@ export function FoodPlanner() {
                 : slot === 3
                   ? [{ food: "Yogurt greco 2%", grams: 125 }]
                   : [{ food: "Pane integrale", grams: 50 }]
-          : calories >= 2000
+          : dailyTarget >= 2000
           ? slot === 0
             ? [
                 {
@@ -6476,10 +6476,12 @@ export function FoodPlanner() {
 
   const activeMealParts = (key: string, recipe: Recipe): MealPart[] => {
     if (partSelections[key]) return partSelections[key].map(normalizeMealPart);
-    const slot = Number(key.split("-")[1]);
+    const [dayText, slotText] = key.split("-");
+    const day = Number(dayText);
+    const slot = Number(slotText);
     const sourceParts = recipe.parts || recipe.ingredients.map(additionAsPart);
     const merged = sourceParts.map((part) => ({ ...part }));
-    targetAdditionsFor(slot).forEach((item) => {
+    targetAdditionsFor(slot, targetForDay(day)).forEach((item) => {
       const existing = merged.find((part) => part.food === item.food);
       if (existing) existing.grams += item.grams;
       else merged.push(additionAsPart(item));
@@ -6497,11 +6499,14 @@ export function FoodPlanner() {
     const slot = Number(slotText);
     const target = targetForDay(day) * mealCalorieShares[slot];
     const current = calc(items).kcal;
-    if (!current || Math.abs(current - target) <= target * 0.08) return items;
+    if (!current || Math.abs(current - target) <= target * 0.06) return items;
     const adjustableFoods = new Set(
-      [...mealPartOptions.Carboidrato, ...mealPartOptions.Extra].map(
-        (part) => part.food,
-      ),
+      [
+        ...mealPartOptions.Carboidrato,
+        ...mealPartOptions.Proteina,
+        ...mealPartOptions.Latticino,
+        ...mealPartOptions.Extra,
+      ].map((part) => part.food),
     );
     const adjustable = items.filter((item) => adjustableFoods.has(item.food));
     const fixed = items.filter((item) => !adjustableFoods.has(item.food));
@@ -6509,30 +6514,47 @@ export function FoodPlanner() {
     const fixedKcal = calc(fixed).kcal;
     if (!adjustableKcal || target <= fixedKcal) return items;
     const factor = Math.max(
-      0.72,
-      Math.min(1.35, (target - fixedKcal) / adjustableKcal),
+      0.55,
+      Math.min(1.5, (target - fixedKcal) / adjustableKcal),
     );
     const practicalGrams = (item: RecipeIngredient) => {
       const raw = item.grams * factor;
       const food = item.food.toLowerCase();
-      const limits =
-        food.includes("pasta") || food.includes("riso")
-          ? { min: 50, max: 100, step: 10 }
-          : food.includes("gnocchi")
-            ? { min: 120, max: 200, step: 10 }
-            : food.includes("patate")
-              ? { min: 150, max: 300, step: 25 }
-              : food.includes("pane")
-                ? { min: 30, max: 120, step: 10 }
-                : food.includes("olio") || food.includes("burro")
-                  ? { min: 5, max: 15, step: 5 }
-                  : /noci|mandorle|pistacchi|arachidi|nocciole|semi/.test(food)
-                    ? { min: 5, max: 30, step: 5 }
-                    : { min: 10, max: 100, step: 5 };
-      return Math.max(
-        limits.min,
-        Math.min(limits.max, Math.round(raw / limits.step) * limits.step),
-      );
+      const roundWithin = (min: number, max: number, step: number) =>
+        Math.max(min, Math.min(max, Math.round(raw / step) * step));
+      const cookedGrain =
+        /riso|pasta|farro|quinoa|orzo|bulgur|cous cous|grano saraceno/.test(food) &&
+        /cott/.test(food);
+      if (cookedGrain) return roundWithin(120, 250, 10);
+      if (/pasta|riso/.test(food)) return roundWithin(50, 100, 10);
+      if (food.includes("gnocchi")) return roundWithin(120, 220, 10);
+      if (food.includes("patate")) return roundWithin(150, 300, 25);
+      if (/fette biscottate|biscott|cracker|grissini/.test(food))
+        return roundWithin(20, 60, 5);
+      if (food.includes("pane")) return roundWithin(30, 120, 10);
+      if (/confettura|miele|crema 100%|nutella/.test(food))
+        return roundWithin(10, 30, 5);
+      if (/olio|burro/.test(food)) return roundWithin(5, 15, 5);
+      if (/noci|mandorle|pistacchi|arachidi|nocciole|anacardi|semi/.test(food))
+        return roundWithin(10, 30, 5);
+      if (/latte|bevanda di soia|bevanda d.avena/.test(food))
+        return roundWithin(150, 300, 50);
+      if (/yogurt|skyr|kefir|budino proteico/.test(food)) {
+        const packs = [125, 150, 170, 200, 250];
+        return packs.reduce((best, value) =>
+          Math.abs(value - raw) < Math.abs(best - raw) ? value : best,
+        );
+      }
+      if (/uovo|uova|albume/.test(food)) return roundWithin(50, 150, 50);
+      if (/ceci|lenticchie|fagioli|piselli|fave|edamame|lupini|tofu|tempeh|burger vegetale/.test(food))
+        return roundWithin(100, 200, 25);
+      if (/bresaola|prosciutto|fesa|speck|salame|mortadella/.test(food))
+        return roundWithin(40, 100, 10);
+      if (/pollo|tacchino|coniglio|manzo|vitello|maiale|lonza|cavallo|bistecca|salmone|tonno|merluzzo|orata|branzino|sogliola|rombo|trota|seppia|gamber/.test(food))
+        return roundWithin(80, 180, 10);
+      if (/ricotta|mozzarella|feta|crescenza|primo sale|scamorza|provolone|grana|parmigiano/.test(food))
+        return roundWithin(50, 150, 25);
+      return roundWithin(10, 200, 5);
     };
     return items.map((item) =>
       adjustableFoods.has(item.food)
@@ -6541,8 +6563,10 @@ export function FoodPlanner() {
     );
   };
   const plannedIngredients = (key: string, recipe: Recipe) => {
-    const slot = Number(key.split("-")[1]);
-    const targetAdditions = targetAdditionsFor(slot);
+    const [dayText, slotText] = key.split("-");
+    const day = Number(dayText);
+    const slot = Number(slotText);
+    const targetAdditions = targetAdditionsFor(slot, targetForDay(day));
     if (!recipe.parts && !partSelections[key])
       return calibratePlannedIngredients(
         key,
