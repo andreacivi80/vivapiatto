@@ -70,7 +70,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.23";
+const VERSION = "1.16.24";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -6007,6 +6007,7 @@ export function FoodPlanner() {
   const [extraName, setExtraName] = useState("");
   const [extraGrams, setExtraGrams] = useState("50");
   const [gelatoScoops, setGelatoScoops] = useState<2 | 3>(2);
+  const [gelatoComposerOpen, setGelatoComposerOpen] = useState(false);
   const [gelatoFlavors, setGelatoFlavors] = useState<string[]>([
     "Gelato fiordilatte",
     "Gelato al cioccolato",
@@ -6058,6 +6059,7 @@ export function FoodPlanner() {
     drinks,
     extras,
     gelatoScoops,
+    gelatoComposerOpen,
     gelatoFlavors,
     groceryChecked,
     groceryAmounts,
@@ -6873,6 +6875,7 @@ export function FoodPlanner() {
     setRemovedIngredients((current) => { const next = { ...current }; delete next[key]; return next; });
     setReplanNote(`Gelato inserito: ${gelatoScoops} palline. Il totale usa 60 g per gusto e resta modificabile.`);
     replanFollowingDays(changedDay);
+    setGelatoComposerOpen(false);
     setPartPicker(null);
   };
   const chooseCompleteMeal = (recipe: Recipe) => {
@@ -7997,6 +8000,22 @@ export function FoodPlanner() {
                               }`
                             : r.name}
                         </h3>
+                        {!fullDishView && (
+                          <div className="dish-view-actions" onClick={(e) => e.stopPropagation()}>
+                            <button
+                              onClick={() => {
+                                setSwapReturnTab("today");
+                                setSwapTarget({ day: dayIndex, slot: i });
+                                setCuisineFilter(recipeCuisine(r));
+                                setLibraryQuery("");
+                                setTab("library");
+                                scrollTo({ top: 0, behavior: "smooth" });
+                              }}
+                            >
+                              ↻ Cambia piatto
+                            </button>
+                          </div>
+                        )}
                         {r.parts && r.kind !== "combination" && fullDishView ? (
                           <div className="dish-view-actions" onClick={(e) => e.stopPropagation()}>
                             <button onClick={() => { setSelectedMealKey(key); setSelected(r); }}>ⓘ Ricetta e preparazione</button>
@@ -8987,12 +9006,19 @@ export function FoodPlanner() {
                           <article key={recipe.id}>
                             <button
                               className="complete-meal-select"
-                              onClick={() => chooseCompleteMeal(recipe)}
+                              onClick={() => {
+                                if (recipe.id === "occasional-gelato") {
+                                  setGelatoComposerOpen(true);
+                                  return;
+                                }
+                                setGelatoComposerOpen(false);
+                                chooseCompleteMeal(recipe);
+                              }}
                             >
                               <RecipeVisual recipe={recipe} />
                               <span>{recipe.name}</span>
                               <b>{round(macros.kcal)} kcal · {recipe.time} min</b>
-                              <strong>Scegli questo sgarro</strong>
+                              <strong>{recipe.id === "occasional-gelato" ? "Componi il gelato" : "Scegli questo sgarro"}</strong>
                             </button>
                             <button
                               className="complete-meal-info"
@@ -9009,9 +9035,12 @@ export function FoodPlanner() {
                         );
                       })}
                   </div>
-                  {[1, 3].includes(Number(partPicker.key.split("-")[1])) && (
+                  {gelatoComposerOpen && [1, 3].includes(Number(partPicker.key.split("-")[1])) && (
                     <div className="gelato-builder">
-                      <b>Componi il gelato</b>
+                      <div className="gelato-builder-title">
+                        <b>Componi il gelato</b>
+                        <button type="button" aria-label="Chiudi composizione gelato" onClick={() => setGelatoComposerOpen(false)}>×</button>
+                      </div>
                       <div className="gelato-scoops">
                         {[2, 3].map((count) => (
                           <button
