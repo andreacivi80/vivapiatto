@@ -2835,3 +2835,16 @@ button {
   color: var(--muted);
   font-size: 7px;
 }
+
+
+/* v1.16.31: le fotografie degli alimenti e dei componenti restano interamente visibili. */
+.meal-card .meal-part img,
+.part-choice-grid img,
+.swap-food-grid img,
+.recipe-visual-parts img,
+.week-part-strip img {
+  object-fit: contain !important;
+  object-position: center center !important;
+  background: #f7f3e9;
+  padding: 2px;
+}
