@@ -93,6 +93,9 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /week-kcal-summary/);
   assert.match(app, /Rotazione confermata/);
   assert.match(app, /simpleBreakfasts\.forEach\(\(recipe\) => \(recipe\.kind = "combination"\)\)/);
+  const realRecipeIndex = app.slice(app.indexOf("const rawRecipes"), app.indexOf("const pantryPartByFood"));
+  assert.match(realRecipeIndex, /catalogMains/);
+  assert.doesNotMatch(realRecipeIndex, /generatedRecipes|snackRecipes/);
   assert.match(app, /version\.json/);
   assert.match(app, /part-grissini-v112/);
   assert.match(app, /matrix-c21-porridge-banana-peanut/);
