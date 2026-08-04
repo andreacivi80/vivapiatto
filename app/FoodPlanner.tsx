@@ -5495,10 +5495,9 @@ const rawRecipes: Recipe[] = [
   ...snackRecipes,
 ];
 const pantryPartByFood = new Map(
-  (Object.values(mealPartOptions).flat() as MealPart[]).map((part) => [
-    part.food,
-    part,
-  ]),
+  (Object.values(mealPartOptions).flat() as MealPart[]).map(
+    (part) => [part.food, part] as const,
+  ),
 );
 const allRecipes: Recipe[] = rawRecipes.map((recipe) => {
   if (recipe.parts?.length) return recipe;
