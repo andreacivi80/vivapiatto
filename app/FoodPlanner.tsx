@@ -70,7 +70,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.11";
+const VERSION = "1.16.12";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -8189,6 +8189,22 @@ export function FoodPlanner() {
         )}
         {tab === "library" && (
           <section>
+            {swapTarget && (
+              <button
+                type="button"
+                className="swap-back"
+                aria-label="Torna indietro senza cambiare piatto"
+                onClick={() => {
+                  setSwapTarget(null);
+                  setLibraryQuery("");
+                  setTab(swapReturnTab);
+                  scrollTo({ top: 0, behavior: "smooth" });
+                }}
+              >
+                <span aria-hidden="true">←</span>
+                Torna indietro
+              </button>
+            )}
             <span className="eyebrow">300+ RICETTE GUIDATE</span>
             <h1 className="page-title">
               {swapTarget ? "Scegli il sostituto" : "Scegli cosa cucinare"}
