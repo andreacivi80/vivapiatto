@@ -70,7 +70,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.12";
+const VERSION = "1.16.13";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -5980,6 +5980,7 @@ export function FoodPlanner() {
   updateBlockedRef.current = Boolean(
     selected ||
       partPicker ||
+      swapTarget ||
       preferencesOpen ||
       checkinOpen ||
       shoppingOpen ||
@@ -6000,7 +6001,10 @@ export function FoodPlanner() {
         Date.now() >= userInteractionUntilRef.current
       ) {
         localStorage.setItem("vivapiatto-v1", refreshSnapshotRef.current);
-        window.location.reload();
+        sessionStorage.setItem("vivapiatto-release-target", pendingVersion);
+        const refreshUrl = new URL(window.location.href);
+        refreshUrl.searchParams.set("_release", `${pendingVersion}-${Date.now()}`);
+        window.location.replace(refreshUrl.toString());
       }
     };
     const checkVersion = async () => {
@@ -6043,6 +6047,18 @@ export function FoodPlanner() {
       window.removeEventListener("touchstart", markInteraction);
       document.removeEventListener("visibilitychange", onVisibility);
     };
+  }, []);
+
+  useEffect(() => {
+    const currentUrl = new URL(window.location.href);
+    if (currentUrl.searchParams.has("_release")) {
+      currentUrl.searchParams.delete("_release");
+      const cleanUrl = `${currentUrl.pathname}${currentUrl.search}${currentUrl.hash}`;
+      window.history.replaceState(window.history.state, "", cleanUrl);
+    }
+    if (sessionStorage.getItem("vivapiatto-release-target") === VERSION) {
+      sessionStorage.removeItem("vivapiatto-release-target");
+    }
   }, []);
 
   useEffect(() => {
