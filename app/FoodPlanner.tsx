@@ -50,7 +50,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.7";
+const VERSION = "1.16.8";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -5477,7 +5477,7 @@ const occasionalRecipes: Recipe[] = [
     ],
   },
 ];
-const allRecipes = [
+const rawRecipes: Recipe[] = [
   ...simpleBreakfasts,
   ...matrixBreakfasts,
   ...catalogBreakfasts,
@@ -5494,6 +5494,30 @@ const allRecipes = [
   ...generatedRecipes,
   ...snackRecipes,
 ];
+const pantryPartByFood = new Map(
+  (Object.values(mealPartOptions).flat() as MealPart[]).map((part) => [
+    part.food,
+    part,
+  ]),
+);
+const allRecipes: Recipe[] = rawRecipes.map((recipe) => {
+  if (recipe.parts?.length) return recipe;
+  const inferredParts = recipe.ingredients
+    .map((ingredient) => {
+      const known = pantryPartByFood.get(ingredient.food);
+      return known
+        ? {
+            ...known,
+            grams: ingredient.grams,
+            label: ingredient.label || known.label || ingredient.food,
+          }
+        : null;
+    })
+    .filter((part): part is MealPart => Boolean(part));
+  return inferredParts.length >= 2
+    ? { ...recipe, parts: inferredParts }
+    : recipe;
+});
 const recipeMap = Object.fromEntries(allRecipes.map((r) => [r.id, r]));
 const days: Day[] = [
   {
@@ -5938,10 +5962,15 @@ export function FoodPlanner() {
           list.findIndex((candidate) => candidate.id === recipe.id) === index,
       );
   const compatibleWithPlace = (_r: Recipe) => true;
+  const isSubstantialRecipe = (recipe: Recipe) =>
+    recipe.steps.length >= 2 &&
+    recipe.ingredients.length >= 2 &&
+    (recipe.time >= 5 || recipe.ingredients.length >= 3);
   const filteredRecipes = allRecipes
     .filter(
       (r) =>
         r.kind !== "combination" &&
+        isSubstantialRecipe(r) &&
         r.ingredients.every((item) => Boolean(foods[item.food])) &&
         isAllowed(r) &&
         compatibleWithSlot(r) &&
