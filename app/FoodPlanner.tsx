@@ -48,7 +48,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.1";
+const VERSION = "1.16.2";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -5377,6 +5377,7 @@ export function FoodPlanner() {
     index: number;
     part: MealPart;
     role: MealPart["category"];
+    adding?: boolean;
   } | null>(null);
   const [preferencesOpen, setPreferencesOpen] = useState(false);
   const [checkinOpen, setCheckinOpen] = useState(false);
@@ -6322,12 +6323,16 @@ export function FoodPlanner() {
     };
     const delta =
       calc([{ food: nextPart.food, grams: nextPart.grams }]).kcal -
-      calc([{ food: previous.food, grams: previous.grams }]).kcal;
+      (previous
+        ? calc([{ food: previous.food, grams: previous.grams }]).kcal
+        : 0);
     setPartSelections((v) => ({
       ...v,
-      [partPicker.key]: activeParts.map((x, index) =>
-        index === partPicker.index ? nextPart : x,
-      ),
+      [partPicker.key]: previous
+        ? activeParts.map((x, index) =>
+            index === partPicker.index ? nextPart : x,
+          )
+        : [...activeParts, nextPart],
     }));
     const nextSlot = slot === 0 ? 1 : slot <= 2 ? 3 : null;
     if (nextSlot !== null && !completed[`${day}-${nextSlot}`]) {
@@ -6337,7 +6342,9 @@ export function FoodPlanner() {
         setChoices((v) => ({ ...v, [`${day}-${nextSlot}`]: snackId }));
     }
     setReplanNote(
-      nextSlot === null
+      partPicker.adding
+        ? `Aggiunto: ${nextPart.label || nextPart.food} ${nextPart.grams} g. Totali aggiornati.`
+        : nextSlot === null
         ? `Parte cambiata: ${nextPart.label || nextPart.food} ${nextPart.grams} g.`
         : `Parte cambiata e ${SLOT_LABELS[nextSlot].toLowerCase()} ricalibrato.`,
     );
@@ -6375,6 +6382,20 @@ export function FoodPlanner() {
           : part,
       ),
     }));
+  };
+  const startAddingMealPart = (key: string, recipe: Recipe, slot: number) => {
+    const role: MealPart["category"] =
+      slot === 0 || slot === 1 || slot === 3 ? "Frutta" : "Contorno";
+    const seed = seasonalFirst(mealPartOptions[role])[0] || mealPartOptions[role][0];
+    if (!seed) return;
+    setMealView((current) => ({ ...current, [key]: "parts" }));
+    setPartPicker({
+      key,
+      index: activeMealParts(key, recipe).length,
+      part: { ...seed },
+      role,
+      adding: true,
+    });
   };
   useEffect(() => {
     if (!profileHydrated) return;
@@ -7064,25 +7085,19 @@ export function FoodPlanner() {
                               </div>
                             )}
                             <div className="meal-parts">
-                              {activeParts.map((part, partIndex) => (
+                              {activeParts
+                                .map((part, partIndex) => ({ part, partIndex }))
+                                .filter(({ part }) => part.grams > 0)
+                                .map(({ part, partIndex }) => (
                                 <div
                                   className="meal-part"
                                   key={`${part.category}-${partIndex}`}
                                   onClick={(e) => e.stopPropagation()}
                                 >
-                                  {part.grams > 0 ? (
-                                    <img
-                                      src={part.image}
-                                      alt={part.label || part.food}
-                                    />
-                                  ) : (
-                                    <div
-                                      className="part-empty"
-                                      aria-label="Elemento rimosso"
-                                    >
-                                      −
-                                    </div>
-                                  )}
+                                  <img
+                                    src={part.image}
+                                    alt={part.label || part.food}
+                                  />
                                   <button
                                     className="part-change"
                                     aria-label={`Cambia ${part.category}`}
@@ -7181,6 +7196,15 @@ export function FoodPlanner() {
                             )}
                           </div>
                         ) : null}
+                        <button
+                          className="add-meal-part"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            startAddingMealPart(key, r, i);
+                          }}
+                        >
+                          ＋ Aggiungi un elemento
+                        </button>
                         <p>
                           {caution
                             ? "Sconsigliato oggi: possibile alimento fermentabile"
@@ -7405,9 +7429,9 @@ export function FoodPlanner() {
                   {getDayIds(i).map((id, slot) => {
                     const r = recipeMap[id];
                     const key = `${i}-${slot}`;
-                    const weekParts = activeMealParts(key, r).filter(
-                      (part) => part.grams > 0,
-                    );
+                    const weekParts = activeMealParts(key, r)
+                      .map((part, originalIndex) => ({ ...part, originalIndex }))
+                      .filter((part) => part.grams > 0);
                     const weekIngredients = plannedIngredients(key, r);
                     return (
                       <div className="week-meal-row" key={key}>
@@ -7457,9 +7481,9 @@ export function FoodPlanner() {
                                 onClick={() =>
                                   setPartPicker({
                                     key,
-                                    index: partIndex,
+                                    index: part.originalIndex,
                                     part,
-                                        role: part.category,
+                                    role: part.category,
                                   })
                                 }
                               >
@@ -7471,7 +7495,23 @@ export function FoodPlanner() {
                                 <b>{part.grams} g</b>
                               </button>
                             ))}
+                            <button
+                              className="week-part-add"
+                              aria-label={`Aggiungi elemento a ${SLOT_LABELS[slot]} ${d.label}`}
+                              onClick={() => startAddingMealPart(key, r, slot)}
+                            >
+                              <i>＋</i>
+                              <span>Aggiungi</span>
+                            </button>
                           </div>
+                        )}
+                        {weekParts.length === 0 && (
+                          <button
+                            className="week-empty-add"
+                            onClick={() => startAddingMealPart(key, r, slot)}
+                          >
+                            ＋ Aggiungi elemento
+                          </button>
                         )}
                       </div>
                     );
@@ -7890,8 +7930,12 @@ export function FoodPlanner() {
           >
             <header>
               <div>
-                <span>CAMBIA UNA PARTE</span>
-                <h2>{partPicker.part.label || partPicker.part.food}</h2>
+                <span>{partPicker.adding ? "AGGIUNGI AL PASTO" : "CAMBIA UNA PARTE"}</span>
+                <h2>
+                  {partPicker.adding
+                    ? "Scegli un altro elemento"
+                    : partPicker.part.label || partPicker.part.food}
+                </h2>
               </div>
               <button
                 type="button"
@@ -7902,10 +7946,13 @@ export function FoodPlanner() {
               </button>
             </header>
             <div className="part-picker-scroll">
-              <button className="remove-part-choice" onClick={removeMealPart}>
-                − Nessuno · togli questo elemento
-              </button>
-              <details className="picker-group complete-meals" open>
+              {!partPicker.adding && (
+                <button className="remove-part-choice" onClick={removeMealPart}>
+                  − Nessuno · togli questo elemento
+                </button>
+              )}
+              {!partPicker.adding && (
+                <details className="picker-group complete-meals" open>
                 <summary>Piatti completi consigliati</summary>
                 <p>Sostituisci l'intero pasto. Dopo puoi tenerlo unico o dividerlo nei suoi componenti.</p>
                 <div className="complete-meal-grid">
@@ -7937,7 +7984,8 @@ export function FoodPlanner() {
                     );
                   })}
                 </div>
-              </details>
+                </details>
+              )}
               <details className="picker-group" open>
                 <summary>Alternative consigliate</summary>
                 <div className="part-choice-grid">

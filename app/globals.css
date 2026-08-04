@@ -1605,6 +1605,43 @@ button {
   gap: 4px;
   flex: 0 0 auto;
 }
+.add-meal-part {
+  width: 100%;
+  min-height: 34px;
+  margin: 5px 0 2px;
+  border: 1px dashed #90a89f;
+  border-radius: 11px;
+  background: #f4f8f3;
+  color: #245849;
+  font-size: 9px;
+  font-weight: 900;
+}
+.add-meal-part:active {
+  transform: scale(0.99);
+}
+.week-part-add i {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 1;
+  border: 1px dashed #91aaa1;
+  border-radius: 8px;
+  background: #f4f8f3;
+  color: #245849;
+  font-size: 18px;
+  font-style: normal;
+}
+.week-empty-add {
+  width: 100%;
+  margin-top: 5px;
+  border: 1px dashed #91aaa1;
+  border-radius: 9px;
+  background: #f4f8f3;
+  color: #245849;
+  padding: 7px;
+  font-size: 8px;
+  font-weight: 900;
+}
 .today-strip .today-strip-actions button {
   min-height: 28px;
   padding: 6px 8px;
