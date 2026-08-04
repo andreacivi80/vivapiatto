@@ -2741,3 +2741,22 @@ button {
   color: white;
   font-weight: 900;
 }
+
+.gelato-builder-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.gelato-builder-title b {
+  font-size: 12px;
+}
+.gelato-builder-title button {
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 50%;
+  background: #f1dfd2;
+  font-size: 20px;
+  line-height: 1;
+}
