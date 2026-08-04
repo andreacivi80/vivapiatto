@@ -70,7 +70,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.26";
+const VERSION = "1.16.27";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -5612,6 +5612,22 @@ const occasionalRecipes: Recipe[] = [
       "Registra a parte eventuali salse o una porzione più grande.",
     ],
     alternatives: ["Tiramisù", "Panna cotta", "Gelato personalizzato"],
+  },
+  {
+    id: "occasional-cannolo",
+    name: "Cannolo siciliano",
+    kicker: "Dolce occasionale con porzione e valori visibili",
+    course: "Dolce",
+    cuisine: "Italiano",
+    image: photo("cheat-cannolo-v11627"),
+    time: 5,
+    ingredients: [{ food: "Cannolo siciliano", grams: 100 }],
+    steps: [
+      "Scegli un cannolo con cialda croccante e ricotta fresca, poi pesalo se la porzione è diversa da 100 g.",
+      "Aggiungi pistacchio o scorza d'arancia soltanto se già compresi nella preparazione.",
+      "Registra la quantità realmente mangiata: non serve compensare saltando il pasto successivo.",
+    ],
+    alternatives: ["Cheesecake ai frutti rossi", "Tiramisù", "Gelato personalizzato"],
   },
 ];
 const verifiedWorldRecipeExpansion: Recipe[] = [
