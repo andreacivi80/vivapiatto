@@ -2694,3 +2694,50 @@ button {
 .library-section.swapping .library-tools {
   top: 54px;
 }
+
+.gelato-builder {
+  margin-top: 9px;
+  padding: 10px;
+  border: 1px solid #e5c1aa;
+  border-radius: 14px;
+  background: #fff8ef;
+}
+.gelato-builder > b {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 12px;
+}
+.gelato-scoops {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  margin-bottom: 7px;
+}
+.gelato-scoops button,
+.gelato-builder select,
+.gelato-choose {
+  min-height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: white;
+  color: var(--ink);
+  font: inherit;
+  font-size: 10px;
+}
+.gelato-scoops button.active {
+  border-color: var(--coral);
+  background: #ffe3d6;
+  font-weight: 900;
+}
+.gelato-builder select {
+  width: 100%;
+  margin-top: 5px;
+  padding: 0 9px;
+}
+.gelato-choose {
+  width: 100%;
+  margin-top: 8px;
+  background: var(--ink);
+  color: white;
+  font-weight: 900;
+}
