@@ -1599,6 +1599,33 @@ button {
   position: relative;
   z-index: 1;
 }
+.today-strip .today-strip-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4px;
+  flex: 0 0 auto;
+}
+.today-strip .today-strip-actions button {
+  min-height: 28px;
+  padding: 6px 8px;
+  font-size: 8px;
+}
+.today-strip .today-strip-actions .cheat-quick-btn {
+  background: #f6f1df;
+  color: #28473e;
+}
+.log-list span {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+}
+.log-list span small {
+  color: #7b756a;
+  font-size: 7px;
+  line-height: 1.15;
+}
 .preferences {
   background: var(--paper);
   border: 1px solid var(--line);
@@ -2461,4 +2488,57 @@ button {
   color: #fff;
   font: 900 14px/1 Georgia, serif;
   box-shadow: 0 2px 7px rgba(22, 49, 41, 0.24);
+}
+
+.recipe-mode-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin: 9px 0 12px;
+}
+.recipe-mode-actions button {
+  min-height: 38px;
+  border: 1px solid #d7c39c;
+  border-radius: 11px;
+  background: #fff9ed;
+  color: var(--ink);
+  padding: 7px;
+  font-size: 9px;
+  line-height: 1.2;
+  font-weight: 900;
+}
+.recipe-mode-actions button:first-child {
+  grid-column: 1 / -1;
+  background: var(--ink);
+  color: #fff;
+  border-color: var(--ink);
+}
+
+.start-here-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.start-here-actions button:last-child,
+.recipe-card-choose {
+  background: var(--ink);
+  color: #fff;
+}
+.recipe-grid article {
+  position: relative;
+}
+.recipe-card-choose {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 10px;
+  font-weight: 900;
+  box-shadow: 0 3px 10px rgba(22, 49, 41, 0.22);
+}
+.recipe-preview-choose {
+  width: 100%;
+  margin: 9px 0 2px;
 }

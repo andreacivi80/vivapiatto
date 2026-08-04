@@ -38,6 +38,7 @@ type LogItem = {
   carbs?: number;
   fat?: number;
   fiber?: number;
+  source?: Food["source"];
 };
 const SLOT_LABELS = [
   "Colazione",
@@ -47,7 +48,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.15.22";
+const VERSION = "1.16.0";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -1215,7 +1216,18 @@ const foods: Record<string, Food> = {
     fiber: 0,
     source: "CREA",
   },
-  "Wafer confezionati": {
+  "Mirtilli freschi": {
+    kcal: 49, protein: 0.9, carbs: 10.1, fat: 0.2, fiber: 3.1, source: "CREA",
+  },
+  "Mandarini freschi": {
+    kcal: 76, protein: 0.9, carbs: 17.6, fat: 0.3, fiber: 1.7, source: "CREA",
+  },
+  "Melagrana fresca": {
+    kcal: 68, protein: 0.5, carbs: 15.9, fat: 0.2, fiber: 2.2, source: "CREA",
+  },
+  "Anacardi non salati": {
+    kcal: 604, protein: 15, carbs: 33, fat: 46, fiber: 3, source: "CREA",
+  },  "Wafer confezionati": {
     kcal: 516,
     protein: 5.4,
     carbs: 63,
@@ -1225,6 +1237,96 @@ const foods: Record<string, Food> = {
   },
 };
 
+// Banca dati separata per sgarri ed extra: ricercabile nel diario ma esclusa
+// dalle proposte automatiche del piano quotidiano.
+type OccasionalFoodRow = [string, number, number, number, number, number, Food["source"]];
+const occasionalFoodRows: OccasionalFoodRow[] = [
+  ["Pizza margherita da pizzeria",266,11,33,10,2.3,"RICETTA CALCOLATA"],
+  ["Pizza quattro formaggi",330,15,31,17,1.8,"RICETTA CALCOLATA"],
+  ["Pizza diavola",305,14,32,14,2,"RICETTA CALCOLATA"],
+  ["Pizza capricciosa",275,12,31,12,2.2,"RICETTA CALCOLATA"],
+  ["Focaccia all'olio",310,8,48,10,2.5,"RICETTA CALCOLATA"],
+  ["Calzone farcito",285,13,32,12,2,"RICETTA CALCOLATA"],
+  ["Panzerotto fritto",310,10,35,15,2,"RICETTA CALCOLATA"],
+  ["Piadina farcita",295,13,30,14,2.1,"RICETTA CALCOLATA"],
+  ["Hamburger completo",250,13,24,12,1.6,"RICETTA CALCOLATA"],
+  ["Cheeseburger",270,14,23,14,1.5,"RICETTA CALCOLATA"],
+  ["Hot dog",290,11,25,17,1.4,"RICETTA CALCOLATA"],
+  ["Kebab nel pane",235,14,24,9,2.2,"RICETTA CALCOLATA"],
+  ["Toast prosciutto e formaggio",285,16,27,13,1.7,"RICETTA CALCOLATA"],
+  ["Tramezzino tonno e maionese",280,11,25,15,1.3,"RICETTA CALCOLATA"],
+  ["Panino salumi e formaggio",300,16,28,14,1.7,"RICETTA CALCOLATA"],
+  ["Patatine fritte",312,3.4,41,15,3.8,"RICETTA CALCOLATA"],
+  ["Crocchette di patate",245,5,31,11,2.5,"RICETTA CALCOLATA"],
+  ["Arancino di riso",255,9,34,9,1.8,"RICETTA CALCOLATA"],
+  ["Suppli al telefono",250,9,34,9,1.7,"RICETTA CALCOLATA"],
+  ["Mozzarella in carrozza",315,14,25,18,1.3,"RICETTA CALCOLATA"],
+  ["Olive ascolane",270,10,22,16,2.2,"RICETTA CALCOLATA"],
+  ["Fritto misto di pesce",235,17,16,12,0.8,"RICETTA CALCOLATA"],
+  ["Calamari fritti",250,18,17,13,0.8,"RICETTA CALCOLATA"],
+  ["Pollo fritto",285,21,10,18,0.6,"RICETTA CALCOLATA"],
+  ["Cotoletta fritta",285,20,15,16,1,"RICETTA CALCOLATA"],
+  ["Nachos",500,7,58,26,5,"ETICHETTA"],
+  ["Patatine chips",536,6.5,53,34,4.8,"ETICHETTA"],
+  ["Popcorn al burro",480,8,55,25,9,"ETICHETTA"],
+  ["Pasta alla carbonara",225,10,27,9,1.5,"RICETTA CALCOLATA"],
+  ["Pasta all'amatriciana",175,7,27,5,1.7,"RICETTA CALCOLATA"],
+  ["Pasta ai quattro formaggi",245,11,25,12,1.3,"RICETTA CALCOLATA"],
+  ["Lasagne al ragu",185,11,16,9,1.4,"RICETTA CALCOLATA"],
+  ["Cannelloni ripieni",175,10,17,7.5,1.3,"RICETTA CALCOLATA"],
+  ["Pasta al forno",190,10,20,8,1.5,"RICETTA CALCOLATA"],
+  ["Gnocchi ai quattro formaggi",205,8,27,8,1.5,"RICETTA CALCOLATA"],
+  ["Risotto mantecato",175,5,26,6,1,"RICETTA CALCOLATA"],
+  ["Parmigiana di melanzane",170,8,10,11,2.2,"RICETTA CALCOLATA"],
+  ["Salsiccia cotta",310,18,1,26,0,"RICETTA CALCOLATA"],
+  ["Porchetta",335,22,1,27,0,"RICETTA CALCOLATA"],
+  ["Salame",425,22,1.5,37,0,"ETICHETTA"],
+  ["Mortadella",317,15,1,28,0,"ETICHETTA"],
+  ["Pancetta",450,20,1,41,0,"ETICHETTA"],
+  ["Wurstel",270,12,2,24,0,"ETICHETTA"],
+  ["Maionese",680,1,1,75,0,"ETICHETTA"],
+  ["Ketchup",110,1.3,25,0.2,0.5,"ETICHETTA"],
+  ["Cornetto farcito",410,7,47,22,2,"ETICHETTA"],
+  ["Brioche confezionata",390,7,50,18,2,"ETICHETTA"],
+  ["Bombolone alla crema",335,6,45,15,1.5,"RICETTA CALCOLATA"],
+  ["Muffin",390,6,50,19,1.5,"ETICHETTA"],
+  ["Donut glassato",410,5,49,22,1.5,"ETICHETTA"],
+  ["Waffle dolce",310,8,45,11,1.8,"RICETTA CALCOLATA"],
+  ["Tiramisu",285,6,31,15,0.8,"RICETTA CALCOLATA"],
+  ["Cheesecake",320,6,28,21,0.8,"RICETTA CALCOLATA"],
+  ["Profiteroles",335,7,30,21,1.2,"RICETTA CALCOLATA"],
+  ["Panna cotta",300,4,25,20,0,"RICETTA CALCOLATA"],
+  ["Gelato alla crema",210,4,25,11,0,"ETICHETTA"],
+  ["Gelato al cioccolato",220,4,27,11,1.5,"ETICHETTA"],
+  ["Torta al cioccolato",385,6,50,19,2.5,"RICETTA CALCOLATA"],
+  ["Crostata alla confettura",350,5,55,13,2,"RICETTA CALCOLATA"],
+  ["Cannolo siciliano",350,9,38,18,1,"RICETTA CALCOLATA"],
+  ["Pastiera",360,8,44,17,2,"RICETTA CALCOLATA"],
+  ["Biscotti farciti",480,6,68,20,2,"ETICHETTA"],
+  ["Merendina confezionata",420,6,55,20,1.5,"ETICHETTA"],
+  ["Wafer",515,7,62,27,2.5,"ETICHETTA"],
+  ["Cioccolato al latte",535,7,59,30,3,"ETICHETTA"],
+  ["Cioccolato fondente",550,7,46,36,10,"ETICHETTA"],
+  ["Barretta al cioccolato",490,7,60,25,2,"ETICHETTA"],
+  ["Caramelle",390,0,98,0,0,"ETICHETTA"],
+  ["Crema spalmabile cacao e nocciole",539,6.3,57.5,30.9,3.4,"ETICHETTA"],
+  ["Frappè",145,4,23,4,0.5,"RICETTA CALCOLATA"],
+  ["Milkshake",160,4,25,5,0.5,"RICETTA CALCOLATA"],
+  ["Bibita gassata zuccherata",42,0,10.5,0,0,"ETICHETTA"],
+  ["Energy drink zuccherato",45,0,11,0,0,"ETICHETTA"],
+  ["Tè freddo zuccherato",36,0,9,0,0,"ETICHETTA"],
+  ["Succo di frutta zuccherato",50,0.2,12,0,0.2,"ETICHETTA"],
+  ["Birra",43,0.5,3.6,0,0,"ETICHETTA"],
+  ["Vino bianco",82,0.1,2.6,0,0,"ETICHETTA"],
+  ["Vino rosso",85,0.1,2.6,0,0,"ETICHETTA"],
+  ["Prosecco",75,0.1,2,0,0,"ETICHETTA"],
+  ["Liquore",250,0,20,0,0,"ETICHETTA"],
+  ["Amaro",240,0,25,0,0,"ETICHETTA"],
+];
+const occasionalFoods: Record<string, Food> = Object.fromEntries(
+  occasionalFoodRows.map(([name,kcal,protein,carbs,fat,fiber,source]) => [name,{kcal,protein,carbs,fat,fiber,source}]),
+);
+const foodSearchDatabase: Record<string, Food> = { ...foods, ...occasionalFoods };
 const calc = (
   ingredients: RecipeIngredient[],
   scale = 1,
@@ -1247,6 +1349,24 @@ const calc = (
     { kcal: 0, protein: 0, carbs: 0, fat: 0, fiber: 0, weight: 0 },
   );
 
+type WeeklyProteinFamily = "pesce" | "carne-bianca" | "carne-rossa" | "uova" | "legumi" | "latticini" | "salumi" | "altro";
+const proteinFamilyForItems = (items: RecipeIngredient[]): WeeklyProteinFamily => {
+  const names = items.map((item) => item.food.toLowerCase());
+  const has = (terms: string[]) => names.some((name) => terms.some((term) => name.includes(term)));
+  if (has(["bresaola", "prosciutto", "salame", "mortadella", "speck", "wurstel"])) return "salumi";
+  if (has(["salmone", "tonno", "merluzzo", "nasello", "orata", "branzino", "spigola", "sogliola", "platessa", "rombo", "trota", "sgombro", "sardine", "alici", "acciughe", "pesce spada", "palombo", "polpo", "sepp", "calamar", "gamber", "cozz", "vongol", "pesce"])) return "pesce";
+  if (has(["pollo", "tacchino", "coniglio"])) return "carne-bianca";
+  if (has(["manzo", "vitello", "maiale", "lonza", "cavallo", "bistecca"])) return "carne-rossa";
+  if (has(["uovo", "uova", "albume"])) return "uova";
+  if (has(["ceci", "lenticchie", "fagioli", "piselli", "fave", "edamame", "lupini", "cicerchie", "tofu", "tempeh", "seitan", "burger vegetale", "legumi"])) return "legumi";
+  if (has(["ricotta", "mozzarella", "feta", "crescenza", "stracchino", "primo sale", "scamorza", "provolone", "fiocchi di latte", "parmigiano", "grana"])) return "latticini";
+  return "altro";
+};
+const recipeProteinFamily = (recipe: Recipe) => proteinFamilyForItems(recipe.parts || recipe.ingredients);
+const WEEKLY_MAIN_ROTATION: WeeklyProteinFamily[] = [
+  "legumi", "pesce", "carne-bianca", "uova", "legumi", "pesce", "latticini",
+  "legumi", "carne-bianca", "pesce", "legumi", "carne-rossa", "latticini", "uova",
+];
 const recipes: Recipe[] = [
   {
     id: "jar",
@@ -1945,7 +2065,7 @@ const snackFruits = [
   "Fragole",
   "Frutti di bosco",
 ];
-const snackNuts = ["Noci", "Mandorle", "Pistacchi", "Nocciole"];
+const snackNuts = ["Noci", "Mandorle", "Pistacchi", "Nocciole", "Anacardi non salati"];
 const snackRecipes: Recipe[] = Array.from({ length: 32 }, (_, index) => {
   const fruit = snackFruits[Math.floor(index / 4) % snackFruits.length];
   const nuts = snackNuts[Math.floor(index / 8) % snackNuts.length];
@@ -2654,6 +2774,92 @@ const matrixSnacks: Recipe[] = [
   { id: "matrix-s32-cottage-carrot-cucumber", name: "Fiocchi di latte con carote crude e cetrioli", kicker: "Spuntino fresco · matrice S32", course: "Spuntino", cuisine: "Italiano", kind: "combination", image: photo("part-cottage-cheese-v11512"), time: 7, ingredients: [{ food: "Fiocchi di latte", grams: 80 }, { food: "Carote crude", grams: 100 }, { food: "Cetriolo", grams: 100 }], parts: [{ category: "Latticino", food: "Fiocchi di latte", grams: 80, label: "Fiocchi di latte", image: photo("part-cottage-cheese-v11512") }, { category: "Contorno", food: "Carote crude", grams: 100, label: "Carote crude a bastoncino", image: photo("part-carrots-raw-v11512") }, { category: "Contorno", food: "Cetriolo", grams: 100, label: "Cetriolo a bastoncino", image: photo("part-cucumber-v8") }], steps: ["Lava e pela le carote, lava il cetriolo e tagliali a bastoncino. Servi con i fiocchi di latte e erbe aromatiche."], alternatives: ["Conserva refrigerato", "Contiene latte"] },
   { id: "matrix-s33-yogurt-pineapple-sesame", name: "Yogurt con ananas e sesamo", kicker: "Spuntino fresco · matrice S33", course: "Spuntino", cuisine: "Internazionale", kind: "combination", image: photo("part-pineapple-v11513"), time: 3, ingredients: [{ food: "Yogurt greco 2%", grams: 125 }, { food: "Ananas", grams: 150 }, { food: "Semi di sesamo", grams: 5 }], parts: [{ category: "Latticino", food: "Yogurt greco 2%", grams: 125, label: "Yogurt bianco", image: photo("part-yogurt-v7") }, { category: "Frutta", food: "Ananas", grams: 150, label: "Ananas fresco · parte edibile", image: photo("part-pineapple-v11513") }, { category: "Extra", food: "Semi di sesamo", grams: 5, label: "Semi di sesamo", image: photo("part-sesame-v11512") }], steps: ["Taglia l'ananas fresco a cubetti, uniscilo allo yogurt e completa con 5 g di semi di sesamo."], alternatives: ["Conserva refrigerato", "Contiene latte e sesamo"] },
   { id: "matrix-s34-rye-ricotta-radish", name: "Pane di segale con ricotta e ravanelli", kicker: "Spuntino salato · matrice S34", course: "Spuntino", cuisine: "Italiano", kind: "combination", image: photo("part-radishes-v11512"), time: 5, ingredients: [{ food: "Pane di segale", grams: 40 }, { food: "Ricotta vaccina", grams: 60 }, { food: "Ravanelli crudi", grams: 100 }], parts: [{ category: "Carboidrato", food: "Pane di segale", grams: 40, label: "Pane di segale", image: photo("part-bread-rye-v1156") }, { category: "Latticino", food: "Ricotta vaccina", grams: 60, label: "Ricotta vaccina", image: photo("part-ricotta-v7") }, { category: "Contorno", food: "Ravanelli crudi", grams: 100, label: "Ravanelli crudi", image: photo("part-radishes-v11512") }], steps: ["Lava e affetta sottilmente i ravanelli. Spalma la ricotta sul pane di segale e aggiungi i ravanelli."], alternatives: ["Trasportabile separando pane e farcitura", "Contiene latte e segale"] },];
+const attachmentMissingSnacks: Recipe[] = [
+  {
+    id: "matrix-s02-yogurt-blueberries",
+    name: "Yogurt bianco e mirtilli",
+    kicker: "Spuntino fresco · pronto in 2 minuti",
+    course: "Spuntino",
+    cuisine: "Italiano",
+    kind: "combination",
+    image: photo("recipe-s02-yogurt-blueberries-v1160"),
+    time: 2,
+    ingredients: [{ food: "Yogurt greco 2%", grams: 125 }, { food: "Mirtilli freschi", grams: 150 }],
+    parts: [
+      { category: "Latticino", food: "Yogurt greco 2%", grams: 125, label: "Yogurt bianco · 1 vasetto", image: photo("part-yogurt-v7") },
+      { category: "Frutta", food: "Mirtilli freschi", grams: 150, label: "Mirtilli freschi · parte edibile", image: photo("part-blueberries-v1160") },
+    ],
+    steps: ["Lava e asciuga delicatamente i mirtilli.", "Versa lo yogurt in una ciotola e aggiungi i mirtilli senza zucchero."],
+    alternatives: ["Conserva refrigerato fino al consumo", "Contiene latte"],
+  },
+  {
+    id: "matrix-s09-unsweetened-yogurt-smoothie",
+    name: "Frullato di yogurt e mirtilli senza zucchero",
+    kicker: "Spuntino occasionale · frutta intera di norma preferita",
+    course: "Spuntino",
+    cuisine: "Italiano",
+    image: photo("recipe-s09-yogurt-fruit-smoothie-v1160"),
+    time: 4,
+    ingredients: [{ food: "Yogurt greco 2%", grams: 125 }, { food: "Mirtilli freschi", grams: 150 }],
+    parts: [
+      { category: "Latticino", food: "Yogurt greco 2%", grams: 125, label: "Yogurt bianco · 1 vasetto", image: photo("part-yogurt-v7") },
+      { category: "Frutta", food: "Mirtilli freschi", grams: 150, label: "Mirtilli freschi", image: photo("part-blueberries-v1160") },
+    ],
+    steps: ["Lava i mirtilli.", "Frulla yogurt e mirtilli con poca acqua fredda fino alla consistenza desiderata; non aggiungere zucchero."],
+    alternatives: ["Proposta occasionale: normalmente preferisci la frutta intera", "Contiene latte"],
+  },
+  {
+    id: "matrix-s12-mandarins-walnuts",
+    name: "Mandarini e noci",
+    kicker: "Spuntino pratico · due ingredienti",
+    course: "Spuntino",
+    cuisine: "Italiano",
+    kind: "combination",
+    image: photo("recipe-s12-mandarins-walnuts-v1160"),
+    time: 2,
+    ingredients: [{ food: "Mandarini freschi", grams: 150 }, { food: "Noci", grams: 15 }],
+    parts: [
+      { category: "Frutta", food: "Mandarini freschi", grams: 150, label: "Mandarini · parte edibile", image: photo("part-mandarins-v1160") },
+      { category: "Extra", food: "Noci", grams: 15, label: "Noci non salate · 15 g", image: photo("walnuts-20g-v5") },
+    ],
+    steps: ["Sbuccia i mandarini e pesa 150 g di parte edibile.", "Abbinali a 15 g di noci già porzionate."],
+    alternatives: ["Trasportabile al lavoro", "Contiene frutta a guscio"],
+  },
+  {
+    id: "matrix-s13-skyr-pomegranate",
+    name: "Skyr con melagrana",
+    kicker: "Spuntino fresco · pronto in 3 minuti",
+    course: "Spuntino",
+    cuisine: "Italiano",
+    kind: "combination",
+    image: photo("recipe-s13-skyr-pomegranate-v1160"),
+    time: 3,
+    ingredients: [{ food: "Skyr bianco", grams: 170 }, { food: "Melagrana fresca", grams: 150 }],
+    parts: [
+      { category: "Latticino", food: "Skyr bianco", grams: 170, label: "Skyr bianco · 1 vasetto", image: photo("part-skyr-v11511") },
+      { category: "Frutta", food: "Melagrana fresca", grams: 150, label: "Chicchi di melagrana · parte edibile", image: photo("part-pomegranate-v1160") },
+    ],
+    steps: ["Apri la melagrana e ricava 150 g di chicchi puliti.", "Versa lo skyr in una ciotola e aggiungi i chicchi senza zucchero."],
+    alternatives: ["Yogurt greco bianco al posto dello skyr", "Contiene latte"],
+  },
+  {
+    id: "matrix-s19-peach-cashews",
+    name: "Pesca e anacardi",
+    kicker: "Spuntino estivo · pronto in 2 minuti",
+    course: "Spuntino",
+    cuisine: "Italiano",
+    kind: "combination",
+    image: photo("recipe-s19-peach-cashews-v1160"),
+    time: 2,
+    ingredients: [{ food: "Pesca", grams: 150 }, { food: "Anacardi non salati", grams: 15 }],
+    parts: [
+      { category: "Frutta", food: "Pesca", grams: 150, label: "Pesca · parte edibile", image: photo("part-peach-v113") },
+      { category: "Extra", food: "Anacardi non salati", grams: 15, label: "Anacardi non salati · 15 g", image: photo("part-cashews-v1160") },
+    ],
+    steps: ["Lava, asciuga e taglia la pesca; pesa 150 g di parte edibile.", "Abbinala a 15 g di anacardi non salati già porzionati."],
+    alternatives: ["Nettarina nella stessa quantità", "Contiene frutta a guscio"],
+  },
+];
 const matrixMainRecipes: Recipe[] = [
   { id:"matrix-p48-legume-pasta-salmon", name:"Pasta di lenticchie con salmone e broccoli", kicker:"Pranzo di pesce · matrice P48", course:"Piatto unico", cuisine:"Italiano", image:photo("recipe-p48-legume-pasta-salmon-v11515"), time:25, ingredients:[{food:"Pasta di lenticchie secca",grams:70},{food:"Salmone cotto",grams:100},{food:"Broccoli bolliti",grams:250},{food:"Olio extravergine",grams:5}], parts:[{category:"Carboidrato",food:"Pasta di lenticchie secca",grams:70,label:"Pasta di lenticchie · peso a crudo",image:photo("part-lentil-pasta-v11515")},{category:"Proteina",food:"Salmone cotto",grams:100,label:"Salmone alla piastra",image:photo("part-salmon-baked-v7")},{category:"Contorno",food:"Broccoli bolliti",grams:250,label:"Broccoli cotti",image:photo("part-broccoli-v1154")},{category:"Extra",food:"Olio extravergine",grams:5,label:"Olio EVO · 5 g",image:photo("part-olive-oil-v8")}], steps:["Cuoci i broccoli al vapore o in acqua per 6-8 minuti.","Cuoci la pasta secondo confezione e il salmone alla piastra fino a completa cottura.","Unisci e completa con 5 g di olio pesato, limone ed erba cipollina."], alternatives:["Contiene pesce; verificare il legume della pasta","Adatto a casa o schiscetta refrigerata","Componenti modificabili separatamente"] },
   { id:"matrix-p49-millet-chicken-pumpkin", name:"Miglio con pollo, zucca e cavolo nero", kicker:"Pranzo carne bianca · matrice P49", course:"Piatto unico", cuisine:"Italiano", image:photo("recipe-p49-millet-chicken-v11515"), time:35, ingredients:[{food:"Miglio cotto",grams:190},{food:"Petto di pollo cotto",grams:100},{food:"Zucca",grams:150},{food:"Cavolo nero cotto",grams:100},{food:"Olio extravergine",grams:10}], parts:[{category:"Carboidrato",food:"Miglio cotto",grams:190,label:"Miglio cotto · da circa 70 g secco",image:photo("part-millet-v11515")},{category:"Proteina",food:"Petto di pollo cotto",grams:100,label:"Petto di pollo alla piastra",image:photo("part-chicken-grilled-v7")},{category:"Contorno",food:"Zucca",grams:150,label:"Zucca arrostita",image:photo("part-pumpkin-v8")},{category:"Contorno",food:"Cavolo nero cotto",grams:100,label:"Cavolo nero cotto",image:photo("part-kale-v11515")},{category:"Extra",food:"Olio extravergine",grams:10,label:"Olio EVO · 10 g",image:photo("part-olive-oil-v8")}], steps:["Cuoci il miglio seguendo la confezione.","Arrostisci la zucca, cuoci il cavolo nero e griglia il pollo fino a completa cottura.","Unisci e completa con olio pesato, rosmarino, paprika e pepe."], alternatives:["Senza glutine se certificato","Preferibile a casa; trasportabile preparato prima","Componenti modificabili separatamente"] },
@@ -4428,6 +4634,9 @@ const balancedDinnerRecipes: Recipe[] = [
     },
     { category: "Frutta", food: "More", grams: 150, label: "More fresche", image: photo("part-blackberries-v11512") },
     { category: "Frutta", food: "Ananas", grams: 150, label: "Ananas fresco", image: photo("part-pineapple-v11513") },
+    { category: "Frutta", food: "Mirtilli freschi", grams: 150, label: "Mirtilli freschi", image: photo("part-blueberries-v1160") },
+    { category: "Frutta", food: "Mandarini freschi", grams: 150, label: "Mandarini · parte edibile", image: photo("part-mandarins-v1160") },
+    { category: "Frutta", food: "Melagrana fresca", grams: 150, label: "Melagrana · parte edibile", image: photo("part-pomegranate-v1160") },
   ],
   Extra: [
     {
@@ -4556,6 +4765,13 @@ const balancedDinnerRecipes: Recipe[] = [
       label: "Semi di sesamo",
       image: photo("part-sesame-v11512"),
     },
+    {
+      category: "Extra",
+      food: "Anacardi non salati",
+      grams: 15,
+      label: "Anacardi non salati · 15 g",
+      image: photo("part-cashews-v1160"),
+    },
   ],
 };
 
@@ -4573,6 +4789,9 @@ const normalizeMealPart = (part: MealPart): MealPart => {
 };
 
 const seasonalMonths: Record<string, number[]> = {
+  "Mirtilli freschi": [6, 7, 8, 9],
+  "Mandarini freschi": [11, 12, 1, 2, 3],
+  "Melagrana fresca": [9, 10, 11, 12],
   More: [6, 7, 8, 9],
   "Ravanelli crudi": [3, 4, 5, 6, 7, 8, 9, 10],
   "Ciliegie fresche": [5, 6],
@@ -4850,7 +5069,7 @@ const asPracticalSnackPortion = (part: MealPart): MealPart => {
         ? 25
         : part.food === "Cracker integrali"
           ? 25
-          : ["Noci", "Mandorle", "Pistacchi", "Noci pecan", "Nocciole", "Arachidi"].includes(part.food)
+          : ["Noci", "Mandorle", "Pistacchi", "Noci pecan", "Nocciole", "Arachidi", "Anacardi non salati"].includes(part.food)
             ? 15
             : part.grams;
   return { ...part, grams };
@@ -5028,6 +5247,7 @@ const allRecipes = [
   ...catalogBreakfasts,
   ...quickSnacks,
   ...matrixSnacks,
+  ...attachmentMissingSnacks,
   ...matrixMainRecipes,
   ...catalogSnacks,
   ...portableRecipes,
@@ -5212,7 +5432,9 @@ export function FoodPlanner() {
       preferencesOpen ||
       checkinOpen ||
       shoppingOpen ||
-      weekEditingDay !== null,
+      weekEditingDay !== null ||
+      tab === "builder" ||
+      Boolean(extraName.trim()),
   );
 
   useEffect(() => {
@@ -5286,6 +5508,11 @@ export function FoodPlanner() {
         setPlannedDrink(s.plannedDrink || "Acqua");
         setDayContext(s.dayContext || "Lavoro");
         setWeekLocked(Boolean(s.weekLocked));
+        setCuisineChoice(s.cuisineChoice || "Italiano");
+        setDayIndex(Math.max(0, Math.min(days.length - 1, Number(s.dayIndex) || 0)));
+        setDiaryDay(Math.max(0, Math.min(days.length - 1, Number(s.diaryDay) || 0)));
+        if (["today", "week", "library", "builder", "progress"].includes(s.tab)) setTab(s.tab);
+        if (Array.isArray(s.builder) && s.builder.length) setBuilder(s.builder);
       }
     } catch {}
     setProfileHydrated(true);
@@ -5313,6 +5540,11 @@ export function FoodPlanner() {
         plannedDrink,
         dayContext,
         weekLocked,
+        cuisineChoice,
+        dayIndex,
+        diaryDay,
+        tab,
+        builder,
       }),
     );
   }, [
@@ -5334,6 +5566,11 @@ export function FoodPlanner() {
     plannedDrink,
     dayContext,
     weekLocked,
+    cuisineChoice,
+    dayIndex,
+    diaryDay,
+    tab,
+    builder,
     profileHydrated,
   ]);
   const groupFoods: Record<string, string[]> = {
@@ -5349,7 +5586,7 @@ export function FoodPlanner() {
       "Cous cous integrale cotto",
       "Orzo perlato cotto",
     ],
-    "Frutta a guscio": ["Noci", "Mandorle", "Pistacchi", "Nocciole"],
+    "Frutta a guscio": ["Noci", "Mandorle", "Pistacchi", "Nocciole", "Anacardi non salati"],
     Arachidi: ["Arachidi", "Crema 100% arachidi"],
   };
   const blockedFoods = [
@@ -5442,7 +5679,7 @@ export function FoodPlanner() {
   const replanFollowingDays = (changedDay: number) => {
     if (weekLocked) return;
     const breakfasts = availableBreakfasts();
-    const snacks = [...quickSnacks, ...matrixSnacks, ...catalogSnacks].filter(isAllowed);
+    const snacks = [...quickSnacks, ...matrixSnacks, ...attachmentMissingSnacks, ...catalogSnacks].filter(isAllowed);
     const mains = allRecipes.filter(
       (r) =>
         isAllowed(r) &&
@@ -5869,7 +6106,7 @@ export function FoodPlanner() {
       (r) => isAllowed(r) && recipeCuisine(r) === cuisineChoice,
     );
     const breakfasts = availableBreakfasts();
-    const snacks = [...quickSnacks, ...matrixSnacks, ...catalogSnacks].filter(isAllowed);
+    const snacks = [...quickSnacks, ...matrixSnacks, ...attachmentMissingSnacks, ...catalogSnacks].filter(isAllowed);
     const mains = styled.filter((r) =>
       ["Piatto unico", "Piatto completo", "Primo", "Secondo"].includes(recipeCourse(r)),
     );
@@ -5899,24 +6136,44 @@ export function FoodPlanner() {
     const profileDays = weekLocked ? [dayIndex] : days.map((_, index) => index);
     setChoices((current) => {
       const next = { ...current };
+      const usedRecipes = new Set<string>();
+      const chooseMain = (
+        pool: Recipe[],
+        family: WeeklyProteinFamily,
+        slot: number,
+        target: number,
+        offset: number,
+      ) => {
+        const unused = pool.filter((recipe) => !usedRecipes.has(recipe.id));
+        const byFamily = unused.filter((recipe) => recipeProteinFamily(recipe) === family);
+        const candidates = byFamily.length ? byFamily : unused.length ? unused : pool;
+        const chosen = closestForSlot(candidates, slot, target, offset);
+        usedRecipes.add(chosen.id);
+        return chosen;
+      };
       profileDays.forEach((day) => {
         const profileTarget = day === dayIndex ? plannedCalories : calories;
         const offset = profileSeed + day;
-        const selectedForDay = [
-          closestForSlot(breakfasts, 0, profileTarget * shares[0], offset),
-          closestForSlot(snacks, 1, profileTarget * shares[1], offset),
-          closestForSlot(lunches, 2, profileTarget * shares[2], offset),
-          closestForSlot(snacks, 3, profileTarget * shares[3], offset + 1),
-          closestForSlot(dinners, 4, profileTarget * shares[4], offset + 1),
-        ];
-        if (selectedForDay[1].id === selectedForDay[3].id)
-          selectedForDay[3] = closestForSlot(
-            snacks.filter((recipe) => recipe.id !== selectedForDay[1].id),
-            3,
-            profileTarget * shares[3],
-            offset + 1,
-          );
-        selectedForDay.forEach((recipe, slot) => {
+        const breakfast = closestForSlot(breakfasts, 0, profileTarget * shares[0], offset);
+        const morningSnack = closestForSlot(snacks, 1, profileTarget * shares[1], offset);
+        const afternoonPool = snacks.filter((recipe) => recipe.id !== morningSnack.id);
+        const afternoonSnack = closestForSlot(afternoonPool, 3, profileTarget * shares[3], offset + 1);
+        const lunch = chooseMain(
+          lunches,
+          WEEKLY_MAIN_ROTATION[day * 2],
+          2,
+          profileTarget * shares[2],
+          offset,
+        );
+        const dinnerPool = dinners.filter((recipe) => recipeProteinFamily(recipe) !== recipeProteinFamily(lunch));
+        const dinner = chooseMain(
+          dinnerPool.length ? dinnerPool : dinners,
+          WEEKLY_MAIN_ROTATION[day * 2 + 1],
+          4,
+          profileTarget * shares[4],
+          offset + 1,
+        );
+        [breakfast, morningSnack, lunch, afternoonSnack, dinner].forEach((recipe, slot) => {
           const key = `${day}-${slot}`;
           if (!completed[key]) next[key] = recipe.id;
         });
@@ -5936,7 +6193,7 @@ export function FoodPlanner() {
           ? 3
           : 2);
     const breakfasts = availableBreakfasts();
-    let snacks = [...quickSnacks, ...matrixSnacks, ...catalogSnacks].filter(isAllowed);
+    let snacks = [...quickSnacks, ...matrixSnacks, ...attachmentMissingSnacks, ...catalogSnacks].filter(isAllowed);
     let mains = allRecipes.filter(
       (r) =>
         isAllowed(r) &&
@@ -6131,7 +6388,7 @@ export function FoodPlanner() {
     setDrinks((v) => ({ ...v, [day]: [...(v[day] || []), item] }));
   const addExtra = (day = diaryDay) => {
     if (!extraName.trim()) return;
-    const match = Object.keys(foods).find(
+    const match = Object.keys(foodSearchDatabase).find(
       (food) => food.toLowerCase() === extraName.trim().toLowerCase(),
     );
     const grams = Math.max(0, Number(extraGrams) || 0);
@@ -6140,7 +6397,7 @@ export function FoodPlanner() {
       return;
     }
     const factor = grams / 100;
-    const kcal = round(foods[match].kcal * factor);
+    const kcal = round(foodSearchDatabase[match].kcal * factor);
     setExtras((v) => ({
       ...v,
       [day]: [
@@ -6148,10 +6405,11 @@ export function FoodPlanner() {
         {
           label: `${match} · ${grams} g`,
           kcal,
-          protein: foods[match].protein * factor,
-          carbs: foods[match].carbs * factor,
-          fat: foods[match].fat * factor,
-          fiber: foods[match].fiber * factor,
+          protein: foodSearchDatabase[match].protein * factor,
+          carbs: foodSearchDatabase[match].carbs * factor,
+          fat: foodSearchDatabase[match].fat * factor,
+          fiber: foodSearchDatabase[match].fiber * factor,
+          source: foodSearchDatabase[match].source,
         },
       ],
     }));
@@ -6180,7 +6438,9 @@ export function FoodPlanner() {
       "Carne bianca": 0,
       "Carne rossa": 0,
       Uova: 0,
-      Legumi: 0,
+      "Legumi e vegetali": 0,
+      Formaggi: 0,
+      Salumi: 0,
     };
     days.forEach((_, day) => {
       getDayIds(day).forEach((id, slot) => {
@@ -6190,31 +6450,21 @@ export function FoodPlanner() {
         const items = completed[key]
           ? actualIngredients(key, recipe)
           : plannedIngredients(key, recipe);
-        const names = items.map((item) => item.food);
-        const has = (terms: string[]) =>
-          names.some((name) =>
-            terms.some((term) => name.toLowerCase().includes(term)),
-          );
-        if (has(["salmone", "tonno", "merluzzo", "orata", "pesce"]))
-          counts.Pesce += 1;
-        if (has(["pollo", "tacchino", "coniglio"])) counts["Carne bianca"] += 1;
-        if (has(["manzo", "bistecca", "vitello", "maiale", "lonza", "cavallo", "bresaola", "prosciutto cotto", "prosciutto crudo"]))
-          counts["Carne rossa"] += 1;
-        if (has(["uovo", "uova"])) counts.Uova += 1;
-        const legumeGrams = items
-          .filter((item) =>
-            ["ceci", "lenticchie", "fagioli", "piselli", "legumi"].some((term) =>
-              item.food.toLowerCase().includes(term),
-            ),
-          )
+        const family = proteinFamilyForItems(items);
+        if (family === "pesce") counts.Pesce += 1;
+        if (family === "carne-bianca") counts["Carne bianca"] += 1;
+        if (family === "carne-rossa") counts["Carne rossa"] += 1;
+        if (family === "legumi") counts["Legumi e vegetali"] += 1;
+        if (family === "latticini") counts.Formaggi += 1;
+        if (family === "salumi") counts.Salumi += 1;
+        const eggGrams = items
+          .filter((item) => /uovo|uova/i.test(item.food))
           .reduce((sum, item) => sum + item.grams, 0);
-        if (has(["burger vegetale"]) || legumeGrams >= 100)
-          counts.Legumi += 1;
+        counts.Uova += Math.round(eggGrams / 50);
       });
     });
     return counts;
-  };
-  const weeklyCounts = weeklyProteinCounts();
+  };  const weeklyCounts = weeklyProteinCounts();
   const weeklyPlannedKcal = days.map((_, day) =>
     round(
       getDayIds(day).reduce((total, id, slot) => {
@@ -6241,16 +6491,13 @@ export function FoodPlanner() {
   );
   const weeklyTargets = [
     { label: "Pesce", target: "2–3", count: weeklyCounts.Pesce },
-    {
-      label: "Carne bianca",
-      target: "1–3",
-      count: weeklyCounts["Carne bianca"],
-    },
-    { label: "Carne rossa", target: "1–2", count: weeklyCounts["Carne rossa"] },
+    { label: "Legumi e vegetali", target: "3–4", count: weeklyCounts["Legumi e vegetali"] },
+    { label: "Carne bianca", target: "1–2", count: weeklyCounts["Carne bianca"] },
+    { label: "Carne rossa", target: "0–1", count: weeklyCounts["Carne rossa"] },
     { label: "Uova", target: "2–4", count: weeklyCounts.Uova },
-    { label: "Legumi", target: "2–3", count: weeklyCounts.Legumi },
-  ];
-  const replanNextDay = (day: number) => {
+    { label: "Formaggi", target: "2–3", count: weeklyCounts.Formaggi },
+    { label: "Salumi", target: "0–1", count: weeklyCounts.Salumi },
+  ];  const replanNextDay = (day: number) => {
     if (day >= days.length - 1) {
       setReplanNote(
         "Settimana completata: usa il diario per impostare la prossima.",
@@ -6452,9 +6699,23 @@ export function FoodPlanner() {
                   {round(dayTotals.kcal - plannedCalories)} kcal
                 </small>
               </div>
-              <button onClick={() => setPreferencesOpen((v) => !v)}>
-                ⚙ Preferenze {blockedFoods.length ? `(${blockedFoods.length})` : ""}
-              </button>
+              <div className="today-strip-actions">
+                <button onClick={() => setPreferencesOpen((v) => !v)}>
+                  ⚙ Preferenze {blockedFoods.length ? `(${blockedFoods.length})` : ""}
+                </button>
+                <button
+                  className="cheat-quick-btn"
+                  onClick={() => {
+                    const section = document.getElementById("sgarri-extra") as HTMLDetailsElement | null;
+                    if (section) {
+                      section.open = true;
+                      section.scrollIntoView({ behavior: "smooth", block: "center" });
+                    }
+                  }}
+                >
+                  ＋ Sgarri
+                </button>
+              </div>
             </section>
             {preferencesOpen && (
               <section className="preferences">
@@ -6996,8 +7257,8 @@ export function FoodPlanner() {
                   <b>fibre {percentOf(effectiveDayTotals.fiber, 25)}% di 25 g</b>
                 </div>
               </section>
-              <details className="today-extra">
-                <summary>＋ Aggiungi extra o alimento diverso</summary>
+              <details className="today-extra" id="sgarri-extra">
+                <summary>＋ Sgarri ed extra</summary>
                 <div className="extra-form">
                   <input
                     placeholder="Scrivi pane, cracker, dolce…"
@@ -7006,7 +7267,7 @@ export function FoodPlanner() {
                     onChange={(e) => setExtraName(e.target.value)}
                   />
                   <datalist id="food-suggestions">
-                    {Object.keys(foods).map((food) => (
+                    {Object.keys(foodSearchDatabase).map((food) => (
                       <option key={food} value={food} />
                     ))}
                   </datalist>
@@ -7032,7 +7293,7 @@ export function FoodPlanner() {
                         }))
                       }
                     >
-                      <span>{x.label}</span>
+                      <span>{x.label}<small>{x.source === "RICETTA CALCOLATA" ? "stima da ricetta" : x.source === "ETICHETTA" ? "valore medio: verifica etichetta" : x.source}</small></span>
                       <b>{x.kcal} kcal ×</b>
                     </button>
                   ))}
@@ -7245,16 +7506,29 @@ export function FoodPlanner() {
               <div className="start-here">
                 <span>INIZIA DA QUI</span>
                 <b>{filteredRecipes[0].name}</b>
-                <button onClick={() => chooseRecipe(filteredRecipes[0])}>
-                  {swapTarget ? "Scegli" : "Apri"}
-                </button>
+                <div className="start-here-actions">
+                  <button onClick={() => { setSelectedMealKey(null); setSelected(filteredRecipes[0]); }}>
+                    {swapTarget ? "ⓘ Ricetta" : "Apri"}
+                  </button>
+                  {swapTarget && (
+                    <button onClick={() => chooseRecipe(filteredRecipes[0])}>Scegli</button>
+                  )}
+                </div>
               </div>
             )}
             <div className="recipe-grid">
               {filteredRecipes.map((r) => {
                 const m = calc(r.ingredients);
                 return (
-                  <article key={r.id} onClick={() => chooseRecipe(r)}>
+                  <article
+                    key={r.id}
+                    onClick={() => {
+                      if (swapTarget) {
+                        setSelectedMealKey(null);
+                        setSelected(r);
+                      } else chooseRecipe(r);
+                    }}
+                  >
                     <img src={r.image} alt={r.name} />
                     <div>
                       <span>
@@ -7264,6 +7538,17 @@ export function FoodPlanner() {
                       <h3>{r.name}</h3>
                       <p>{cleanKicker(r.kicker)}</p>
                     </div>
+                    {swapTarget && (
+                      <button
+                        className="recipe-card-choose"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          chooseRecipe(r);
+                        }}
+                      >
+                        Scegli
+                      </button>
+                    )}
                   </article>
                 );
               })}
@@ -7735,6 +8020,51 @@ export function FoodPlanner() {
                   <b>{round(selectedMacros.fat)}g</b> grassi
                 </span>
               </div>
+              {swapTarget && !selectedMealKey && (
+                <button
+                  className="primary-btn recipe-preview-choose"
+                  onClick={() => chooseRecipe(selected)}
+                >
+                  Scegli questo piatto
+                </button>
+              )}
+              {selectedMealKey && (
+                <div className="recipe-mode-actions">
+                  <button
+                    onClick={() => {
+                      const [dayText, slotText] = selectedMealKey.split("-");
+                      setSwapReturnTab(tab === "week" ? "week" : "today");
+                      setSwapTarget({ day: Number(dayText), slot: Number(slotText) });
+                      setSelected(null);
+                      setTab("library");
+                      scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                  >
+                    ↻ Cambia ricetta
+                  </button>
+                  {selected.parts?.length ? (
+                    <>
+                      <button
+                        onClick={() => {
+                          setMealView((current) => ({ ...current, [selectedMealKey]: "parts" }));
+                          setSelected(null);
+                        }}
+                      >
+                        Dividi in componenti
+                      </button>
+                      <button
+                        onClick={() => {
+                          setMealView((current) => ({ ...current, [selectedMealKey]: "parts" }));
+                          setSelected(null);
+                          setReplanNote("Tocca il componente che vuoi sostituire: la ricetta resta invariata nelle altre parti.");
+                        }}
+                      >
+                        Cambia un elemento
+                      </button>
+                    </>
+                  ) : null}
+                </div>
+              )}
               <h3>Ingredienti e grammi reali</h3>
               <ul className="ingredients editable">
                 {selectedIngredients.map((x, i) => (

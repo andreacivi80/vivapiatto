@@ -16,7 +16,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.15\.22"/);
+  assert.match(app, /VERSION = "1\.16\.0"/);
   assert.match(app, /food: "Crescenza"/);
   assert.match(app, /food: "Primo sale"/);
   assert.match(app, /food: "Scamorza"/);
@@ -37,6 +37,11 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /complete-meal-info/);
   assert.match(app, /Vedi ingredienti e preparazione/);
   assert.match(app, /Scegli questo piatto/);
+  assert.match(app, /Cambia ricetta/);
+  assert.match(app, /Cambia un elemento/);
+  assert.match(app, /recipe-mode-actions/);
+  assert.match(app, /recipe-card-choose/);
+  assert.match(app, /recipe-preview-choose/);
   assert.match(app, /Note utili/);
   assert.match(app, /italian-minestrone-complete/);
   assert.match(app, /Peperoni crudi/);
@@ -67,6 +72,11 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /matrix-s11-banana-peanut/);
   assert.match(app, /matrix-s27-apricot-almond/);
   assert.match(app, /matrix-s34-rye-ricotta-radish/);
+  assert.match(app, /matrix-s02-yogurt-blueberries/);
+  assert.match(app, /matrix-s09-unsweetened-yogurt-smoothie/);
+  assert.match(app, /matrix-s12-mandarins-walnuts/);
+  assert.match(app, /matrix-s13-skyr-pomegranate/);
+  assert.match(app, /matrix-s19-peach-cashews/);
   assert.match(app, /matrix-p41-whole-pasta-peas-ricotta/);
   assert.match(app, /matrix-p42-basmati-cod-spinach/);
   assert.match(app, /matrix-p44-quinoa-cannellini-beet/);
@@ -74,6 +84,16 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /matrix-p52-bulgur-tofu-chickpeas/);
   assert.match(app, /Hummus di barbabietola/);
   assert.match(app, /weeklyPlannedFiber\[index\]\} g fibre/);
+  assert.match(app, /WEEKLY_MAIN_ROTATION/);
+  assert.match(app, /occasionalFoodRows/);
+  assert.match(app, /foodSearchDatabase/);
+  assert.match(app, /Sgarri ed extra/);
+  assert.match(app, /Pizza quattro formaggi/);
+  assert.match(app, /stima da ricetta/);
+  assert.match(app, /proteinFamilyForItems/);
+  assert.match(app, /Legumi e vegetali/);
+  assert.match(app, /setCuisineChoice\(s\.cuisineChoice/);
+  assert.match(app, /tab === "builder"/);
   await access(new URL("../dist/food/recipe-d41-sole-potatoes-fennel-v11519.png", import.meta.url));
   await access(new URL("../dist/food/recipe-d42-chicken-brown-rice-v11519.png", import.meta.url));
   await access(new URL("../dist/food/recipe-d43-grass-pea-soup-v11519.png", import.meta.url));
@@ -112,6 +132,15 @@ test("sorgente mobile con versione e fonti", async () => {
   await access(new URL("../dist/food/part-radishes-v11512.png", import.meta.url));
   await access(new URL("../dist/food/recipe-c21-porridge-banana-peanut-v113.png", import.meta.url));
   await access(new URL("../dist/food/part-peanuts-v113.png", import.meta.url));
+  await access(new URL("../dist/food/part-blueberries-v1160.png", import.meta.url));
+  await access(new URL("../dist/food/part-mandarins-v1160.png", import.meta.url));
+  await access(new URL("../dist/food/part-pomegranate-v1160.png", import.meta.url));
+  await access(new URL("../dist/food/part-cashews-v1160.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-s02-yogurt-blueberries-v1160.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-s09-yogurt-fruit-smoothie-v1160.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-s12-mandarins-walnuts-v1160.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-s13-skyr-pomegranate-v1160.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-s19-peach-cashews-v1160.png", import.meta.url));
   assert.match(app, /matrix-c31-spelt-ricotta-apple/);
   assert.match(app, /matrix-c34-buckwheat-pancakes-pear/);
   assert.match(app, /matrix-c35-skyr-melon-chia/);
