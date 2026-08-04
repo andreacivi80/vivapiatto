@@ -16,7 +16,21 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.8"/);\n  assert.match(app, /breakfastMilkAlternatives/);\n  assert.match(app, /recipeFlours/);\n  assert.match(app, /sharesFruit/);\n  assert.match(app, /slot !== 2 && slot !== 4/);\n  assert.match(app, /sameCuisineFamily/);\n  assert.match(app, /calibratePlannedIngredients/);\n  assert.match(app, /mealCalorieShares/);\n  assert.match(app, /max: 100, step: 10/);\n  assert.match(app, /refreshSnapshotRef/);\n  assert.match(app, /setMealView\(s\.mealView/);\n  assert.match(css, /add-part-compact::before/);\n  assert.match(app, /const rawRecipes: Recipe\[\]/);\n  assert.match(app, /pantryPartByFood/);\n  assert.match(app, /isSubstantialRecipe/);
+  assert.match(app, /VERSION = "1\.16\.8"/);
+  assert.match(app, /breakfastMilkAlternatives/);
+  assert.match(app, /recipeFlours/);
+  assert.match(app, /sharesFruit/);
+  assert.match(app, /slot !== 2 && slot !== 4/);
+  assert.match(app, /sameCuisineFamily/);
+  assert.match(app, /calibratePlannedIngredients/);
+  assert.match(app, /mealCalorieShares/);
+  assert.match(app, /max: 100, step: 10/);
+  assert.match(app, /refreshSnapshotRef/);
+  assert.match(app, /setMealView\(s\.mealView/);
+  assert.match(css, /add-part-compact::before/);
+  assert.match(app, /const rawRecipes: Recipe\[\]/);
+  assert.match(app, /pantryPartByFood/);
+  assert.match(app, /isSubstantialRecipe/);
   assert.match(app, /Cambia piatto pronto/);
   assert.match(app, /setCuisineFilter\(recipeCuisine\(r\)\)/);
   assert.match(app, /startAddingMealPart/);
