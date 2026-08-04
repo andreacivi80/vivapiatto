@@ -2476,7 +2476,7 @@ button {
   min-width: 0;
   border: 0;
   background: transparent;
-  padding: 0 0 27px;
+  padding: 0;
   text-align: left;
 }
 .complete-meal-grid img {
@@ -2504,10 +2504,17 @@ button {
 }
 .complete-meal-grid strong {
   position: absolute;
-  left: 7px;
-  bottom: 9px;
-  color: var(--coral);
-  font-size: 8px;
+  top: 10px;
+  right: 10px;
+  left: auto;
+  bottom: auto;
+  max-width: calc(100% - 20px);
+  padding: 5px 7px;
+  border-radius: 8px;
+  background: rgba(24, 55, 47, 0.9);
+  color: #fff;
+  font-size: 7px;
+  line-height: 1.1;
 }
 .complete-meal-info {
   position: absolute;
@@ -2593,12 +2600,17 @@ button {
 .recipe-grid article {
   position: relative;
 }
+.recipe-grid article > div {
+  padding-right: 52px;
+}
 .recipe-card-choose {
   position: absolute;
-  right: 8px;
-  bottom: 8px;
-  min-height: 34px;
-  padding: 0 12px;
+  top: 7px;
+  right: 7px;
+  bottom: auto;
+  min-height: 25px;
+  padding: 0 8px;
+  font-size: 8px;
   border: 0;
   border-radius: 10px;
   font-weight: 900;
@@ -2759,4 +2771,67 @@ button {
   background: #f1dfd2;
   font-size: 20px;
   line-height: 1;
+}
+
+.swap-food-catalog {
+  margin-top: 14px;
+  padding-top: 11px;
+  border-top: 2px solid #d9c6a0;
+}
+.swap-food-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.swap-food-heading span {
+  color: var(--coral);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+.swap-food-heading b {
+  font-size: 9px;
+}
+.swap-food-catalog > p {
+  margin: 5px 0 9px;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.3;
+}
+.swap-food-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+.swap-food-grid button {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper);
+  padding: 5px;
+  text-align: left;
+}
+.swap-food-grid img {
+  width: 100%;
+  height: 68px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+.swap-food-grid span,
+.swap-food-grid b {
+  display: block;
+  overflow-wrap: anywhere;
+}
+.swap-food-grid span {
+  margin-top: 4px;
+  font-size: 8px;
+  font-weight: 900;
+  line-height: 1.2;
+}
+.swap-food-grid b {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 7px;
 }
