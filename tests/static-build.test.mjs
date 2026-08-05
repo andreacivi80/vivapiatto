@@ -16,7 +16,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.40"/);
+  assert.match(app, /VERSION = "1\.16\.41"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -106,6 +106,14 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /week-kcal-summary/);
   assert.match(app, /Rotazione confermata/);
   assert.match(app, /simpleBreakfasts\.forEach\(\(recipe\) => \(recipe\.kind = "combination"\)\)/);
+  for (let code = 1; code <= 36; code += 1) {
+    const recipeId = `matrix-c${String(code).padStart(2, "0")}`;
+    assert.match(app, new RegExp(recipeId), `ricetta colazione mancante: ${recipeId}`);
+  }
+  assert.match(app, /part-pumpkin-seeds-v11641/);
+  assert.match(app, /part-egg-white-v11641/);
+  assert.match(app, /part-almond-butter-v11641/);
+  assert.match(app, /part-dark-chocolate-v11641/);
   const realRecipeIndex = app.slice(app.indexOf("const rawRecipes"), app.indexOf("const pantryPartByFood"));
   assert.match(realRecipeIndex, /catalogMains/);
   assert.doesNotMatch(realRecipeIndex, /generatedRecipes|snackRecipes/);
@@ -168,6 +176,10 @@ test("sorgente mobile con versione e fonti", async () => {
   await access(new URL("../dist/food/recipe-asian-oyakodon-v11520.png", import.meta.url));
   await access(new URL("../dist/food/recipe-asian-bibimbap-v11520.png", import.meta.url));
   await access(new URL("../dist/food/part-sunflower-seeds-v11640.png", import.meta.url));
+  await access(new URL("../dist/food/part-pumpkin-seeds-v11641.png", import.meta.url));
+  await access(new URL("../dist/food/part-egg-white-v11641.png", import.meta.url));
+  await access(new URL("../dist/food/part-almond-butter-v11641.png", import.meta.url));
+  await access(new URL("../dist/food/part-dark-chocolate-v11641.png", import.meta.url));
   await access(new URL("../dist/food/part-tempeh-v11520.png", import.meta.url));
   await access(new URL("../dist/food/part-turbot-v11520.png", import.meta.url));
   await access(new URL("../dist/food/part-cuttlefish-v11520.png", import.meta.url));
