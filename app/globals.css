@@ -2593,28 +2593,27 @@ button {
   align-items: center;
 }
 .start-here-actions button:last-child,
-.recipe-card-choose {
-  background: var(--ink);
-  color: #fff;
-}
 .recipe-grid article {
   position: relative;
 }
 .recipe-grid article > div {
-  padding-right: 52px;
+  padding-right: 31px;
 }
-.recipe-card-choose {
+.recipe-card-info {
   position: absolute;
   top: 7px;
   right: 7px;
-  bottom: auto;
+  width: 25px;
+  height: 25px;
   min-height: 25px;
-  padding: 0 8px;
-  font-size: 8px;
-  border: 0;
-  border-radius: 10px;
-  font-weight: 900;
-  box-shadow: 0 3px 10px rgba(22, 49, 41, 0.22);
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  background: rgba(22, 49, 41, 0.92);
+  color: #fff;
+  font: 900 13px/1 Georgia, serif;
+  box-shadow: 0 3px 10px rgba(22, 49, 41, 0.2);
+  z-index: 2;
 }
 .recipe-preview-choose {
   width: 100%;
