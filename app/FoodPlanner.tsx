@@ -1340,6 +1340,24 @@ foods["Uovo in camicia"] = {
   source: "USDA",
 };
 
+foods["Yogurt bianco"] = {
+  kcal: 63,
+  protein: 5.3,
+  carbs: 7,
+  fat: 1.6,
+  fiber: 0,
+  source: "USDA",
+};
+
+foods["Crema 100% mandorle"] = {
+  kcal: 614,
+  protein: 21.1,
+  carbs: 18.8,
+  fat: 55.5,
+  fiber: 10.3,
+  source: "USDA",
+};
+
 foods["Semi di girasole"] = {
   kcal: 584,
   protein: 20.8,
