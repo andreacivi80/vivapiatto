@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.65"/);
+  assert.match(app, /VERSION = "1\.16\.66"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -525,6 +525,13 @@ test("v1.16.17 keeps swap navigation visible and exposes occasional choices", as
   assert.match(app, /healthyFilters\.every/);
   assert.match(app, /Filtri healthy/);
   assert.match(css, /\.healthy-filter-panel/);
+  assert.match(app, /Anteprima stampa/);
+  assert.match(app, /className="print-preview-sheet"/);
+  assert.match(app, /Menu, quantità e nutrienti/);
+  assert.match(app, /className="print-food-row"/);
+  assert.match(app, /Chiudi anteprima stampa/);
+  assert.match(css, /\.print-preview-sheet/);
+  assert.match(css, /\.print-food-row/);
   assert.match(app, /const hasPartCards = Boolean/);
   assert.match(app, /partSelections\[key\]\?\.length/);
   assert.match(app, /hasPartCards \? \(/);
