@@ -74,7 +74,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.44";
+const VERSION = "1.16.45";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -1409,6 +1409,24 @@ foods["Fagioli rossi cotti"] = {
   carbs: 22.8,
   fat: 0.5,
   fiber: 6.4,
+  source: "USDA",
+};
+
+foods["Trota cotta"] = {
+  kcal: 168,
+  protein: 23.8,
+  carbs: 0,
+  fat: 7.4,
+  fiber: 0,
+  source: "USDA",
+};
+
+foods["Polpo cotto"] = {
+  kcal: 164,
+  protein: 29.8,
+  carbs: 4.4,
+  fat: 2.1,
+  fiber: 0,
   source: "USDA",
 };
 
@@ -4622,6 +4640,9 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     { category: "Proteina", food: "Petto di tacchino cotto alla piastra", grams: 100, label: "Petto di tacchino alla piastra", image: photo("part-turkey-grilled-v11514") },
     { category: "Proteina", food: "Coniglio cotto in umido", grams: 100, label: "Coniglio cotto in umido", image: photo("part-rabbit-v11515") },
     { category: "Proteina", food: "Tofu alla piastra", grams: 100, label: "Tofu alla piastra", image: photo("part-tofu-v11515") },
+    { category: "Proteina", food: "Edamame cotti", grams: 80, label: "Edamame cotti", image: photo("part-edamame-v11634") },
+    { category: "Proteina", food: "Trota cotta", grams: 150, label: "Trota cotta al forno o al vapore", image: photo("part-trout-v11645") },
+    { category: "Proteina", food: "Polpo cotto", grams: 150, label: "Polpo cotto", image: photo("part-octopus-v11645") },
   ],
   Contorno: [
     {
@@ -7456,6 +7477,139 @@ const attachmentMainsP23P27: Recipe[] = [
   },
 ];
 
+
+const attachmentMainsP28P34: Recipe[] = [
+  {
+    id: "matrix-p28-red-rice-tofu-edamame-vegetables",
+    name: "Riso rosso con tofu, edamame e verdure",
+    kicker: "Piatto unico vegetale",
+    course: "Piatto unico",
+    cuisine: "Asiatico",
+    image: photo("moment-lunch-v1121"),
+    time: 35,
+    ingredients: [
+      { food: "Riso rosso integrale cotto", grams: 180 },
+      { food: "Tofu alla piastra", grams: 100 },
+      { food: "Edamame cotti", grams: 80 },
+      { food: "Broccoli bolliti", grams: 90 },
+      { food: "Carote crude", grams: 80 },
+      { food: "Funghi", grams: 80 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    steps: ["Cuoci il riso rosso secondo confezione.", "Griglia il tofu e cuoci broccoli, carote e funghi al vapore o in padella antiaderente.", "Unisci edamame, riso e verdure e completa con olio misurato, zenzero e salsa di soia a ridotto contenuto di sale se desiderata."],
+    alternatives: ["Riso Venere al posto del riso rosso", "Tempeh al posto del tofu"],
+  },
+  {
+    id: "matrix-p29-whole-pasta-cannellini-broccoli",
+    name: "Pasta integrale con cannellini e broccoli",
+    kicker: "Piatto unico vegetale",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    image: photo("moment-lunch-v1121"),
+    time: 25,
+    ingredients: [
+      { food: "Pasta integrale secca", grams: 70 },
+      { food: "Fagioli cannellini cotti", grams: 120 },
+      { food: "Broccoli bolliti", grams: 250 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    steps: ["Lessa i broccoli e usa la stessa acqua per cuocere la pasta.", "Scola la pasta al dente e uniscila a broccoli e cannellini risciacquati con poca acqua di cottura.", "Completa con olio a crudo, aglio e peperoncino."],
+    alternatives: ["Pasta di farro al posto dell'integrale", "Ceci cotti al posto dei cannellini"],
+  },
+  {
+    id: "matrix-p30-basmati-chicken-vegetable-salad",
+    name: "Insalata di riso basmati con pollo e verdure",
+    kicker: "Pranzo trasportabile di carne bianca",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    image: photo("moment-lunch-v1121"),
+    time: 30,
+    ingredients: [
+      { food: "Riso basmati secco", grams: 70 },
+      { food: "Petto di pollo · peso a crudo", grams: 100 },
+      { food: "Zucchine", grams: 85 },
+      { food: "Peperoni cotti senza olio", grams: 85 },
+      { food: "Carote crude", grams: 80 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    steps: ["Cuoci il riso, scolalo e raffreddalo rapidamente.", "Griglia pollo e verdure finché il pollo è completamente cotto.", "Taglia tutto a pezzi, unisci e completa con olio misurato e limone; conserva refrigerato."],
+    alternatives: ["Petto di tacchino alla piastra al posto del pollo", "Riso integrale al posto del basmati"],
+  },
+  {
+    id: "matrix-p31-barley-chickpeas-artichokes-tomatoes",
+    name: "Orzo con ceci, carciofi e pomodori",
+    kicker: "Piatto unico vegetale",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    image: photo("moment-lunch-v1121"),
+    time: 35,
+    ingredients: [
+      { food: "Orzo perlato cotto", grams: 160 },
+      { food: "Ceci cotti", grams: 150 },
+      { food: "Carciofi cotti bolliti", grams: 125 },
+      { food: "Pomodorini", grams: 125 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    steps: ["Cuoci l'orzo secondo confezione.", "Cuoci i carciofi con poca acqua e taglia i pomodorini.", "Unisci ceci risciacquati, orzo e verdure e completa con olio misurato, prezzemolo e limone."],
+    alternatives: ["Farro cotto al posto dell'orzo", "Lenticchie cotte al posto dei ceci"],
+  },
+  {
+    id: "matrix-p32-quinoa-trout-asparagus-tomatoes",
+    name: "Quinoa con trota, asparagi e pomodorini",
+    kicker: "Piatto unico di pesce",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    image: photo("moment-lunch-v1121"),
+    time: 30,
+    ingredients: [
+      { food: "Quinoa cotta", grams: 185 },
+      { food: "Trota cotta", grams: 150 },
+      { food: "Asparagi crudi", grams: 125 },
+      { food: "Pomodorini", grams: 125 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    steps: ["Cuoci la quinoa secondo confezione.", "Cuoci trota e asparagi al forno o al vapore fino a completa cottura.", "Servi con pomodorini, quinoa e olio misurato; completa con limone e aneto."],
+    alternatives: ["Salmone cotto al posto della trota", "Riso basmati al posto della quinoa"],
+  },
+  {
+    id: "matrix-p33-couscous-turkey-pumpkin-radicchio",
+    name: "Cous cous integrale con tacchino, zucca e radicchio",
+    kicker: "Piatto unico di carne bianca",
+    course: "Piatto unico",
+    cuisine: "Mediterraneo",
+    image: photo("moment-lunch-v1121"),
+    time: 30,
+    ingredients: [
+      { food: "Cous cous integrale cotto", grams: 210 },
+      { food: "Petto di tacchino cotto alla piastra", grams: 100 },
+      { food: "Zucca", grams: 125 },
+      { food: "Radicchio cotto", grams: 125 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    steps: ["Arrostisci zucca e radicchio.", "Cuoci il tacchino alla piastra fino a completa cottura e taglialo a strisce.", "Prepara il cous cous, unisci tutto e completa con olio misurato, timo e limone."],
+    alternatives: ["Petto di pollo al posto del tacchino", "Bulgur cotto al posto del cous cous"],
+  },
+  {
+    id: "matrix-p34-venere-octopus-crunchy-vegetables",
+    name: "Riso Venere con polpo e verdure croccanti",
+    kicker: "Piatto unico di pesce",
+    course: "Piatto unico",
+    cuisine: "Mediterraneo",
+    image: photo("moment-lunch-v1121"),
+    time: 30,
+    ingredients: [
+      { food: "Riso Venere secco", grams: 70 },
+      { food: "Polpo cotto", grams: 150 },
+      { food: "Finocchi crudi", grams: 100 },
+      { food: "Carote crude", grams: 100 },
+      { food: "Rucola", grams: 50 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    steps: ["Cuoci il riso Venere e raffreddalo rapidamente.", "Taglia il polpo cotto e affetta finocchi e carote; lava e asciuga la rucola.", "Unisci tutto e completa con olio misurato e limone."],
+    alternatives: ["Riso rosso al posto del Venere", "Gamberi cotti al posto del polpo"],
+  },
+];
+
 const rawRecipes: Recipe[] = [
   ...simpleBreakfasts,
   ...attachmentBaseBreakfasts,
@@ -7473,6 +7627,7 @@ const rawRecipes: Recipe[] = [
   ...attachmentBaseMainsC,
   ...attachmentMainsP17P22,
   ...attachmentMainsP23P27,
+  ...attachmentMainsP28P34,
   ...matrixMainRecipes,
   ...catalogSnacks,
   ...portableRecipes,
