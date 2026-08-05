@@ -4611,7 +4611,7 @@ const attachmentDinnersA: Recipe[] = [
       { category: "Proteina", food: "Polpo cotto", grams: 150, label: "Polpo cotto · 150 g", image: photo("part-octopus-v11645") },
       { category: "Carboidrato", food: "Patate lesse", grams: 200, label: "Patate lesse · 200 g", image: photo("part-potatoes-boiled-v7") },
       { category: "Contorno", food: "Pomodorini", grams: 150, label: "Pomodori · 150 g", image: photo("part-tomatoes-v8") },
-      { category: "Contorno", food: "Rucola", grams: 50, label: "Rucola · 50 g", image: photo("part-rucola-v11513") },
+      { category: "Contorno", food: "Rucola", grams: 50, label: "Rucola · 50 g", image: photo("part-rucola-v7") },
       { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") },
     ],
     steps: ["Se parti dal polpo crudo, puliscilo e lessalo finché è tenero; altrimenti usa polpo già cotto non condito e conservato correttamente.","Lessa le patate, lasciale intiepidire e tagliale con pomodori e rucola.","Unisci il polpo e completa con limone, prezzemolo e olio pesato."],
