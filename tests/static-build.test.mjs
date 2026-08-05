@@ -31,6 +31,14 @@ test("build GitHub Pages autonomo e completo", async () => {
   await access(new URL("../dist/food/recipe-c42-greek-yogurt-pear-v11659.png", import.meta.url));
   await access(new URL("../dist/food/recipe-c43-cottage-pomegranate-v11659.png", import.meta.url));
   await access(new URL("../dist/food/recipe-c44-oat-soy-peach-pudding-v11659.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-s35-skyr-blueberries-v11660.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-s36-banana-hazelnuts-v11660.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-s37-hummus-tomato-toast-v11660.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-s38-yogurt-peach-seeds-v11660.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-s39-ricotta-cucumber-radish-v11660.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-s40-apple-pistachio-kefir-v11660.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-s41-cottage-ricecakes-v11660.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-s42-mixed-berries-yogurt-v11660.png", import.meta.url));
 });
 
 test("sorgente mobile con versione e fonti", async () => {
@@ -476,4 +484,10 @@ test("v1.16.17 keeps swap navigation visible and exposes occasional choices", as
   assert.match(app, /matrix-c44-oat-soy-peach-sesame-pudding/);
   assert.match(app, /\.\.\.attachmentBreakfastsC37C44/);
   assert.match(app, /recipe-c41-spelt-pancakes-v11659/);
+
+  assert.match(app, /const attachmentSnacksS35S42: Recipe\[\]/);
+  assert.match(app, /matrix-s35-mirtilli-skyr-e-mandorle/);
+  assert.match(app, /matrix-s42-frutti-di-bosco-con-yogurt-e-chia/);
+  assert.match(app, /\.\.\.attachmentSnacksS35S42/);
+  assert.match(app, /recipe-s41-cottage-ricecakes-v11660/);
 });
