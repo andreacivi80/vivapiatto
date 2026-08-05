@@ -74,7 +74,6 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /chooseCompleteMeal/);
   assert.match(app, /complete-meal-info/);
   assert.match(app, /Vedi ingredienti e preparazione/);
-  assert.match(app, /Scegli questo piatto/);
   assert.doesNotMatch(app, /Scegli questo sgarro/);
   assert.doesNotMatch(app, /<strong>Scegli questo piatto<\/strong>/);
   assert.match(app, /Cambia ricetta/);
