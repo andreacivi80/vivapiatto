@@ -74,7 +74,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.58";
+const VERSION = "1.16.59";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -1558,6 +1558,8 @@ foods["Cicoria cotta"] = { kcal: 24, protein: 1.4, carbs: 3.4, fat: 0.3, fiber: 
 foods["Cavolo cappuccio cotto"] = { kcal: 23, protein: 1.3, carbs: 5.5, fat: 0.1, fiber: 2.6, source: "USDA" };
 
 foods["Platessa cotta"] = { kcal: 86, protein: 18.6, carbs: 0, fat: 1.2, fiber: 0, source: "USDA" };
+
+foods["Farina integrale"] = { kcal: 340, protein: 13.2, carbs: 61.3, fat: 2.5, fiber: 10.7, source: "CREA" };
 
 const calc = (
   ingredients: RecipeIngredient[],
@@ -4885,6 +4887,172 @@ const attachmentDinnersE: Recipe[] = [
   { id: "matrix-d64-tempeh-con-melanzane-pomodori-e-miglio", name: "Tempeh con melanzane, pomodori e miglio", kicker: "Cena completa · matrice D64", course: "Piatto unico", cuisine: "Vegetale", kind: "combination", image: photo("part-tempeh-v11520"), time: 35, ingredients: [{ food: "Tempeh", grams: 100 }, { food: "Miglio cotto", grams: 170 }, { food: "Melanzane", grams: 140 }, { food: "Pomodorini", grams: 100 }, { food: "Cipolle crude", grams: 60 }, { food: "Olio extravergine", grams: 10 }], parts: [{ category: "Proteina", food: "Tempeh", grams: 100, label: "Tempeh grigliato · 100 g", image: photo("part-tempeh-v11520") }, { category: "Carboidrato", food: "Miglio cotto", grams: 170, label: "Miglio cotto · da circa 60 g secco", image: photo("part-millet-v11515") }, { category: "Contorno", food: "Melanzane", grams: 140, label: "Melanzane · 140 g", image: photo("part-eggplant-v8") }, { category: "Contorno", food: "Pomodorini", grams: 100, label: "Pomodori · 100 g", image: photo("part-tomatoes-v8") }, { category: "Contorno", food: "Cipolle crude", grams: 60, label: "Cipolla · 60 g", image: photo("part-onions-v11519") }, { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") }], steps: ["Cuoci il miglio secondo confezione.","Griglia il tempeh e cuoci melanzane, pomodori e cipolla al forno o in padella antiaderente.","Unisci con paprika, basilico, origano e 10 g di olio."], alternatives: ["Ogni componente può essere sostituito separatamente", "Porzioni orientative per un adulto sano", "Pesi e stato di cottura sono indicati in ogni componente"] }
 ];
 
+
+const attachmentBreakfastsC37C44: Recipe[] = [
+  {
+    id: "matrix-c37-blueberry-chia-almond-porridge",
+    name: "Porridge di mirtilli, chia e mandorle",
+    kicker: "Colazione calda · matrice C37",
+    course: "Colazione", cuisine: "Italiano", kind: "combination",
+    image: photo("recipe-c37-blueberry-porridge-v11659"), time: 10,
+    ingredients: [
+      { food: "Fiocchi d'avena", grams: 40 },
+      { food: "Latte parzialmente scremato", grams: 180 },
+      { food: "Mirtilli freschi", grams: 150 },
+      { food: "Semi di chia", grams: 5 },
+      { food: "Mandorle", grams: 10 },
+    ],
+    parts: [
+      { category: "Carboidrato", food: "Fiocchi d'avena", grams: 40, label: "Fiocchi d'avena · 40 g", image: photo("part-oats-v113") },
+      { category: "Latticino", food: "Latte parzialmente scremato", grams: 180, label: "Latte parzialmente scremato · 180 ml", image: photo("part-milk-v7") },
+      { category: "Frutta", food: "Mirtilli freschi", grams: 150, label: "Mirtilli freschi · 150 g", image: photo("part-blueberries-v1160") },
+      { category: "Extra", food: "Semi di chia", grams: 5, label: "Semi di chia · 5 g", image: photo("part-chia-v11511") },
+      { category: "Extra", food: "Mandorle", grams: 10, label: "Mandorle · 10 g", image: photo("part-almonds-v9") },
+    ],
+    steps: ["Versa avena e latte in un pentolino.", "Cuoci per 5-7 minuti mescolando, finché il porridge è cremoso.", "Spegni e completa con mirtilli lavati, chia e mandorle tritate."],
+    alternatives: ["Bevanda di soia senza zuccheri al posto del latte", "Frutti di bosco nella quantità equivalente", "Contiene latte e mandorle; adattabile senza lattosio"],
+  },
+  {
+    id: "matrix-c38-skyr-mango-pistachio-oats",
+    name: "Skyr con mango, pistacchi e avena",
+    kicker: "Colazione rapida · matrice C38",
+    course: "Colazione", cuisine: "Italiano", kind: "combination",
+    image: photo("recipe-c38-skyr-mango-v11659"), time: 5,
+    ingredients: [
+      { food: "Skyr bianco", grams: 170 }, { food: "Mango", grams: 150 },
+      { food: "Fiocchi d'avena", grams: 30 }, { food: "Pistacchi", grams: 10 },
+    ],
+    parts: [
+      { category: "Latticino", food: "Skyr bianco", grams: 170, label: "Skyr bianco · 170 g", image: photo("part-skyr-v11511") },
+      { category: "Frutta", food: "Mango", grams: 150, label: "Mango · 150 g edibili", image: photo("part-mango-v11") },
+      { category: "Carboidrato", food: "Fiocchi d'avena", grams: 30, label: "Fiocchi d'avena · 30 g", image: photo("part-oats-v113") },
+      { category: "Extra", food: "Pistacchi", grams: 10, label: "Pistacchi non salati · 10 g", image: photo("part-pistachios-v1143") },
+    ],
+    steps: ["Taglia il mango a cubetti.", "Versa lo skyr in una ciotola e aggiungi avena, mango e pistacchi tritati."],
+    alternatives: ["Yogurt greco 0% al posto dello skyr", "Pesca o papaya al posto del mango", "Contiene latte e pistacchi"],
+  },
+  {
+    id: "matrix-c39-rye-egg-spinach-tomato",
+    name: "Pane di segale con uovo, spinaci e pomodori",
+    kicker: "Colazione salata da casa · matrice C39",
+    course: "Colazione", cuisine: "Italiano", kind: "combination",
+    image: photo("recipe-c39-rye-egg-spinach-v11659"), time: 15,
+    ingredients: [
+      { food: "Pane di segale", grams: 50 }, { food: "Uova strapazzate o in frittata", grams: 60 },
+      { food: "Albume", grams: 100 }, { food: "Spinaci", grams: 100 },
+      { food: "Pomodorini", grams: 80 }, { food: "Olio extravergine", grams: 5 },
+    ],
+    parts: [
+      { category: "Carboidrato", food: "Pane di segale", grams: 50, label: "Pane di segale · 50 g", image: photo("part-bread-rye-v1156") },
+      { category: "Proteina", food: "Uova strapazzate o in frittata", grams: 60, label: "Un uovo strapazzato senza grassi · 60 g", image: photo("part-eggs-scrambled-v1156") },
+      { category: "Proteina", food: "Albume", grams: 100, label: "Albume · 100 g", image: photo("part-egg-white-v11641") },
+      { category: "Contorno", food: "Spinaci", grams: 100, label: "Spinaci · 100 g", image: photo("part-spinach-v7") },
+      { category: "Contorno", food: "Pomodorini", grams: 80, label: "Pomodori · 80 g", image: photo("part-tomatoes-v8") },
+      { category: "Extra", food: "Olio extravergine", grams: 5, label: "Olio EVO · 5 g", image: photo("part-olive-oil-v8") },
+    ],
+    steps: ["Tosta il pane di segale.", "Appassisci spinaci e pomodori in padella antiaderente.", "Aggiungi uovo e albume e cuoci completamente mescolando; completa con pepe, erba cipollina e 5 g di olio."],
+    alternatives: ["Colazione salata più adatta a casa o al weekend", "Pane integrale nella quantità equivalente", "Contiene uova e glutine"],
+  },
+  {
+    id: "matrix-c40-kefir-banana-walnut-flax",
+    name: "Kefir con banana, noci e semi di lino",
+    kicker: "Colazione rapida · matrice C40",
+    course: "Colazione", cuisine: "Italiano", kind: "combination",
+    image: photo("recipe-c40-kefir-banana-v11659"), time: 5,
+    ingredients: [
+      { food: "Kefir bianco magro", grams: 170 }, { food: "Banana", grams: 150 },
+      { food: "Muesli", grams: 30 }, { food: "Noci", grams: 10 }, { food: "Semi di lino macinati", grams: 5 },
+    ],
+    parts: [
+      { category: "Latticino", food: "Kefir bianco magro", grams: 170, label: "Kefir bianco · 170 g", image: photo("part-kefir-v1152") },
+      { category: "Frutta", food: "Banana", grams: 150, label: "Banana · 150 g edibili", image: photo("part-banana-v7") },
+      { category: "Carboidrato", food: "Muesli", grams: 30, label: "Muesli senza zuccheri aggiunti · 30 g", image: photo("part-muesli-v1152") },
+      { category: "Extra", food: "Noci", grams: 10, label: "Noci · 10 g", image: photo("walnuts-20g-v5") },
+      { category: "Extra", food: "Semi di lino macinati", grams: 5, label: "Semi di lino macinati · 5 g", image: photo("part-flaxseed-v113") },
+    ],
+    steps: ["Taglia la banana a rondelle.", "Unisci kefir, muesli, banana, noci spezzettate e semi di lino macinati."],
+    alternatives: ["Skyr o yogurt bianco al posto del kefir", "Pera nella quantità equivalente", "Contiene latte, noci ed eventuale glutine"],
+  },
+  {
+    id: "matrix-c41-spelt-pancakes-ricotta-apricot",
+    name: "Pancake di farro con ricotta e albicocche",
+    kicker: "Colazione da casa · matrice C41",
+    course: "Colazione", cuisine: "Italiano", kind: "combination",
+    image: photo("recipe-c41-spelt-pancakes-v11659"), time: 15,
+    ingredients: [
+      { food: "Farina integrale", grams: 40 }, { food: "Albume", grams: 100 },
+      { food: "Latte parzialmente scremato", grams: 50 }, { food: "Ricotta vaccina", grams: 60 },
+      { food: "Albicocche fresche", grams: 150 },
+    ],
+    parts: [
+      { category: "Carboidrato", food: "Farina integrale", grams: 40, label: "Farina di farro o integrale nell'impasto · 40 g", image: photo("part-whole-wheat-flour-v9") },
+      { category: "Proteina", food: "Albume", grams: 100, label: "Albume nell'impasto · 100 g", image: photo("part-egg-white-v11641") },
+      { category: "Latticino", food: "Latte parzialmente scremato", grams: 50, label: "Latte nell'impasto · 50 ml", image: photo("part-milk-v7") },
+      { category: "Latticino", food: "Ricotta vaccina", grams: 60, label: "Ricotta · 60 g", image: photo("part-ricotta-v7") },
+      { category: "Frutta", food: "Albicocche fresche", grams: 150, label: "Albicocche · 150 g edibili", image: photo("part-apricots-v1152") },
+    ],
+    steps: ["Mescola farina, albume e latte fino a ottenere una pastella liscia.", "Cuoci piccoli pancake in padella antiaderente calda, girandoli quando compaiono le bolle.", "Servi con ricotta e albicocche lavate e affettate."],
+    alternatives: ["Farina integrale al posto della farina di farro", "Pesca al posto delle albicocche", "Contiene glutine, uovo e latte"],
+  },
+  {
+    id: "matrix-c42-greek-yogurt-pear-pumpkin-seeds-bread",
+    name: "Yogurt greco con pera, semi di zucca e pane",
+    kicker: "Colazione rapida · matrice C42",
+    course: "Colazione", cuisine: "Italiano", kind: "combination",
+    image: photo("recipe-c42-greek-yogurt-pear-v11659"), time: 5,
+    ingredients: [
+      { food: "Yogurt greco 2%", grams: 170 }, { food: "Pera", grams: 150 },
+      { food: "Semi di zucca", grams: 10 }, { food: "Pane integrale", grams: 40 },
+    ],
+    parts: [
+      { category: "Latticino", food: "Yogurt greco 2%", grams: 170, label: "Yogurt greco bianco · 170 g", image: photo("part-yogurt-v7") },
+      { category: "Frutta", food: "Pera", grams: 150, label: "Pera · 150 g edibili", image: photo("part-pear-v7") },
+      { category: "Extra", food: "Semi di zucca", grams: 10, label: "Semi di zucca · 10 g", image: photo("part-pumpkin-seeds-v11641") },
+      { category: "Carboidrato", food: "Pane integrale", grams: 40, label: "Pane integrale tostato · 40 g", image: photo("part-bread-v7") },
+    ],
+    steps: ["Lava e affetta la pera.", "Servi yogurt con pera e semi di zucca; accompagna con pane tostato."],
+    alternatives: ["Skyr al posto dello yogurt", "Mela al posto della pera", "Contiene latte, glutine e semi"],
+  },
+  {
+    id: "matrix-c43-cottage-pomegranate-hazelnut",
+    name: "Fiocchi di latte con melagrana e nocciole",
+    kicker: "Colazione rapida · matrice C43",
+    course: "Colazione", cuisine: "Italiano", kind: "combination",
+    image: photo("recipe-c43-cottage-pomegranate-v11659"), time: 5,
+    ingredients: [
+      { food: "Fiocchi di latte", grams: 100 }, { food: "Melagrana fresca", grams: 150 },
+      { food: "Pane ai cereali", grams: 50 }, { food: "Nocciole", grams: 10 },
+    ],
+    parts: [
+      { category: "Latticino", food: "Fiocchi di latte", grams: 100, label: "Fiocchi di latte · 100 g", image: photo("part-cottage-cheese-v11512") },
+      { category: "Frutta", food: "Melagrana fresca", grams: 150, label: "Chicchi di melagrana · 150 g", image: photo("part-pomegranate-v1160") },
+      { category: "Carboidrato", food: "Pane ai cereali", grams: 50, label: "Pane ai cereali · 50 g", image: photo("part-bread-cereals-v11511") },
+      { category: "Extra", food: "Nocciole", grams: 10, label: "Nocciole · 10 g", image: photo("part-hazelnuts-v11511") },
+    ],
+    steps: ["Ricava i chicchi dalla melagrana.", "Unisci fiocchi di latte, melagrana e nocciole tritate; servi con pane ai cereali."],
+    alternatives: ["Ricotta magra al posto dei fiocchi di latte", "Pera al posto della melagrana", "Contiene latte, glutine e nocciole"],
+  },
+  {
+    id: "matrix-c44-oat-soy-peach-sesame-pudding",
+    name: "Budino di avena, soia, pesca e sesamo",
+    kicker: "Colazione preparata la sera · matrice C44",
+    course: "Colazione", cuisine: "Vegetale", kind: "combination",
+    image: photo("recipe-c44-oat-soy-peach-pudding-v11659"), time: 5,
+    ingredients: [
+      { food: "Fiocchi d'avena", grams: 35 }, { food: "Bevanda di soia", grams: 180 },
+      { food: "Pesca", grams: 150 }, { food: "Semi di chia", grams: 10 }, { food: "Semi di sesamo", grams: 5 },
+    ],
+    parts: [
+      { category: "Carboidrato", food: "Fiocchi d'avena", grams: 35, label: "Fiocchi d'avena · 35 g", image: photo("part-oats-v113") },
+      { category: "Latticino", food: "Bevanda di soia", grams: 180, label: "Bevanda di soia senza zuccheri · 180 ml", image: photo("part-soy-drink-v11649") },
+      { category: "Frutta", food: "Pesca", grams: 150, label: "Pesca o nettarina · 150 g edibili", image: photo("part-peach-v113") },
+      { category: "Extra", food: "Semi di chia", grams: 10, label: "Semi di chia · 10 g", image: photo("part-chia-v11511") },
+      { category: "Extra", food: "Semi di sesamo", grams: 5, label: "Semi di sesamo · 5 g", image: photo("part-sesame-v11512") },
+    ],
+    steps: ["La sera mescola avena, bevanda di soia e chia in un contenitore.", "Copri e lascia in frigorifero per almeno 3 ore.", "Al mattino aggiungi pesca affettata e sesamo."],
+    alternatives: ["Nettarina o albicocche al posto della pesca", "Latte vaccino nella quantità equivalente", "Contiene soia, sesamo e avena"],
+  },
+];
 
 const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
   Carboidrato: [
@@ -8364,6 +8532,7 @@ const attachmentMainsP35P40: Recipe[] = [
 const rawRecipes: Recipe[] = [
   ...simpleBreakfasts,
   ...attachmentBaseBreakfasts,
+  ...attachmentBreakfastsC37C44,
   ...attachmentBreakfastsC13C20,
   ...attachmentBreakfastsC22C28,
   ...matrixBreakfasts,
