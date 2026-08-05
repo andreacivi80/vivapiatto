@@ -19,7 +19,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.52"/);
+  assert.match(app, /VERSION = "1\.16\.53"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -412,4 +412,8 @@ test("v1.16.17 keeps swap navigation visible and exposes occasional choices", as
     "ogni alimento del catalogo deve avere una fotografia distinta"
   );
 
+  assert.doesNotMatch(app, /Scegli questo (?:piatto|sgarro)/);
+  assert.doesNotMatch(app, /chooseRecipe\(filteredRecipes\[0\]\)/);
+  assert.match(app, /recipe-preview-photo-select/);
+  assert.match(css, /\.recipe-preview-photo-select/);
 });
