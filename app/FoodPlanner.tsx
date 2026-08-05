@@ -65,6 +65,7 @@ type LogItem = {
   fat?: number;
   fiber?: number;
   source?: Food["source"];
+  image?: string;
 };
 const SLOT_LABELS = [
   "Colazione",
@@ -74,7 +75,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.72";
+const VERSION = "1.16.73";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -90,23 +91,23 @@ const WEEK_SLOT_IMAGES = [
   "moment-dinner-v1121",
 ];
 const drinkOptions: LogItem[] = [
-  { label: "Acqua naturale", kcal: 0, amount: "500 ml" },
-  { label: "Acqua frizzante", kcal: 0, amount: "500 ml" },
-  { label: "Caffè senza zucchero", kcal: 2, amount: "1 tazzina · 30 ml" },
-  { label: "Caffè decaffeinato senza zucchero", kcal: 2, amount: "1 tazzina · 30 ml" },
-  { label: "Caffè d'orzo senza zucchero", kcal: 7, amount: "1 tazza · 120 ml" },
-  { label: "Tè verde senza zucchero", kcal: 2, amount: "1 tazza · 250 ml" },
-  { label: "Tè nero senza zucchero", kcal: 2, amount: "1 tazza · 250 ml" },
-  { label: "Tè deteinato senza zucchero", kcal: 2, amount: "1 tazza · 250 ml" },
-  { label: "Tisana senza zucchero", kcal: 2, amount: "1 tazza · 250 ml" },
-  { label: "Acqua aromatizzata al limone", kcal: 0, amount: "500 ml · senza zucchero" },
-  { label: "Acqua aromatizzata al cetriolo", kcal: 0, amount: "500 ml · senza zucchero" },
-  { label: "Acqua aromatizzata alla menta", kcal: 0, amount: "500 ml · senza zucchero" },
-  { label: "Coca-Cola Zero", kcal: 0, amount: "330 ml" },
-  { label: "Gassata zero", kcal: 0, amount: "330 ml" },
-  { label: "Bibita zuccherata", kcal: 140, amount: "330 ml" },
-  { label: "Vino bianco", kcal: 102, amount: "1 bicchiere · 125 ml" },
-  { label: "Vino rosso", kcal: 106, amount: "1 bicchiere · 125 ml" },
+  { label: "Acqua naturale", kcal: 0, amount: "500 ml", image: photo("part-water-still-v11673") },
+  { label: "Acqua frizzante", kcal: 0, amount: "500 ml", image: photo("part-water-sparkling-v11673") },
+  { label: "Caffè senza zucchero", kcal: 2, amount: "1 tazzina · 30 ml", image: photo("part-coffee-v8") },
+  { label: "Caffè decaffeinato senza zucchero", kcal: 2, amount: "1 tazzina · 30 ml", image: photo("part-coffee-decaf-v11673") },
+  { label: "Caffè d'orzo senza zucchero", kcal: 7, amount: "1 tazza · 120 ml", image: photo("part-barley-coffee-v11673") },
+  { label: "Tè verde senza zucchero", kcal: 2, amount: "1 tazza · 250 ml", image: photo("part-green-tea-v11673") },
+  { label: "Tè nero senza zucchero", kcal: 2, amount: "1 tazza · 250 ml", image: photo("part-black-tea-v11673") },
+  { label: "Tè deteinato senza zucchero", kcal: 2, amount: "1 tazza · 250 ml", image: photo("part-decaf-tea-v11673") },
+  { label: "Tisana senza zucchero", kcal: 2, amount: "1 tazza · 250 ml", image: photo("part-herbal-tea-v11673") },
+  { label: "Acqua aromatizzata al limone", kcal: 0, amount: "500 ml · senza zucchero", image: photo("part-lemon-water-v11673") },
+  { label: "Acqua aromatizzata al cetriolo", kcal: 0, amount: "500 ml · senza zucchero", image: photo("part-cucumber-water-v11673") },
+  { label: "Acqua aromatizzata alla menta", kcal: 0, amount: "500 ml · senza zucchero", image: photo("part-mint-water-v11673") },
+  { label: "Coca-Cola Zero", kcal: 0, amount: "330 ml", image: photo("part-cola-zero-v11673") },
+  { label: "Gassata zero", kcal: 0, amount: "330 ml", image: photo("part-zero-soda-v11673") },
+  { label: "Bibita zuccherata", kcal: 140, amount: "330 ml", image: photo("part-sugary-soda-v11673") },
+  { label: "Vino bianco", kcal: 102, amount: "1 bicchiere · 125 ml", image: photo("part-white-wine-v11673") },
+  { label: "Vino rosso", kcal: 106, amount: "1 bicchiere · 125 ml", image: photo("part-red-wine-v11673") },
 ];
 
 const foods: Record<string, Food> = {
@@ -12209,7 +12210,8 @@ export function FoodPlanner() {
                 <div className="quick-log">
                   {drinkOptions.map((d) => (
                     <button key={d.label} onClick={() => addDrink(diaryDay, d)}>
-                      ＋ {d.label}
+                      <img src={d.image} alt="" aria-hidden="true" />
+                      <span>＋ {d.label}</span>
                     </button>
                   ))}
                 </div>
@@ -12224,6 +12226,7 @@ export function FoodPlanner() {
                         }))
                       }
                     >
+                      {x.image && <img src={x.image} alt="" aria-hidden="true" />}
                       <span>
                         {x.label} · {x.amount}
                       </span>

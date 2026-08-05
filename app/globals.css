@@ -2433,21 +2433,46 @@ button {
   overflow-x: auto;
 }
 .quick-log button {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 5px;
+  max-width: 168px;
+  min-height: 32px;
   border: 0;
   background: #eaf2ff;
   border-radius: 999px;
-  padding: 7px 9px;
+  padding: 4px 8px 4px 4px;
   font-size: 8px;
   white-space: nowrap;
+}
+.quick-log button img {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.quick-log button span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .log-list {
   margin-top: 6px;
 }
 .log-list button {
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  align-items: center;
   font-size: 9px;
   width: 100%;
   padding-right: 12px;
+}
+.log-list button > img {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  object-fit: cover;
 }
 .extra-form {
   display: grid;

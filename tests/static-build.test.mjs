@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.72"/);
+  assert.match(app, /VERSION = "1\.16\.73"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -113,6 +113,33 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /chooseCompleteMeal/);
   assert.match(app, /complete-meal-info/);
   assert.match(app, /complete-meal-card-actions/);
+  assert.match(app, /image\?: string/);
+  assert.match(app, /<img src=\{d\.image\}/);
+  assert.match(app, /<img src=\{x\.image\}/);
+  assert.match(app, /part-coffee-v8/);
+  assert.match(css, /\.quick-log button img/);
+  assert.match(css, /width: 24px/);
+  for (const asset of [
+    "part-water-still-v11673",
+    "part-water-sparkling-v11673",
+    "part-coffee-decaf-v11673",
+    "part-barley-coffee-v11673",
+    "part-green-tea-v11673",
+    "part-black-tea-v11673",
+    "part-decaf-tea-v11673",
+    "part-herbal-tea-v11673",
+    "part-lemon-water-v11673",
+    "part-cucumber-water-v11673",
+    "part-mint-water-v11673",
+    "part-cola-zero-v11673",
+    "part-zero-soda-v11673",
+    "part-sugary-soda-v11673",
+    "part-white-wine-v11673",
+    "part-red-wine-v11673"
+]) {
+    assert.match(app, new RegExp(asset));
+    await access(new URL(`../dist/food/${asset}.png`, import.meta.url));
+  }
   assert.match(app, /Prima scelta/);
   assert.match(app, /optionIndex < 3/);
   assert.match(app, /missingRoles \* 0\.22 \+ extraRoles \* 0\.08/);
