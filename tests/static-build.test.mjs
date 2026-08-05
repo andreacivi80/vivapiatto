@@ -106,6 +106,13 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /week-kcal-summary/);
   assert.match(app, /Rotazione confermata/);
   assert.match(app, /simpleBreakfasts\.forEach\(\(recipe\) => \(recipe\.kind = "combination"\)\)/);
+  for (let code = 35; code <= 40; code += 1) {
+    const recipeId = `matrix-p${String(code).padStart(2, "0")}`;
+    assert.match(app, new RegExp(recipeId), `piatto principale mancante: ${recipeId}`);
+  }
+  assert.match(app, /attachmentMainsP35P40/);
+  assert.match(app, /part-black-beans-v11646/);
+  await access(new URL("../dist/food/part-black-beans-v11646.png", import.meta.url));
   for (let code = 28; code <= 34; code += 1) {
     const recipeId = `matrix-p${String(code).padStart(2, "0")}`;
     assert.match(app, new RegExp(recipeId), `piatto principale mancante: ${recipeId}`);
