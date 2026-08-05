@@ -74,7 +74,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.50";
+const VERSION = "1.16.51";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -3078,7 +3078,7 @@ const attachmentMissingSnacks: Recipe[] = [
 ];
 const matrixMainRecipes: Recipe[] = [
   { id:"matrix-p48-legume-pasta-salmon", name:"Pasta di lenticchie con salmone e broccoli", kicker:"Pranzo di pesce · matrice P48", course:"Piatto unico", cuisine:"Italiano", image:photo("recipe-p48-legume-pasta-salmon-v11515"), time:25, ingredients:[{food:"Pasta di lenticchie secca",grams:70},{food:"Salmone cotto",grams:100},{food:"Broccoli bolliti",grams:250},{food:"Olio extravergine",grams:5}], parts:[{category:"Carboidrato",food:"Pasta di lenticchie secca",grams:70,label:"Pasta di lenticchie · peso a crudo",image:photo("part-lentil-pasta-v11515")},{category:"Proteina",food:"Salmone cotto",grams:100,label:"Salmone alla piastra",image:photo("part-salmon-baked-v7")},{category:"Contorno",food:"Broccoli bolliti",grams:250,label:"Broccoli cotti",image:photo("part-broccoli-v1154")},{category:"Extra",food:"Olio extravergine",grams:5,label:"Olio EVO · 5 g",image:photo("part-olive-oil-v8")}], steps:["Cuoci i broccoli al vapore o in acqua per 6-8 minuti.","Cuoci la pasta secondo confezione e il salmone alla piastra fino a completa cottura.","Unisci e completa con 5 g di olio pesato, limone ed erba cipollina."], alternatives:["Contiene pesce; verificare il legume della pasta","Adatto a casa o schiscetta refrigerata","Componenti modificabili separatamente"] },
-  { id:"matrix-p49-millet-chicken-pumpkin", name:"Miglio con pollo, zucca e cavolo nero", kicker:"Pranzo carne bianca · matrice P49", course:"Piatto unico", cuisine:"Italiano", image:photo("recipe-p49-millet-chicken-v11515"), time:35, ingredients:[{food:"Miglio cotto",grams:190},{food:"Petto di pollo cotto",grams:100},{food:"Zucca",grams:150},{food:"Cavolo nero cotto",grams:100},{food:"Olio extravergine",grams:10}], parts:[{category:"Carboidrato",food:"Miglio cotto",grams:190,label:"Miglio cotto · da circa 70 g secco",image:photo("part-millet-v11515")},{category:"Proteina",food:"Petto di pollo cotto",grams:100,label:"Petto di pollo alla piastra",image:photo("part-chicken-grilled-v7")},{category:"Contorno",food:"Zucca",grams:150,label:"Zucca arrostita",image:photo("part-pumpkin-v8")},{category:"Contorno",food:"Cavolo nero cotto",grams:100,label:"Cavolo nero cotto",image:photo("part-kale-v11515")},{category:"Extra",food:"Olio extravergine",grams:10,label:"Olio EVO · 10 g",image:photo("part-olive-oil-v8")}], steps:["Cuoci il miglio seguendo la confezione.","Arrostisci la zucca, cuoci il cavolo nero e griglia il pollo fino a completa cottura.","Unisci e completa con olio pesato, rosmarino, paprika e pepe."], alternatives:["Senza glutine se certificato","Preferibile a casa; trasportabile preparato prima","Componenti modificabili separatamente"] },
+  { id:"matrix-p49-millet-chicken-pumpkin", name:"Miglio con pollo, zucca e cavolo nero", kicker:"Pranzo carne bianca · matrice P49", course:"Piatto unico", cuisine:"Italiano", image:photo("recipe-p49-millet-chicken-v11515"), time:35, ingredients:[{food:"Miglio cotto",grams:190},{food:"Petto di pollo cotto",grams:100},{food:"Zucca",grams:150},{food:"Cavolo nero cotto",grams:100},{food:"Olio extravergine",grams:10}], parts:[{category:"Carboidrato",food:"Miglio cotto",grams:190,label:"Miglio cotto · da circa 70 g secco",image:photo("part-millet-v11515")},{category:"Proteina",food:"Petto di pollo cotto",grams:100,label:"Petto di pollo alla piastra",image:photo("part-chicken-cooked-v11651")},{category:"Contorno",food:"Zucca",grams:150,label:"Zucca arrostita",image:photo("part-pumpkin-v8")},{category:"Contorno",food:"Cavolo nero cotto",grams:100,label:"Cavolo nero cotto",image:photo("part-kale-v11515")},{category:"Extra",food:"Olio extravergine",grams:10,label:"Olio EVO · 10 g",image:photo("part-olive-oil-v8")}], steps:["Cuoci il miglio seguendo la confezione.","Arrostisci la zucca, cuoci il cavolo nero e griglia il pollo fino a completa cottura.","Unisci e completa con olio pesato, rosmarino, paprika e pepe."], alternatives:["Senza glutine se certificato","Preferibile a casa; trasportabile preparato prima","Componenti modificabili separatamente"] },
   { id:"matrix-p50-gnocchi-cannellini-chard", name:"Gnocchi con cannellini, pomodoro e bietole", kicker:"Pranzo vegetale · matrice P50", course:"Piatto unico", cuisine:"Italiano", image:photo("recipe-p50-gnocchi-cannellini-v11515"), time:25, ingredients:[{food:"Gnocchi di patate",grams:150},{food:"Fagioli cannellini cotti",grams:120},{food:"Pomodorini",grams:125},{food:"Bietole cotte",grams:125},{food:"Olio extravergine",grams:10}], parts:[{category:"Carboidrato",food:"Gnocchi di patate",grams:150,label:"Gnocchi di patate",image:photo("part-gnocchi-v7")},{category:"Proteina",food:"Fagioli cannellini cotti",grams:120,label:"Cannellini cotti e sgocciolati",image:photo("part-cannellini-v1141")},{category:"Contorno",food:"Pomodorini",grams:125,label:"Pomodoro cotto",image:photo("part-tomatoes-v8")},{category:"Contorno",food:"Bietole cotte",grams:125,label:"Bietole cotte",image:photo("part-chard-v11515")},{category:"Extra",food:"Olio extravergine",grams:10,label:"Olio EVO · 10 g",image:photo("part-olive-oil-v8")}], steps:["Cuoci pomodoro e bietole, quindi aggiungi i cannellini risciacquati.","Lessa gli gnocchi e scolali quando salgono in superficie.","Unisci al condimento e completa con 10 g di olio pesato, aglio e salvia."], alternatives:["Verificare glutine e uova negli gnocchi","Adatto a casa","Componenti modificabili separatamente"] },
   { id:"matrix-p51-polenta-rabbit-mushrooms", name:"Polenta con coniglio, funghi e radicchio", kicker:"Pranzo casa · matrice P51", course:"Piatto completo", cuisine:"Italiano", image:photo("recipe-p51-polenta-rabbit-v11515"), time:45, ingredients:[{food:"Polenta cotta",grams:300},{food:"Coniglio cotto in umido",grams:100},{food:"Funghi",grams:125},{food:"Radicchio cotto",grams:125},{food:"Olio extravergine",grams:10}], parts:[{category:"Carboidrato",food:"Polenta cotta",grams:300,label:"Polenta cotta · da circa 70 g farina",image:photo("part-polenta-v11515")},{category:"Proteina",food:"Coniglio cotto in umido",grams:100,label:"Coniglio cotto · parte edibile",image:photo("part-rabbit-v11515")},{category:"Contorno",food:"Funghi",grams:125,label:"Funghi cotti",image:photo("part-mushrooms-v8")},{category:"Contorno",food:"Radicchio cotto",grams:125,label:"Radicchio cotto",image:photo("part-radicchio-v11515")},{category:"Extra",food:"Olio extravergine",grams:10,label:"Olio EVO · 10 g",image:photo("part-olive-oil-v8")}], steps:["Cuoci il coniglio in umido con rosmarino e salvia fino a completa cottura.","Prepara la polenta secondo confezione e cuoci funghi e radicchio in padella antiaderente.","Servi le tre componenti e distribuisci i 10 g di olio pesato."], alternatives:["Pasto da casa","Polenta certificata per senza glutine","Componenti modificabili separatamente"] },
   { id:"matrix-p52-bulgur-tofu-chickpeas", name:"Bulgur con tofu, ceci e verdure", kicker:"Pranzo vegano · matrice P52", course:"Piatto unico", cuisine:"Internazionale", image:photo("recipe-p52-bulgur-tofu-v11515"), time:30, ingredients:[{food:"Bulgur cotto",grams:130},{food:"Tofu alla piastra",grams:80},{food:"Ceci cotti",grams:100},{food:"Carote crude",grams:80},{food:"Zucchine",grams:85},{food:"Cavolo rosso crudo",grams:85},{food:"Olio extravergine",grams:10}], parts:[{category:"Carboidrato",food:"Bulgur cotto",grams:130,label:"Bulgur cotto · da circa 50 g secco",image:photo("part-bulgur-v11515")},{category:"Proteina",food:"Tofu alla piastra",grams:80,label:"Tofu alla piastra",image:photo("part-tofu-v11515")},{category:"Proteina",food:"Ceci cotti",grams:100,label:"Ceci cotti e sgocciolati",image:photo("part-chickpeas-v8")},{category:"Contorno",food:"Carote crude",grams:80,label:"Carote crude",image:photo("part-carrots-raw-v11512")},{category:"Contorno",food:"Zucchine",grams:85,label:"Zucchine cotte",image:photo("part-zucchini-v8")},{category:"Contorno",food:"Cavolo rosso crudo",grams:85,label:"Cavolo rosso",image:photo("part-red-cabbage-v11515")},{category:"Extra",food:"Olio extravergine",grams:10,label:"Olio EVO · 10 g",image:photo("part-olive-oil-v8")}], steps:["Cuoci il bulgur secondo confezione.","Griglia il tofu; cuoci carote e zucchine lasciando il cavolo rosso crudo e croccante; risciacqua i ceci.","Unisci e completa con olio pesato, zenzero, paprika e limone."], alternatives:["Contiene glutine e soia","Trasportabile refrigerato","Cereale, tofu e ceci restano in porzioni ridotte"] },  { id: "matrix-p45-couscous-shrimp-peppers", name: "Cous cous integrale con gamberi, piselli e peperoni", kicker: "Pranzo di pesce · matrice P45", course: "Piatto unico", cuisine: "Mediterraneo", image: photo("recipe-p45-couscous-shrimp-v11514"), time: 25, ingredients: [{ food: "Cous cous integrale cotto", grams: 180 }, { food: "Gamberi cotti", grams: 150 }, { food: "Piselli cotti", grams: 80 }, { food: "Peperoni cotti senza olio", grams: 200 }, { food: "Olio extravergine", grams: 10 }], parts: [{ category: "Carboidrato", food: "Cous cous integrale cotto", grams: 180, label: "Cous cous cotto · da circa 70 g secco", image: photo("part-couscous-v11514") }, { category: "Proteina", food: "Gamberi cotti", grams: 150, label: "Gamberi cotti", image: photo("part-shrimp-v11514") }, { category: "Proteina", food: "Piselli cotti", grams: 80, label: "Piselli cotti", image: photo("part-peas-v8") }, { category: "Contorno", food: "Peperoni cotti senza olio", grams: 200, label: "Peperoni cotti", image: photo("part-peppers-v11514") }, { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") }], steps: ["Reidrata il cous cous secondo confezione e sgranalo.", "Cuoci i peperoni in padella antiaderente e i gamberi fino a completa cottura; unisci i piselli già cotti.", "Mescola e completa con 10 g di olio pesato, paprika, limone e prezzemolo."], alternatives: ["Contiene glutine e crostacei", "Trasportabile refrigerato", "Componenti modificabili separatamente"] },
@@ -3788,7 +3788,7 @@ const balancedDinnerRecipes: Recipe[] = [
         food: "Petto di pollo cotto",
         grams: 100,
         label: "Petto di pollo alla piastra",
-        image: photo("part-chicken-grilled-v7"),
+        image: photo("part-chicken-cooked-v11651"),
       },
       {
         category: "Contorno",
@@ -3997,7 +3997,7 @@ const balancedDinnerRecipes: Recipe[] = [
     image: photo("recipe-d42-chicken-brown-rice-v11519"), time: 30,
     ingredients: [{ food: "Petto di pollo · peso a crudo", grams: 100 }, { food: "Riso integrale secco", grams: 60 }, { food: "Peperoni cotti senza olio", grams: 150 }, { food: "Cipolle crude", grams: 100 }, { food: "Olio extravergine", grams: 10 }],
     parts: [
-      { category: "Proteina", food: "Petto di pollo · peso a crudo", grams: 100, label: "Petto di pollo alla piastra · 100 g a crudo", image: photo("part-chicken-grilled-v7") },
+      { category: "Proteina", food: "Petto di pollo · peso a crudo", grams: 100, label: "Petto di pollo alla piastra · 100 g a crudo", image: photo("part-chicken-raw-v11651") },
       { category: "Carboidrato", food: "Riso integrale secco", grams: 60, label: "Riso integrale · 60 g a crudo", image: photo("part-brown-rice-v11519") },
       { category: "Contorno", food: "Peperoni cotti senza olio", grams: 150, label: "Peperoni · 150 g", image: photo("part-peppers-v11514") },
       { category: "Contorno", food: "Cipolle crude", grams: 100, label: "Cipolle · 100 g a crudo", image: photo("part-onions-v11519") },
@@ -4116,8 +4116,8 @@ const balancedDinnerRecipes: Recipe[] = [
     ingredients: [{ food: "Riso basmati cotto", grams: 150 }, { food: "Petto di pollo · peso a crudo", grams: 80 }, { food: "Uovo", grams: 100 }, { food: "Cipolle crude", grams: 40 }, { food: "Funghi", grams: 20 }, { food: "Salsa di soia", grams: 10 }, { food: "Mirin", grams: 10 }, { food: "Zucchero", grams: 5 }],
     parts: [
       { category: "Carboidrato", food: "Riso basmati cotto", grams: 150, label: "Riso cotto · 150 g", image: photo("part-basmati-cooked-v11650") },
-      { category: "Proteina", food: "Petto di pollo · peso a crudo", grams: 80, label: "Pollo · 80 g a crudo", image: photo("part-chicken-grilled-v7") },
-      { category: "Proteina", food: "Uovo", grams: 100, label: "Uova · 2", image: photo("part-eggs-scrambled-v1156") },
+      { category: "Proteina", food: "Petto di pollo · peso a crudo", grams: 80, label: "Pollo · 80 g a crudo", image: photo("part-chicken-raw-v11651") },
+      { category: "Proteina", food: "Uovo", grams: 100, label: "Uova · 2", image: photo("part-whole-egg-v11651") },
       { category: "Contorno", food: "Cipolle crude", grams: 40, label: "Cipolla · 40 g", image: photo("part-onions-v11519") },
       { category: "Contorno", food: "Funghi", grams: 20, label: "Shiitake o funghi · 20 g", image: photo("part-mushrooms-v8") },
     ],
@@ -4235,7 +4235,7 @@ const balancedDinnerRecipes: Recipe[] = [
     parts: [
       { category: "Carboidrato", food: "Noodles di riso cotti", grams: 180, label: "Noodles di riso cotti · 180 g", image: photo("rice-noodles-veg-v3") },
       { category: "Proteina", food: "Gamberi cotti", grams: 130, label: "Gamberi cotti · 130 g", image: photo("part-shrimp-v11514") },
-      { category: "Proteina", food: "Uovo", grams: 50, label: "Uovo strapazzato · 1", image: photo("part-eggs-scrambled-v1156") },
+      { category: "Proteina", food: "Uovo", grams: 50, label: "Uovo strapazzato · 1", image: photo("part-whole-egg-v11651") },
       { category: "Contorno", food: "Germogli di soia", grams: 80, label: "Germogli di soia · 80 g", image: photo("part-sprouts-v11520") },
       { category: "Extra", food: "Arachidi", grams: 10, label: "Arachidi tritate · 10 g", image: photo("part-peanuts-v113") },
     ],
@@ -4458,7 +4458,7 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     { category: "Proteina", food: "Rombo · peso a crudo", grams: 160, label: "Rombo al forno · 160 g a crudo", image: photo("part-turbot-v11520") },
     { category: "Proteina", food: "Seppia · peso a crudo", grams: 160, label: "Seppia alla piastra · 160 g a crudo", image: photo("part-cuttlefish-v11520") },
     { category: "Proteina", food: "Sogliola · peso a crudo", grams: 150, label: "Sogliola al forno · 150 g a crudo", image: photo("part-sole-baked-v11519") },
-    { category: "Proteina", food: "Petto di pollo · peso a crudo", grams: 100, label: "Petto di pollo · 100 g a crudo", image: photo("part-chicken-grilled-v7") },
+    { category: "Proteina", food: "Petto di pollo · peso a crudo", grams: 100, label: "Petto di pollo · 100 g a crudo", image: photo("part-chicken-raw-v11651") },
     { category: "Proteina", food: "Cicerchie cotte", grams: 150, label: "Cicerchie cotte · 150 g", image: photo("part-grass-peas-v11519") },
     {
       category: "Proteina",
@@ -4493,7 +4493,7 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       food: "Petto di pollo cotto",
       grams: 100,
       label: "Pollo",
-      image: photo("part-chicken-grilled-v7"),
+      image: photo("part-chicken-cooked-v11651"),
     },
     {
       category: "Proteina",
@@ -4860,7 +4860,7 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       food: "Yogurt bianco",
       grams: 125,
       label: "Yogurt bianco naturale · 1 vasetto",
-      image: photo("part-yogurt-v7"),
+      image: photo("part-yogurt-white-v11651"),
     },
     {
       category: "Latticino",
@@ -5901,7 +5901,7 @@ const verifiedWorldRecipeExpansion: Recipe[] = [
     parts: [
       { category: "Carboidrato", food: "Riso basmati cotto", grams: 150, label: "Riso cotto · 150 g", image: photo("part-basmati-cooked-v11650") },
       { category: "Proteina", food: "Bistecca di manzo · peso a crudo", grams: 100, label: "Manzo a striscioline · 100 g a crudo", image: photo("part-steak-beef-v114") },
-      { category: "Contorno", food: "Carote cotte bollite", grams: 60, label: "Carote · 60 g", image: photo("part-carrots-raw-v11512") },
+      { category: "Contorno", food: "Carote cotte bollite", grams: 60, label: "Carote · 60 g", image: photo("part-carrots-cooked-v11651") },
       { category: "Contorno", food: "Spinaci", grams: 80, label: "Spinaci · 80 g", image: photo("part-spinach-v7") },
     ],
     steps: [
@@ -5930,8 +5930,8 @@ const verifiedWorldRecipeExpansion: Recipe[] = [
     ],
     parts: [
       { category: "Carboidrato", food: "Riso basmati cotto", grams: 150, label: "Riso cotto · 150 g", image: photo("part-basmati-cooked-v11650") },
-      { category: "Proteina", food: "Petto di pollo · peso a crudo", grams: 100, label: "Pollo · 100 g a crudo", image: photo("part-chicken-grilled-v7") },
-      { category: "Proteina", food: "Uovo", grams: 50, label: "Uovo · 1", image: photo("part-eggs-scrambled-v1156") },
+      { category: "Proteina", food: "Petto di pollo · peso a crudo", grams: 100, label: "Pollo · 100 g a crudo", image: photo("part-chicken-raw-v11651") },
+      { category: "Proteina", food: "Uovo", grams: 50, label: "Uovo · 1", image: photo("part-whole-egg-v11651") },
       { category: "Contorno", food: "Funghi", grams: 50, label: "Funghi · 50 g", image: photo("part-mushrooms-v8") },
       { category: "Contorno", food: "Fagiolini", grams: 80, label: "Fagiolini · 80 g", image: photo("part-green-beans-v7") },
     ],
@@ -5961,8 +5961,8 @@ const verifiedWorldRecipeExpansion: Recipe[] = [
     ],
     parts: [
       { category: "Carboidrato", food: "Riso basmati cotto", grams: 160, label: "Riso cotto · 160 g", image: photo("part-basmati-cooked-v11650") },
-      { category: "Proteina", food: "Petto di pollo · peso a crudo", grams: 110, label: "Pollo · 110 g a crudo", image: photo("part-chicken-grilled-v7") },
-      { category: "Contorno", food: "Carote cotte bollite", grams: 70, label: "Carote · 70 g", image: photo("part-carrots-raw-v11512") },
+      { category: "Proteina", food: "Petto di pollo · peso a crudo", grams: 110, label: "Pollo · 110 g a crudo", image: photo("part-chicken-raw-v11651") },
+      { category: "Contorno", food: "Carote cotte bollite", grams: 70, label: "Carote · 70 g", image: photo("part-carrots-cooked-v11651") },
       { category: "Contorno", food: "Funghi", grams: 70, label: "Funghi · 70 g", image: photo("part-mushrooms-v8") },
     ],
     steps: [
@@ -6109,7 +6109,7 @@ const verifiedWorldRecipeExpansion: Recipe[] = [
     ],
     parts: [
       { category: "Carboidrato", food: "Quinoa cotta", grams: 160, label: "Quinoa cotta · 160 g", image: photo("part-quinoa-v7") },
-      { category: "Proteina", food: "Petto di pollo · peso a crudo", grams: 120, label: "Pollo · 120 g a crudo", image: photo("part-chicken-grilled-v7") },
+      { category: "Proteina", food: "Petto di pollo · peso a crudo", grams: 120, label: "Pollo · 120 g a crudo", image: photo("part-chicken-raw-v11651") },
       { category: "Contorno", food: "Barbabietole cotte", grams: 130, label: "Barbabietola · 130 g", image: photo("part-beetroot-v11513") },
       { category: "Contorno", food: "Spinaci", grams: 100, label: "Spinaci · 100 g", image: photo("part-spinach-v7") },
     ],
