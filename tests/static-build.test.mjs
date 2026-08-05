@@ -28,7 +28,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.55"/);
+  assert.match(app, /VERSION = "1\.16\.56"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -443,4 +443,9 @@ test("v1.16.17 keeps swap navigation visible and exposes occasional choices", as
   assert.match(app, /matrix-d28-fave-cicoria-e-pane-integrale/);
   assert.match(app, /\.\.\.attachmentDinnersB/);
   assert.match(app, /part-cicoria-cooked-v11655/);
+
+  assert.match(app, /const attachmentDinnersC: Recipe\[\]/);
+  assert.match(app, /matrix-d29-nasello-al-vapore-con-patata-dolce-e-bietole/);
+  assert.match(app, /matrix-d40-sardine-al-forno-con-pomodori-zucchine-e-cous/);
+  assert.match(app, /\.\.\.attachmentDinnersC/);
 });
