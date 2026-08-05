@@ -74,7 +74,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.60";
+const VERSION = "1.16.61";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -5185,6 +5185,241 @@ const attachmentSnacksS35S42: Recipe[] = [
   }
 ];
 
+const attachmentMainsP53P64: Recipe[] = [
+  {
+    id: "matrix-p53-pasta-integrale-con-lenticchie-e-spinaci", name: "Pasta integrale con lenticchie e spinaci", kicker: "Pranzo completo · matrice P53",
+    course: "Piatto completo", cuisine: "Italiano", kind: "combination", image: photo("recipe-p53-whole-pasta-lentils-v11661"), time: 25,
+    ingredients: [
+      { food: "Pasta integrale secca", grams: 70 },
+      { food: "Lenticchie cotte", grams: 120 },
+      { food: "Spinaci", grams: 125 },
+      { food: "Pomodorini", grams: 125 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    parts: [
+      { category: "Carboidrato", food: "Pasta integrale secca", grams: 70, label: "Pasta integrale · 70 g a crudo", image: photo("part-pasta-whole-v11618") },
+      { category: "Proteina", food: "Lenticchie cotte", grams: 120, label: "Lenticchie cotte · 120 g", image: photo("part-lentils-v1141") },
+      { category: "Contorno", food: "Spinaci", grams: 125, label: "Spinaci · 125 g", image: photo("part-spinach-v7") },
+      { category: "Contorno", food: "Pomodorini", grams: 125, label: "Pomodori · 125 g", image: photo("part-tomatoes-v8") },
+      { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") },
+    ],
+    steps: ["Cuoci la pasta integrale al dente e conserva poca acqua di cottura.","Cuoci gli spinaci con aglio e aggiungi lenticchie e pomodori.","Unisci la pasta, manteca con poca acqua e completa a fuoco spento con 10 g di olio."], alternatives: ["Vegano","Contiene glutine"],
+  },
+  {
+    id: "matrix-p54-riso-basmati-con-salmone-piselli-e-zucchine", name: "Riso basmati con salmone, piselli e zucchine", kicker: "Pranzo completo · matrice P54",
+    course: "Piatto completo", cuisine: "Italiano", kind: "combination", image: photo("recipe-p54-basmati-salmon-peas-v11661"), time: 30,
+    ingredients: [
+      { food: "Riso basmati secco", grams: 70 },
+      { food: "Salmone cotto", grams: 120 },
+      { food: "Piselli cotti", grams: 80 },
+      { food: "Zucchine", grams: 200 },
+      { food: "Olio extravergine", grams: 5 },
+    ],
+    parts: [
+      { category: "Carboidrato", food: "Riso basmati secco", grams: 70, label: "Riso basmati · 70 g a crudo", image: photo("part-basmati-dry-v11650") },
+      { category: "Proteina", food: "Salmone cotto", grams: 120, label: "Salmone alla piastra · 120 g cotti", image: photo("part-salmon-baked-v7") },
+      { category: "Proteina", food: "Piselli cotti", grams: 80, label: "Piselli cotti · 80 g", image: photo("part-peas-v8") },
+      { category: "Contorno", food: "Zucchine", grams: 200, label: "Zucchine · 200 g", image: photo("part-zucchini-v8") },
+      { category: "Extra", food: "Olio extravergine", grams: 5, label: "Olio EVO · 5 g", image: photo("part-olive-oil-v8") },
+    ],
+    steps: ["Cuoci il riso basmati secondo confezione.","Cuoci il salmone alla piastra fino a completa cottura e le zucchine al vapore.","Unisci piselli, riso e zucchine; servi col salmone e condisci con limone, erba cipollina e 5 g di olio."], alternatives: ["Senza glutine se gli ingredienti sono certificati","Contiene pesce"],
+  },
+  {
+    id: "matrix-p55-quinoa-con-tacchino-zucca-e-broccoli", name: "Quinoa con tacchino, zucca e broccoli", kicker: "Pranzo completo · matrice P55",
+    course: "Piatto completo", cuisine: "Italiano", kind: "combination", image: photo("recipe-p55-quinoa-turkey-pumpkin-v11661"), time: 35,
+    ingredients: [
+      { food: "Quinoa cotta", grams: 190 },
+      { food: "Petto di tacchino cotto alla piastra", grams: 100 },
+      { food: "Zucca", grams: 125 },
+      { food: "Broccoli bolliti", grams: 125 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    parts: [
+      { category: "Carboidrato", food: "Quinoa cotta", grams: 190, label: "Quinoa cotta · da circa 70 g secca", image: photo("part-quinoa-v7") },
+      { category: "Proteina", food: "Petto di tacchino cotto alla piastra", grams: 100, label: "Tacchino grigliato · 100 g cotto", image: photo("part-turkey-grilled-v11514") },
+      { category: "Contorno", food: "Zucca", grams: 125, label: "Zucca · 125 g", image: photo("part-pumpkin-v8") },
+      { category: "Contorno", food: "Broccoli bolliti", grams: 125, label: "Broccoli · 125 g", image: photo("part-broccoli-v1154") },
+      { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") },
+    ],
+    steps: ["Sciacqua e cuoci la quinoa.","Arrostisci zucca e broccoli con paprika e rosmarino usando parte dell'olio pesato.","Griglia il tacchino fino a completa cottura e servi con limone e l'olio restante."], alternatives: ["Senza glutine","Carne bianca"],
+  },
+  {
+    id: "matrix-p56-farro-con-ceci-barbabietole-e-finocchi", name: "Farro con ceci, barbabietole e finocchi", kicker: "Pranzo completo · matrice P56",
+    course: "Piatto completo", cuisine: "Italiano", kind: "combination", image: photo("recipe-p56-farro-chickpeas-beet-v11661"), time: 25,
+    ingredients: [
+      { food: "Farro cotto", grams: 170 },
+      { food: "Ceci cotti", grams: 150 },
+      { food: "Barbabietole cotte", grams: 125 },
+      { food: "Finocchi crudi", grams: 125 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    parts: [
+      { category: "Carboidrato", food: "Farro cotto", grams: 170, label: "Farro cotto · da circa 60 g secco", image: photo("farro") },
+      { category: "Proteina", food: "Ceci cotti", grams: 150, label: "Ceci cotti e sgocciolati · 150 g", image: photo("part-chickpeas-v8") },
+      { category: "Contorno", food: "Barbabietole cotte", grams: 125, label: "Barbabietole · 125 g", image: photo("part-beetroot-v11513") },
+      { category: "Contorno", food: "Finocchi crudi", grams: 125, label: "Finocchi · 125 g", image: photo("part-fennel-v113") },
+      { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") },
+    ],
+    steps: ["Cuoci il farro e lascialo intiepidire.","Risciacqua i ceci e affetta finocchi e barbabietole.","Unisci tutto e condisci con limone, aceto di mele, prezzemolo e 10 g di olio."], alternatives: ["Vegano e trasportabile","Contiene glutine"],
+  },
+  {
+    id: "matrix-p57-cous-cous-con-merluzzo-e-verdure-al-curry", name: "Cous cous con merluzzo e verdure al curry", kicker: "Pranzo completo · matrice P57",
+    course: "Piatto completo", cuisine: "Italiano", kind: "combination", image: photo("recipe-p57-couscous-cod-curry-v11661"), time: 30,
+    ingredients: [
+      { food: "Cous cous integrale cotto", grams: 190 },
+      { food: "Merluzzo cotto", grams: 150 },
+      { food: "Carote cotte bollite", grams: 85 },
+      { food: "Zucchine", grams: 85 },
+      { food: "Cavolfiore", grams: 80 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    parts: [
+      { category: "Carboidrato", food: "Cous cous integrale cotto", grams: 190, label: "Cous cous cotto · da 70 g secco", image: photo("part-couscous-v11514") },
+      { category: "Proteina", food: "Merluzzo cotto", grams: 150, label: "Merluzzo al vapore · 150 g", image: photo("part-cod-steamed-v8") },
+      { category: "Contorno", food: "Carote cotte bollite", grams: 85, label: "Carote · 85 g", image: photo("part-carrots-cooked-v11512") },
+      { category: "Contorno", food: "Zucchine", grams: 85, label: "Zucchine · 85 g", image: photo("part-zucchini-v8") },
+      { category: "Contorno", food: "Cavolfiore", grams: 80, label: "Cavolfiore · 80 g", image: photo("part-cauliflower-v8") },
+      { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") },
+    ],
+    steps: ["Reidrata il cous cous integrale secondo confezione.","Cuoci il merluzzo al vapore fino a completa cottura.","Cuoci le verdure con poca acqua, curry, curcuma e zenzero; unisci tutto e completa con 10 g di olio."], alternatives: ["Contiene pesce e glutine","Verificare la miscela di curry"],
+  },
+  {
+    id: "matrix-p58-orzo-con-edamame-funghi-e-cavolo-rosso", name: "Orzo con edamame, funghi e cavolo rosso", kicker: "Pranzo completo · matrice P58",
+    course: "Piatto completo", cuisine: "Italiano", kind: "combination", image: photo("recipe-p58-barley-edamame-cabbage-v11661"), time: 30,
+    ingredients: [
+      { food: "Orzo perlato cotto", grams: 195 },
+      { food: "Edamame cotti", grams: 120 },
+      { food: "Funghi cotti", grams: 125 },
+      { food: "Cavolo rosso crudo", grams: 125 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    parts: [
+      { category: "Carboidrato", food: "Orzo perlato cotto", grams: 195, label: "Orzo cotto · da circa 70 g secco", image: photo("part-barley-v11514") },
+      { category: "Proteina", food: "Edamame cotti", grams: 120, label: "Edamame cotti · 120 g", image: photo("part-edamame-v11634") },
+      { category: "Contorno", food: "Funghi cotti", grams: 125, label: "Funghi cotti · 125 g", image: photo("part-mushrooms-v8") },
+      { category: "Contorno", food: "Cavolo rosso crudo", grams: 125, label: "Cavolo rosso · 125 g", image: photo("part-red-cabbage-v11515") },
+      { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") },
+    ],
+    steps: ["Cuoci l'orzo secondo confezione.","Cuoci funghi e cavolo rosso in padella antiaderente con zenzero e aglio.","Aggiungi edamame e orzo e completa con limone e 10 g di olio."], alternatives: ["Vegano","Contiene glutine e soia"],
+  },
+  {
+    id: "matrix-p59-riso-venere-con-orata-e-asparagi", name: "Riso Venere con orata e asparagi", kicker: "Pranzo completo · matrice P59",
+    course: "Piatto completo", cuisine: "Italiano", kind: "combination", image: photo("recipe-p59-venere-seabream-asparagus-v11661"), time: 35,
+    ingredients: [
+      { food: "Riso Venere secco", grams: 70 },
+      { food: "Orata cotta", grams: 150 },
+      { food: "Asparagi crudi", grams: 150 },
+      { food: "Pomodorini", grams: 100 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    parts: [
+      { category: "Carboidrato", food: "Riso Venere secco", grams: 70, label: "Riso Venere · 70 g a crudo", image: photo("part-rice-venere-v7") },
+      { category: "Proteina", food: "Orata cotta", grams: 150, label: "Orata al forno · 150 g", image: photo("part-sea-bream-baked-v8") },
+      { category: "Contorno", food: "Asparagi crudi", grams: 150, label: "Asparagi · 150 g a crudo", image: photo("part-asparagus-v113") },
+      { category: "Contorno", food: "Pomodorini", grams: 100, label: "Pomodorini · 100 g", image: photo("part-tomatoes-v8") },
+      { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") },
+    ],
+    steps: ["Cuoci il riso Venere secondo confezione.","Cuoci orata e asparagi al forno fino a completa cottura.","Servi con pomodorini, limone, timo, pepe e 10 g di olio."], alternatives: ["Senza glutine","Contiene pesce"],
+  },
+  {
+    id: "matrix-p60-pasta-di-legumi-con-ricotta-e-cavolo-nero", name: "Pasta di legumi con ricotta e cavolo nero", kicker: "Pranzo completo · matrice P60",
+    course: "Piatto completo", cuisine: "Italiano", kind: "combination", image: photo("recipe-p60-legume-pasta-ricotta-kale-v11661"), time: 25,
+    ingredients: [
+      { food: "Pasta di lenticchie secca", grams: 70 },
+      { food: "Ricotta vaccina", grams: 80 },
+      { food: "Cavolo nero cotto", grams: 150 },
+      { food: "Pomodorini", grams: 100 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    parts: [
+      { category: "Carboidrato", food: "Pasta di lenticchie secca", grams: 70, label: "Pasta di lenticchie · 70 g a crudo", image: photo("part-lentil-pasta-v11515") },
+      { category: "Latticino", food: "Ricotta vaccina", grams: 80, label: "Ricotta · 80 g", image: photo("part-ricotta-v7") },
+      { category: "Contorno", food: "Cavolo nero cotto", grams: 150, label: "Cavolo nero · 150 g cotto", image: photo("part-kale-v11515") },
+      { category: "Contorno", food: "Pomodorini", grams: 100, label: "Pomodori · 100 g", image: photo("part-tomatoes-v8") },
+      { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") },
+    ],
+    steps: ["Cuoci la pasta di lenticchie secondo confezione e scola al dente.","Cuoci il cavolo nero e aggiungi i pomodori.","A fuoco spento unisci ricotta, poca acqua di cottura e 10 g di olio."], alternatives: ["Vegetariano","Contiene latte; verificare il legume della pasta"],
+  },
+  {
+    id: "matrix-p61-miglio-con-tempeh-carciofi-e-carote", name: "Miglio con tempeh, carciofi e carote", kicker: "Pranzo completo · matrice P61",
+    course: "Piatto completo", cuisine: "Italiano", kind: "combination", image: photo("recipe-p61-millet-tempeh-artichokes-v11661"), time: 35,
+    ingredients: [
+      { food: "Miglio cotto", grams: 190 },
+      { food: "Tempeh", grams: 100 },
+      { food: "Carciofi cotti bolliti", grams: 125 },
+      { food: "Carote cotte bollite", grams: 125 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    parts: [
+      { category: "Carboidrato", food: "Miglio cotto", grams: 190, label: "Miglio cotto · da circa 70 g secco", image: photo("part-millet-v11515") },
+      { category: "Proteina", food: "Tempeh", grams: 100, label: "Tempeh grigliato · 100 g", image: photo("part-tempeh-v11520") },
+      { category: "Contorno", food: "Carciofi cotti bolliti", grams: 125, label: "Carciofi cotti · 125 g", image: photo("part-artichokes-v11519") },
+      { category: "Contorno", food: "Carote cotte bollite", grams: 125, label: "Carote cotte · 125 g", image: photo("part-carrots-cooked-v11512") },
+      { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") },
+    ],
+    steps: ["Cuoci il miglio secondo confezione.","Griglia il tempeh e cuoci carciofi e carote al forno o in padella antiaderente.","Unisci con curcuma, limone, prezzemolo e 10 g di olio."], alternatives: ["Vegano","Contiene soia; verificare la certificazione del tempeh"],
+  },
+  {
+    id: "matrix-p62-polenta-con-gamberi-e-verdure-in-umido", name: "Polenta con gamberi e verdure in umido", kicker: "Pranzo completo · matrice P62",
+    course: "Piatto completo", cuisine: "Italiano", kind: "combination", image: photo("recipe-p62-polenta-shrimp-stew-v11661"), time: 35,
+    ingredients: [
+      { food: "Polenta cotta", grams: 350 },
+      { food: "Gamberi cotti", grams: 150 },
+      { food: "Zucchine", grams: 100 },
+      { food: "Pomodorini", grams: 100 },
+      { food: "Cipolle crude", grams: 50 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    parts: [
+      { category: "Carboidrato", food: "Polenta cotta", grams: 350, label: "Polenta cotta · da circa 70 g secca", image: photo("part-polenta-v11515") },
+      { category: "Proteina", food: "Gamberi cotti", grams: 150, label: "Gamberi cotti · 150 g", image: photo("part-shrimp-v11514") },
+      { category: "Contorno", food: "Zucchine", grams: 100, label: "Zucchine · 100 g", image: photo("part-zucchini-v8") },
+      { category: "Contorno", food: "Pomodorini", grams: 100, label: "Pomodori · 100 g", image: photo("part-tomatoes-v8") },
+      { category: "Contorno", food: "Cipolle crude", grams: 50, label: "Cipolla · 50 g", image: photo("part-onions-v11519") },
+      { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") },
+    ],
+    steps: ["Prepara la polenta seguendo i tempi indicati sulla confezione.","Cuoci zucchine, pomodori e cipolla in umido con aglio e peperoncino.","Aggiungi i gamberi negli ultimi minuti, portali a completa cottura e servi sulla polenta con 10 g di olio."], alternatives: ["Contiene crostacei","Senza glutine se la polenta è certificata"],
+  },
+  {
+    id: "matrix-p63-bulgur-con-pollo-cavolfiore-e-radicchio", name: "Bulgur con pollo, cavolfiore e radicchio", kicker: "Pranzo completo · matrice P63",
+    course: "Piatto completo", cuisine: "Italiano", kind: "combination", image: photo("recipe-p63-bulgur-chicken-radicchio-v11661"), time: 35,
+    ingredients: [
+      { food: "Bulgur cotto", grams: 200 },
+      { food: "Petto di pollo cotto", grams: 100 },
+      { food: "Cavolfiore", grams: 125 },
+      { food: "Radicchio cotto", grams: 125 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    parts: [
+      { category: "Carboidrato", food: "Bulgur cotto", grams: 200, label: "Bulgur cotto · da circa 70 g secco", image: photo("part-bulgur-v11515") },
+      { category: "Proteina", food: "Petto di pollo cotto", grams: 100, label: "Petto di pollo alla piastra · 100 g", image: photo("part-chicken-cooked-v11651") },
+      { category: "Contorno", food: "Cavolfiore", grams: 125, label: "Cavolfiore · 125 g", image: photo("part-cauliflower-v8") },
+      { category: "Contorno", food: "Radicchio cotto", grams: 125, label: "Radicchio cotto · 125 g", image: photo("part-radicchio-v11515") },
+      { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") },
+    ],
+    steps: ["Cuoci il bulgur secondo confezione.","Arrostisci cavolfiore e radicchio con paprika e rosmarino.","Griglia il pollo fino a completa cottura e servi con limone e 10 g di olio."], alternatives: ["Carne bianca","Contiene glutine"],
+  },
+  {
+    id: "matrix-p64-gnocchi-con-salmone-spinaci-e-yogurt", name: "Gnocchi con salmone, spinaci e yogurt", kicker: "Pranzo completo · matrice P64",
+    course: "Piatto completo", cuisine: "Italiano", kind: "combination", image: photo("recipe-p64-gnocchi-salmon-spinach-v11661"), time: 25,
+    ingredients: [
+      { food: "Gnocchi di patate", grams: 150 },
+      { food: "Salmone cotto", grams: 100 },
+      { food: "Spinaci", grams: 200 },
+      { food: "Yogurt bianco", grams: 50 },
+      { food: "Olio extravergine", grams: 5 },
+    ],
+    parts: [
+      { category: "Carboidrato", food: "Gnocchi di patate", grams: 150, label: "Gnocchi di patate · 150 g", image: photo("part-gnocchi-v7") },
+      { category: "Proteina", food: "Salmone cotto", grams: 100, label: "Salmone cotto · 100 g", image: photo("part-salmon-baked-v7") },
+      { category: "Contorno", food: "Spinaci", grams: 200, label: "Spinaci · 200 g", image: photo("part-spinach-v7") },
+      { category: "Latticino", food: "Yogurt bianco", grams: 50, label: "Yogurt bianco · 50 g", image: photo("part-yogurt-v7") },
+      { category: "Extra", food: "Olio extravergine", grams: 5, label: "Olio EVO · 5 g", image: photo("part-olive-oil-v8") },
+    ],
+    steps: ["Cuoci gli spinaci e il salmone fino a completa cottura.","Lessa gli gnocchi e scolali appena salgono in superficie.","A fuoco spento unisci yogurt, limone, spinaci e salmone; completa con pepe, erba cipollina e 5 g di olio."], alternatives: ["Contiene pesce e latte","Verificare glutine e uova nell'etichetta degli gnocchi"],
+  }
+];
+
 const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
   Carboidrato: [
     {
@@ -8681,6 +8916,7 @@ const rawRecipes: Recipe[] = [
   ...attachmentMainsP23P27,
   ...attachmentMainsP28P34,
   ...attachmentMainsP35P40,
+  ...attachmentMainsP53P64,
   ...matrixMainRecipes,
   ...catalogSnacks,
   ...portableRecipes,
