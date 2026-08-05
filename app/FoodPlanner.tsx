@@ -74,7 +74,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.52";
+const VERSION = "1.16.53";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -10516,9 +10516,6 @@ export function FoodPlanner() {
                   <button onClick={() => { setSelectedMealKey(null); setSelected(filteredRecipes[0]); }}>
                     {swapTarget ? "ⓘ Ricetta" : "Apri"}
                   </button>
-                  {swapTarget && (
-                    <button onClick={() => chooseRecipe(filteredRecipes[0])}>Scegli</button>
-                  )}
                 </div>
               </div>
             )}
@@ -11119,7 +11116,18 @@ export function FoodPlanner() {
             <button className="close" onClick={() => setSelected(null)}>
               ×
             </button>
-            <RecipeVisual recipe={selected} />
+            {swapTarget && !selectedMealKey ? (
+              <button
+                type="button"
+                className="recipe-preview-photo-select"
+                aria-label={`Applica ${selected.name}`}
+                onClick={() => chooseRecipe(selected)}
+              >
+                <RecipeVisual recipe={selected} />
+              </button>
+            ) : (
+              <RecipeVisual recipe={selected} />
+            )}
             <div className="recipe-content">
               <span className="eyebrow">DA ZERO · {selected.time} MIN</span>
               <h2>{selected.name}</h2>
@@ -11137,14 +11145,6 @@ export function FoodPlanner() {
                   <b>{round(selectedMacros.fat)}g</b> grassi
                 </span>
               </div>
-              {swapTarget && !selectedMealKey && (
-                <button
-                  className="primary-btn recipe-preview-choose"
-                  onClick={() => chooseRecipe(selected)}
-                >
-                  Scegli questo piatto
-                </button>
-              )}
               {selectedMealKey && (
                 <div className="recipe-mode-actions">
                   <button
