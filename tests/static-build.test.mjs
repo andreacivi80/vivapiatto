@@ -22,6 +22,7 @@ test("build GitHub Pages autonomo e completo", async () => {
   await access(new URL("../dist/food/part-mackerel-baked-v11654.png", import.meta.url));
   await access(new URL("../dist/food/part-cicoria-cooked-v11655.png", import.meta.url));
   await access(new URL("../dist/food/part-green-cabbage-cooked-v11657.png", import.meta.url));
+  await access(new URL("../dist/food/part-plaice-baked-v11658.png", import.meta.url));
 });
 
 test("sorgente mobile con versione e fonti", async () => {
@@ -455,4 +456,10 @@ test("v1.16.17 keeps swap navigation visible and exposes occasional choices", as
   assert.match(app, /matrix-d52-tofu-con-melanzane-pomodori-e-cous-cous/);
   assert.match(app, /\.\.\.attachmentDinnersD/);
   assert.match(app, /part-green-cabbage-cooked-v11657/);
+
+  assert.match(app, /const attachmentDinnersE: Recipe\[\]/);
+  assert.match(app, /matrix-d53-platessa-al-forno-con-zucca-zucchine-e-riso-rosso/);
+  assert.match(app, /matrix-d64-tempeh-con-melanzane-pomodori-e-miglio/);
+  assert.match(app, /\.\.\.attachmentDinnersE/);
+  assert.match(app, /part-plaice-baked-v11658/);
 });
