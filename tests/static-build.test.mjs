@@ -596,3 +596,14 @@ test("v1.16.69 expands compact daily drink logging without milk-as-day-drink", a
   const drinkBlock = app.slice(app.indexOf("const drinkOptions"), app.indexOf("];", app.indexOf("const drinkOptions")));
   assert.doesNotMatch(drinkBlock, /Latte|Bevanda di soia|Bevanda d'avena/);
 });
+
+
+test("v1.16.70 repairs saved gelato photos and exposes direct compact removal", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  assert.match(app, /GELATO_FLAVORS\.includes\(part\.food/);
+  assert.match(app, /return \{ \.\.\.part, image: gelatoFlavorPhoto\(part\.food\) \}/);
+  assert.match(app, /className="part-remove"/);
+  assert.match(app, /event\.stopPropagation\(\);[\s\S]*removeMealPartAt\(key, r, partIndex\)/);
+  assert.match(css, /\.meal-part \.part-remove\s*\{[\s\S]*width:\s*16px;[\s\S]*height:\s*16px;/);
+});
