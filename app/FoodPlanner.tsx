@@ -74,7 +74,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.68";
+const VERSION = "1.16.69";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -90,8 +90,18 @@ const WEEK_SLOT_IMAGES = [
   "moment-dinner-v1121",
 ];
 const drinkOptions: LogItem[] = [
-  { label: "Acqua", kcal: 0, amount: "500 ml" },
-  { label: "Caffè senza zucchero", kcal: 2, amount: "1 tazza" },
+  { label: "Acqua naturale", kcal: 0, amount: "500 ml" },
+  { label: "Acqua frizzante", kcal: 0, amount: "500 ml" },
+  { label: "Caffè senza zucchero", kcal: 2, amount: "1 tazzina · 30 ml" },
+  { label: "Caffè decaffeinato senza zucchero", kcal: 2, amount: "1 tazzina · 30 ml" },
+  { label: "Caffè d'orzo senza zucchero", kcal: 7, amount: "1 tazza · 120 ml" },
+  { label: "Tè verde senza zucchero", kcal: 2, amount: "1 tazza · 250 ml" },
+  { label: "Tè nero senza zucchero", kcal: 2, amount: "1 tazza · 250 ml" },
+  { label: "Tè deteinato senza zucchero", kcal: 2, amount: "1 tazza · 250 ml" },
+  { label: "Tisana senza zucchero", kcal: 2, amount: "1 tazza · 250 ml" },
+  { label: "Acqua aromatizzata al limone", kcal: 0, amount: "500 ml · senza zucchero" },
+  { label: "Acqua aromatizzata al cetriolo", kcal: 0, amount: "500 ml · senza zucchero" },
+  { label: "Acqua aromatizzata alla menta", kcal: 0, amount: "500 ml · senza zucchero" },
   { label: "Coca-Cola Zero", kcal: 0, amount: "330 ml" },
   { label: "Gassata zero", kcal: 0, amount: "330 ml" },
   { label: "Bibita zuccherata", kcal: 140, amount: "330 ml" },

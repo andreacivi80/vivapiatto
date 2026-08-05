@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.68"/);
+  assert.match(app, /VERSION = "1\.16\.69"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -554,7 +554,7 @@ test("v1.16.17 keeps swap navigation visible and exposes occasional choices", as
 });
 
 
-test("v1.16.68 extends the verified everyday pantry with independent photos", async () => {
+test("v1.16.69 extends the verified everyday pantry with independent photos", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   const foods = [
     ["Pompelmo rosa fresco", "part-grapefruit-v11668"],
@@ -576,4 +576,23 @@ test("v1.16.68 extends the verified everyday pantry with independent photos", as
   }
   assert.match(app, /"Pompelmo rosa fresco": \[11, 12, 1, 2, 3, 4\]/);
   assert.match(app, /"Cime di rapa cotte": \[10, 11, 12, 1, 2, 3, 4\]/);
+});
+
+
+test("v1.16.69 expands compact daily drink logging without milk-as-day-drink", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  for (const label of [
+    "Acqua naturale",
+    "Acqua frizzante",
+    "Caffè d'orzo senza zucchero",
+    "Tè verde senza zucchero",
+    "Tè nero senza zucchero",
+    "Tè deteinato senza zucchero",
+    "Tisana senza zucchero",
+    "Acqua aromatizzata al limone",
+    "Acqua aromatizzata al cetriolo",
+    "Acqua aromatizzata alla menta",
+  ]) assert.match(app, new RegExp('label: "' + label + '"'));
+  const drinkBlock = app.slice(app.indexOf("const drinkOptions"), app.indexOf("];", app.indexOf("const drinkOptions")));
+  assert.doesNotMatch(drinkBlock, /Latte|Bevanda di soia|Bevanda d'avena/);
 });
