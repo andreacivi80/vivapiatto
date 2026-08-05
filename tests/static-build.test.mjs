@@ -77,7 +77,7 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /Cambia ricetta/);
   assert.match(app, /Cambia un elemento/);
   assert.match(app, /recipe-mode-actions/);
-  assert.match(app, /recipe-card-choose/);
+  assert.match(app, /recipe-card-info/);
   assert.match(app, /recipe-preview-choose/);
   assert.match(app, /Note utili/);
   assert.match(app, /italian-minestrone-complete/);
