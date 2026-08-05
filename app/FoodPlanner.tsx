@@ -74,7 +74,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.66";
+const VERSION = "1.16.67";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -1544,12 +1544,27 @@ const GELATO_FLAVORS = [
   "Gelato all'amarena",
 ] as const;
 
+const GELATO_FLAVOR_PHOTOS: Record<string, string> = {
+  "Gelato fiordilatte": "part-gelato-fiordilatte-v11664",
+  "Gelato alla crema": "part-gelato-crema-v11667",
+  "Gelato al cioccolato": "part-gelato-chocolate-v11664",
+  "Gelato stracciatella": "part-gelato-stracciatella-v11667",
+  "Gelato al pistacchio": "part-gelato-pistacchio-v11667",
+  "Gelato alla nocciola": "part-gelato-nocciola-v11667",
+  "Gelato alla vaniglia": "part-gelato-vaniglia-v11667",
+  "Gelato al caffe": "part-gelato-caffe-v11667",
+  "Gelato alla fragola": "part-gelato-fragola-v11667",
+  "Gelato al limone": "part-gelato-limone-v11667",
+  "Gelato al mango": "part-gelato-mango-v11667",
+  "Gelato allo yogurt": "part-gelato-yogurt-v11667",
+  "Gelato al cocco": "part-gelato-cocco-v11667",
+  "Gelato al caramello": "part-gelato-caramello-v11667",
+  "Gelato al tiramisu": "part-gelato-tiramisu-v11667",
+  "Gelato all'amarena": "part-gelato-amarena-v11667",
+};
+
 const gelatoFlavorPhoto = (food: string) =>
-  food === "Gelato fiordilatte"
-    ? photo("part-gelato-fiordilatte-v11664")
-    : food === "Gelato al cioccolato"
-      ? photo("part-gelato-chocolate-v11664")
-      : photo("cheat-gelato-v11619");
+  photo(GELATO_FLAVOR_PHOTOS[food] || "cheat-gelato-v11619");
 
 const HEALTHY_FILTERS = [
   ["verdure", "Ricca di verdure"],

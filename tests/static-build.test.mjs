@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.66"/);
+  assert.match(app, /VERSION = "1\.16\.67"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -516,7 +516,23 @@ test("v1.16.17 keeps swap navigation visible and exposes occasional choices", as
   assert.match(app, /part-mushrooms-raw-v11663/);
   await access(new URL("../dist/food/part-gelato-fiordilatte-v11664.png", import.meta.url));
   await access(new URL("../dist/food/part-gelato-chocolate-v11664.png", import.meta.url));
+  await access(new URL("../dist/food/part-gelato-crema-v11667.png", import.meta.url));
+  await access(new URL("../dist/food/part-gelato-stracciatella-v11667.png", import.meta.url));
+  await access(new URL("../dist/food/part-gelato-pistacchio-v11667.png", import.meta.url));
+  await access(new URL("../dist/food/part-gelato-nocciola-v11667.png", import.meta.url));
+  await access(new URL("../dist/food/part-gelato-vaniglia-v11667.png", import.meta.url));
+  await access(new URL("../dist/food/part-gelato-caffe-v11667.png", import.meta.url));
+  await access(new URL("../dist/food/part-gelato-fragola-v11667.png", import.meta.url));
+  await access(new URL("../dist/food/part-gelato-limone-v11667.png", import.meta.url));
+  await access(new URL("../dist/food/part-gelato-mango-v11667.png", import.meta.url));
+  await access(new URL("../dist/food/part-gelato-yogurt-v11667.png", import.meta.url));
+  await access(new URL("../dist/food/part-gelato-cocco-v11667.png", import.meta.url));
+  await access(new URL("../dist/food/part-gelato-caramello-v11667.png", import.meta.url));
+  await access(new URL("../dist/food/part-gelato-tiramisu-v11667.png", import.meta.url));
+  await access(new URL("../dist/food/part-gelato-amarena-v11667.png", import.meta.url));
   assert.match(app, /gelatoFlavorPhoto/);
+  assert.match(app, /GELATO_FLAVOR_PHOTOS/);
+  assert.equal((app.match(/part-gelato-[a-z-]+-v1166[47]/g) || []).length >= 16, true);
   assert.match(app, /className="part-remove"/);
   assert.match(app, /removeMealPartAt/);
   assert.match(css, /\.meal-part \.part-remove/);
