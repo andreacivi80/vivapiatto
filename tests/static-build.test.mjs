@@ -16,7 +16,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.43"/);
+  assert.match(app, /VERSION = "1\.16\.44"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -106,6 +106,13 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /week-kcal-summary/);
   assert.match(app, /Rotazione confermata/);
   assert.match(app, /simpleBreakfasts\.forEach\(\(recipe\) => \(recipe\.kind = "combination"\)\)/);
+  for (let code = 23; code <= 27; code += 1) {
+    const recipeId = `matrix-p${String(code).padStart(2, "0")}`;
+    assert.match(app, new RegExp(recipeId), `piatto principale mancante: ${recipeId}`);
+  }
+  assert.match(app, /attachmentMainsP23P27/);
+  assert.match(app, /Cous cous integrale con lenticchie, zucca e feta/);
+  assert.match(app, /Miglio con ceci, cavolfiore e curry/);
   for (let code = 17; code <= 22; code += 1) {
     const recipeId = `matrix-p${String(code).padStart(2, "0")}`;
     assert.match(app, new RegExp(recipeId), `piatto principale mancante: ${recipeId}`);
