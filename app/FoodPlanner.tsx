@@ -74,7 +74,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.48";
+const VERSION = "1.16.49";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -4916,14 +4916,14 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       food: "Bevanda di soia senza zucchero",
       grams: 200,
       label: "Bevanda di soia",
-      image: photo("part-milk-v7"),
+      image: photo("part-soy-drink-v11649"),
     },
     {
       category: "Latticino",
       food: "Bevanda d'avena senza zucchero",
       grams: 200,
       label: "Bevanda d'avena",
-      image: photo("part-milk-v7"),
+      image: photo("part-oat-drink-v11649"),
     },
     { category: "Latticino", food: "Fiocchi di latte", grams: 80, label: "Fiocchi di latte", image: photo("part-cottage-cheese-v11512") },
   ],
@@ -5054,14 +5054,14 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       food: "Salsa di tamarindo",
       grams: 15,
       label: "Salsa di tamarindo · 15 g",
-      image: photo("part-tomatoes-v8"),
+      image: photo("part-tamarind-sauce-v11649"),
     },
     {
       category: "Extra",
       food: "Olio di arachidi",
       grams: 5,
       label: "Olio di arachidi · 5 g",
-      image: photo("part-olive-oil-v8"),
+      image: photo("part-peanut-oil-v11649"),
     },
     {
       category: "Extra",
