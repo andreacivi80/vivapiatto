@@ -225,7 +225,7 @@ test("sorgente mobile con versione e fonti", async () => {
   }
   assert.match(app, /part-pumpkin-seeds-v11641/);
   assert.match(app, /part-egg-white-v11641/);
-  assert.match(app, /part-almond-butter-v11641/);
+  assert.match(app, /part-almond-butter-v11671/);
   assert.match(app, /part-dark-chocolate-v11641/);
   const realRecipeIndex = app.slice(app.indexOf("const rawRecipes"), app.indexOf("const pantryPartByFood"));
   assert.match(realRecipeIndex, /catalogMains/);
@@ -298,7 +298,7 @@ test("sorgente mobile con versione e fonti", async () => {
   await access(new URL("../dist/food/part-raspberries-v11642.png", import.meta.url));
   await access(new URL("../dist/food/part-pumpkin-seeds-v11641.png", import.meta.url));
   await access(new URL("../dist/food/part-egg-white-v11641.png", import.meta.url));
-  await access(new URL("../dist/food/part-almond-butter-v11641.png", import.meta.url));
+  await access(new URL("../dist/food/part-almond-butter-v11671.png", import.meta.url));
   await access(new URL("../dist/food/part-dark-chocolate-v11641.png", import.meta.url));
   await access(new URL("../dist/food/part-tempeh-v11520.png", import.meta.url));
   await access(new URL("../dist/food/part-turbot-v11520.png", import.meta.url));
