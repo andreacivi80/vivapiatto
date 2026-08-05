@@ -39,6 +39,18 @@ test("build GitHub Pages autonomo e completo", async () => {
   await access(new URL("../dist/food/recipe-s40-apple-pistachio-kefir-v11660.png", import.meta.url));
   await access(new URL("../dist/food/recipe-s41-cottage-ricecakes-v11660.png", import.meta.url));
   await access(new URL("../dist/food/recipe-s42-mixed-berries-yogurt-v11660.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-p53-whole-pasta-lentils-v11661.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-p54-basmati-salmon-peas-v11661.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-p55-quinoa-turkey-pumpkin-v11661.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-p56-farro-chickpeas-beet-v11661.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-p57-couscous-cod-curry-v11661.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-p58-barley-edamame-cabbage-v11661.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-p59-venere-seabream-asparagus-v11661.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-p60-legume-pasta-ricotta-kale-v11661.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-p61-millet-tempeh-artichokes-v11661.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-p62-polenta-shrimp-stew-v11661.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-p63-bulgur-chicken-radicchio-v11661.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-p64-gnocchi-salmon-spinach-v11661.png", import.meta.url));
 });
 
 test("sorgente mobile con versione e fonti", async () => {
@@ -490,4 +502,10 @@ test("v1.16.17 keeps swap navigation visible and exposes occasional choices", as
   assert.match(app, /matrix-s42-frutti-di-bosco-con-yogurt-e-chia/);
   assert.match(app, /\.\.\.attachmentSnacksS35S42/);
   assert.match(app, /recipe-s41-cottage-ricecakes-v11660/);
+
+  assert.match(app, /const attachmentMainsP53P64: Recipe\[\]/);
+  assert.match(app, /matrix-p53-pasta-integrale-con-lenticchie-e-spinaci/);
+  assert.match(app, /matrix-p64-gnocchi-con-salmone-spinaci-e-yogurt/);
+  assert.match(app, /\.\.\.attachmentMainsP53P64/);
+  assert.match(app, /recipe-p59-venere-seabream-asparagus-v11661/);
 });
