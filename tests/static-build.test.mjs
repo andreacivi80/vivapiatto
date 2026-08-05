@@ -12,6 +12,14 @@ test("build GitHub Pages autonomo e completo", async () => {
   await access(new URL("../dist/food/part-passata-v11652.png", import.meta.url));
   await access(new URL("../dist/food/part-sweet-potato-noodles-v11652.png", import.meta.url));
   await access(new URL("../dist/food/part-rice-noodles-v11652.png", import.meta.url));
+  await access(new URL("../dist/food/part-branzino-baked-v11654.png", import.meta.url));
+  await access(new URL("../dist/food/part-nasello-steamed-v11654.png", import.meta.url));
+  await access(new URL("../dist/food/part-calamari-grilled-v11654.png", import.meta.url));
+  await access(new URL("../dist/food/part-fave-cooked-v11654.png", import.meta.url));
+  await access(new URL("../dist/food/part-borlotti-cooked-v11654.png", import.meta.url));
+  await access(new URL("../dist/food/part-mussels-cooked-v11654.png", import.meta.url));
+  await access(new URL("../dist/food/part-sardines-baked-v11654.png", import.meta.url));
+  await access(new URL("../dist/food/part-mackerel-baked-v11654.png", import.meta.url));
 });
 
 test("sorgente mobile con versione e fonti", async () => {
@@ -19,7 +27,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.53"/);
+  assert.match(app, /VERSION = "1\.16\.54"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -414,4 +422,18 @@ test("v1.16.17 keeps swap navigation visible and exposes occasional choices", as
   assert.doesNotMatch(app, /chooseRecipe\(filteredRecipes\[0\]\)/);
   assert.match(app, /recipe-preview-photo-select/);
   assert.match(css, /\.recipe-preview-photo-select/);
+
+  assert.match(app, /const attachmentDinnersA: Recipe\[\]/);
+  assert.match(app, /matrix-d01-merluzzo-al-forno-con-patate-e-zucchine/);
+  assert.match(app, /matrix-d16-manzo-magro-con-radicchio-funghi-e-polenta/);
+  assert.match(app, /\.\.\.attachmentDinnersA/);
+  assert.match(app, /Branzino cotto/);
+  assert.match(app, /part-branzino-baked-v11654/);
+  assert.match(app, /part-nasello-steamed-v11654/);
+  assert.match(app, /part-calamari-grilled-v11654/);
+  assert.match(app, /part-fave-cooked-v11654/);
+  assert.match(app, /part-borlotti-cooked-v11654/);
+  assert.match(app, /part-mussels-cooked-v11654/);
+  assert.match(app, /part-sardines-baked-v11654/);
+  assert.match(app, /part-mackerel-baked-v11654/);
 });
