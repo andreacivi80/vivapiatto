@@ -74,7 +74,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.69";
+const VERSION = "1.16.70";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -6460,6 +6460,8 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
 };
 
 const normalizeMealPart = (part: MealPart): MealPart => {
+  if (GELATO_FLAVORS.includes(part.food as (typeof GELATO_FLAVORS)[number]))
+    return { ...part, image: gelatoFlavorPhoto(part.food) };
   if (mealPartOptions[part.category]?.some((option) => option.food === part.food))
     return part;
   const canonicalCategory = (
@@ -11338,7 +11340,10 @@ export function FoodPlanner() {
                                     className="part-remove"
                                     aria-label={`Rimuovi ${part.label || part.food}`}
                                     title="Rimuovi elemento"
-                                    onClick={() => removeMealPartAt(key, r, partIndex)}
+                                    onClick={(event) => {
+                                      event.stopPropagation();
+                                      removeMealPartAt(key, r, partIndex);
+                                    }}
                                   >
                                     −
                                   </button>
