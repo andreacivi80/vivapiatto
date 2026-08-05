@@ -16,7 +16,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.42"/);
+  assert.match(app, /VERSION = "1\.16\.43"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -106,6 +106,14 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /week-kcal-summary/);
   assert.match(app, /Rotazione confermata/);
   assert.match(app, /simpleBreakfasts\.forEach\(\(recipe\) => \(recipe\.kind = "combination"\)\)/);
+  for (let code = 17; code <= 22; code += 1) {
+    const recipeId = `matrix-p${String(code).padStart(2, "0")}`;
+    assert.match(app, new RegExp(recipeId), `piatto principale mancante: ${recipeId}`);
+  }
+  assert.match(app, /attachmentMainsP17P22/);
+  assert.match(app, /part-spelt-pasta-v11643/);
+  assert.match(app, /part-mackerel-v11643/);
+  assert.match(app, /part-red-beans-v11643/);
   for (let code = 1; code <= 34; code += 1) {
     const recipeId = `matrix-s${String(code).padStart(2, "0")}`;
     assert.match(app, new RegExp(recipeId), `spuntino mancante: ${recipeId}`);
@@ -185,6 +193,9 @@ test("sorgente mobile con versione e fonti", async () => {
   await access(new URL("../dist/food/recipe-asian-oyakodon-v11520.png", import.meta.url));
   await access(new URL("../dist/food/recipe-asian-bibimbap-v11520.png", import.meta.url));
   await access(new URL("../dist/food/part-sunflower-seeds-v11640.png", import.meta.url));
+  await access(new URL("../dist/food/part-spelt-pasta-v11643.png", import.meta.url));
+  await access(new URL("../dist/food/part-mackerel-v11643.png", import.meta.url));
+  await access(new URL("../dist/food/part-red-beans-v11643.png", import.meta.url));
   await access(new URL("../dist/food/part-plums-v11642.png", import.meta.url));
   await access(new URL("../dist/food/part-raspberries-v11642.png", import.meta.url));
   await access(new URL("../dist/food/part-pumpkin-seeds-v11641.png", import.meta.url));
