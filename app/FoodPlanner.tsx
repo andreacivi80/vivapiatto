@@ -74,7 +74,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.64";
+const VERSION = "1.16.65";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -1550,6 +1550,31 @@ const gelatoFlavorPhoto = (food: string) =>
     : food === "Gelato al cioccolato"
       ? photo("part-gelato-chocolate-v11664")
       : photo("cheat-gelato-v11619");
+
+const HEALTHY_FILTERS = [
+  ["verdure", "Ricca di verdure"],
+  ["vegetale", "Prevalentemente vegetale"],
+  ["integrali", "Cereali integrali"],
+  ["legumi", "Con legumi"],
+  ["pesce", "Con pesce"],
+  ["pesce-grasso", "Con pesce grasso"],
+  ["carne-bianca", "Con carne bianca"],
+  ["vegetariana", "Vegetariana"],
+  ["vegana", "Vegana"],
+  ["lattosio", "Senza lattosio adattabile"],
+  ["glutine", "Senza glutine adattabile"],
+  ["pochi-ingredienti", "Meno ingredienti"],
+  ["15-minuti", "Pronta in 15 minuti"],
+  ["30-minuti", "Pronta in 30 minuti"],
+  ["anticipo", "Da preparare in anticipo"],
+  ["trasportabile", "Trasportabile"],
+  ["stagione", "Adatta alla stagione"],
+  ["vapore", "Cottura al vapore"],
+  ["forno", "Cottura al forno"],
+  ["senza-frittura", "Senza frittura"],
+  ["poco-sale", "Poco sale aggiunto"],
+] as const;
+type HealthyFilterId = (typeof HEALTHY_FILTERS)[number][0];
 
 foods["Branzino cotto"] = { kcal: 124, protein: 23.6, carbs: 0, fat: 2.7, fiber: 0, source: "USDA" };
 foods["Nasello cotto"] = { kcal: 90, protein: 19.2, carbs: 0, fat: 1.2, fiber: 0, source: "USDA" };
@@ -9097,6 +9122,7 @@ export function FoodPlanner() {
   const [dayContext, setDayContext] = useState("Lavoro");
   const [plannedDrink, setPlannedDrink] = useState("Acqua");
   const [cuisineFilter, setCuisineFilter] = useState("Tutte");
+  const [healthyFilters, setHealthyFilters] = useState<HealthyFilterId[]>([]);
   const [drinks, setDrinks] = useState<Record<string, LogItem[]>>({});
   const [extras, setExtras] = useState<Record<string, LogItem[]>>({});
   const [diaryDay, setDiaryDay] = useState(0);
@@ -9163,6 +9189,7 @@ export function FoodPlanner() {
     dayContext,
     weekLocked,
     cuisineChoice,
+    healthyFilters,
     dayIndex,
     diaryDay,
     tab,
@@ -9277,6 +9304,7 @@ export function FoodPlanner() {
         setDayContext(s.dayContext || "Lavoro");
         setWeekLocked(Boolean(s.weekLocked));
         setCuisineChoice(s.cuisineChoice || "Italiano");
+        setHealthyFilters(Array.isArray(s.healthyFilters) ? s.healthyFilters : []);
         setDayIndex(Math.max(0, Math.min(days.length - 1, Number(s.dayIndex) || 0)));
         setDiaryDay(Math.max(0, Math.min(days.length - 1, Number(s.diaryDay) || 0)));
         if (["today", "week", "library", "builder", "progress"].includes(s.tab)) setTab(s.tab);
@@ -9310,6 +9338,7 @@ export function FoodPlanner() {
         dayContext,
         weekLocked,
         cuisineChoice,
+        healthyFilters,
         dayIndex,
         diaryDay,
         tab,
@@ -9337,6 +9366,7 @@ export function FoodPlanner() {
     dayContext,
     weekLocked,
     cuisineChoice,
+    healthyFilters,
     dayIndex,
     diaryDay,
     tab,
@@ -9453,6 +9483,44 @@ export function FoodPlanner() {
     recipe.steps.length >= 2 &&
     recipe.ingredients.length >= 2 &&
     (recipe.time >= 5 || recipe.ingredients.length >= 3);
+  const recipeMatchesHealthyFilter = (recipe: Recipe, filter: HealthyFilterId) => {
+    const foodsText = recipe.ingredients.map((item) => item.food).join(" ").toLowerCase();
+    const methodText = [...recipe.steps, ...recipe.alternatives].join(" ").toLowerCase();
+    const vegetablePattern = /zucchin|pomodor|spinac|broccol|cavol|carot|zucca|melanzan|finocch|asparag|bietol|radicch|rucola|insalat|fung|peperon|carciof|sedano|cetriol|barbabietol|fagiolin/;
+    const vegetableGrams = recipe.ingredients
+      .filter((item) => vegetablePattern.test(item.food.toLowerCase()))
+      .reduce((sum, item) => sum + item.grams, 0);
+    const fish = /salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|gamber|polpo|cozze|calamari|rombo|seppia/.test(foodsText);
+    const meat = /pollo|tacchino|coniglio|manzo|vitello|maiale|cavallo|bresaola|prosciutto|mortadella|salame|salsiccia|porchetta|pancetta/.test(foodsText);
+    const eggs = /\buov|albume/.test(foodsText);
+    const dairy = /latte|yogurt|skyr|kefir|ricotta|feta|mozzarella|crescenza|scamorza|provolone|fiocchi di latte|burro/.test(foodsText);
+    const gluten = /pasta|pane|farro|orzo|bulgur|cous cous|cracker|fette biscottate|biscott|wafer|muesli|farina di frumento|segale/.test(foodsText);
+    const legumes = /ceci|lenticchie|fagioli|piselli|edamame|soia|tofu|tempeh|fave/.test(foodsText);
+    const wholeGrains = /integrale|farro|orzo|riso venere|riso rosso|quinoa|miglio|bulgur|grano saraceno/.test(foodsText);
+    const month = new Date().getMonth() + 1;
+    const seasonal = recipe.ingredients.some((item) => seasonalMonths[item.food]?.includes(month));
+    if (filter === "verdure") return vegetableGrams >= 180;
+    if (filter === "vegetale") return !meat && !fish && vegetableGrams >= 100;
+    if (filter === "integrali") return wholeGrains;
+    if (filter === "legumi") return legumes;
+    if (filter === "pesce") return fish;
+    if (filter === "pesce-grasso") return /salmone|sgombro|sardine|trota/.test(foodsText);
+    if (filter === "carne-bianca") return /pollo|tacchino|coniglio/.test(foodsText);
+    if (filter === "vegetariana") return !meat && !fish;
+    if (filter === "vegana") return !meat && !fish && !eggs && !dairy;
+    if (filter === "lattosio") return !dairy || /senza lattosio|soia|avena/.test(methodText + " " + foodsText);
+    if (filter === "glutine") return !gluten || /senza glutine/.test(methodText);
+    if (filter === "pochi-ingredienti") return recipe.ingredients.length <= 5;
+    if (filter === "15-minuti") return recipe.time <= 15;
+    if (filter === "30-minuti") return recipe.time <= 30;
+    if (filter === "anticipo") return /anticipo|sera prima|frigorifero|riposo|preparabile/.test(methodText);
+    if (filter === "trasportabile") return isWorkFriendly(recipe);
+    if (filter === "stagione") return seasonal;
+    if (filter === "vapore") return /vapore/.test(methodText);
+    if (filter === "forno") return /forno|arrost/.test(methodText);
+    if (filter === "senza-frittura") return !/friggi|frittura|fritto/.test(methodText);
+    return !/sale|dado|salamoia/.test(methodText);
+  };
   const filteredRecipes = allRecipes
     .filter(
       (r) =>
@@ -9462,6 +9530,7 @@ export function FoodPlanner() {
         isAllowed(r) &&
         (swapTarget || compatibleWithSlot(r)) &&
         compatibleWithPlace(r) &&
+        healthyFilters.every((filter) => recipeMatchesHealthyFilter(r, filter)) &&
         (cuisineFilter === "Tutte" ||
           (cuisineFilter === "Sgarri"
             ? r.id.startsWith("occasional-")
@@ -11691,6 +11760,42 @@ export function FoodPlanner() {
                 </button>
               ))}
             </div>
+            <details className="healthy-filter-panel">
+              <summary>
+                Filtri healthy
+                {healthyFilters.length > 0 && <b>{healthyFilters.length}</b>}
+              </summary>
+              <div className="healthy-filter-chips">
+                {HEALTHY_FILTERS.map(([id, label]) => (
+                  <button
+                    type="button"
+                    key={id}
+                    className={healthyFilters.includes(id) ? "active" : ""}
+                    onClick={() =>
+                      setHealthyFilters((current) =>
+                        current.includes(id)
+                          ? current.filter((item) => item !== id)
+                          : [...current, id],
+                      )
+                    }
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+              {healthyFilters.length > 0 && (
+                <button
+                  type="button"
+                  className="healthy-filter-reset"
+                  onClick={() => setHealthyFilters([])}
+                >
+                  Azzera filtri
+                </button>
+              )}
+              <small>
+                Filtri pratici sul catalogo: non attribuiscono proprietà dimagranti o terapeutiche.
+              </small>
+            </details>
             <div className="library-tools">
               <input
                 aria-label="Cerca ricetta"
