@@ -16,7 +16,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.47"/);
+  assert.match(app, /VERSION = "1\.16\.48"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -113,6 +113,10 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /attachmentMainsP35P40/);
   assert.match(app, /part-black-beans-v11646/);
   assert.match(app, /className="recipe-card-info"/);
+  assert.match(app, /containsCommonBloatingTriggers/);
+  assert.match(app, /target: "2–3", count: weeklyCounts\["Legumi e vegetali"\]/);
+  assert.match(app, /target: "1–3", count: weeklyCounts\["Carne bianca"\]/);
+  assert.match(app, /className="weekly-source"/);
   assert.match(app, /aria-label=\{swapTarget \? `Applica/);
   assert.doesNotMatch(app, /className="recipe-card-choose"/);
   await access(new URL("../dist/food/part-black-beans-v11646.png", import.meta.url));
