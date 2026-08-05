@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.71"/);
+  assert.match(app, /VERSION = "1\.16\.72"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -112,6 +112,10 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /Piatti completi consigliati/);
   assert.match(app, /chooseCompleteMeal/);
   assert.match(app, /complete-meal-info/);
+  assert.match(app, /complete-meal-card-actions/);
+  assert.match(app, /Prima scelta/);
+  assert.match(app, /optionIndex < 3/);
+  assert.match(app, /missingRoles \* 0\.22 \+ extraRoles \* 0\.08/);
   assert.match(app, /Vedi ingredienti e preparazione/);
   assert.doesNotMatch(app, /Scegli questo sgarro/);
   assert.doesNotMatch(app, /<strong>Scegli questo piatto<\/strong>/);
