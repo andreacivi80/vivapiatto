@@ -74,7 +74,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.46";
+const VERSION = "1.16.47";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -10525,12 +10525,8 @@ export function FoodPlanner() {
                 return (
                   <article
                     key={r.id}
-                    onClick={() => {
-                      if (swapTarget) {
-                        setSelectedMealKey(null);
-                        setSelected(r);
-                      } else chooseRecipe(r);
-                    }}
+                    onClick={() => chooseRecipe(r)}
+                    aria-label={swapTarget ? `Applica ${r.name}` : undefined}
                   >
                     <RecipeVisual recipe={r} />
                     <div>
@@ -10543,13 +10539,16 @@ export function FoodPlanner() {
                     </div>
                     {swapTarget && (
                       <button
-                        className="recipe-card-choose"
+                        className="recipe-card-info"
+                        aria-label={`Vedi la ricetta di ${r.name}`}
+                        title="Vedi ricetta"
                         onClick={(event) => {
                           event.stopPropagation();
-                          chooseRecipe(r);
+                          setSelectedMealKey(null);
+                          setSelected(r);
                         }}
                       >
-                        Scegli
+                        i
                       </button>
                     )}
                   </article>
