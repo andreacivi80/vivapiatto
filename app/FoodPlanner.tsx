@@ -4639,7 +4639,7 @@ const attachmentDinnersA: Recipe[] = [
     ],
     parts: [
       { category: "Proteina", food: "Ceci cotti", grams: 150, label: "Burger di ceci · da 150 g cotti", image: photo("part-chickpeas-v8") },
-      { category: "Carboidrato", food: "Fiocchi d'avena", grams: 20, label: "Fiocchi d'avena nell'impasto · 20 g", image: photo("part-oats-v11511") },
+      { category: "Carboidrato", food: "Fiocchi d'avena", grams: 20, label: "Fiocchi d'avena nell'impasto · 20 g", image: photo("part-oats-v113") },
       { category: "Contorno", food: "Carote crude", grams: 40, label: "Carota · 40 g", image: photo("part-carrots-raw-v11512") },
       { category: "Contorno", food: "Cipolle crude", grams: 40, label: "Cipolla · 40 g", image: photo("part-onions-v11519") },
       { category: "Contorno", food: "Melanzane", grams: 100, label: "Melanzane grigliate · 100 g", image: photo("part-eggplant-v8") },
@@ -4668,7 +4668,7 @@ const attachmentDinnersA: Recipe[] = [
     ],
     parts: [
       { category: "Proteina", food: "Tempeh", grams: 100, label: "Tempeh al forno · 100 g", image: photo("part-tempeh-v11520") },
-      { category: "Carboidrato", food: "Patata dolce cotta", grams: 200, label: "Patata dolce al forno · 200 g", image: photo("part-sweet-potato-v11515") },
+      { category: "Carboidrato", food: "Patata dolce cotta", grams: 200, label: "Patata dolce al forno · 200 g", image: photo("part-sweet-potato-v8") },
       { category: "Contorno", food: "Cavolo rosso crudo", grams: 250, label: "Cavolo rosso cotto · 250 g", image: photo("part-red-cabbage-v11515") },
       { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") },
     ],
