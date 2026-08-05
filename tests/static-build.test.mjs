@@ -23,6 +23,14 @@ test("build GitHub Pages autonomo e completo", async () => {
   await access(new URL("../dist/food/part-cicoria-cooked-v11655.png", import.meta.url));
   await access(new URL("../dist/food/part-green-cabbage-cooked-v11657.png", import.meta.url));
   await access(new URL("../dist/food/part-plaice-baked-v11658.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-c37-blueberry-porridge-v11659.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-c38-skyr-mango-v11659.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-c39-rye-egg-spinach-v11659.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-c40-kefir-banana-v11659.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-c41-spelt-pancakes-v11659.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-c42-greek-yogurt-pear-v11659.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-c43-cottage-pomegranate-v11659.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-c44-oat-soy-peach-pudding-v11659.png", import.meta.url));
 });
 
 test("sorgente mobile con versione e fonti", async () => {
@@ -462,4 +470,10 @@ test("v1.16.17 keeps swap navigation visible and exposes occasional choices", as
   assert.match(app, /matrix-d64-tempeh-con-melanzane-pomodori-e-miglio/);
   assert.match(app, /\.\.\.attachmentDinnersE/);
   assert.match(app, /part-plaice-baked-v11658/);
+
+  assert.match(app, /const attachmentBreakfastsC37C44: Recipe\[\]/);
+  assert.match(app, /matrix-c37-blueberry-chia-almond-porridge/);
+  assert.match(app, /matrix-c44-oat-soy-peach-sesame-pudding/);
+  assert.match(app, /\.\.\.attachmentBreakfastsC37C44/);
+  assert.match(app, /recipe-c41-spelt-pancakes-v11659/);
 });
