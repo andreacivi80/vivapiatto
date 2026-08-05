@@ -74,7 +74,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.47";
+const VERSION = "1.16.48";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -1581,7 +1581,7 @@ const proteinFamilyForItems = (items: RecipeIngredient[]): WeeklyProteinFamily =
 const recipeProteinFamily = (recipe: Recipe) => proteinFamilyForItems(recipe.parts || recipe.ingredients);
 const WEEKLY_MAIN_ROTATION: WeeklyProteinFamily[] = [
   "legumi", "pesce", "carne-bianca", "uova", "legumi", "pesce", "latticini",
-  "legumi", "carne-bianca", "pesce", "legumi", "carne-rossa", "latticini", "uova",
+  "latticini", "carne-bianca", "pesce", "legumi", "carne-rossa", "latticini", "uova",
 ];
 const recipes: Recipe[] = [
   {
@@ -9036,25 +9036,20 @@ export function FoodPlanner() {
         ["Piatto unico", "Piatto completo", "Primo", "Secondo"].includes(recipeCourse(r)),
     );
     if (next.feeling === "gonfio") {
+      const containsCommonBloatingTriggers = (recipe: Recipe) =>
+        recipeProteinFamily(recipe) === "legumi" ||
+        recipe.ingredients.some((item) =>
+          /cavolo|cavolfiore|broccoli|cipoll|porro/i.test(item.food),
+        );
       mains = mains
-        .filter(
-          (r) =>
-            !r.ingredients.some((i) =>
-              [
-                "Ceci cotti",
-                "Lenticchie cotte",
-                "Fagioli cannellini cotti",
-                "Piselli cotti",
-              ].includes(i.food),
-            ),
-        )
+        .filter((recipe) => !containsCommonBloatingTriggers(recipe))
+        .sort((a, b) => {
+          const portionDelta = a.ingredients.length - b.ingredients.length;
+          return portionDelta || calc(a.ingredients).fat - calc(b.ingredients).fat;
+        });
+      snacks = snacks
+        .filter((recipe) => !containsCommonBloatingTriggers(recipe))
         .sort((a, b) => a.ingredients.length - b.ingredients.length);
-      snacks = snacks.filter(
-        (r) =>
-          !r.ingredients.some((i) =>
-            ["Wafer confezionati", "Pera", "Mela"].includes(i.food),
-          ),
-      );
     } else if (next.feeling === "fame") {
       mains = [...mains].sort(
         (a, b) =>
@@ -9403,12 +9398,12 @@ export function FoodPlanner() {
   );
   const weeklyTargets = [
     { label: "Pesce", target: "2–3", count: weeklyCounts.Pesce },
-    { label: "Legumi e vegetali", target: "3–4", count: weeklyCounts["Legumi e vegetali"] },
-    { label: "Carne bianca", target: "1–2", count: weeklyCounts["Carne bianca"] },
-    { label: "Carne rossa", target: "0–1", count: weeklyCounts["Carne rossa"] },
+    { label: "Legumi e vegetali", target: "2–3", count: weeklyCounts["Legumi e vegetali"] },
+    { label: "Carne bianca", target: "1–3", count: weeklyCounts["Carne bianca"] },
+    { label: "Carne rossa", target: "1–2", count: weeklyCounts["Carne rossa"] },
     { label: "Uova", target: "2–4", count: weeklyCounts.Uova },
     { label: "Formaggi", target: "2–3", count: weeklyCounts.Formaggi },
-    { label: "Salumi", target: "0–1", count: weeklyCounts.Salumi },
+    { label: "Salumi", target: "<1", count: weeklyCounts.Salumi },
   ];  const replanNextDay = (day: number) => {
     if (day >= days.length - 1) {
       setReplanNote(
@@ -10325,6 +10320,14 @@ export function FoodPlanner() {
               <header>
                 <b>{weekLocked ? "Rotazione confermata" : "Rotazione pianificata"}</b>
                 <span>pasti della settimana · riferimento CREA</span>
+                <a
+                  className="weekly-source"
+                  href="https://www.crea.gov.it/documents/59764/0/Dossier%2BLG%2B2017_CAP10.pdf/"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Fonte ↗
+                </a>
               </header>
               <div>
                 {weeklyTargets.map((item) => (
