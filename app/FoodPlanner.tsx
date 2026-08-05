@@ -74,7 +74,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.51";
+const VERSION = "1.16.52";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -2628,7 +2628,7 @@ const matrixBreakfasts: Recipe[] = [
         food: "Bevanda di soia senza zucchero",
         grams: 180,
         label: "Bevanda di soia senza zuccheri",
-        image: photo("part-milk-v7"),
+        image: photo("part-soy-drink-v11649"),
       },
       {
         category: "Frutta",
@@ -4102,7 +4102,7 @@ const balancedDinnerRecipes: Recipe[] = [
       { category: "Proteina", food: "Seppia · peso a crudo", grams: 160, label: "Seppia alla piastra · 160 g a crudo", image: photo("part-cuttlefish-v11520") },
       { category: "Contorno", food: "Bietole cotte", grams: 180, label: "Bietole cotte · 180 g", image: photo("part-chard-v11515") },
       { category: "Carboidrato", food: "Riso basmati cotto", grams: 170, label: "Riso basmati cotto · 170 g", image: photo("part-basmati-cooked-v11650") },
-      { category: "Contorno", food: "Passata di pomodoro", grams: 100, label: "Salsa di pomodoro · 100 g", image: photo("part-tomatoes-v8") },
+      { category: "Contorno", food: "Passata di pomodoro", grams: 100, label: "Salsa di pomodoro · 100 g", image: photo("part-passata-v11652") },
       { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") },
     ],
     steps: ["Cuoci il basmati secondo confezione e pesane 170 g cotto.", "Scalda la passata 8-10 minuti e cuoci le bietole finché sono tenere.", "Tampona la seppia e cuocila su piastra molto calda pochi minuti per lato; servi con l'olio pesato."],
@@ -4135,7 +4135,7 @@ const balancedDinnerRecipes: Recipe[] = [
     parts: [
       { category: "Carboidrato", food: "Riso basmati cotto", grams: 150, label: "Riso cotto · 150 g", image: photo("part-basmati-cooked-v11650") },
       { category: "Proteina", food: "Bistecca di manzo · peso a crudo", grams: 70, label: "Manzo a striscioline · 70 g a crudo", image: photo("part-steak-beef-v114") },
-      { category: "Proteina", food: "Uovo", grams: 50, label: "Uovo al tegamino · 1", image: photo("simple-eggs-v5") },
+      { category: "Proteina", food: "Uovo", grams: 50, label: "Uovo al tegamino · 1", image: photo("part-whole-egg-v11651") },
       { category: "Contorno", food: "Spinaci", grams: 70, label: "Spinaci · 70 g", image: photo("part-spinach-v7") },
       { category: "Contorno", food: "Carote crude", grams: 60, label: "Carote · 60 g", image: photo("part-carrots-raw-v11512") },
       { category: "Contorno", food: "Germogli di soia", grams: 70, label: "Germogli di soia · 70 g", image: photo("part-sprouts-v11520") },
@@ -4196,7 +4196,7 @@ const balancedDinnerRecipes: Recipe[] = [
       { food: "Olio di arachidi", grams: 5 },
     ],
     parts: [
-      { category: "Carboidrato", food: "Vermicelli di patata dolce cotti", grams: 180, label: "Vermicelli traslucidi cotti · 180 g", image: photo("rice-noodles-veg-v3") },
+      { category: "Carboidrato", food: "Vermicelli di patata dolce cotti", grams: 180, label: "Vermicelli traslucidi cotti · 180 g", image: photo("part-sweet-potato-noodles-v11652") },
       { category: "Proteina", food: "Bistecca di manzo · peso a crudo", grams: 100, label: "Manzo a striscioline · 100 g a crudo", image: photo("part-steak-beef-v114") },
       { category: "Contorno", food: "Spinaci", grams: 80, label: "Spinaci cotti · 80 g", image: photo("part-spinach-v7") },
       { category: "Contorno", food: "Carote crude", grams: 60, label: "Carote a julienne · 60 g", image: photo("part-carrots-raw-v11512") },
@@ -4233,7 +4233,7 @@ const balancedDinnerRecipes: Recipe[] = [
       { food: "Lime", grams: 30 },
     ],
     parts: [
-      { category: "Carboidrato", food: "Noodles di riso cotti", grams: 180, label: "Noodles di riso cotti · 180 g", image: photo("rice-noodles-veg-v3") },
+      { category: "Carboidrato", food: "Noodles di riso cotti", grams: 180, label: "Noodles di riso cotti · 180 g", image: photo("part-rice-noodles-v11652") },
       { category: "Proteina", food: "Gamberi cotti", grams: 130, label: "Gamberi cotti · 130 g", image: photo("part-shrimp-v11514") },
       { category: "Proteina", food: "Uovo", grams: 50, label: "Uovo strapazzato · 1", image: photo("part-whole-egg-v11651") },
       { category: "Contorno", food: "Germogli di soia", grams: 80, label: "Germogli di soia · 80 g", image: photo("part-sprouts-v11520") },
@@ -4284,7 +4284,7 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       food: "Vermicelli di patata dolce cotti",
       grams: 180,
       label: "Vermicelli coreani cotti · 180 g",
-      image: photo("rice-noodles-veg-v3"),
+      image: photo("part-sweet-potato-noodles-v11652"),
     },
     {
       category: "Carboidrato",
