@@ -74,7 +74,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.39";
+const VERSION = "1.16.40";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -1337,6 +1337,15 @@ foods["Uovo in camicia"] = {
   carbs: 0.7,
   fat: 9.5,
   fiber: 0,
+  source: "USDA",
+};
+
+foods["Semi di girasole"] = {
+  kcal: 584,
+  protein: 20.8,
+  carbs: 20,
+  fat: 51.5,
+  fiber: 8.6,
   source: "USDA",
 };
 
@@ -5049,6 +5058,13 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     },
     {
       category: "Extra",
+      food: "Semi di girasole",
+      grams: 10,
+      label: "Semi di girasole non salati",
+      image: photo("part-sunflower-seeds-v11640"),
+    },
+    {
+      category: "Extra",
       food: "Anacardi non salati",
       grams: 15,
       label: "Anacardi non salati · 15 g",
@@ -6776,10 +6792,144 @@ const attachmentBreakfastsC13C20: Recipe[] = [
   },
 ];
 
+
+const attachmentBreakfastsC22C28: Recipe[] = [
+  {
+    id: "matrix-c22-yogurt-apple-oats-sunflower",
+    name: "Yogurt, mela, avena e semi di girasole",
+    kicker: "Colazione rapida",
+    course: "Colazione",
+    cuisine: "Italiano",
+    kind: "combination",
+    image: photo("moment-breakfast-v1121"),
+    time: 5,
+    ingredients: [
+      { food: "Yogurt bianco", grams: 170 },
+      { food: "Mela", grams: 150 },
+      { food: "Fiocchi d'avena", grams: 30 },
+      { food: "Semi di girasole", grams: 10 },
+    ],
+    steps: ["Taglia la mela a cubetti.", "Uniscila allo yogurt e completa con avena e semi di girasole già pesati."],
+    alternatives: ["Pera al posto della mela", "Semi di zucca al posto dei semi di girasole"],
+  },
+  {
+    id: "matrix-c23-bread-cottage-pear-pecans",
+    name: "Pane integrale con fiocchi di latte, pera e pecan",
+    kicker: "Colazione veloce",
+    course: "Colazione",
+    cuisine: "Italiano",
+    kind: "combination",
+    image: photo("moment-breakfast-v1121"),
+    time: 7,
+    ingredients: [
+      { food: "Pane integrale", grams: 50 },
+      { food: "Fiocchi di latte", grams: 100 },
+      { food: "Pera", grams: 150 },
+      { food: "Noci pecan", grams: 10 },
+    ],
+    steps: ["Tosta il pane e servilo con i fiocchi di latte.", "Aggiungi la pera tagliata al momento e le noci pecan spezzettate."],
+    alternatives: ["Pane di segale al posto dell'integrale", "Mela al posto della pera"],
+  },
+  {
+    id: "matrix-c24-kefir-strawberry-oat-smoothie",
+    name: "Frullato denso di kefir, fragole e avena",
+    kicker: "Colazione frullata da casa",
+    course: "Colazione",
+    cuisine: "Italiano",
+    kind: "combination",
+    image: photo("moment-breakfast-v1121"),
+    time: 7,
+    ingredients: [
+      { food: "Kefir bianco magro", grams: 170 },
+      { food: "Fragole", grams: 150 },
+      { food: "Fiocchi d'avena", grams: 30 },
+      { food: "Semi di chia", grams: 5 },
+    ],
+    steps: ["Frulla kefir, fragole lavate e avena con poca acqua.", "Aggiungi la chia e lascia riposare cinque minuti prima di bere."],
+    alternatives: ["Yogurt bianco al posto del kefir", "Mirtilli freschi al posto delle fragole"],
+  },
+  {
+    id: "matrix-c25-scrambled-eggs-asparagus-rye",
+    name: "Uova strapazzate con asparagi, segale e kiwi",
+    kicker: "Colazione salata da weekend",
+    course: "Colazione",
+    cuisine: "Italiano",
+    kind: "combination",
+    image: photo("moment-breakfast-v1121"),
+    time: 15,
+    ingredients: [
+      { food: "Uova strapazzate o in frittata", grams: 50 },
+      { food: "Albume", grams: 100 },
+      { food: "Asparagi crudi", grams: 150 },
+      { food: "Pane di segale", grams: 50 },
+      { food: "Olio extravergine", grams: 5 },
+      { food: "Kiwi", grams: 150 },
+    ],
+    steps: ["Elimina la parte dura degli asparagi e cuocili al vapore.", "Cuoci uovo e albume in padella antiaderente finché sono completamente rappresi; aggiungi gli asparagi e l'olio pesato.", "Servi con pane di segale e kiwi."],
+    alternatives: ["Uova sode al posto delle strapazzate", "Pane integrale al posto del pane di segale"],
+  },
+  {
+    id: "matrix-c26-skyr-grapes-pistachio-muesli",
+    name: "Skyr con uva, pistacchi e muesli",
+    kicker: "Colazione pronta in cinque minuti",
+    course: "Colazione",
+    cuisine: "Italiano",
+    kind: "combination",
+    image: photo("moment-breakfast-v1121"),
+    time: 5,
+    ingredients: [
+      { food: "Skyr bianco", grams: 170 },
+      { food: "Uva", grams: 150 },
+      { food: "Muesli", grams: 30 },
+      { food: "Pistacchi", grams: 10 },
+    ],
+    steps: ["Lava l'uva, taglia a metà gli acini più grandi e rimuovi eventuali semi.", "Unisci skyr, muesli, uva e pistacchi non salati."],
+    alternatives: ["Yogurt greco 0% al posto dello skyr", "Pera al posto dell'uva"],
+  },
+  {
+    id: "matrix-c27-oat-pancakes-blueberries-almond",
+    name: "Pancake d'avena con mirtilli e crema di mandorle",
+    kicker: "Colazione da weekend",
+    course: "Colazione",
+    cuisine: "Italiano",
+    kind: "combination",
+    image: photo("moment-breakfast-v1121"),
+    time: 15,
+    ingredients: [
+      { food: "Farina d'avena", grams: 40 },
+      { food: "Albume", grams: 100 },
+      { food: "Bevanda di soia senza zucchero", grams: 60 },
+      { food: "Mirtilli freschi", grams: 150 },
+      { food: "Crema 100% mandorle", grams: 10 },
+    ],
+    steps: ["Mescola farina, albume e bevanda di soia fino a ottenere una pastella.", "Cuoci piccoli pancake in padella antiaderente.", "Servi con mirtilli e crema di mandorle pesata."],
+    alternatives: ["Latte parzialmente scremato al posto della soia", "Fragole al posto dei mirtilli"],
+  },
+  {
+    id: "matrix-c28-ricotta-pineapple-rye-sesame",
+    name: "Ricotta con ananas, segale e sesamo",
+    kicker: "Colazione fresca e rapida",
+    course: "Colazione",
+    cuisine: "Italiano",
+    kind: "combination",
+    image: photo("moment-breakfast-v1121"),
+    time: 5,
+    ingredients: [
+      { food: "Ricotta vaccina", grams: 100 },
+      { food: "Ananas", grams: 150 },
+      { food: "Pane di segale", grams: 50 },
+      { food: "Semi di sesamo", grams: 5 },
+    ],
+    steps: ["Taglia l'ananas a cubetti e servilo con la ricotta.", "Completa con sesamo e pane di segale tostato."],
+    alternatives: ["Fiocchi di latte al posto della ricotta", "Papaya al posto dell'ananas"],
+  },
+];
+
 const rawRecipes: Recipe[] = [
   ...simpleBreakfasts,
   ...attachmentBaseBreakfasts,
   ...attachmentBreakfastsC13C20,
+  ...attachmentBreakfastsC22C28,
   ...matrixBreakfasts,
   ...catalogBreakfasts,
   ...quickSnacks,
