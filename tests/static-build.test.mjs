@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.70"/);
+  assert.match(app, /VERSION = "1\.16\.71"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -606,4 +606,21 @@ test("v1.16.70 repairs saved gelato photos and exposes direct compact removal", 
   assert.match(app, /className="part-remove"/);
   assert.match(app, /event\.stopPropagation\(\);[\s\S]*removeMealPartAt\(key, r, partIndex\)/);
   assert.match(css, /\.meal-part \.part-remove\s*\{[\s\S]*width:\s*16px;[\s\S]*height:\s*16px;/);
+});
+
+
+test("v1.16.71 repairs almond cream imagery and ranks complete meal replacements", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  assert.match(app, /photo\("part-almond-butter-v11671"\)/);
+  await access(new URL("../dist/food/part-almond-butter-v11671.png", import.meta.url));
+  assert.match(app, /const compatibilityScore = \(recipe: Recipe\)/);
+  assert.match(app, /candidateMacros\.protein - currentMacros\.protein/);
+  assert.match(app, /candidateMacros\.carbs - currentMacros\.carbs/);
+  assert.match(app, /candidateMacros\.fat - currentMacros\.fat/);
+  assert.match(app, /contextDistance/);
+  assert.match(app, /optionIndex === 0/);
+  assert.match(app, /Scelta consigliata/);
+  assert.match(css, /\.complete-meal-recommended/);
+  assert.match(app, /if \(localOption\) return \{ \.\.\.part, image: localOption\.image \}/);
 });

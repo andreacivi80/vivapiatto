@@ -2544,6 +2544,18 @@ button {
   font-size: 7px;
   line-height: 1.1;
 }
+.complete-meal-recommended {
+  display: inline-block;
+  max-width: calc(100% - 32px);
+  margin-top: 4px;
+  padding: 3px 6px;
+  border-radius: 999px;
+  background: #e4f3b8;
+  color: #24483d;
+  font-size: 7px;
+  font-weight: 900;
+  line-height: 1.1;
+}
 .complete-meal-info {
   position: absolute;
   right: 7px;

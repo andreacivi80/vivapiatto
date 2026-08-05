@@ -74,7 +74,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.70";
+const VERSION = "1.16.71";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -6398,7 +6398,7 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       food: "Crema 100% mandorle",
       grams: 10,
       label: "Crema 100% mandorle · 10 g",
-      image: photo("part-almond-butter-v11641"),
+      image: photo("part-almond-butter-v11671"),
     },
     {
       category: "Extra",
@@ -6462,16 +6462,24 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
 const normalizeMealPart = (part: MealPart): MealPart => {
   if (GELATO_FLAVORS.includes(part.food as (typeof GELATO_FLAVORS)[number]))
     return { ...part, image: gelatoFlavorPhoto(part.food) };
-  if (mealPartOptions[part.category]?.some((option) => option.food === part.food))
-    return part;
+  const localOption = mealPartOptions[part.category]?.find(
+    (option) => option.food === part.food,
+  );
+  if (localOption) return { ...part, image: localOption.image };
   const canonicalCategory = (
     Object.keys(mealPartOptions) as MealPart["category"][]
   ).find((category) =>
     mealPartOptions[category].some((option) => option.food === part.food),
   );
-  return canonicalCategory && canonicalCategory !== part.category
-    ? { ...part, category: canonicalCategory }
-    : part;
+  if (!canonicalCategory) return part;
+  const canonicalOption = mealPartOptions[canonicalCategory].find(
+    (option) => option.food === part.food,
+  );
+  return {
+    ...part,
+    category: canonicalCategory,
+    image: canonicalOption?.image || part.image,
+  };
 };
 
 const seasonalMonths: Record<string, number[]> = {
@@ -10106,17 +10114,55 @@ export function FoodPlanner() {
   };
   const completeMealOptions = (key: string) => {
     const [dayText, slotText] = key.split("-");
+    const day = Number(dayText);
     const slot = Number(slotText);
-    const current = recipeMap[getDayIds(Number(dayText))[slot]];
-    const target = calc(plannedIngredients(key, current)).kcal;
+    const current = recipeMap[getDayIds(day)[slot]];
+    const currentMacros = calc(plannedIngredients(key, current));
+    const currentRoles = new Set(activeMealParts(key, current).map((part) => part.category));
+    const compatibilityScore = (recipe: Recipe) => {
+      const candidateItems = mergeTargetAdditions(
+        recipe.parts || recipe.ingredients,
+        targetAdditionsFor(slot, targetForDay(day)),
+      ).map(lowEnergyAdjusted);
+      const candidateMacros = calc(candidateItems);
+      const candidateRoles = new Set(
+        (recipe.parts || []).map((part) => part.category),
+      );
+      const macroDistance =
+        Math.abs(candidateMacros.kcal - currentMacros.kcal) /
+          Math.max(120, currentMacros.kcal) +
+        0.7 *
+          Math.abs(candidateMacros.protein - currentMacros.protein) /
+          Math.max(12, currentMacros.protein) +
+        0.45 *
+          Math.abs(candidateMacros.carbs - currentMacros.carbs) /
+          Math.max(20, currentMacros.carbs) +
+        0.55 *
+          Math.abs(candidateMacros.fat - currentMacros.fat) /
+          Math.max(8, currentMacros.fat);
+      const structureDistance =
+        [...currentRoles].filter((role) => !candidateRoles.has(role)).length *
+        0.16;
+      const cuisineDistance =
+        recipeCuisine(recipe) === recipeCuisine(current)
+          ? 0
+          : recipeCuisine(recipe) === cuisineChoice
+            ? 0.08
+            : 0.22;
+      const contextDistance =
+        dayContext === "Lavoro" && !isWorkFriendly(recipe) ? 0.2 : 0;
+      return macroDistance + structureDistance + cuisineDistance + contextDistance;
+    };
     return allRecipes
-      .filter((recipe) => recipe.id !== current.id && recipe.kind !== "combination" && Boolean(recipe.parts?.length) && fitsSlot(recipe, slot) && isAllowed(recipe))
-      .sort((a, b) => {
-        const cuisineA = recipeCuisine(a) === cuisineChoice ? 0 : 1;
-        const cuisineB = recipeCuisine(b) === cuisineChoice ? 0 : 1;
-        if (cuisineA !== cuisineB) return cuisineA - cuisineB;
-        return Math.abs(calc(a.ingredients).kcal - target) - Math.abs(calc(b.ingredients).kcal - target);
-      })
+      .filter(
+        (recipe) =>
+          recipe.id !== current.id &&
+          recipe.kind !== "combination" &&
+          Boolean(recipe.parts?.length) &&
+          fitsSlot(recipe, slot) &&
+          isAllowed(recipe),
+      )
+      .sort((a, b) => compatibilityScore(a) - compatibilityScore(b))
       .slice(0, 6);
   };
   const chooseConfiguredGelato = () => {
@@ -12291,7 +12337,7 @@ export function FoodPlanner() {
                 <summary>Piatti completi consigliati</summary>
                 <p>Sostituisci l'intero pasto. Dopo puoi tenerlo unico o dividerlo nei suoi componenti.</p>
                 <div className="complete-meal-grid">
-                  {completeMealOptions(partPicker.key).map((recipe) => {
+                  {completeMealOptions(partPicker.key).map((recipe, optionIndex) => {
                     const macros = calc(recipe.ingredients);
                     return (
                       <article key={recipe.id}>
@@ -12302,6 +12348,11 @@ export function FoodPlanner() {
                           <RecipeVisual recipe={recipe} />
                           <span>{recipe.name}</span>
                           <b>{round(macros.kcal)} kcal · {recipe.time} min</b>
+                          {optionIndex === 0 && (
+                            <small className="complete-meal-recommended">
+                              Scelta consigliata
+                            </small>
+                          )}
                         </button>
                         <button
                           className="complete-meal-info"
