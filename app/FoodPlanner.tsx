@@ -74,7 +74,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.45";
+const VERSION = "1.16.46";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -704,6 +704,14 @@ const foods: Record<string, Food> = {
     fat: 0.4,
     fiber: 7.8,
     source: "CREA",
+  },
+  "Fagioli neri cotti": {
+    kcal: 132,
+    protein: 8.9,
+    carbs: 23.7,
+    fat: 0.5,
+    fiber: 8.7,
+    source: "USDA",
   },
   "Patata dolce cotta": {
     kcal: 90,
@@ -4629,6 +4637,13 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     },
     {
       category: "Proteina",
+      food: "Fagioli neri cotti",
+      grams: 150,
+      label: "Fagioli neri cotti",
+      image: photo("part-black-beans-v11646"),
+    },
+    {
+      category: "Proteina",
       food: "Burger vegetale di soia",
       grams: 150,
       label: "Burger vegetali di soia · 2 piccoli",
@@ -7610,6 +7625,122 @@ const attachmentMainsP28P34: Recipe[] = [
   },
 ];
 
+
+const attachmentMainsP35P40: Recipe[] = [
+  {
+    id: "matrix-p35-farro-tofu-eggplant-tomatoes",
+    name: "Farro con tofu, melanzane e pomodorini",
+    kicker: "Piatto unico vegetale",
+    course: "Piatto unico",
+    cuisine: "Mediterraneo",
+    image: photo("moment-lunch-v1121"),
+    time: 30,
+    ingredients: [
+      { food: "Farro cotto", grams: 180 },
+      { food: "Tofu alla piastra", grams: 100 },
+      { food: "Melanzane", grams: 150 },
+      { food: "Pomodorini", grams: 100 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    steps: ["Cuoci il farro secondo confezione e scolalo.", "Griglia tofu e melanzane fino a doratura; taglia i pomodorini.", "Unisci tutto e completa con olio misurato e basilico."],
+    alternatives: ["Orzo perlato cotto al posto del farro", "Tempeh al posto del tofu"],
+  },
+  {
+    id: "matrix-p36-legume-pasta-tuna-peppers",
+    name: "Pasta di legumi con tonno e peperoni",
+    kicker: "Piatto unico di pesce",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    image: photo("moment-lunch-v1121"),
+    time: 25,
+    ingredients: [
+      { food: "Pasta di lenticchie secca", grams: 70 },
+      { food: "Tonno al naturale sgocciolato", grams: 50 },
+      { food: "Peperoni cotti senza olio", grams: 150 },
+      { food: "Pomodorini", grams: 100 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    steps: ["Arrostisci i peperoni senza olio e taglia i pomodorini.", "Cuoci la pasta di legumi al dente.", "Unisci pasta, tonno sgocciolato e verdure; completa con olio misurato."],
+    alternatives: ["Pasta di ceci al posto della pasta di lenticchie", "Sgombro al naturale al posto del tonno"],
+  },
+  {
+    id: "matrix-p37-polenta-lentils-black-kale",
+    name: "Polenta con lenticchie e cavolo nero",
+    kicker: "Piatto unico vegetale caldo",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    image: photo("moment-dinner-v1121"),
+    time: 40,
+    ingredients: [
+      { food: "Polenta cotta", grams: 280 },
+      { food: "Lenticchie cotte", grams: 150 },
+      { food: "Cavolo nero cotto", grams: 120 },
+      { food: "Carote crude", grams: 60 },
+      { food: "Sedano crudo", grams: 40 },
+      { food: "Cipolle crude", grams: 30 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    steps: ["Prepara la polenta seguendo i tempi della confezione.", "Cuoci carota, sedano e cipolla con poca acqua; aggiungi lenticchie e cavolo nero.", "Servi lo stufato sulla polenta e completa con olio misurato."],
+    alternatives: ["Riso integrale al posto della polenta", "Fagioli cannellini al posto delle lenticchie"],
+  },
+  {
+    id: "matrix-p38-bulgur-salmon-fennel-orange",
+    name: "Bulgur con salmone, finocchi e arancia",
+    kicker: "Piatto unico di pesce",
+    course: "Piatto unico",
+    cuisine: "Mediterraneo",
+    image: photo("moment-lunch-v1121"),
+    time: 25,
+    ingredients: [
+      { food: "Bulgur cotto", grams: 190 },
+      { food: "Salmone cotto", grams: 120 },
+      { food: "Finocchi crudi", grams: 200 },
+      { food: "Arancia", grams: 100 },
+      { food: "Olio extravergine", grams: 5 },
+    ],
+    steps: ["Cuoci il bulgur e lascialo intiepidire.", "Cuoci il salmone alla piastra fino a completa cottura.", "Affetta finocchi e arancia, unisci al bulgur e completa con salmone e olio misurato."],
+    alternatives: ["Trota cotta al posto del salmone", "Farro cotto al posto del bulgur"],
+  },
+  {
+    id: "matrix-p39-millet-black-beans-pumpkin-cabbage",
+    name: "Miglio con fagioli neri, zucca e cavolo rosso",
+    kicker: "Piatto unico vegetale",
+    course: "Piatto unico",
+    cuisine: "Internazionale",
+    image: photo("moment-lunch-v1121"),
+    time: 35,
+    ingredients: [
+      { food: "Miglio cotto", grams: 180 },
+      { food: "Fagioli neri cotti", grams: 150 },
+      { food: "Zucca", grams: 150 },
+      { food: "Cavolo rosso crudo", grams: 100 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    steps: ["Cuoci il miglio secondo confezione.", "Arrostisci la zucca e lascia il cavolo rosso croccante oppure scottalo brevemente.", "Unisci fagioli risciacquati, miglio e verdure e completa con olio misurato."],
+    alternatives: ["Fagioli rossi al posto dei fagioli neri", "Quinoa cotta al posto del miglio"],
+  },
+  {
+    id: "matrix-p40-brown-rice-eggs-peas-vegetables",
+    name: "Riso integrale con uova, piselli e verdure",
+    kicker: "Piatto unico con uova",
+    course: "Piatto unico",
+    cuisine: "Asiatico",
+    image: photo("moment-dinner-v1121"),
+    time: 30,
+    ingredients: [
+      { food: "Riso integrale secco", grams: 70 },
+      { food: "Uova strapazzate o in frittata", grams: 120 },
+      { food: "Piselli cotti", grams: 80 },
+      { food: "Carote crude", grams: 70 },
+      { food: "Zucchine", grams: 80 },
+      { food: "Cipolle crude", grams: 50 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    steps: ["Cuoci il riso integrale secondo confezione.", "Cuoci carote, zucchine e cipolla in padella antiaderente; aggiungi i piselli.", "Versa le uova sbattute, cuocile completamente e unisci il riso; completa con olio misurato."],
+    alternatives: ["Riso basmati al posto dell'integrale", "Tofu alla piastra al posto delle uova"],
+  },
+];
+
 const rawRecipes: Recipe[] = [
   ...simpleBreakfasts,
   ...attachmentBaseBreakfasts,
@@ -7628,6 +7759,7 @@ const rawRecipes: Recipe[] = [
   ...attachmentMainsP17P22,
   ...attachmentMainsP23P27,
   ...attachmentMainsP28P34,
+  ...attachmentMainsP35P40,
   ...matrixMainRecipes,
   ...catalogSnacks,
   ...portableRecipes,
