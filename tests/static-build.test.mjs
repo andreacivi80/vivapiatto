@@ -16,7 +16,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.49"/);
+  assert.match(app, /VERSION = "1\.16\.50"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -125,6 +125,15 @@ test("sorgente mobile con versione e fonti", async () => {
   await access(new URL("../dist/food/part-oat-drink-v11649.png", import.meta.url));
   await access(new URL("../dist/food/part-tamarind-sauce-v11649.png", import.meta.url));
   await access(new URL("../dist/food/part-peanut-oil-v11649.png", import.meta.url));
+  for (const asset of [
+    "part-basmati-dry-v11650",
+    "part-basmati-cooked-v11650",
+    "part-tuna-fresh-v11650",
+    "part-tuna-canned-v11650",
+  ]) {
+    assert.match(app, new RegExp(asset));
+    await access(new URL(`../dist/food/${asset}.png`, import.meta.url));
+  }
   assert.match(app, /aria-label=\{swapTarget \? `Applica/);
   assert.doesNotMatch(app, /className="recipe-card-choose"/);
   await access(new URL("../dist/food/part-black-beans-v11646.png", import.meta.url));
