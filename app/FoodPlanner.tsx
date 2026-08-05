@@ -74,7 +74,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.43";
+const VERSION = "1.16.44";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -4417,6 +4417,8 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     { category: "Carboidrato", food: "Bulgur cotto", grams: 130, label: "Bulgur cotto", image: photo("part-bulgur-v11515") },
     { category: "Carboidrato", food: "Orzo perlato cotto", grams: 180, label: "Orzo cotto · da circa 70 g secco", image: photo("part-barley-v11514") },
     { category: "Carboidrato", food: "Pasta di farro secca", grams: 80, label: "Pasta di farro · peso a crudo", image: photo("part-spelt-pasta-v11643") },
+    { category: "Carboidrato", food: "Cous cous integrale cotto", grams: 180, label: "Cous cous integrale cotto · da circa 60 g secco", image: photo("part-couscous-v11514") },
+    { category: "Carboidrato", food: "Farro cotto", grams: 175, label: "Farro cotto · da circa 70 g secco", image: photo("farro") },
   ],
   Proteina: [
     {
@@ -7358,6 +7360,102 @@ const attachmentMainsP17P22: Recipe[] = [
   },
 ];
 
+
+const attachmentMainsP23P27: Recipe[] = [
+  {
+    id: "matrix-p23-couscous-lentils-pumpkin-feta",
+    name: "Cous cous integrale con lenticchie, zucca e feta",
+    kicker: "Piatto unico vegetariano",
+    course: "Piatto unico",
+    cuisine: "Mediterraneo",
+    image: photo("moment-lunch-v1121"),
+    time: 30,
+    ingredients: [
+      { food: "Cous cous integrale cotto", grams: 180 },
+      { food: "Lenticchie cotte", grams: 120 },
+      { food: "Zucca", grams: 125 },
+      { food: "Radicchio cotto", grams: 125 },
+      { food: "Feta", grams: 40 },
+      { food: "Olio extravergine", grams: 5 },
+    ],
+    steps: ["Arrostisci zucca e radicchio finché sono morbidi e leggermente dorati.", "Reidrata il cous cous integrale secondo confezione e sgranalo.", "Unisci lenticchie risciacquate, feta, verdure e olio misurato; completa con timo e limone."],
+    alternatives: ["Bulgur cotto al posto del cous cous", "Cannellini al posto delle lenticchie", "Primo sale al posto della feta"],
+  },
+  {
+    id: "matrix-p24-whole-pasta-salmon-zucchini-yogurt",
+    name: "Pasta integrale con salmone, zucchine e yogurt",
+    kicker: "Piatto unico di pesce",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    image: photo("moment-lunch-v1121"),
+    time: 25,
+    ingredients: [
+      { food: "Pasta integrale secca", grams: 80 },
+      { food: "Salmone cotto", grams: 100 },
+      { food: "Zucchine", grams: 250 },
+      { food: "Yogurt bianco", grams: 50 },
+      { food: "Olio extravergine", grams: 5 },
+    ],
+    steps: ["Cuoci la pasta integrale e le zucchine.", "Cuoci il salmone in padella antiaderente fino al centro.", "A fuoco spento unisci yogurt, limone e pasta; aggiungi il salmone a pezzi e l'olio misurato."],
+    alternatives: ["Trota al posto del salmone", "Yogurt greco 0% al posto dello yogurt bianco"],
+  },
+  {
+    id: "matrix-p25-gnocchi-tomato-ricotta-spinach",
+    name: "Gnocchi con pomodoro, ricotta e spinaci",
+    kicker: "Piatto unico vegetariano",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    image: photo("moment-lunch-v1121"),
+    time: 25,
+    ingredients: [
+      { food: "Gnocchi di patate", grams: 150 },
+      { food: "Ricotta vaccina", grams: 100 },
+      { food: "Pomodorini", grams: 150 },
+      { food: "Spinaci", grams: 150 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    steps: ["Cuoci i pomodori con basilico fino a ottenere una salsa semplice.", "Cuoci gli spinaci al vapore e lessa gli gnocchi finché salgono a galla.", "Condisci gli gnocchi con pomodoro e ricotta e servi con gli spinaci e l'olio misurato."],
+    alternatives: ["Pasta integrale al posto degli gnocchi", "Fiocchi di latte al posto della ricotta"],
+  },
+  {
+    id: "matrix-p26-farro-bresaola-rucola-tomatoes",
+    name: "Farro con bresaola, rucola, pomodorini e finocchi",
+    kicker: "Pranzo occasionale trasportabile",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    image: photo("moment-lunch-v1121"),
+    time: 25,
+    ingredients: [
+      { food: "Farro cotto", grams: 175 },
+      { food: "Bresaola", grams: 50 },
+      { food: "Rucola", grams: 50 },
+      { food: "Pomodorini", grams: 100 },
+      { food: "Finocchi crudi", grams: 100 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    steps: ["Cuoci il farro, scolalo e raffreddalo rapidamente.", "Lava le verdure e taglia bresaola e finocchi a strisce.", "Unisci tutto con rucola, pomodorini, limone e olio misurato."],
+    alternatives: ["Petto di pollo alla piastra al posto della bresaola", "Riso integrale al posto del farro"],
+  },
+  {
+    id: "matrix-p27-millet-chickpeas-cauliflower-curry",
+    name: "Miglio con ceci, cavolfiore e curry",
+    kicker: "Piatto unico vegetale",
+    course: "Piatto unico",
+    cuisine: "Asiatico",
+    image: photo("moment-lunch-v1121"),
+    time: 35,
+    ingredients: [
+      { food: "Miglio cotto", grams: 190 },
+      { food: "Ceci cotti", grams: 150 },
+      { food: "Cavolfiore", grams: 125 },
+      { food: "Carote crude", grams: 125 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    steps: ["Cuoci il miglio secondo confezione.", "Arrostisci cavolfiore e carote con curry, curcuma e poca acqua; aggiungi l'olio misurato a fine cottura.", "Unisci ceci risciacquati e miglio e completa con zenzero e limone."],
+    alternatives: ["Quinoa cotta al posto del miglio", "Lenticchie cotte al posto dei ceci"],
+  },
+];
+
 const rawRecipes: Recipe[] = [
   ...simpleBreakfasts,
   ...attachmentBaseBreakfasts,
@@ -7374,6 +7472,7 @@ const rawRecipes: Recipe[] = [
   ...attachmentBaseMainsB,
   ...attachmentBaseMainsC,
   ...attachmentMainsP17P22,
+  ...attachmentMainsP23P27,
   ...matrixMainRecipes,
   ...catalogSnacks,
   ...portableRecipes,
