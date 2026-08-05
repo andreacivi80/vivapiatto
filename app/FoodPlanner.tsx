@@ -74,7 +74,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.42";
+const VERSION = "1.16.43";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -1382,6 +1382,33 @@ foods["Lamponi"] = {
   carbs: 11.9,
   fat: 0.7,
   fiber: 6.5,
+  source: "USDA",
+};
+
+foods["Pasta di farro secca"] = {
+  kcal: 348,
+  protein: 14.6,
+  carbs: 67.9,
+  fat: 2.4,
+  fiber: 6.8,
+  source: "USDA",
+};
+
+foods["Sgombro al naturale sgocciolato"] = {
+  kcal: 194,
+  protein: 18.6,
+  carbs: 0,
+  fat: 13.9,
+  fiber: 0,
+  source: "USDA",
+};
+
+foods["Fagioli rossi cotti"] = {
+  kcal: 127,
+  protein: 8.7,
+  carbs: 22.8,
+  fat: 0.5,
+  fiber: 6.4,
   source: "USDA",
 };
 
@@ -4388,6 +4415,8 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     { category: "Carboidrato", food: "Miglio cotto", grams: 190, label: "Miglio cotto", image: photo("part-millet-v11515") },
     { category: "Carboidrato", food: "Polenta cotta", grams: 300, label: "Polenta cotta", image: photo("part-polenta-v11515") },
     { category: "Carboidrato", food: "Bulgur cotto", grams: 130, label: "Bulgur cotto", image: photo("part-bulgur-v11515") },
+    { category: "Carboidrato", food: "Orzo perlato cotto", grams: 180, label: "Orzo cotto · da circa 70 g secco", image: photo("part-barley-v11514") },
+    { category: "Carboidrato", food: "Pasta di farro secca", grams: 80, label: "Pasta di farro · peso a crudo", image: photo("part-spelt-pasta-v11643") },
   ],
   Proteina: [
     {
@@ -4524,6 +4553,13 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     },
     {
       category: "Proteina",
+      food: "Sgombro al naturale sgocciolato",
+      grams: 80,
+      label: "Sgombro al naturale sgocciolato",
+      image: photo("part-mackerel-v11643"),
+    },
+    {
+      category: "Proteina",
       food: "Prosciutto cotto",
       grams: 50,
       label: "Prosciutto cotto",
@@ -4563,6 +4599,13 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       grams: 150,
       label: "Cannellini cotti",
       image: photo("part-cannellini-v1141"),
+    },
+    {
+      category: "Proteina",
+      food: "Fagioli rossi cotti",
+      grams: 150,
+      label: "Fagioli rossi cotti",
+      image: photo("part-red-beans-v11643"),
     },
     {
       category: "Proteina",
@@ -7203,6 +7246,118 @@ const attachmentSnacksS14S26: Recipe[] = [
   },
 ];
 
+
+const attachmentMainsP17P22: Recipe[] = [
+  {
+    id: "matrix-p17-brown-risotto-peas-shrimp",
+    name: "Risotto integrale con piselli, gamberi e zucchine",
+    kicker: "Piatto unico di pesce",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    image: photo("moment-lunch-v1121"),
+    time: 35,
+    ingredients: [
+      { food: "Riso integrale secco", grams: 70 },
+      { food: "Piselli cotti", grams: 100 },
+      { food: "Gamberi cotti", grams: 120 },
+      { food: "Zucchine", grams: 150 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    steps: ["Cuoci il riso integrale con cipolla e acqua o brodo vegetale poco salato.", "A metà cottura aggiungi piselli e zucchine; unisci i gamberi già cotti solo negli ultimi minuti.", "Completa con olio misurato, prezzemolo e pepe."],
+    alternatives: ["Quinoa cotta al posto del riso", "Merluzzo cotto al posto dei gamberi"],
+  },
+  {
+    id: "matrix-p18-quinoa-chicken-peppers-turmeric",
+    name: "Quinoa con pollo, peperoni e curcuma",
+    kicker: "Piatto unico di carne bianca",
+    course: "Piatto unico",
+    cuisine: "Mediterraneo",
+    image: photo("moment-lunch-v1121"),
+    time: 30,
+    ingredients: [
+      { food: "Quinoa cotta", grams: 185 },
+      { food: "Petto di pollo · peso a crudo", grams: 100 },
+      { food: "Peperoni cotti senza olio", grams: 125 },
+      { food: "Zucchine", grams: 125 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    steps: ["Cuoci la quinoa secondo confezione e scolala.", "Griglia pollo, peperoni e zucchine finché il pollo è completamente cotto.", "Taglia il pollo a strisce e unisci tutto con olio pesato, curcuma, paprika e limone."],
+    alternatives: ["Riso basmati al posto della quinoa", "Petto di tacchino alla piastra al posto del pollo"],
+  },
+  {
+    id: "matrix-p19-spelt-pasta-mackerel-broccoli",
+    name: "Pasta di farro con sgombro e broccoli",
+    kicker: "Piatto unico di pesce",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    image: photo("moment-lunch-v1121"),
+    time: 25,
+    ingredients: [
+      { food: "Pasta di farro secca", grams: 80 },
+      { food: "Sgombro al naturale sgocciolato", grams: 50 },
+      { food: "Broccoli bolliti", grams: 250 },
+      { food: "Olio extravergine", grams: 5 },
+    ],
+    steps: ["Lessa i broccoli e usa la stessa acqua per cuocere la pasta di farro.", "Scola la pasta al dente e uniscila a broccoli e sgombro sgocciolato.", "Completa con olio misurato, limone e peperoncino."],
+    alternatives: ["Pasta integrale al posto della pasta di farro", "Tonno al naturale al posto dello sgombro"],
+  },
+  {
+    id: "matrix-p20-bulgur-red-beans-cabbage",
+    name: "Bulgur con fagioli rossi, pomodori e cavolo",
+    kicker: "Piatto unico vegetale",
+    course: "Piatto unico",
+    cuisine: "Mediterraneo",
+    image: photo("moment-lunch-v1121"),
+    time: 20,
+    ingredients: [
+      { food: "Bulgur cotto", grams: 180 },
+      { food: "Fagioli rossi cotti", grams: 150 },
+      { food: "Pomodorini", grams: 100 },
+      { food: "Cavolo rosso crudo", grams: 75 },
+      { food: "Peperoni crudi", grams: 75 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    steps: ["Cuoci il bulgur secondo confezione e lascialo intiepidire.", "Risciacqua i fagioli e taglia le verdure.", "Unisci tutto con paprika, limone, cipolla e olio misurato."],
+    alternatives: ["Quinoa cotta per una versione senza glutine", "Cannellini al posto dei fagioli rossi"],
+  },
+  {
+    id: "matrix-p21-venere-tuna-zucchini-carrots",
+    name: "Riso Venere con tonno, zucchine e carote",
+    kicker: "Piatto unico di pesce",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    image: photo("moment-lunch-v1121"),
+    time: 35,
+    ingredients: [
+      { food: "Riso Venere secco", grams: 70 },
+      { food: "Tonno al naturale sgocciolato", grams: 50 },
+      { food: "Zucchine", grams: 125 },
+      { food: "Carote crude", grams: 125 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    steps: ["Cuoci il riso Venere rispettando il tempo indicato sulla confezione.", "Cuoci zucchine e carote al vapore o in padella antiaderente.", "Unisci riso, tonno sgocciolato e verdure; completa con olio pesato, zenzero e limone."],
+    alternatives: ["Riso basmati al posto del Venere", "Salmone cotto al posto del tonno"],
+  },
+  {
+    id: "matrix-p22-barley-chicken-mushroom-spinach",
+    name: "Orzo con pollo, funghi e spinaci",
+    kicker: "Piatto unico di carne bianca",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    image: photo("moment-lunch-v1121"),
+    time: 30,
+    ingredients: [
+      { food: "Orzo perlato cotto", grams: 180 },
+      { food: "Petto di pollo · peso a crudo", grams: 100 },
+      { food: "Funghi", grams: 125 },
+      { food: "Spinaci", grams: 125 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    steps: ["Cuoci l'orzo secondo confezione e scolalo.", "Cuoci funghi e spinaci in padella antiaderente e griglia il pollo fino a completa cottura.", "Taglia il pollo a strisce e unisci tutto con olio misurato, timo e pepe."],
+    alternatives: ["Farro cotto al posto dell'orzo", "Petto di tacchino alla piastra al posto del pollo"],
+  },
+];
+
 const rawRecipes: Recipe[] = [
   ...simpleBreakfasts,
   ...attachmentBaseBreakfasts,
@@ -7218,6 +7373,7 @@ const rawRecipes: Recipe[] = [
   ...attachmentBaseMainsA,
   ...attachmentBaseMainsB,
   ...attachmentBaseMainsC,
+  ...attachmentMainsP17P22,
   ...matrixMainRecipes,
   ...catalogSnacks,
   ...portableRecipes,
