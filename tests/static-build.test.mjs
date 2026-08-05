@@ -21,6 +21,7 @@ test("build GitHub Pages autonomo e completo", async () => {
   await access(new URL("../dist/food/part-sardines-baked-v11654.png", import.meta.url));
   await access(new URL("../dist/food/part-mackerel-baked-v11654.png", import.meta.url));
   await access(new URL("../dist/food/part-cicoria-cooked-v11655.png", import.meta.url));
+  await access(new URL("../dist/food/part-green-cabbage-cooked-v11657.png", import.meta.url));
 });
 
 test("sorgente mobile con versione e fonti", async () => {
@@ -28,7 +29,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.56"/);
+  assert.match(app, /VERSION = "1\.16\.57"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -448,4 +449,10 @@ test("v1.16.17 keeps swap navigation visible and exposes occasional choices", as
   assert.match(app, /matrix-d29-nasello-al-vapore-con-patata-dolce-e-bietole/);
   assert.match(app, /matrix-d40-sardine-al-forno-con-pomodori-zucchine-e-cous/);
   assert.match(app, /\.\.\.attachmentDinnersC/);
+
+  assert.match(app, /const attachmentDinnersD: Recipe\[\]/);
+  assert.match(app, /matrix-d49-burger-di-fagioli-rossi-con-cavolo-e-patate/);
+  assert.match(app, /matrix-d52-tofu-con-melanzane-pomodori-e-cous-cous/);
+  assert.match(app, /\.\.\.attachmentDinnersD/);
+  assert.match(app, /part-green-cabbage-cooked-v11657/);
 });
