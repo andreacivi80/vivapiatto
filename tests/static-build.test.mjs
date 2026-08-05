@@ -16,7 +16,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.39"/);
+  assert.match(app, /VERSION = "1\.16\.40"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -124,6 +124,11 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /attachmentBreakfastsC13C20/);
   assert.match(app, /matrix-c13-pear-cocoa-hazelnut-porridge/);
   assert.match(app, /matrix-c20-cold-papaya-porridge/);
+  assert.match(app, /attachmentBreakfastsC22C28/);
+  assert.match(app, /matrix-c22-yogurt-apple-oats-sunflower/);
+  assert.match(app, /matrix-c28-ricotta-pineapple-rye-sesame/);
+  assert.match(app, /Semi di girasole/);
+  assert.match(app, /part-sunflower-seeds-v11640/);
   assert.match(app, /Uovo in camicia/);
   assert.match(app, /part-poached-egg-v11639/);
   assert.match(app, /matrix-c21-porridge-banana-peanut/);
@@ -162,6 +167,7 @@ test("sorgente mobile con versione e fonti", async () => {
   await access(new URL("../dist/food/recipe-d48-cuttlefish-chard-v11520.png", import.meta.url));
   await access(new URL("../dist/food/recipe-asian-oyakodon-v11520.png", import.meta.url));
   await access(new URL("../dist/food/recipe-asian-bibimbap-v11520.png", import.meta.url));
+  await access(new URL("../dist/food/part-sunflower-seeds-v11640.png", import.meta.url));
   await access(new URL("../dist/food/part-tempeh-v11520.png", import.meta.url));
   await access(new URL("../dist/food/part-turbot-v11520.png", import.meta.url));
   await access(new URL("../dist/food/part-cuttlefish-v11520.png", import.meta.url));
