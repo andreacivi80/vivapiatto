@@ -9,6 +9,9 @@ test("build GitHub Pages autonomo e completo", async () => {
   await access(new URL("../dist/food/chicken-bowl.png", import.meta.url));
   await access(new URL("../dist/food/toast.png", import.meta.url));
   await access(new URL("../dist/og.png", import.meta.url));
+  await access(new URL("../dist/food/part-passata-v11652.png", import.meta.url));
+  await access(new URL("../dist/food/part-sweet-potato-noodles-v11652.png", import.meta.url));
+  await access(new URL("../dist/food/part-rice-noodles-v11652.png", import.meta.url));
 });
 
 test("sorgente mobile con versione e fonti", async () => {
@@ -16,7 +19,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.51"/);
+  assert.match(app, /VERSION = "1\.16\.52"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -389,4 +392,24 @@ test("v1.16.17 keeps swap navigation visible and exposes occasional choices", as
   assert.match(app, /attachmentBaseMainsC/);
   assert.match(app, /matrix-p11-polenta-mushrooms-ricotta/);
   assert.match(app, /matrix-p16-potatoes-eggs-green-beans/);
+  assert.match(app, /Passata di pomodoro[^}]+part-passata-v11652/);
+  assert.match(app, /Vermicelli di patata dolce cotti[^}]+part-sweet-potato-noodles-v11652/);
+  assert.match(app, /Noodles di riso cotti[^}]+part-rice-noodles-v11652/);
+  const categoryObjects = [...app.matchAll(/\{\s*category:\s*"[^"]+"[\s\S]*?\}/g)].map((match) => match[0]);
+  const imagePairs = categoryObjects.map((entry) => ({
+    food: entry.match(/food:\s*"([^"]+)"/)?.[1],
+    image: entry.match(/image:\s*photo\("([^"]+)"\)/)?.[1],
+  })).filter((entry) => entry.food && entry.image);
+  const foodNamesByImage = new Map();
+  for (const pair of imagePairs) {
+    const foodsForImage = foodNamesByImage.get(pair.image) ?? new Set();
+    foodsForImage.add(pair.food);
+    foodNamesByImage.set(pair.image, foodsForImage);
+  }
+  assert.deepEqual(
+    [...foodNamesByImage.entries()].filter(([, foodsForImage]) => foodsForImage.size > 1),
+    [],
+    "ogni alimento del catalogo deve avere una fotografia distinta"
+  );
+
 });
