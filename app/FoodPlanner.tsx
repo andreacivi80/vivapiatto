@@ -74,7 +74,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.59";
+const VERSION = "1.16.60";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -5054,6 +5054,137 @@ const attachmentBreakfastsC37C44: Recipe[] = [
   },
 ];
 
+const attachmentSnacksS35S42: Recipe[] = [
+  {
+    id: "matrix-s35-mirtilli-skyr-e-mandorle",
+    name: "Mirtilli, skyr e mandorle", kicker: "Spuntino pratico · matrice S35", course: "Spuntino", cuisine: "Italiano", kind: "combination",
+    image: photo("recipe-s35-skyr-blueberries-v11660"), time: 3,
+    ingredients: [
+      { food: "Skyr bianco", grams: 125 },
+      { food: "Mirtilli freschi", grams: 150 },
+      { food: "Mandorle", grams: 10 },
+    ],
+    parts: [
+      { category: "Latticino", food: "Skyr bianco", grams: 125, label: "Skyr bianco · 125 g", image: photo("part-skyr-v11511") },
+      { category: "Frutta", food: "Mirtilli freschi", grams: 150, label: "Mirtilli freschi · 150 g", image: photo("part-blueberries-v1160") },
+      { category: "Extra", food: "Mandorle", grams: 10, label: "Mandorle · 10 g", image: photo("part-almonds-v9") },
+    ],
+    steps: ["Lava e asciuga delicatamente i mirtilli.","Servili con lo skyr e le mandorle già pesate."], alternatives: ["Contiene latte e mandorle","Trasportabile in contenitore refrigerato"],
+  },
+  {
+    id: "matrix-s36-banana-e-nocciole",
+    name: "Banana e nocciole", kicker: "Spuntino pratico · matrice S36", course: "Spuntino", cuisine: "Italiano", kind: "combination",
+    image: photo("recipe-s36-banana-hazelnuts-v11660"), time: 2,
+    ingredients: [
+      { food: "Banana", grams: 150 },
+      { food: "Nocciole", grams: 15 },
+    ],
+    parts: [
+      { category: "Frutta", food: "Banana", grams: 150, label: "Banana · 150 g edibili", image: photo("part-banana-v7") },
+      { category: "Extra", food: "Nocciole", grams: 15, label: "Nocciole · 15 g", image: photo("part-hazelnuts-v11511") },
+    ],
+    steps: ["Sbuccia e pesa la banana.","Abbinala alle nocciole già porzionate."], alternatives: ["Pratico al lavoro","Contiene nocciole"],
+  },
+  {
+    id: "matrix-s37-pane-integrale-con-hummus-e-pomodori",
+    name: "Pane integrale con hummus e pomodori", kicker: "Spuntino pratico · matrice S37", course: "Spuntino", cuisine: "Italiano", kind: "combination",
+    image: photo("recipe-s37-hummus-tomato-toast-v11660"), time: 5,
+    ingredients: [
+      { food: "Pane integrale", grams: 40 },
+      { food: "Hummus di ceci", grams: 40 },
+      { food: "Pomodorini", grams: 100 },
+    ],
+    parts: [
+      { category: "Carboidrato", food: "Pane integrale", grams: 40, label: "Pane integrale · 40 g", image: photo("part-bread-v7") },
+      { category: "Proteina", food: "Hummus di ceci", grams: 40, label: "Hummus · 40 g", image: photo("part-hummus-v11512") },
+      { category: "Contorno", food: "Pomodorini", grams: 100, label: "Pomodori · 100 g", image: photo("part-tomatoes-v8") },
+    ],
+    steps: ["Tosta il pane se sei a casa; al lavoro puoi usarlo senza tostatura.","Spalma l'hummus e aggiungi pomodori affettati, origano e pepe."], alternatives: ["Vegano","Contiene glutine e sesamo se presente nell'hummus"],
+  },
+  {
+    id: "matrix-s38-yogurt-pesca-e-semi-di-girasole",
+    name: "Yogurt, pesca e semi di girasole", kicker: "Spuntino pratico · matrice S38", course: "Spuntino", cuisine: "Italiano", kind: "combination",
+    image: photo("recipe-s38-yogurt-peach-seeds-v11660"), time: 3,
+    ingredients: [
+      { food: "Yogurt bianco", grams: 125 },
+      { food: "Pesca", grams: 150 },
+      { food: "Semi di girasole", grams: 10 },
+    ],
+    parts: [
+      { category: "Latticino", food: "Yogurt bianco", grams: 125, label: "Yogurt bianco · 125 g", image: photo("part-yogurt-v7") },
+      { category: "Frutta", food: "Pesca", grams: 150, label: "Pesca · 150 g edibili", image: photo("part-peach-v113") },
+      { category: "Extra", food: "Semi di girasole", grams: 10, label: "Semi di girasole · 10 g", image: photo("part-sunflower-seeds-v11640") },
+    ],
+    steps: ["Lava e affetta la pesca.","Aggiungila allo yogurt con i semi di girasole pesati."], alternatives: ["Contiene latte","Skyr al posto dello yogurt"],
+  },
+  {
+    id: "matrix-s39-ricotta-con-cetrioli-e-ravanelli",
+    name: "Ricotta con cetrioli e ravanelli", kicker: "Spuntino pratico · matrice S39", course: "Spuntino", cuisine: "Italiano", kind: "combination",
+    image: photo("recipe-s39-ricotta-cucumber-radish-v11660"), time: 7,
+    ingredients: [
+      { food: "Ricotta vaccina", grams: 80 },
+      { food: "Cetrioli", grams: 100 },
+      { food: "Ravanelli crudi", grams: 100 },
+    ],
+    parts: [
+      { category: "Latticino", food: "Ricotta vaccina", grams: 80, label: "Ricotta · 80 g", image: photo("part-ricotta-v7") },
+      { category: "Contorno", food: "Cetrioli", grams: 100, label: "Cetrioli · 100 g", image: photo("part-cucumber-v8") },
+      { category: "Contorno", food: "Ravanelli crudi", grams: 100, label: "Ravanelli · 100 g", image: photo("part-radishes-v11512") },
+    ],
+    steps: ["Lavora la ricotta con limone, pepe ed erba cipollina.","Lava e taglia cetrioli e ravanelli e servili separati per intingerli."], alternatives: ["Contiene latte","Fiocchi di latte al posto della ricotta"],
+  },
+  {
+    id: "matrix-s40-mela-pistacchi-e-kefir",
+    name: "Mela, pistacchi e kefir", kicker: "Spuntino pratico · matrice S40", course: "Spuntino", cuisine: "Italiano", kind: "combination",
+    image: photo("recipe-s40-apple-pistachio-kefir-v11660"), time: 3,
+    ingredients: [
+      { food: "Mela", grams: 150 },
+      { food: "Pistacchi", grams: 10 },
+      { food: "Kefir bianco magro", grams: 125 },
+    ],
+    parts: [
+      { category: "Frutta", food: "Mela", grams: 150, label: "Mela · 150 g edibili", image: photo("part-apple-v7") },
+      { category: "Extra", food: "Pistacchi", grams: 10, label: "Pistacchi non salati · 10 g", image: photo("part-pistachios-v1143") },
+      { category: "Latticino", food: "Kefir bianco magro", grams: 125, label: "Kefir bianco · 125 g", image: photo("part-kefir-v1152") },
+    ],
+    steps: ["Lava e affetta la mela.","Servi con kefir e pistacchi già pesati."], alternatives: ["Contiene latte e pistacchi","Adatto al lavoro con borsa termica"],
+  },
+  {
+    id: "matrix-s41-gallette-con-fiocchi-di-latte-e-rucola",
+    name: "Gallette con fiocchi di latte e rucola", kicker: "Spuntino pratico · matrice S41", course: "Spuntino", cuisine: "Italiano", kind: "combination",
+    image: photo("recipe-s41-cottage-ricecakes-v11660"), time: 5,
+    ingredients: [
+      { food: "Gallette di riso integrale", grams: 27 },
+      { food: "Fiocchi di latte", grams: 60 },
+      { food: "Rucola", grams: 30 },
+      { food: "Pomodorini", grams: 100 },
+    ],
+    parts: [
+      { category: "Carboidrato", food: "Gallette di riso integrale", grams: 27, label: "Gallette integrali · circa 3", image: photo("part-rice-cakes-whole-v11512") },
+      { category: "Latticino", food: "Fiocchi di latte", grams: 60, label: "Fiocchi di latte · 60 g", image: photo("part-cottage-cheese-v11512") },
+      { category: "Contorno", food: "Rucola", grams: 30, label: "Rucola · 30 g", image: photo("part-rucola-v7") },
+      { category: "Contorno", food: "Pomodorini", grams: 100, label: "Pomodorini · 100 g", image: photo("part-tomatoes-v8") },
+    ],
+    steps: ["Distribuisci i fiocchi di latte sulle gallette solo al momento.","Completa con rucola lavata e pomodorini tagliati."], alternatives: ["Contiene latte; verificare il glutine in etichetta","Pane integrale al posto delle gallette"],
+  },
+  {
+    id: "matrix-s42-frutti-di-bosco-con-yogurt-e-chia",
+    name: "Frutti di bosco con yogurt e chia", kicker: "Spuntino pratico · matrice S42", course: "Spuntino", cuisine: "Italiano", kind: "combination",
+    image: photo("recipe-s42-mixed-berries-yogurt-v11660"), time: 3,
+    ingredients: [
+      { food: "Frutti di bosco", grams: 150 },
+      { food: "Yogurt bianco", grams: 125 },
+      { food: "Semi di chia", grams: 5 },
+    ],
+    parts: [
+      { category: "Frutta", food: "Frutti di bosco", grams: 150, label: "Fragole, mirtilli, lamponi e more · 150 g", image: photo("part-mixed-berries-v11") },
+      { category: "Latticino", food: "Yogurt bianco", grams: 125, label: "Yogurt bianco · 125 g", image: photo("part-yogurt-v7") },
+      { category: "Extra", food: "Semi di chia", grams: 5, label: "Semi di chia · 5 g", image: photo("part-chia-v11511") },
+    ],
+    steps: ["Lava e asciuga delicatamente i frutti di bosco.","Aggiungili allo yogurt e completa con chia pesata."], alternatives: ["Contiene latte","Skyr al posto dello yogurt"],
+  }
+];
+
 const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
   Carboidrato: [
     {
@@ -8538,6 +8669,7 @@ const rawRecipes: Recipe[] = [
   ...matrixBreakfasts,
   ...catalogBreakfasts,
   ...quickSnacks,
+  ...attachmentSnacksS35S42,
   ...attachmentBaseSnacks,
   ...attachmentSnacksS14S26,
   ...matrixSnacks,
