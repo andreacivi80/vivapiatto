@@ -74,7 +74,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.40";
+const VERSION = "1.16.41";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -4471,6 +4471,13 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     },
     {
       category: "Proteina",
+      food: "Albume",
+      grams: 100,
+      label: "Albume pastorizzato · 100 g",
+      image: photo("part-egg-white-v11641"),
+    },
+    {
+      category: "Proteina",
       food: "Uova strapazzate o in frittata",
       grams: 100,
       label: "Due uova strapazzate · senza grassi aggiunti",
@@ -4747,6 +4754,13 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       food: "Yogurt greco 2%",
       grams: 125,
       label: "Yogurt · 1 vasetto",
+      image: photo("part-yogurt-v7"),
+    },
+    {
+      category: "Latticino",
+      food: "Yogurt bianco",
+      grams: 125,
+      label: "Yogurt bianco naturale · 1 vasetto",
       image: photo("part-yogurt-v7"),
     },
     {
@@ -5038,6 +5052,27 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       grams: 10,
       label: "Semi di chia · 10 g",
       image: photo("part-chia-v11511"),
+    },
+    {
+      category: "Extra",
+      food: "Semi di zucca",
+      grams: 10,
+      label: "Semi di zucca non salati · 10 g",
+      image: photo("part-pumpkin-seeds-v11641"),
+    },
+    {
+      category: "Extra",
+      food: "Crema 100% mandorle",
+      grams: 10,
+      label: "Crema 100% mandorle · 10 g",
+      image: photo("part-almond-butter-v11641"),
+    },
+    {
+      category: "Extra",
+      food: "Cioccolato fondente 70%",
+      grams: 10,
+      label: "Cioccolato fondente 70% · 10 g",
+      image: photo("part-dark-chocolate-v11641"),
     },
     {
       category: "Extra",
