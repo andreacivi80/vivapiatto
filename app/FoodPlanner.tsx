@@ -74,7 +74,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.61";
+const VERSION = "1.16.62";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -11087,7 +11087,14 @@ export function FoodPlanner() {
                   const visibleIngredients = actualIngredients(key, r);
                   const m = calc(visibleIngredients);
                   const activeParts = activeMealParts(key, r);
-                  const fullDishView = Boolean(r.parts && r.kind !== "combination" && (mealView[key] || "dish") === "dish");
+                  const hasPartCards = Boolean(
+                    r.parts?.length || partSelections[key]?.length,
+                  );
+                  const fullDishView = Boolean(
+                    r.parts &&
+                      r.kind !== "combination" &&
+                      (mealView[key] || "dish") === "dish",
+                  );
                   const allowed = isAllowed(r);
                   const actual = completed[key]
                     ? calc(actualIngredients(key, r))
@@ -11105,18 +11112,18 @@ export function FoodPlanner() {
                     );
                   return (
                     <article
-                      className={`meal-card ${r.parts && !fullDishView ? "composed" : "detailed"} ${allowed ? "" : "blocked"} ${caution ? "caution" : ""}`}
+                      className={`meal-card ${hasPartCards && !fullDishView ? "composed" : "detailed"} ${allowed ? "" : "blocked"} ${caution ? "caution" : ""}`}
                       key={key}
                       onClick={() => {
                         setSelectedMealKey(key);
                         setSelected(r);
                       }}
                     >
-                      {(!r.parts || fullDishView) && <RecipeVisual recipe={r} />}
+                      {(!hasPartCards || fullDishView) && <RecipeVisual recipe={r} />}
                       <div className="meal-body">
                         <span>{SLOT_LABELS[i]}</span>
                         <h3>
-                          {r.parts && !fullDishView
+                          {hasPartCards && !fullDishView
                             ? `${SLOT_LABELS[i]} · ${
                                 activeParts
                                   .filter((part) => part.grams > 0)
@@ -11158,7 +11165,7 @@ export function FoodPlanner() {
                             </button>
                             <button onClick={() => setMealView((current) => ({ ...current, [key]: "parts" }))}>Dividi in componenti</button>
                           </div>
-                        ) : r.parts ? (
+                        ) : hasPartCards ? (
                           <>
                             {(!partSelections[key] || r.kind !== "combination") && (
                               <div className="dish-view-actions" onClick={(e) => e.stopPropagation()}>
