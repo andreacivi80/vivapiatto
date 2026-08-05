@@ -74,7 +74,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.71";
+const VERSION = "1.16.72";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -10140,9 +10140,17 @@ export function FoodPlanner() {
         0.55 *
           Math.abs(candidateMacros.fat - currentMacros.fat) /
           Math.max(8, currentMacros.fat);
-      const structureDistance =
-        [...currentRoles].filter((role) => !candidateRoles.has(role)).length *
-        0.16;
+      const missingRoles = [...currentRoles].filter(
+        (role) => !candidateRoles.has(role),
+      ).length;
+      const extraRoles = [...candidateRoles].filter(
+        (role) => !currentRoles.has(role),
+      ).length;
+      const structureDistance = missingRoles * 0.22 + extraRoles * 0.08;
+      const courseDistance =
+        recipe.course && current.course && recipe.course === current.course
+          ? 0
+          : 0.08;
       const cuisineDistance =
         recipeCuisine(recipe) === recipeCuisine(current)
           ? 0
@@ -10151,7 +10159,13 @@ export function FoodPlanner() {
             : 0.22;
       const contextDistance =
         dayContext === "Lavoro" && !isWorkFriendly(recipe) ? 0.2 : 0;
-      return macroDistance + structureDistance + cuisineDistance + contextDistance;
+      return (
+        macroDistance +
+        structureDistance +
+        courseDistance +
+        cuisineDistance +
+        contextDistance
+      );
     };
     return allRecipes
       .filter(
@@ -12348,23 +12362,35 @@ export function FoodPlanner() {
                           <RecipeVisual recipe={recipe} />
                           <span>{recipe.name}</span>
                           <b>{round(macros.kcal)} kcal · {recipe.time} min</b>
-                          {optionIndex === 0 && (
-                            <small className="complete-meal-recommended">
-                              Scelta consigliata
+                        </button>
+                        <div className="complete-meal-card-actions">
+                          {optionIndex < 3 ? (
+                            <small
+                              className={
+                                optionIndex === 0
+                                  ? "complete-meal-recommended primary"
+                                  : "complete-meal-recommended"
+                              }
+                            >
+                              {optionIndex === 0
+                                ? "Prima scelta"
+                                : "Scelta consigliata"}
                             </small>
+                          ) : (
+                            <span aria-hidden="true" />
                           )}
-                        </button>
-                        <button
-                          className="complete-meal-info"
-                          aria-label={"Vedi ricetta " + recipe.name}
-                          title="Vedi ingredienti e preparazione"
-                          onClick={() => {
-                            setSelectedMealKey(null);
-                            setSelected(recipe);
-                          }}
-                        >
-                          i
-                        </button>
+                          <button
+                            className="complete-meal-info"
+                            aria-label={"Vedi ricetta " + recipe.name}
+                            title="Vedi ingredienti e preparazione"
+                            onClick={() => {
+                              setSelectedMealKey(null);
+                              setSelected(recipe);
+                            }}
+                          >
+                            i
+                          </button>
+                        </div>
                       </article>
                     );
                   })}
