@@ -2934,3 +2934,70 @@ button {
 .recipe-grid article > div:not(.recipe-visual-parts) {
   padding-right: 52px;
 }
+
+.healthy-filter-panel {
+  margin: 8px 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper);
+  overflow: hidden;
+}
+.healthy-filter-panel summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 38px;
+  padding: 8px 10px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 900;
+  list-style: none;
+}
+.healthy-filter-panel summary::-webkit-details-marker {
+  display: none;
+}
+.healthy-filter-panel summary b {
+  display: grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: var(--coral);
+  color: #fff;
+  font-size: 10px;
+}
+.healthy-filter-chips {
+  display: flex;
+  gap: 6px;
+  padding: 0 10px 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.healthy-filter-chips::-webkit-scrollbar {
+  display: none;
+}
+.healthy-filter-chips button,
+.healthy-filter-reset {
+  flex: 0 0 auto;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  padding: 6px 9px;
+  font-size: 9px;
+  font-weight: 800;
+}
+.healthy-filter-chips button.active {
+  border-color: var(--ink);
+  background: var(--lime2);
+}
+.healthy-filter-reset {
+  margin: 0 10px 7px;
+  color: var(--coral);
+}
+.healthy-filter-panel > small {
+  display: block;
+  padding: 0 10px 9px;
+  color: var(--muted);
+  font-size: 8px;
+  line-height: 1.3;
+}
