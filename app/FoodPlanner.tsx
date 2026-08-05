@@ -74,7 +74,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.49";
+const VERSION = "1.16.50";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -3092,7 +3092,7 @@ const matrixMainRecipes: Recipe[] = [
   {
     id: "matrix-p42-basmati-cod-spinach", name: "Riso basmati con merluzzo, spinaci e carote", kicker: "Pranzo completo di pesce · matrice P42", course: "Piatto completo", cuisine: "Italiano", image: photo("recipe-p42-basmati-cod-spinach-v11513"), time: 30,
     ingredients: [{ food: "Riso basmati secco", grams: 70 }, { food: "Merluzzo cotto", grams: 150 }, { food: "Spinaci", grams: 150 }, { food: "Carote cotte bollite", grams: 100 }, { food: "Olio extravergine", grams: 10 }],
-    parts: [{ category: "Carboidrato", food: "Riso basmati secco", grams: 70, label: "Riso basmati · peso a crudo", image: photo("part-rice-basmati-v7") }, { category: "Proteina", food: "Merluzzo cotto", grams: 150, label: "Merluzzo cotto al vapore", image: photo("part-cod-steamed-v8") }, { category: "Contorno", food: "Spinaci", grams: 150, label: "Spinaci cotti", image: photo("part-spinach-v7") }, { category: "Contorno", food: "Carote cotte bollite", grams: 100, label: "Carote cotte bollite", image: photo("part-carrots-cooked-v11512") }, { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") }],
+    parts: [{ category: "Carboidrato", food: "Riso basmati secco", grams: 70, label: "Riso basmati · peso a crudo", image: photo("part-basmati-dry-v11650") }, { category: "Proteina", food: "Merluzzo cotto", grams: 150, label: "Merluzzo cotto al vapore", image: photo("part-cod-steamed-v8") }, { category: "Contorno", food: "Spinaci", grams: 150, label: "Spinaci cotti", image: photo("part-spinach-v7") }, { category: "Contorno", food: "Carote cotte bollite", grams: 100, label: "Carote cotte bollite", image: photo("part-carrots-cooked-v11512") }, { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") }],
     steps: ["Sciacqua il riso e cuocilo secondo confezione, quindi scolalo o lascialo assorbire completamente.", "Cuoci il merluzzo al vapore fino a completa cottura; cuoci separatamente spinaci e carote senza grassi aggiunti.", "Servi le componenti distinguibili e condisci con 10 g di olio pesato, curcuma, zenzero e limone."], alternatives: ["Trasportabile in contenitore refrigerato", "Contiene pesce", "Ogni componente resta sostituibile separatamente"]
   },
   {
@@ -3452,14 +3452,14 @@ const portableRecipes: Recipe[] = [
         food: "Riso basmati cotto",
         grams: 200,
         label: "Riso basmati · peso cotto",
-        image: photo("part-rice-basmati-v7"),
+        image: photo("part-basmati-cooked-v11650"),
       },
       {
         category: "Proteina",
         food: "Tonno al naturale sgocciolato",
         grams: 90,
         label: "Tonno al naturale",
-        image: photo("part-tuna-v7"),
+        image: photo("part-tuna-canned-v11650"),
       },
       {
         category: "Contorno",
@@ -3781,7 +3781,7 @@ const balancedDinnerRecipes: Recipe[] = [
         food: "Riso basmati secco",
         grams: 80,
         label: "Riso basmati · peso a crudo",
-        image: photo("part-rice-basmati-v7"),
+        image: photo("part-basmati-dry-v11650"),
       },
       {
         category: "Proteina",
@@ -3906,7 +3906,7 @@ const balancedDinnerRecipes: Recipe[] = [
     ],
     parts: [
       { category: "Carboidrato", food: "Gnocchi di patate", grams: 180, label: "Gnocchi di patate", image: photo("part-gnocchi-v7") },
-      { category: "Proteina", food: "Tonno al naturale sgocciolato", grams: 120, label: "Tonno al naturale sgocciolato", image: photo("part-tuna-v7") },
+      { category: "Proteina", food: "Tonno al naturale sgocciolato", grams: 120, label: "Tonno al naturale sgocciolato", image: photo("part-tuna-canned-v11650") },
       { category: "Contorno", food: "Zucchine", grams: 200, label: "Zucchine in padella", image: photo("part-zucchini-v8") },
       { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio extravergine", image: photo("part-olive-oil-v8") },
     ],
@@ -4101,7 +4101,7 @@ const balancedDinnerRecipes: Recipe[] = [
     parts: [
       { category: "Proteina", food: "Seppia · peso a crudo", grams: 160, label: "Seppia alla piastra · 160 g a crudo", image: photo("part-cuttlefish-v11520") },
       { category: "Contorno", food: "Bietole cotte", grams: 180, label: "Bietole cotte · 180 g", image: photo("part-chard-v11515") },
-      { category: "Carboidrato", food: "Riso basmati cotto", grams: 170, label: "Riso basmati cotto · 170 g", image: photo("part-rice-basmati-v7") },
+      { category: "Carboidrato", food: "Riso basmati cotto", grams: 170, label: "Riso basmati cotto · 170 g", image: photo("part-basmati-cooked-v11650") },
       { category: "Contorno", food: "Passata di pomodoro", grams: 100, label: "Salsa di pomodoro · 100 g", image: photo("part-tomatoes-v8") },
       { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") },
     ],
@@ -4115,7 +4115,7 @@ const balancedDinnerRecipes: Recipe[] = [
     image: photo("recipe-asian-oyakodon-v11520"), time: 25,
     ingredients: [{ food: "Riso basmati cotto", grams: 150 }, { food: "Petto di pollo · peso a crudo", grams: 80 }, { food: "Uovo", grams: 100 }, { food: "Cipolle crude", grams: 40 }, { food: "Funghi", grams: 20 }, { food: "Salsa di soia", grams: 10 }, { food: "Mirin", grams: 10 }, { food: "Zucchero", grams: 5 }],
     parts: [
-      { category: "Carboidrato", food: "Riso basmati cotto", grams: 150, label: "Riso cotto · 150 g", image: photo("part-rice-basmati-v7") },
+      { category: "Carboidrato", food: "Riso basmati cotto", grams: 150, label: "Riso cotto · 150 g", image: photo("part-basmati-cooked-v11650") },
       { category: "Proteina", food: "Petto di pollo · peso a crudo", grams: 80, label: "Pollo · 80 g a crudo", image: photo("part-chicken-grilled-v7") },
       { category: "Proteina", food: "Uovo", grams: 100, label: "Uova · 2", image: photo("part-eggs-scrambled-v1156") },
       { category: "Contorno", food: "Cipolle crude", grams: 40, label: "Cipolla · 40 g", image: photo("part-onions-v11519") },
@@ -4133,7 +4133,7 @@ const balancedDinnerRecipes: Recipe[] = [
     image: photo("recipe-asian-bibimbap-v11520"), time: 35,
     ingredients: [{ food: "Riso basmati cotto", grams: 150 }, { food: "Bistecca di manzo · peso a crudo", grams: 70 }, { food: "Uovo", grams: 50 }, { food: "Spinaci", grams: 70 }, { food: "Carote crude", grams: 60 }, { food: "Germogli di soia", grams: 70 }, { food: "Funghi", grams: 60 }, { food: "Gochujang", grams: 15 }, { food: "Olio extravergine", grams: 5 }],
     parts: [
-      { category: "Carboidrato", food: "Riso basmati cotto", grams: 150, label: "Riso cotto · 150 g", image: photo("part-rice-basmati-v7") },
+      { category: "Carboidrato", food: "Riso basmati cotto", grams: 150, label: "Riso cotto · 150 g", image: photo("part-basmati-cooked-v11650") },
       { category: "Proteina", food: "Bistecca di manzo · peso a crudo", grams: 70, label: "Manzo a striscioline · 70 g a crudo", image: photo("part-steak-beef-v114") },
       { category: "Proteina", food: "Uovo", grams: 50, label: "Uovo al tegamino · 1", image: photo("simple-eggs-v5") },
       { category: "Contorno", food: "Spinaci", grams: 70, label: "Spinaci · 70 g", image: photo("part-spinach-v7") },
@@ -4163,8 +4163,8 @@ const balancedDinnerRecipes: Recipe[] = [
       { food: "Zucchero", grams: 3 },
     ],
     parts: [
-      { category: "Carboidrato", food: "Riso basmati cotto", grams: 150, label: "Riso cotto · 150 g", image: photo("part-rice-basmati-v7") },
-      { category: "Proteina", food: "Tonno fresco cotto", grams: 150, label: "Tonno fresco a cubi · 150 g cotti", image: photo("part-tuna-v7") },
+      { category: "Carboidrato", food: "Riso basmati cotto", grams: 150, label: "Riso cotto · 150 g", image: photo("part-basmati-cooked-v11650") },
+      { category: "Proteina", food: "Tonno fresco cotto", grams: 150, label: "Tonno fresco a cubi · 150 g cotti", image: photo("part-tuna-fresh-v11650") },
       { category: "Contorno", food: "Porro cotto", grams: 120, label: "Porro cotto · 120 g", image: photo("part-leek-v1163") },
       { category: "Contorno", food: "Funghi", grams: 80, label: "Funghi shiitake · 80 g", image: photo("part-mushrooms-v8") },
     ],
@@ -4368,7 +4368,7 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       food: "Riso basmati secco",
       grams: 80,
       label: "Riso basmati · peso a crudo",
-      image: photo("part-rice-basmati-v7"),
+      image: photo("part-basmati-dry-v11650"),
     },
     {
       category: "Carboidrato",
@@ -4452,7 +4452,7 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       food: "Tonno fresco cotto",
       grams: 150,
       label: "Tonno fresco cotto · 150 g",
-      image: photo("part-tuna-v7"),
+      image: photo("part-tuna-fresh-v11650"),
     },
     { category: "Proteina", food: "Tempeh", grams: 120, label: "Tempeh alla piastra · 120 g", image: photo("part-tempeh-v11520") },
     { category: "Proteina", food: "Rombo · peso a crudo", grams: 160, label: "Rombo al forno · 160 g a crudo", image: photo("part-turbot-v11520") },
@@ -4577,7 +4577,7 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       food: "Tonno al naturale sgocciolato",
       grams: 100,
       label: "Tonno al naturale",
-      image: photo("part-tuna-v7"),
+      image: photo("part-tuna-canned-v11650"),
     },
     {
       category: "Proteina",
@@ -5899,7 +5899,7 @@ const verifiedWorldRecipeExpansion: Recipe[] = [
       { food: "Olio extravergine", grams: 5 },
     ],
     parts: [
-      { category: "Carboidrato", food: "Riso basmati cotto", grams: 150, label: "Riso cotto · 150 g", image: photo("part-rice-basmati-v7") },
+      { category: "Carboidrato", food: "Riso basmati cotto", grams: 150, label: "Riso cotto · 150 g", image: photo("part-basmati-cooked-v11650") },
       { category: "Proteina", food: "Bistecca di manzo · peso a crudo", grams: 100, label: "Manzo a striscioline · 100 g a crudo", image: photo("part-steak-beef-v114") },
       { category: "Contorno", food: "Carote cotte bollite", grams: 60, label: "Carote · 60 g", image: photo("part-carrots-raw-v11512") },
       { category: "Contorno", food: "Spinaci", grams: 80, label: "Spinaci · 80 g", image: photo("part-spinach-v7") },
@@ -5929,7 +5929,7 @@ const verifiedWorldRecipeExpansion: Recipe[] = [
       { food: "Fagiolini", grams: 80 },
     ],
     parts: [
-      { category: "Carboidrato", food: "Riso basmati cotto", grams: 150, label: "Riso cotto · 150 g", image: photo("part-rice-basmati-v7") },
+      { category: "Carboidrato", food: "Riso basmati cotto", grams: 150, label: "Riso cotto · 150 g", image: photo("part-basmati-cooked-v11650") },
       { category: "Proteina", food: "Petto di pollo · peso a crudo", grams: 100, label: "Pollo · 100 g a crudo", image: photo("part-chicken-grilled-v7") },
       { category: "Proteina", food: "Uovo", grams: 50, label: "Uovo · 1", image: photo("part-eggs-scrambled-v1156") },
       { category: "Contorno", food: "Funghi", grams: 50, label: "Funghi · 50 g", image: photo("part-mushrooms-v8") },
@@ -5960,7 +5960,7 @@ const verifiedWorldRecipeExpansion: Recipe[] = [
       { food: "Salsa di soia", grams: 10 },
     ],
     parts: [
-      { category: "Carboidrato", food: "Riso basmati cotto", grams: 160, label: "Riso cotto · 160 g", image: photo("part-rice-basmati-v7") },
+      { category: "Carboidrato", food: "Riso basmati cotto", grams: 160, label: "Riso cotto · 160 g", image: photo("part-basmati-cooked-v11650") },
       { category: "Proteina", food: "Petto di pollo · peso a crudo", grams: 110, label: "Pollo · 110 g a crudo", image: photo("part-chicken-grilled-v7") },
       { category: "Contorno", food: "Carote cotte bollite", grams: 70, label: "Carote · 70 g", image: photo("part-carrots-raw-v11512") },
       { category: "Contorno", food: "Funghi", grams: 70, label: "Funghi · 70 g", image: photo("part-mushrooms-v8") },
