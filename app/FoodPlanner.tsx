@@ -74,7 +74,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.63";
+const VERSION = "1.16.64";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -1543,6 +1543,13 @@ const GELATO_FLAVORS = [
   "Gelato al tiramisu",
   "Gelato all'amarena",
 ] as const;
+
+const gelatoFlavorPhoto = (food: string) =>
+  food === "Gelato fiordilatte"
+    ? photo("part-gelato-fiordilatte-v11664")
+    : food === "Gelato al cioccolato"
+      ? photo("part-gelato-chocolate-v11664")
+      : photo("cheat-gelato-v11619");
 
 foods["Branzino cotto"] = { kcal: 124, protein: 23.6, carbs: 0, fat: 2.7, fiber: 0, source: "USDA" };
 foods["Nasello cotto"] = { kcal: 90, protein: 19.2, carbs: 0, fat: 1.2, fiber: 0, source: "USDA" };
@@ -9697,7 +9704,7 @@ export function FoodPlanner() {
       food: item.food,
       grams: item.grams,
       label: item.label || known?.label || item.food,
-      image: known?.image || photo("part-bread-v7"),
+      image: known?.image || (GELATO_FLAVORS.includes(item.food as (typeof GELATO_FLAVORS)[number]) ? gelatoFlavorPhoto(item.food) : photo("part-bread-v7")),
     };
   };
 
@@ -9995,7 +10002,7 @@ export function FoodPlanner() {
       food,
       grams: 60,
       label: `Pallina ${index + 1} · ${food.replace("Gelato ", "")}`,
-      image: photo("cheat-gelato-v11619"),
+      image: gelatoFlavorPhoto(food),
     }));
     setChoices((current) => ({ ...current, [key]: "occasional-gelato" }));
     setMealView((current) => ({ ...current, [key]: "components" }));
@@ -10415,6 +10422,14 @@ export function FoodPlanner() {
     }));
     setReplanNote("Elemento tolto: calorie e nutrienti aggiornati.");
     setPartPicker(null);
+  };
+  const removeMealPartAt = (key: string, recipe: Recipe, index: number) => {
+    const activeParts = activeMealParts(key, recipe);
+    setPartSelections((current) => ({
+      ...current,
+      [key]: activeParts.filter((_, partIndex) => partIndex !== index),
+    }));
+    setReplanNote("Elemento rimosso: calorie e nutrienti aggiornati.");
   };
   const updateMealPartGrams = (
     key: string,
@@ -11192,6 +11207,15 @@ export function FoodPlanner() {
                                     src={part.image}
                                     alt={part.label || part.food}
                                   />
+                                  <button
+                                    type="button"
+                                    className="part-remove"
+                                    aria-label={`Rimuovi ${part.label || part.food}`}
+                                    title="Rimuovi elemento"
+                                    onClick={() => removeMealPartAt(key, r, partIndex)}
+                                  >
+                                    −
+                                  </button>
                                   <button
                                     className="part-change"
                                     aria-label={`Cambia ${part.category}`}
