@@ -74,7 +74,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.67";
+const VERSION = "1.16.68";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -1606,6 +1606,18 @@ foods["Cavolo cappuccio cotto"] = { kcal: 23, protein: 1.3, carbs: 5.5, fat: 0.1
 
 foods["Platessa cotta"] = { kcal: 86, protein: 18.6, carbs: 0, fat: 1.2, fiber: 0, source: "USDA" };
 
+
+
+foods["Pompelmo rosa fresco"] = { kcal: 42, protein: 0.8, carbs: 10.7, fat: 0.1, fiber: 1.6, source: "USDA" };
+foods["Riso parboiled cotto"] = { kcal: 123, protein: 2.9, carbs: 26, fat: 0.4, fiber: 0.9, source: "USDA" };
+foods["Vongole cotte"] = { kcal: 148, protein: 25.6, carbs: 5.1, fat: 2, fiber: 0, source: "USDA" };
+foods["Lattuga fresca"] = { kcal: 15, protein: 1.4, carbs: 2.9, fat: 0.2, fiber: 1.3, source: "USDA" };
+foods["Songino fresco"] = { kcal: 21, protein: 2, carbs: 3.6, fat: 0.4, fiber: 1.8, source: "USDA" };
+foods["Catalogna fresca"] = { kcal: 23, protein: 1.7, carbs: 4.7, fat: 0.3, fiber: 4, source: "USDA" };
+foods["Verza fresca"] = { kcal: 27, protein: 2, carbs: 6.1, fat: 0.1, fiber: 3.1, source: "USDA" };
+foods["Cavolini di Bruxelles cotti"] = { kcal: 36, protein: 2.6, carbs: 7.1, fat: 0.5, fiber: 2.6, source: "USDA" };
+foods["Cime di rapa cotte"] = { kcal: 27, protein: 3.2, carbs: 3.1, fat: 0.5, fiber: 2.7, source: "USDA" };
+foods["Cipollotti freschi"] = { kcal: 32, protein: 1.8, carbs: 7.3, fat: 0.2, fiber: 2.6, source: "USDA" };
 
 const calc = (
   ingredients: RecipeIngredient[],
@@ -5468,6 +5480,7 @@ const attachmentMainsP53P64: Recipe[] = [
 
 const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
   Carboidrato: [
+    { category: "Carboidrato", food: "Riso parboiled cotto", grams: 150, label: "Riso parboiled cotto · 150 g", image: photo("part-parboiled-rice-v11668") },
     {
       category: "Carboidrato",
       food: "Vermicelli di patata dolce cotti",
@@ -5636,6 +5649,7 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     { category: "Carboidrato", food: "Farro cotto", grams: 175, label: "Farro cotto · da circa 70 g secco", image: photo("farro") },
   ],
   Proteina: [
+    { category: "Proteina", food: "Vongole cotte", grams: 150, label: "Vongole cotte · 150 g", image: photo("part-clams-v11668") },
     { category: "Proteina", food: "Platessa cotta", grams: 150, label: "Platessa al forno · 150 g", image: photo("part-plaice-baked-v11658") },
     { category: "Proteina", food: "Branzino cotto", grams: 150, label: "Branzino al forno · 150 g", image: photo("part-branzino-baked-v11654") },
     { category: "Proteina", food: "Nasello cotto", grams: 150, label: "Nasello al vapore · 150 g", image: photo("part-nasello-steamed-v11654") },
@@ -5858,6 +5872,13 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     { category: "Proteina", food: "Polpo cotto", grams: 150, label: "Polpo cotto", image: photo("part-octopus-v11645") },
   ],
   Contorno: [
+    { category: "Contorno", food: "Lattuga fresca", grams: 100, label: "Lattuga fresca · 100 g", image: photo("part-lettuce-v11668") },
+    { category: "Contorno", food: "Songino fresco", grams: 100, label: "Songino fresco · 100 g", image: photo("part-lambs-lettuce-v11668") },
+    { category: "Contorno", food: "Catalogna fresca", grams: 150, label: "Catalogna fresca · 150 g", image: photo("part-catalogna-v11668") },
+    { category: "Contorno", food: "Verza fresca", grams: 150, label: "Verza fresca · 150 g", image: photo("part-savoy-cabbage-v11668") },
+    { category: "Contorno", food: "Cavolini di Bruxelles cotti", grams: 180, label: "Cavolini di Bruxelles cotti · 180 g", image: photo("part-brussels-sprouts-v11668") },
+    { category: "Contorno", food: "Cime di rapa cotte", grams: 180, label: "Cime di rapa cotte · 180 g", image: photo("part-turnip-greens-v11668") },
+    { category: "Contorno", food: "Cipollotti freschi", grams: 100, label: "Cipollotti freschi · 100 g", image: photo("part-spring-onions-v11668") },
     { category: "Contorno", food: "Cavolo cappuccio cotto", grams: 200, label: "Cavolo cappuccio cotto · 200 g", image: photo("part-green-cabbage-cooked-v11657") },
     { category: "Contorno", food: "Cicoria cotta", grams: 250, label: "Cicoria lessa · 250 g", image: photo("part-cicoria-cooked-v11655") },
     {
@@ -6128,6 +6149,7 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     { category: "Latticino", food: "Fiocchi di latte", grams: 80, label: "Fiocchi di latte", image: photo("part-cottage-cheese-v11512") },
   ],
   Frutta: [
+    { category: "Frutta", food: "Pompelmo rosa fresco", grams: 200, label: "Pompelmo rosa · parte edibile 200 g", image: photo("part-grapefruit-v11668") },
     {
       category: "Frutta",
       food: "Lime",
@@ -6441,6 +6463,14 @@ const normalizeMealPart = (part: MealPart): MealPart => {
 };
 
 const seasonalMonths: Record<string, number[]> = {
+  "Pompelmo rosa fresco": [11, 12, 1, 2, 3, 4],
+  "Lattuga fresca": [3, 4, 5, 6, 7, 8, 9, 10],
+  "Songino fresco": [10, 11, 12, 1, 2, 3],
+  "Catalogna fresca": [10, 11, 12, 1, 2, 3],
+  "Verza fresca": [10, 11, 12, 1, 2, 3],
+  "Cavolini di Bruxelles cotti": [10, 11, 12, 1, 2, 3],
+  "Cime di rapa cotte": [10, 11, 12, 1, 2, 3, 4],
+  "Cipollotti freschi": [3, 4, 5, 6],
   "Mirtilli freschi": [6, 7, 8, 9],
   "Mandarini freschi": [11, 12, 1, 2, 3],
   "Melagrana fresca": [9, 10, 11, 12],

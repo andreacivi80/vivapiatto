@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.67"/);
+  assert.match(app, /VERSION = "1\.16\.68"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -551,4 +551,29 @@ test("v1.16.17 keeps swap navigation visible and exposes occasional choices", as
   assert.match(app, /const hasPartCards = Boolean/);
   assert.match(app, /partSelections\[key\]\?\.length/);
   assert.match(app, /hasPartCards \? \(/);
+});
+
+
+test("v1.16.68 extends the verified everyday pantry with independent photos", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const foods = [
+    ["Pompelmo rosa fresco", "part-grapefruit-v11668"],
+    ["Riso parboiled cotto", "part-parboiled-rice-v11668"],
+    ["Vongole cotte", "part-clams-v11668"],
+    ["Lattuga fresca", "part-lettuce-v11668"],
+    ["Songino fresco", "part-lambs-lettuce-v11668"],
+    ["Catalogna fresca", "part-catalogna-v11668"],
+    ["Verza fresca", "part-savoy-cabbage-v11668"],
+    ["Cavolini di Bruxelles cotti", "part-brussels-sprouts-v11668"],
+    ["Cime di rapa cotte", "part-turnip-greens-v11668"],
+    ["Cipollotti freschi", "part-spring-onions-v11668"],
+  ];
+  for (const [food, asset] of foods) {
+    assert.match(app, new RegExp('foods\\["' + food + '"\\]'));
+    assert.match(app, new RegExp('food: "' + food + '"'));
+    assert.match(app, new RegExp('photo\\("' + asset + '"\\)'));
+    await access(new URL('../dist/food/' + asset + '.png', import.meta.url));
+  }
+  assert.match(app, /"Pompelmo rosa fresco": \[11, 12, 1, 2, 3, 4\]/);
+  assert.match(app, /"Cime di rapa cotte": \[10, 11, 12, 1, 2, 3, 4\]/);
 });
