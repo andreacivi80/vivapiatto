@@ -2544,23 +2544,36 @@ button {
   font-size: 7px;
   line-height: 1.1;
 }
+.complete-meal-card-actions {
+  display: flex;
+  min-height: 27px;
+  margin-top: 4px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+.complete-meal-card-actions > span {
+  min-width: 0;
+}
 .complete-meal-recommended {
   display: inline-block;
-  max-width: calc(100% - 32px);
-  margin-top: 4px;
+  min-width: 0;
+  max-width: calc(100% - 33px);
   padding: 3px 6px;
   border-radius: 999px;
-  background: #e4f3b8;
-  color: #24483d;
-  font-size: 7px;
+  background: #edf5d5;
+  color: #345246;
+  font-size: 6.8px;
   font-weight: 900;
   line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+.complete-meal-recommended.primary {
+  background: #d9ef72;
+  color: #18372f;
 }
 .complete-meal-info {
-  position: absolute;
-  right: 7px;
-  bottom: 6px;
-  z-index: 2;
+  flex: 0 0 27px;
   display: grid;
   place-items: center;
   width: 27px;
