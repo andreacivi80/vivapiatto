@@ -75,7 +75,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.73";
+const VERSION = "1.16.74";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -7383,7 +7383,7 @@ const attachmentBaseBreakfasts: Recipe[] = [
     course: "Colazione",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-breakfast-v1121"),
+    image: photo("recipe-c01-apple-walnut-chia-v11674"),
     time: 10,
     ingredients: [
       { food: "Fiocchi d'avena", grams: 40 },
@@ -7402,7 +7402,7 @@ const attachmentBaseBreakfasts: Recipe[] = [
     course: "Colazione",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-breakfast-v1121"),
+    image: photo("recipe-c02-overnight-berries-v11674"),
     time: 5,
     ingredients: [
       { food: "Fiocchi d'avena", grams: 35 },
@@ -7420,7 +7420,7 @@ const attachmentBaseBreakfasts: Recipe[] = [
     course: "Colazione",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-breakfast-v1121"),
+    image: photo("recipe-c03-skyr-pear-hazelnut-v11674"),
     time: 5,
     ingredients: [
       { food: "Skyr bianco", grams: 170 },
@@ -7438,7 +7438,7 @@ const attachmentBaseBreakfasts: Recipe[] = [
     course: "Colazione",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-breakfast-v1121"),
+    image: photo("recipe-c04-rye-ricotta-orange-v11674"),
     time: 7,
     ingredients: [
       { food: "Pane di segale", grams: 50 },
@@ -7456,7 +7456,7 @@ const attachmentBaseBreakfasts: Recipe[] = [
     course: "Colazione",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-breakfast-v1121"),
+    image: photo("recipe-c06-spinach-omelette-v11674"),
     time: 15,
     ingredients: [
       { food: "Uova strapazzate o in frittata", grams: 100 },
@@ -7475,7 +7475,7 @@ const attachmentBaseBreakfasts: Recipe[] = [
     course: "Colazione",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-breakfast-v1121"),
+    image: photo("recipe-c07-kefir-muesli-peach-v11674"),
     time: 5,
     ingredients: [
       { food: "Kefir bianco magro", grams: 170 },
@@ -7493,7 +7493,7 @@ const attachmentBaseBreakfasts: Recipe[] = [
     course: "Colazione",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-breakfast-v1121"),
+    image: photo("recipe-c08-soy-mango-chia-v11674"),
     time: 5,
     ingredients: [
       { food: "Bevanda di soia senza zucchero", grams: 200 },
@@ -7511,7 +7511,7 @@ const attachmentBaseBreakfasts: Recipe[] = [
     course: "Colazione",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-breakfast-v1121"),
+    image: photo("recipe-c09-yogurt-pomegranate-pistachio-v11674"),
     time: 5,
     ingredients: [
       { food: "Yogurt greco 2%", grams: 170 },

@@ -655,3 +655,13 @@ test("v1.16.71 repairs almond cream imagery and ranks complete meal replacements
   assert.match(css, /\.complete-meal-recommended/);
   assert.match(app, /if \(localOption\) return \{ \.\.\.part, image: localOption\.image \}/);
 });
+
+
+test("v1.16.74 gives the first breakfast matrix recipes their own faithful photos", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const assets = [["matrix-c01-porridge-apple-walnuts-chia","recipe-c01-apple-walnut-chia-v11674"],["matrix-c02-overnight-oats-berries","recipe-c02-overnight-berries-v11674"],["matrix-c03-skyr-pear-hazelnuts","recipe-c03-skyr-pear-hazelnut-v11674"],["matrix-c04-rye-ricotta-orange","recipe-c04-rye-ricotta-orange-v11674"],["matrix-c06-omelette-spinach-bread","recipe-c06-spinach-omelette-v11674"],["matrix-c07-kefir-muesli-peach","recipe-c07-kefir-muesli-peach-v11674"],["matrix-c08-soy-mango-chia","recipe-c08-soy-mango-chia-v11674"],["matrix-c09-yogurt-pomegranate-pistachios","recipe-c09-yogurt-pomegranate-pistachio-v11674"]];
+  for (const [id, asset] of assets) {
+    assert.match(app, new RegExp('id: "' + id + '"[\\s\\S]{0,500}image: photo\\("' + asset + '"\\)'));
+    await access(new URL("../dist/food/" + asset + ".png", import.meta.url));
+  }
+});
