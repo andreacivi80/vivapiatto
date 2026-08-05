@@ -508,4 +508,7 @@ test("v1.16.17 keeps swap navigation visible and exposes occasional choices", as
   assert.match(app, /matrix-p64-gnocchi-con-salmone-spinaci-e-yogurt/);
   assert.match(app, /\.\.\.attachmentMainsP53P64/);
   assert.match(app, /recipe-p59-venere-seabream-asparagus-v11661/);
+  assert.match(app, /const hasPartCards = Boolean/);
+  assert.match(app, /partSelections\[key\]\?\.length/);
+  assert.match(app, /hasPartCards \? \(/);
 });
