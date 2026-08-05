@@ -74,7 +74,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.65";
+const VERSION = "1.16.66";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -9137,6 +9137,7 @@ export function FoodPlanner() {
   ]);
   const [replanNote, setReplanNote] = useState("");
   const [shoppingOpen, setShoppingOpen] = useState(false);
+  const [printPreviewOpen, setPrintPreviewOpen] = useState(false);
   const [shoppingScope, setShoppingScope] = useState<"day" | "week">("day");
   const [weekLocked, setWeekLocked] = useState(false);
   const [weekEditingDay, setWeekEditingDay] = useState<number | null>(null);
@@ -9202,6 +9203,7 @@ export function FoodPlanner() {
       preferencesOpen ||
       checkinOpen ||
       shoppingOpen ||
+      printPreviewOpen ||
       weekEditingDay !== null ||
       tab === "builder" ||
       Boolean(extraName.trim()),
@@ -11540,18 +11542,26 @@ export function FoodPlanner() {
                     : "Apri un giorno, cambialo e chiudilo per riequilibrare i successivi."}
                 </span>
               </div>
-              <button
-                onClick={() => {
-                  setWeekLocked((value) => !value);
-                  setReplanNote(
-                    weekLocked
-                      ? "Settimana riaperta: i giorni successivi possono essere riequilibrati."
-                      : "Settimana confermata: calorie dei 7 giorni e rotazione salvate.",
-                  );
-                }}
-              >
-                {weekLocked ? "Riapri" : "Conferma"}
-              </button>
+              <div className="week-lock-actions">
+                <button
+                  onClick={() => {
+                    setWeekLocked((value) => !value);
+                    setReplanNote(
+                      weekLocked
+                        ? "Settimana riaperta: i giorni successivi possono essere riequilibrati."
+                        : "Settimana confermata: calorie dei 7 giorni e rotazione salvate.",
+                    );
+                  }}
+                >
+                  {weekLocked ? "Riapri" : "Conferma"}
+                </button>
+                <button
+                  className="print-preview-trigger"
+                  onClick={() => setPrintPreviewOpen(true)}
+                >
+                  Anteprima stampa
+                </button>
+              </div>
             </section>
             <div className="week-kcal-summary">
               <header>
@@ -12551,6 +12561,96 @@ export function FoodPlanner() {
                 </a>
               )}
             </div>
+          </article>
+        </div>
+      )}
+      {printPreviewOpen && (
+        <div
+          className="modal-backdrop"
+          onClick={() => setPrintPreviewOpen(false)}
+        >
+          <article
+            className="print-preview-sheet"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <header className="print-preview-header">
+              <div>
+                <span>ANTEPRIMA SETTIMANALE</span>
+                <h2>Menu, quantità e nutrienti</h2>
+              </div>
+              <button
+                type="button"
+                aria-label="Chiudi anteprima stampa"
+                onClick={() => setPrintPreviewOpen(false)}
+              >
+                ×
+              </button>
+            </header>
+            <div className="print-preview-summary">
+              <b>Media {weeklyAverageKcal} kcal al giorno</b>
+              <span>{weeklyAverageFiber} g fibre/giorno</span>
+            </div>
+            <div className="print-preview-days">
+              {days.map((day, dayNumber) => {
+                const dayIds = getDayIds(dayNumber);
+                return (
+                  <section key={day.label} className="print-day">
+                    <header>
+                      <b>{day.label}</b>
+                      <span>
+                        {weeklyPlannedKcal[dayNumber]} kcal ·{" "}
+                        {weeklyPlannedFiber[dayNumber]} g fibre
+                      </span>
+                    </header>
+                    {dayIds.map((recipeId, slot) => {
+                      const key = `${dayNumber}-${slot}`;
+                      const recipe = recipeMap[recipeId];
+                      const ingredients = plannedIngredients(key, recipe);
+                      const mealMacros = calc(ingredients);
+                      return (
+                        <div className="print-meal" key={key}>
+                          <div className="print-meal-title">
+                            <span>{SLOT_LABELS[slot]}</span>
+                            <b>{recipe.name}</b>
+                            <i>{round(mealMacros.kcal)} kcal</i>
+                          </div>
+                          <div className="print-food-head" aria-hidden="true">
+                            <span>Alimento</span>
+                            <span>g</span>
+                            <span>kcal</span>
+                            <span>P</span>
+                            <span>C</span>
+                            <span>G</span>
+                          </div>
+                          {ingredients.map((ingredient, ingredientIndex) => {
+                            const nutrient = calc([ingredient]);
+                            return (
+                              <div
+                                className="print-food-row"
+                                key={`${ingredient.food}-${ingredientIndex}`}
+                              >
+                                <span>{ingredient.label || ingredient.food}</span>
+                                <b>{ingredient.grams}</b>
+                                <i>{round(nutrient.kcal)}</i>
+                                <i>{fmt(nutrient.protein)}</i>
+                                <i>{fmt(nutrient.carbs)}</i>
+                                <i>{fmt(nutrient.fat)}</i>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      );
+                    })}
+                  </section>
+                );
+              })}
+            </div>
+            <footer className="print-preview-actions">
+              <button onClick={() => setPrintPreviewOpen(false)}>Chiudi</button>
+              <button type="button" disabled title="Attivazione nella revisione di stampa">
+                Stampa
+              </button>
+            </footer>
           </article>
         </div>
       )}
