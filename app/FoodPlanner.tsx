@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.28";
+const VERSION = "1.18.29";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -1810,6 +1810,16 @@ const eggUnitsForItems = (items: RecipeIngredient[]) =>
     if (!food.includes("uovo") && !food.includes("uova")) return total;
     return total + item.grams / 50;
   }, 0);
+const vegetablePortionForItems = (items: RecipeIngredient[]) => {
+  const vegetablePattern = /zucchin|pomodor|spinac|broccol|cavol|carot|zucca|melanzan|finocch|asparag|bietol|radicch|rucola|insalat|fung|peperon|carciof|sedano|cetriol|barbabietol|fagiolin|verza|porro/i;
+  const leafyPattern = /spinac|bietol|rucola|insalat|radicch|cavolo nero|verza/i;
+  const vegetables = items.filter((item) => vegetablePattern.test(item.food));
+  const total = vegetables.reduce((sum, item) => sum + item.grams, 0);
+  const leafy = vegetables
+    .filter((item) => leafyPattern.test(item.food))
+    .reduce((sum, item) => sum + item.grams, 0);
+  return { total, leafy, adequate: total >= 200 || leafy >= 80 };
+};
 const WEEKLY_MAIN_ROTATION: WeeklyProteinFamily[] = [
   "legumi", "pesce", "carne-bianca", "uova", "legumi", "pesce", "latticini",
   "carne-bianca", "uova", "latticini", "legumi", "carne-rossa", "latticini", "uova",
@@ -12725,6 +12735,7 @@ export function FoodPlanner() {
                       : "",
                     !activeCategories.has("Contorno") ? "verdura" : "",
                   ].filter(Boolean);
+                  const vegetablePortion = vegetablePortionForItems(visibleIngredients);
                   return (
                     <article
                       className={`meal-card ${hasPartCards && !fullDishView ? "composed" : "detailed"} ${allowed ? "" : "blocked"} ${caution ? "caution" : ""}`}
@@ -12752,6 +12763,13 @@ export function FoodPlanner() {
                             Da completare: {balanceMissing.join(", ")}. Puoi cambiare o aggiungere un elemento.
                           </p>
                         )}
+                        {[2, 4].includes(i) &&
+                          vegetablePortion.total > 0 &&
+                          !vegetablePortion.adequate && (
+                            <p className="meal-balance-status">
+                              Verdure {round(vegetablePortion.total)} g: quota contenuta; puoi aumentarla verso 200 g, oppure 80 g se è solo verdura a foglia.
+                            </p>
+                          )}
                         {!fullDishView && (
                           <div className="dish-view-actions" onClick={(e) => e.stopPropagation()}>
                             <button

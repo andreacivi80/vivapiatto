@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.28"/);
+  assert.match(app, /VERSION = "1\.18\.29"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1440,4 +1440,11 @@ test("v1.18.28 permanently limits added oil in salmon and mackerel recipes", asy
   assert.match(pkg.scripts.test, /audit-fatty-fish-oil\.mjs/);
   assert.match(audit, /grams > 5/);
   assert.match(audit, /Olio da ridurre con salmone o sgombro/);
+});
+
+test("v1.18.29 evaluates an actual vegetable portion in lunch and dinner", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  assert.match(app, /const vegetablePortionForItems =/);
+  assert.match(app, /adequate: total >= 200 \|\| leafy >= 80/);
+  assert.match(app, /Verdure \{round\(vegetablePortion\.total\)\} g: quota contenuta/);
 });
