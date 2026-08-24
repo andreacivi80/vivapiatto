@@ -79,7 +79,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.17.9";
+const VERSION = "1.18.0";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -9203,7 +9203,101 @@ const inferRecipeSeasonMonths = (recipe: Recipe) =>
     ),
   ).sort((left, right) => left - right);
 
+const everydayLegumeRecipes: Recipe[] = [
+  {
+    id: "everyday-pasta-e-fagioli",
+    name: "Pasta e fagioli",
+    kicker: "Pranzo italiano semplice e completo",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    kind: "combination",
+    image: photo("recipe-pasta-beans-v1180"),
+    time: 30,
+    ingredients: [
+      { food: "Pasta di semola secca", grams: 70 },
+      { food: "Fagioli borlotti cotti", grams: 120 },
+      { food: "Passata di pomodoro", grams: 100 },
+      { food: "Carote crude", grams: 50 },
+      { food: "Sedano crudo", grams: 50 },
+      { food: "Olio extravergine", grams: 10 },
+    ],
+    parts: [
+      { category: "Carboidrato", food: "Pasta di semola secca", grams: 70, label: "Pasta corta · 70 g a crudo", image: photo("part-pasta-semolina-v11618") },
+      { category: "Proteina", food: "Fagioli borlotti cotti", grams: 120, label: "Borlotti cotti e sgocciolati · 120 g", image: photo("part-borlotti-cooked-v11654") },
+      { category: "Contorno", food: "Passata di pomodoro", grams: 100, label: "Passata di pomodoro · 100 g", image: photo("part-passata-v11652") },
+      { category: "Contorno", food: "Carote crude", grams: 50, label: "Carota · 50 g", image: photo("part-carrots-raw-v11512") },
+      { category: "Contorno", food: "Sedano crudo", grams: 50, label: "Sedano · 50 g", image: photo("part-celery-v1154") },
+      { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") },
+    ],
+    steps: ["Taglia finemente carota e sedano e falli ammorbidire con passata e poca acqua per 8 minuti.", "Aggiungi i borlotti risciacquati; schiacciane un terzo per rendere il fondo cremoso.", "Cuoci la pasta a parte, scolala al dente e termina la cottura nel fondo di fagioli. Completa con l'olio pesato."],
+    alternatives: ["Cannellini al posto dei borlotti", "Pasta integrale nella porzione proposta", "Trasportabile in contenitore termico"],
+  },
+  {
+    id: "everyday-rice-lentils",
+    name: "Riso integrale con lenticchie, carote e zucchine",
+    kicker: "Piatto vegetale pratico da casa o lavoro",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    kind: "combination",
+    image: photo("recipe-rice-lentils-v1180"),
+    time: 35,
+    ingredients: [{ food: "Riso integrale secco", grams: 70 }, { food: "Lenticchie cotte", grams: 150 }, { food: "Carote crude", grams: 100 }, { food: "Zucchine", grams: 150 }, { food: "Olio extravergine", grams: 10 }],
+    parts: [
+      { category: "Carboidrato", food: "Riso integrale secco", grams: 70, label: "Riso integrale · 70 g a crudo", image: photo("part-brown-rice-v11519") },
+      { category: "Proteina", food: "Lenticchie cotte", grams: 150, label: "Lenticchie cotte · 150 g", image: photo("part-lentils-v1141") },
+      { category: "Contorno", food: "Carote crude", grams: 100, label: "Carote · 100 g", image: photo("part-carrots-raw-v11512") },
+      { category: "Contorno", food: "Zucchine", grams: 150, label: "Zucchine · 150 g", image: photo("part-zucchini-v8") },
+      { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") },
+    ],
+    steps: ["Sciacqua il riso e cuocilo secondo la confezione.", "Taglia carote e zucchine a cubetti e cuocile in padella antiaderente con poca acqua per 10-12 minuti.", "Risciacqua le lenticchie, uniscile a riso e verdure e completa con olio misurato, limone ed erbe."],
+    alternatives: ["Riso basmati nella quantità equivalente proposta", "Ceci o cannellini al posto delle lenticchie", "Buono anche freddo al lavoro"],
+  },
+  {
+    id: "everyday-farro-chickpeas",
+    name: "Farro con ceci, pomodorini e cetriolo",
+    kicker: "Insalata completa da preparare in anticipo",
+    course: "Piatto unico",
+    cuisine: "Mediterraneo",
+    kind: "combination",
+    image: photo("recipe-farro-chickpeas-v1180"),
+    time: 25,
+    ingredients: [{ food: "Farro cotto", grams: 175 }, { food: "Ceci cotti", grams: 120 }, { food: "Pomodorini", grams: 125 }, { food: "Cetrioli", grams: 125 }, { food: "Olio extravergine", grams: 10 }],
+    parts: [
+      { category: "Carboidrato", food: "Farro cotto", grams: 175, label: "Farro cotto · da circa 70 g secco", image: photo("farro") },
+      { category: "Proteina", food: "Ceci cotti", grams: 120, label: "Ceci cotti e sgocciolati · 120 g", image: photo("part-chickpeas-v8") },
+      { category: "Contorno", food: "Pomodorini", grams: 125, label: "Pomodorini · 125 g", image: photo("part-tomatoes-v8") },
+      { category: "Contorno", food: "Cetrioli", grams: 125, label: "Cetriolo · 125 g", image: photo("part-cucumber-v8") },
+      { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") },
+    ],
+    steps: ["Cuoci il farro seguendo la confezione, scolalo e raffreddalo.", "Risciacqua i ceci e taglia pomodorini e cetriolo.", "Unisci tutto e condisci con olio pesato, limone, basilico e pepe; conserva refrigerato."],
+    alternatives: ["Orzo al posto del farro", "Lenticchie al posto dei ceci", "Trasportabile in contenitore refrigerato"],
+  },
+  {
+    id: "everyday-mixed-legume-salad",
+    name: "Insalata di ceci, cannellini e lenticchie",
+    kicker: "Piatto vegetale fresco con tre legumi",
+    course: "Piatto unico",
+    cuisine: "Mediterraneo",
+    kind: "combination",
+    image: photo("recipe-mixed-legumes-v1180"),
+    time: 12,
+    ingredients: [{ food: "Ceci cotti", grams: 80 }, { food: "Fagioli cannellini cotti", grams: 80 }, { food: "Lenticchie cotte", grams: 80 }, { food: "Pomodorini", grams: 100 }, { food: "Carote crude", grams: 80 }, { food: "Sedano crudo", grams: 60 }, { food: "Olio extravergine", grams: 10 }],
+    parts: [
+      { category: "Proteina", food: "Ceci cotti", grams: 80, label: "Ceci cotti · 80 g", image: photo("part-chickpeas-v8") },
+      { category: "Proteina", food: "Fagioli cannellini cotti", grams: 80, label: "Cannellini cotti · 80 g", image: photo("part-cannellini-v1141") },
+      { category: "Proteina", food: "Lenticchie cotte", grams: 80, label: "Lenticchie cotte · 80 g", image: photo("part-lentils-v1141") },
+      { category: "Contorno", food: "Pomodorini", grams: 100, label: "Pomodorini · 100 g", image: photo("part-tomatoes-v8") },
+      { category: "Contorno", food: "Carote crude", grams: 80, label: "Carote · 80 g", image: photo("part-carrots-raw-v11512") },
+      { category: "Contorno", food: "Sedano crudo", grams: 60, label: "Sedano · 60 g", image: photo("part-celery-v1154") },
+      { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") },
+    ],
+    steps: ["Risciacqua molto bene tutti i legumi cotti e scolali.", "Taglia pomodorini, carota e sedano in pezzi piccoli.", "Unisci, condisci con olio misurato, aceto o limone ed erbe; conserva al fresco fino al pasto."],
+    alternatives: ["Usa due soli legumi mantenendo il peso totale proposto", "Aggiungi una quota di pane o cereale dalla sezione carboidrati se prevista dal piano", "Trasportabile refrigerata"],
+  },
+];
+
 const rawRecipes: Recipe[] = [
+  ...everydayLegumeRecipes,
   ...simpleBreakfasts,
   ...attachmentBaseBreakfasts,
   ...attachmentBreakfastsC37C44,

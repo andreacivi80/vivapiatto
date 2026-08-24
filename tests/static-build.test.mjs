@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.17\.9"/);
+  assert.match(app, /VERSION = "1\.18\.0"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1111,4 +1111,20 @@ test("v1.17.9 recognises practical cooking methods in recipe metadata", async ()
   assert.match(app, /\["In umido", \/in umido\|stufat\/\]/);
   assert.match(app, /name: "Orata al cartoccio con verdure e pane"/);
   assert.match(app, /Cuoci il salmone in forno o friggitrice ad aria/);
+});
+
+test("v1.18.0 adds four complete everyday legume dishes with faithful photos", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  const required = [
+    ["Pasta e fagioli", "recipe-pasta-beans-v1180"],
+    ["Riso integrale con lenticchie, carote e zucchine", "recipe-rice-lentils-v1180"],
+    ["Farro con ceci, pomodorini e cetriolo", "recipe-farro-chickpeas-v1180"],
+    ["Insalata di ceci, cannellini e lenticchie", "recipe-mixed-legumes-v1180"],
+  ];
+  for (const [name, asset] of required) {
+    assert.match(app, new RegExp(name));
+    assert.match(app, new RegExp('photo\\("' + asset + '"\\)'));
+    await access(new URL("../dist/food/" + asset + ".png", import.meta.url));
+  }
+  assert.match(app, /\.\.\.everydayLegumeRecipes/);
 });
