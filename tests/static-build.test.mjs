@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.32"/);
+  assert.match(app, /VERSION = "1\.18\.33"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1470,4 +1470,13 @@ test("v1.18.32 treats egg recipes as weekly occasions and rebalances main meals 
   assert.match(app, /const nonMainEggMeals = days\.reduce/);
   assert.match(app, /const eggMainTarget = Math\.max\(0, 3 - nonMainEggMeals\)/);
   assert.match(app, /const eggReplacements: WeeklyProteinFamily\[\] = \["pesce", "salumi"\]/);
+});
+
+test("v1.18.33 caps automatic whole-egg breakfasts while preserving manual freedom", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  assert.match(app, /let plannedWholeEggBreakfasts = 0/);
+  assert.match(app, /plannedWholeEggBreakfasts >= 1/);
+  assert.match(app, /if \(hasWholeEgg\(breakfast\.ingredients\)\) plannedWholeEggBreakfasts \+= 1/);
+  assert.match(app, /const otherWholeEggBreakfasts = days\.reduce/);
+  assert.match(app, /const checkinBreakfastPool =/);
 });

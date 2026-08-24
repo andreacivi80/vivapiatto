@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.32";
+const VERSION = "1.18.33";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -11253,6 +11253,7 @@ export function FoodPlanner() {
       const next = { ...current };
       const usedRecipes = new Set<string>();
       const usedProteinSignatures = new Set<string>();
+      let plannedWholeEggBreakfasts = 0;
       const chooseMain = (
         pool: Recipe[],
         family: WeeklyProteinFamily,
@@ -11304,7 +11305,17 @@ export function FoodPlanner() {
       profileDays.forEach((day) => {
         const profileTarget = day === dayIndex ? plannedCalories : calories;
         const offset = profileSeed + day;
-        const breakfast = closestForSlot(breakfasts, 0, profileTarget * shares[0], offset);
+        const breakfastPool =
+          plannedWholeEggBreakfasts >= 1
+            ? breakfasts.filter((recipe) => !hasWholeEgg(recipe.ingredients))
+            : breakfasts;
+        const breakfast = closestForSlot(
+          breakfastPool.length ? breakfastPool : breakfasts,
+          0,
+          profileTarget * shares[0],
+          offset,
+        );
+        if (hasWholeEgg(breakfast.ingredients)) plannedWholeEggBreakfasts += 1;
         const morningSnackPool = isSmoothieRecipe(breakfast)
           ? snacks.filter((recipe) => !isSmoothieRecipe(recipe))
           : snacks;
@@ -11470,7 +11481,22 @@ export function FoodPlanner() {
           ? 1
           : 0) +
       profileSeed;
-    const breakfast = breakfasts[(dayIndex + offset) % breakfasts.length];
+    const otherWholeEggBreakfasts = days.reduce((total, _, day) => {
+      if (day === dayIndex) return total;
+      const recipe = recipeMap[getDayIds(day)[0]];
+      return (
+        total +
+        Number(Boolean(recipe) && hasWholeEgg(plannedIngredients(String(day) + "-0", recipe)))
+      );
+    }, 0);
+    const checkinBreakfastPool =
+      otherWholeEggBreakfasts >= 1
+        ? breakfasts.filter((recipe) => !hasWholeEgg(recipe.ingredients))
+        : breakfasts;
+    const breakfast =
+      (checkinBreakfastPool.length ? checkinBreakfastPool : breakfasts)[
+        (dayIndex + offset) % (checkinBreakfastPool.length || breakfasts.length)
+      ];
     const morningSnackPool = isSmoothieRecipe(breakfast)
       ? snacks.filter((recipe) => !isSmoothieRecipe(recipe))
       : snacks;
