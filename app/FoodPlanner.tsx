@@ -75,7 +75,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.78";
+const VERSION = "1.16.79";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -8411,7 +8411,7 @@ const attachmentSnacksS14S26: Recipe[] = [
     course: "Spuntino",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-snack-v1121"),
+    image: photo("recipe-s20-greek-yogurt-raspberries-v11679"),
     time: 3,
     ingredients: [
       { food: "Yogurt greco 2%", grams: 150 },
@@ -8427,7 +8427,7 @@ const attachmentSnacksS14S26: Recipe[] = [
     course: "Spuntino",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-snack-v1121"),
+    image: photo("recipe-s21-cottage-tomatoes-rice-cakes-v11679"),
     time: 5,
     ingredients: [
       { food: "Fiocchi di latte", grams: 80 },
@@ -8444,7 +8444,7 @@ const attachmentSnacksS14S26: Recipe[] = [
     course: "Spuntino",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-snack-v1121"),
+    image: photo("recipe-s22-apple-hazelnuts-chocolate-v11679"),
     time: 2,
     ingredients: [
       { food: "Mela", grams: 150 },
@@ -8461,7 +8461,7 @@ const attachmentSnacksS14S26: Recipe[] = [
     course: "Spuntino",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-snack-v1121"),
+    image: photo("recipe-s23-fennel-herb-ricotta-v11679"),
     time: 7,
     ingredients: [
       { food: "Finocchi crudi", grams: 200 },
@@ -8477,7 +8477,7 @@ const attachmentSnacksS14S26: Recipe[] = [
     course: "Spuntino",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-snack-v1121"),
+    image: photo("recipe-s24-pear-almond-butter-v11679"),
     time: 2,
     ingredients: [
       { food: "Pera", grams: 150 },
@@ -8493,7 +8493,7 @@ const attachmentSnacksS14S26: Recipe[] = [
     course: "Spuntino",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-snack-v1121"),
+    image: photo("recipe-s25-skyr-banana-pumpkin-v11679"),
     time: 3,
     ingredients: [
       { food: "Skyr bianco", grams: 125 },
@@ -8510,7 +8510,7 @@ const attachmentSnacksS14S26: Recipe[] = [
     course: "Spuntino",
     cuisine: "Mediterraneo",
     kind: "combination",
-    image: photo("moment-snack-v1121"),
+    image: photo("recipe-s26-hummus-tomatoes-cucumber-v11679"),
     time: 5,
     ingredients: [
       { food: "Hummus di ceci", grams: 40 },

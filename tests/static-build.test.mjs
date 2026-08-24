@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.78"/);
+  assert.match(app, /VERSION = "1\.16\.79"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -737,4 +737,22 @@ test("v1.16.78 gives the next snack matrix block faithful recipe photos", async 
     assert.match(app, new RegExp('id: "' + id + '"[\\s\\S]{0,500}image: photo\\("' + asset + '"\\)'));
     await access(new URL("../dist/food/" + asset + ".png", import.meta.url));
   }
+});
+
+test("v1.16.79 completes faithful photos for the remaining snack matrix", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const assets = [
+    ["matrix-s20-greek-yogurt-raspberries", "recipe-s20-greek-yogurt-raspberries-v11679"],
+    ["matrix-s21-cottage-tomatoes-rice-cakes", "recipe-s21-cottage-tomatoes-rice-cakes-v11679"],
+    ["matrix-s22-apple-hazelnuts-dark-chocolate", "recipe-s22-apple-hazelnuts-chocolate-v11679"],
+    ["matrix-s23-fennel-herb-ricotta", "recipe-s23-fennel-herb-ricotta-v11679"],
+    ["matrix-s24-pear-almond-butter", "recipe-s24-pear-almond-butter-v11679"],
+    ["matrix-s25-skyr-banana-pumpkin-seeds", "recipe-s25-skyr-banana-pumpkin-v11679"],
+    ["matrix-s26-hummus-tomatoes-cucumber", "recipe-s26-hummus-tomatoes-cucumber-v11679"],
+  ];
+  for (const [id, asset] of assets) {
+    assert.match(app, new RegExp('id: "' + id + '"[\\s\\S]{0,500}image: photo\\("' + asset + '"\\)'));
+    await access(new URL("../dist/food/" + asset + ".png", import.meta.url));
+  }
+  assert.equal((app.match(/image: photo\("moment-snack-v1121"\)/g) || []).length, 0);
 });
