@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.0"/);
+  assert.match(app, /VERSION = "1\.18\.1"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1127,4 +1127,23 @@ test("v1.18.0 adds four complete everyday legume dishes with faithful photos", a
     await access(new URL("../dist/food/" + asset + ".png", import.meta.url));
   }
   assert.match(app, /\.\.\.everydayLegumeRecipes/);
+});
+
+test("v1.18.1 completes missing everyday condiments, soups, cheese and baked turkey", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  const required = [
+    ["Petto di tacchino al forno", "part-turkey-baked-v1181"],
+    ["Formaggio fresco magro", "part-low-fat-fresh-cheese-v1181"],
+    ["Succo di limone", "part-lemon-juice-v1181"],
+    ["Aceto di vino", "part-wine-vinegar-v1181"],
+    ["Aceto balsamico", "part-balsamic-vinegar-v1181"],
+    ["Sale iodato", "part-iodized-salt-v1181"],
+    ["Passato di verdure", "part-vegetable-passato-v1181"],
+    ["Vellutata di verdure senza panna", "part-vegetable-vellutata-v1181"],
+  ];
+  for (const [food, asset] of required) {
+    assert.match(app, new RegExp(food));
+    assert.match(app, new RegExp('photo\\("' + asset + '"\\)'));
+    await access(new URL("../dist/food/" + asset + ".png", import.meta.url));
+  }
 });

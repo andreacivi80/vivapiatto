@@ -79,7 +79,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.0";
+const VERSION = "1.18.1";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -1007,6 +1007,14 @@ const foods: Record<string, Food> = {
     source: "CREA",
   },  "Gamberi cotti": { kcal: 99, protein: 24, carbs: 0.2, fat: 0.3, fiber: 0, source: "USDA" },
   "Petto di tacchino cotto alla piastra": { kcal: 135, protein: 29, carbs: 0, fat: 1.8, fiber: 0, source: "USDA" },
+  "Petto di tacchino al forno": { kcal: 135, protein: 29, carbs: 0, fat: 1.8, fiber: 0, source: "USDA" },
+  "Formaggio fresco magro": { kcal: 150, protein: 9, carbs: 4, fat: 10.5, fiber: 0, source: "ETICHETTA" },
+  "Succo di limone": { kcal: 22, protein: 0.4, carbs: 6.9, fat: 0.2, fiber: 0.3, source: "USDA" },
+  "Aceto di vino": { kcal: 18, protein: 0, carbs: 0.6, fat: 0, fiber: 0, source: "USDA" },
+  "Aceto balsamico": { kcal: 88, protein: 0.5, carbs: 17, fat: 0, fiber: 0, source: "USDA" },
+  "Sale iodato": { kcal: 0, protein: 0, carbs: 0, fat: 0, fiber: 0, source: "ETICHETTA" },
+  "Passato di verdure": { kcal: 35, protein: 1.5, carbs: 6, fat: 0.5, fiber: 2, source: "RICETTA CALCOLATA" },
+  "Vellutata di verdure senza panna": { kcal: 42, protein: 1.6, carbs: 7.5, fat: 0.7, fiber: 2.2, source: "RICETTA CALCOLATA" },
   "Riso rosso integrale cotto": { kcal: 111, protein: 2.6, carbs: 23, fat: 0.9, fiber: 1.8, source: "ETICHETTA" },
   "Pasta di lenticchie secca": { kcal: 330, protein: 24, carbs: 50, fat: 2, fiber: 8, source: "ETICHETTA" },
   "Cavolo nero cotto": { kcal: 35, protein: 3, carbs: 4.4, fat: 0.6, fiber: 4.1, source: "CREA" },
@@ -6020,6 +6028,7 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     { category: "Proteina", food: "Hummus di barbabietola", grams: 40, label: "Hummus di barbabietola", image: photo("part-beet-hummus-v11513") },
     { category: "Proteina", food: "Gamberi cotti", grams: 150, label: "Gamberi cotti", image: photo("part-shrimp-v11514") },
     { category: "Proteina", food: "Petto di tacchino cotto alla piastra", grams: 100, label: "Petto di tacchino alla piastra", image: photo("part-turkey-grilled-v11514") },
+    { category: "Proteina", food: "Petto di tacchino al forno", grams: 100, label: "Petto di tacchino al forno · 100 g", image: photo("part-turkey-baked-v1181") },
     { category: "Proteina", food: "Coniglio cotto in umido", grams: 100, label: "Coniglio cotto in umido", image: photo("part-rabbit-v11515") },
     { category: "Proteina", food: "Tofu alla piastra", grams: 100, label: "Tofu alla piastra", image: photo("part-tofu-v11515") },
     { category: "Proteina", food: "Edamame cotti", grams: 80, label: "Edamame cotti", image: photo("part-edamame-v11634") },
@@ -6053,6 +6062,8 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     { category: "Contorno", food: "Peperoni crudi", grams: 200, label: "Peperoni crudi · 200 g", image: photo("part-peppers-raw-v11522") },
     { category: "Contorno", food: "Peperoni cotti senza olio", grams: 200, label: "Peperoni cotti senza olio · 200 g", image: photo("part-peppers-cooked-v11522") },
     { category: "Contorno", food: "Minestrone cotto", grams: 350, label: "Minestrone cotto · 350 g", image: photo("recipe-minestrone-v11522") },
+    { category: "Contorno", food: "Passato di verdure", grams: 300, label: "Passato di verdure · 300 g", image: photo("part-vegetable-passato-v1181") },
+    { category: "Contorno", food: "Vellutata di verdure senza panna", grams: 300, label: "Vellutata di verdure senza panna · 300 g", image: photo("part-vegetable-vellutata-v1181") },
     { category: "Contorno", food: "Cipolle crude", grams: 100, label: "Cipolle · 100 g a crudo", image: photo("part-onions-v11519") },
     { category: "Contorno", food: "Carciofi cotti bolliti", grams: 200, label: "Carciofi cotti bolliti · 200 g", image: photo("part-artichokes-v11519") },
     {
@@ -6200,6 +6211,7 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     },
   ],
   Latticino: [
+    { category: "Latticino", food: "Formaggio fresco magro", grams: 80, label: "Formaggio fresco magro · 80 g", image: photo("part-low-fat-fresh-cheese-v1181") },
     { category: "Latticino", food: "Mozzarella vaccina", grams: 100, label: "Mozzarella vaccina · 100 g", image: photo("part-mozzarella-v11522") },
     { category: "Latticino", food: "Mozzarella light", grams: 100, label: "Mozzarella light · 100 g", image: photo("part-mozzarella-light-v11522") },
     { category: "Latticino", food: "Yogurt greco 0%", grams: 150, label: "Yogurt greco 0% · 150 g", image: photo("part-greek-yogurt-zero-v11522") },
@@ -6447,6 +6459,10 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     { category: "Frutta", food: "Melagrana fresca", grams: 150, label: "Melagrana · parte edibile", image: photo("part-pomegranate-v1160") },
   ],
   Extra: [
+    { category: "Extra", food: "Succo di limone", grams: 15, label: "Succo di limone · 15 g", image: photo("part-lemon-juice-v1181") },
+    { category: "Extra", food: "Aceto di vino", grams: 10, label: "Aceto di vino · 10 g", image: photo("part-wine-vinegar-v1181") },
+    { category: "Extra", food: "Aceto balsamico", grams: 10, label: "Aceto balsamico · 10 g", image: photo("part-balsamic-vinegar-v1181") },
+    { category: "Extra", food: "Sale iodato", grams: 1, label: "Sale iodato · 1 g", image: photo("part-iodized-salt-v1181") },
     {
       category: "Extra",
       food: "Salsa di tamarindo",
@@ -7015,9 +7031,9 @@ type MainBaseFamily = "pane" | "pasta" | "riso" | "tubero" | "altro";
 const mainCompatibilityMatrix: Record<MainBaseFamily, string[]> = {
   pane: ["Fesa di tacchino", "Bresaola", "Tonno al naturale sgocciolato", "Prosciutto cotto", "Feta", "Uova sode", "Burger vegetale di soia"],
   pasta: ["Tonno al naturale sgocciolato", "Salmone cotto", "Feta", "Ceci cotti", "Piselli cotti", "Lenticchie cotte", "Fagioli cannellini cotti"],
-  riso: ["Petto di pollo cotto", "Petto di pollo alla griglia", "Petto di pollo lesso", "Petto di pollo al vapore", "Petto di pollo arrosto", "Salmone cotto", "Merluzzo cotto", "Orata cotta", "Tonno al naturale sgocciolato", "Uova sode", "Uova strapazzate o in frittata", "Ceci cotti", "Piselli cotti", "Lenticchie cotte", "Fagioli cannellini cotti"],
-  tubero: ["Bistecca di manzo · peso a crudo", "Bistecca di vitello · peso a crudo", "Lonza di maiale · peso a crudo", "Bistecca di cavallo magra · peso a crudo", "Roast beef magro", "Carpaccio di manzo · peso a crudo", "Petto di pollo cotto", "Petto di pollo alla griglia", "Petto di pollo lesso", "Petto di pollo al vapore", "Merluzzo cotto", "Orata cotta", "Salmone cotto", "Uova sode", "Burger vegetale di soia"],
-  altro: ["Petto di pollo cotto", "Petto di pollo alla griglia", "Petto di pollo lesso", "Petto di pollo al vapore", "Roast beef magro", "Carpaccio di manzo · peso a crudo", "Merluzzo cotto", "Orata cotta", "Salmone cotto", "Uova sode", "Uova strapazzate o in frittata", "Ceci cotti", "Lenticchie cotte", "Fagioli cannellini cotti", "Burger vegetale di soia"],
+  riso: ["Petto di pollo cotto", "Petto di pollo alla griglia", "Petto di pollo lesso", "Petto di pollo al vapore", "Petto di pollo arrosto", "Petto di tacchino al forno", "Salmone cotto", "Merluzzo cotto", "Orata cotta", "Tonno al naturale sgocciolato", "Uova sode", "Uova strapazzate o in frittata", "Ceci cotti", "Piselli cotti", "Lenticchie cotte", "Fagioli cannellini cotti"],
+  tubero: ["Bistecca di manzo · peso a crudo", "Bistecca di vitello · peso a crudo", "Lonza di maiale · peso a crudo", "Bistecca di cavallo magra · peso a crudo", "Roast beef magro", "Carpaccio di manzo · peso a crudo", "Petto di pollo cotto", "Petto di pollo alla griglia", "Petto di pollo lesso", "Petto di pollo al vapore", "Petto di tacchino al forno", "Merluzzo cotto", "Orata cotta", "Salmone cotto", "Uova sode", "Burger vegetale di soia"],
+  altro: ["Petto di pollo cotto", "Petto di pollo alla griglia", "Petto di pollo lesso", "Petto di pollo al vapore", "Petto di tacchino al forno", "Roast beef magro", "Carpaccio di manzo · peso a crudo", "Merluzzo cotto", "Orata cotta", "Salmone cotto", "Uova sode", "Uova strapazzate o in frittata", "Ceci cotti", "Lenticchie cotte", "Fagioli cannellini cotti", "Burger vegetale di soia"],
 };
 const mainBaseFamily = (food: string): MainBaseFamily => {
   if (["Pane", "Cracker", "Grissini"].some((term) => food.includes(term))) return "pane";
