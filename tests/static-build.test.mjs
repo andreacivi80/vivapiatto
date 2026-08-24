@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.77"/);
+  assert.match(app, /VERSION = "1\.16\.78"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -719,4 +719,22 @@ test("v1.16.77 completes generic breakfast imagery and starts faithful snack ima
     await access(new URL("../dist/food/" + asset + ".png", import.meta.url));
   }
   assert.equal((app.match(/id: "matrix-s02-yogurt-blueberries"/g) || []).length, 1);
+});
+
+test("v1.16.78 gives the next snack matrix block faithful recipe photos", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const assets = [
+    ["matrix-s08-orange-pistachios", "recipe-s08-orange-pistachios-v11678"],
+    ["matrix-s09-unsweetened-smoothie", "recipe-s09-yogurt-banana-smoothie-v11678"],
+    ["matrix-s10-dark-chocolate-pear-walnuts", "recipe-s10-pear-chocolate-walnuts-v11678"],
+    ["matrix-s14-rice-cakes-ricotta-tomatoes", "recipe-s14-rice-cakes-ricotta-tomatoes-v11678"],
+    ["matrix-s15-hummus-cucumber-carrots", "recipe-s15-hummus-cucumber-carrots-v11678"],
+    ["matrix-s16-yogurt-plums-sunflower", "recipe-s16-yogurt-plums-sunflower-v11678"],
+    ["matrix-s17-bread-cottage-cucumber", "recipe-s17-bread-cottage-cucumber-v11678"],
+    ["matrix-s18-pineapple-kefir-chia", "recipe-s18-pineapple-kefir-chia-v11678"],
+  ];
+  for (const [id, asset] of assets) {
+    assert.match(app, new RegExp('id: "' + id + '"[\\s\\S]{0,500}image: photo\\("' + asset + '"\\)'));
+    await access(new URL("../dist/food/" + asset + ".png", import.meta.url));
+  }
 });

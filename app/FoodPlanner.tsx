@@ -75,7 +75,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.77";
+const VERSION = "1.16.78";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -7673,7 +7673,7 @@ const attachmentBaseSnacks: Recipe[] = [
     course: "Spuntino",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-snack-v1121"),
+    image: photo("recipe-s08-orange-pistachios-v11678"),
     time: 2,
     ingredients: [{ food: "Arancia", grams: 150 }, { food: "Pistacchi", grams: 15 }],
     steps: ["Sbuccia l'arancia e accompagna con pistacchi non salati già pesati."],
@@ -7686,7 +7686,7 @@ const attachmentBaseSnacks: Recipe[] = [
     course: "Spuntino",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-snack-v1121"),
+    image: photo("recipe-s09-yogurt-banana-smoothie-v11678"),
     time: 4,
     ingredients: [{ food: "Yogurt greco 2%", grams: 125 }, { food: "Banana", grams: 150 }],
     steps: ["Frulla yogurt e banana con poca acqua fredda.", "Non aggiungere zucchero; registra eventuali ingredienti extra."],
@@ -7699,7 +7699,7 @@ const attachmentBaseSnacks: Recipe[] = [
     course: "Spuntino",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-snack-v1121"),
+    image: photo("recipe-s10-pear-chocolate-walnuts-v11678"),
     time: 2,
     ingredients: [
       { food: "Cioccolato fondente 70%", grams: 10 },
@@ -8326,7 +8326,7 @@ const attachmentSnacksS14S26: Recipe[] = [
     course: "Spuntino",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-snack-v1121"),
+    image: photo("recipe-s14-rice-cakes-ricotta-tomatoes-v11678"),
     time: 5,
     ingredients: [
       { food: "Gallette di riso integrale", grams: 30 },
@@ -8343,7 +8343,7 @@ const attachmentSnacksS14S26: Recipe[] = [
     course: "Spuntino",
     cuisine: "Mediterraneo",
     kind: "combination",
-    image: photo("moment-snack-v1121"),
+    image: photo("recipe-s15-hummus-cucumber-carrots-v11678"),
     time: 7,
     ingredients: [
       { food: "Hummus di ceci", grams: 40 },
@@ -8360,7 +8360,7 @@ const attachmentSnacksS14S26: Recipe[] = [
     course: "Spuntino",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-snack-v1121"),
+    image: photo("recipe-s16-yogurt-plums-sunflower-v11678"),
     time: 3,
     ingredients: [
       { food: "Yogurt bianco", grams: 125 },
@@ -8377,7 +8377,7 @@ const attachmentSnacksS14S26: Recipe[] = [
     course: "Spuntino",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-snack-v1121"),
+    image: photo("recipe-s17-bread-cottage-cucumber-v11678"),
     time: 5,
     ingredients: [
       { food: "Pane integrale", grams: 40 },
@@ -8394,7 +8394,7 @@ const attachmentSnacksS14S26: Recipe[] = [
     course: "Spuntino",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-snack-v1121"),
+    image: photo("recipe-s18-pineapple-kefir-chia-v11678"),
     time: 3,
     ingredients: [
       { food: "Kefir bianco magro", grams: 125 },
