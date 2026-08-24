@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.30"/);
+  assert.match(app, /VERSION = "1\.18\.31"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1456,4 +1456,11 @@ test("v1.18.30 shows the planned daily fruit and vegetable quantity", async () =
   assert.match(app, /produce: s\.produce \+ produceGramsForItems\(ingredients\)/);
   assert.match(app, /frutta \+ verdura · riferimento pratico 400 g/);
   assert.match(css, /\.produce-status/);
+});
+
+test("v1.18.31 never reloads a newer client toward an older queued Pages release", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  assert.match(app, /const isNewerRelease =/);
+  assert.match(app, /isNewerRelease\(release\.version, VERSION\)/);
+  assert.doesNotMatch(app, /release\.version !== VERSION/);
 });
