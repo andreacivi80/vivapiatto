@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.31";
+const VERSION = "1.18.32";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -1819,12 +1819,8 @@ const proteinFamilyForItems = (items: RecipeIngredient[]): WeeklyProteinFamily =
   return "altro";
 };
 const recipeProteinFamily = (recipe: Recipe) => proteinFamilyForItems(recipe.parts || recipe.ingredients);
-const eggUnitsForItems = (items: RecipeIngredient[]) =>
-  items.reduce((total, item) => {
-    const food = item.food.toLowerCase();
-    if (!food.includes("uovo") && !food.includes("uova")) return total;
-    return total + item.grams / 50;
-  }, 0);
+const hasWholeEgg = (items: RecipeIngredient[]) =>
+  items.some((item) => /uovo|uova/i.test(item.food) && item.grams > 0);
 const vegetablePortionForItems = (items: RecipeIngredient[]) => {
   const vegetablePattern = /zucchin|pomodor|spinac|broccol|cavol|carot|zucca|melanzan|finocch|asparag|bietol|radicch|rucola|insalat|fung|peperon|carciof|sedano|cetriol|barbabietol|fagiolin|verza|porro/i;
   const leafyPattern = /spinac|bietol|rucola|insalat|radicch|cavolo nero|verza/i;
@@ -11762,7 +11758,6 @@ export function FoodPlanner() {
       Formaggi: 0,
       Salumi: 0,
     };
-    let weeklyEggUnits = 0;
     days.forEach((_, day) => {
       getDayIds(day).forEach((id, slot) => {
         if (!isActiveMealSlot(slot)) return;
@@ -11772,7 +11767,7 @@ export function FoodPlanner() {
         const items = completed[key]
           ? actualIngredients(key, recipe)
           : plannedIngredients(key, recipe);
-        weeklyEggUnits += eggUnitsForItems(items);
+        if (hasWholeEgg(items)) counts.Uova += 1;
         if (slot !== 2 && slot !== 4) return;
         const family = proteinFamilyForItems(items);
         if (family === "pesce") counts.Pesce += 1;
@@ -11783,7 +11778,6 @@ export function FoodPlanner() {
         if (family === "salumi") counts.Salumi += 1;
       });
     });
-    counts.Uova = Math.round(weeklyEggUnits);
     return counts;
   };  const weeklyCounts = weeklyProteinCounts();
   const weeklyPlannedKcal = days.map((_, day) =>
@@ -11817,7 +11811,7 @@ export function FoodPlanner() {
     { label: "Legumi e vegetali", target: "3", min: 3, max: 3, count: weeklyCounts["Legumi e vegetali"] },
     { label: "Carne bianca", target: "1–2", min: 1, max: 2, count: weeklyCounts["Carne bianca"] },
     { label: "Carne rossa", target: "0–1", min: 0, max: 1, count: weeklyCounts["Carne rossa"] },
-    { label: "Uova", target: "3", min: 3, max: 3, count: weeklyCounts.Uova },
+    { label: "Uova", target: "2–4", min: 2, max: 4, count: weeklyCounts.Uova },
     { label: "Formaggi", target: "2–3", min: 2, max: 3, count: weeklyCounts.Formaggi },
     { label: "Salumi", target: "0–1", min: 0, max: 1, count: weeklyCounts.Salumi },
   ].map((item) => ({
@@ -11834,7 +11828,29 @@ export function FoodPlanner() {
     .filter((family, index, sequence) => index > 0 && family !== "altro" && family === sequence[index - 1])
     .length;
   const rebalanceWeeklyProteinRotation = () => {
-    const requestedFamilies = WEEKLY_MAIN_ROTATION;
+    const nonMainEggMeals = days.reduce(
+      (total, _, day) =>
+        total +
+        [0, 1, 3].filter((slot) => {
+          if (!isActiveMealSlot(slot)) return false;
+          const key = `${day}-${slot}`;
+          return hasWholeEgg(plannedIngredients(key, recipeMap[getDayIds(day)[slot]]));
+        }).length,
+      0,
+    );
+    let retainedEggMains = 0;
+    let replacementIndex = 0;
+    const eggMainTarget = Math.max(0, 3 - nonMainEggMeals);
+    const eggReplacements: WeeklyProteinFamily[] = ["pesce", "salumi"];
+    const requestedFamilies = WEEKLY_MAIN_ROTATION.map((family) => {
+      if (family !== "uova" || retainedEggMains < eggMainTarget) {
+        if (family === "uova") retainedEggMains += 1;
+        return family;
+      }
+      const replacement = eggReplacements[replacementIndex];
+      replacementIndex += 1;
+      return replacement || family;
+    });
     const mainSlots = days.flatMap((_, day) => [2, 4].map((slot) => ({ day, slot })));
     const used = new Set<string>();
     const usedProteinSignatures = new Set<string>();

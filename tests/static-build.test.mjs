@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.31"/);
+  assert.match(app, /VERSION = "1\.18\.32"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1418,11 +1418,10 @@ test("v1.18.25 declares nutrition variability and blocks prohibited health claim
   assert.match(pkg.scripts.test, /audit-copy-safety\.mjs/);
 });
 
-test("v1.18.26 counts whole eggs from every active meal in the weekly rotation", async () => {
+test("v1.18.26 counts whole-egg meals from every active slot in the weekly rotation", async () => {
   const app = await readFile("app/FoodPlanner.tsx", "utf8");
-  assert.match(app, /const eggUnitsForItems =/);
-  assert.match(app, /weeklyEggUnits \+= eggUnitsForItems\(items\)/);
-  assert.match(app, /counts\.Uova = Math\.round\(weeklyEggUnits\)/);
+  assert.match(app, /const hasWholeEgg =/);
+  assert.match(app, /if \(hasWholeEgg\(items\)\) counts\.Uova \+= 1/);
   assert.match(app, /if \(!isActiveMealSlot\(slot\)\) return/);
 });
 
@@ -1463,4 +1462,12 @@ test("v1.18.31 never reloads a newer client toward an older queued Pages release
   assert.match(app, /const isNewerRelease =/);
   assert.match(app, /isNewerRelease\(release\.version, VERSION\)/);
   assert.doesNotMatch(app, /release\.version !== VERSION/);
+});
+
+test("v1.18.32 treats egg recipes as weekly occasions and rebalances main meals around breakfast eggs", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  assert.match(app, /label: "Uova", target: "2–4", min: 2, max: 4/);
+  assert.match(app, /const nonMainEggMeals = days\.reduce/);
+  assert.match(app, /const eggMainTarget = Math\.max\(0, 3 - nonMainEggMeals\)/);
+  assert.match(app, /const eggReplacements: WeeklyProteinFamily\[\] = \["pesce", "salumi"\]/);
 });
