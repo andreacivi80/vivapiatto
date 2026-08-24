@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.4"/);
+  assert.match(app, /VERSION = "1\.18\.5"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1188,4 +1188,15 @@ test("v1.18.4 assigns and displays recipe difficulty", async () => {
   assert.match(app, /const inferRecipeDifficulty/);
   assert.match(app, /difficulty: recipe\.difficulty \|\| inferRecipeDifficulty\(recipe\)/);
   assert.match(app, /Difficoltà: \{selected\.difficulty\}/);
+});
+
+test("v1.18.5 states how every recipe ingredient is weighed", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  const css = await readFile("app/globals.css", "utf8");
+  assert.match(app, /const ingredientWeightState = \(food: string\)/);
+  for (const state of ["sgocciolato", "cotto", "parte edibile", "pronto all’uso", "a crudo"]) {
+    assert.match(app, new RegExp(state));
+  }
+  assert.match(app, /peso \{ingredientWeightState\(x\.food\)\}/);
+  assert.match(css, /\.ingredient-weight-state/);
 });

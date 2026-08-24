@@ -80,7 +80,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.4";
+const VERSION = "1.18.5";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -9227,6 +9227,20 @@ const inferRecipeDifficulty = (recipe: Recipe): NonNullable<Recipe["difficulty"]
   if (recipe.time <= 35) return "Media";
   return "Impegnativa";
 };
+const ingredientWeightState = (food: string) => {
+  const value = food.toLowerCase();
+  if (/sgocciolat|in scatola|al naturale/.test(value)) return "sgocciolato";
+  if (/cott|bollit|less|arrostit|al forno|alla griglia|alla piastra|al vapore|saltat|stufat|strapazzat|frittat/.test(value)) {
+    return "cotto";
+  }
+  if (/fresc|crud|mela|pera|banana|arancia|mandarin|kiwi|uva|fragol|mirtill|ciliegi|albicocc|pesca|ananas|mango|papaya|anguria|melone/.test(value)) {
+    return "parte edibile";
+  }
+  if (/olio|aceto|succo|passata|bevanda|latte|yogurt|kefir|skyr|ricotta|formaggio|miele|confettura|crema/.test(value)) {
+    return "pronto all’uso";
+  }
+  return "a crudo";
+};
 const inferRecipeTags = (recipe: Recipe) => {
   const text = recipe.ingredients.map((item) => item.food).join(" ").toLowerCase();
   return [
@@ -13980,7 +13994,10 @@ export function FoodPlanner() {
               <ul className="ingredients editable">
                 {selectedIngredients.map((x, i) => (
                   <li key={i}>
-                    <span>{x.label || x.food}</span>
+                    <span>
+                      {x.label || x.food}
+                      <small className="ingredient-weight-state">peso {ingredientWeightState(x.food)}</small>
+                    </span>
                     {selectedMealKey ? (
                       <label>
                         <input
