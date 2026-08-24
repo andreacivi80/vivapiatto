@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.90"/);
+  assert.match(app, /VERSION = "1\.16\.91"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -905,4 +905,15 @@ test("v1.16.90 applies the saved household and cooking profile", async () => {
   assert.match(app, /matchesEquipment/);
   assert.match(app, /scale \* peopleCount/);
   assert.match(app, /Porzioni standard per adulti non applicabili ai minori/);
+});
+
+test("v1.16.91 exports the whole weekly plan", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  assert.match(app, /weeklyExportRows/);
+  assert.match(app, /Copia tutto/);
+  assert.match(app, /exportWeeklyCsv/);
+  assert.match(app, /exportWeeklyWord/);
+  assert.match(app, /window\.print\(\)/);
+  assert.match(css, /@media print/);
 });

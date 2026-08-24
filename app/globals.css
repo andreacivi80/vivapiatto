@@ -3480,6 +3480,28 @@ button {
 .print-preview-actions button:disabled {
   opacity: 0.45;
 }
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+  .print-preview-sheet,
+  .print-preview-sheet * {
+    visibility: visible !important;
+  }
+  .print-preview-sheet {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    max-height: none;
+    overflow: visible;
+    border: 0;
+    box-shadow: none;
+  }
+  .print-preview-actions,
+  .print-preview-header > button {
+    display: none !important;
+  }
+}
 @media (max-width: 390px) {
   .week-lock {
     align-items: stretch;

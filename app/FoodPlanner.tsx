@@ -75,7 +75,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.90";
+const VERSION = "1.16.91";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -11161,6 +11161,69 @@ export function FoodPlanner() {
       await navigator.share({ title: "Lista spesa - Tavola Mia", text });
     else await navigator.clipboard.writeText(text);
   };
+  const weeklyExportRows = () =>
+    days.flatMap((day, dayNumber) =>
+      getDayIds(dayNumber).flatMap((recipeId, slot) => {
+        const key = `${dayNumber}-${slot}`;
+        const recipe = recipeMap[recipeId];
+        return plannedIngredients(key, recipe).map((ingredient) => {
+          const nutrients = calc([ingredient]);
+          return {
+            day: day.label,
+            meal: SLOT_LABELS[slot],
+            recipe: recipe.name,
+            food: ingredient.label || ingredient.food,
+            grams: ingredient.grams,
+            kcal: round(nutrients.kcal),
+            protein: fmt(nutrients.protein),
+            carbs: fmt(nutrients.carbs),
+            fat: fmt(nutrients.fat),
+          };
+        });
+      }),
+    );
+  const weeklyPlanText = () => {
+    const rows = weeklyExportRows();
+    return [
+      `Tavola Mia · piano settimanale · media ${weeklyAverageKcal} kcal/giorno`,
+      ...days.flatMap((day) => {
+        const dayRows = rows.filter((row) => row.day === day.label);
+        return [
+          `\n${day.label}`,
+          ...SLOT_LABELS.flatMap((meal) => {
+            const mealRows = dayRows.filter((row) => row.meal === meal);
+            return mealRows.length
+              ? [`${meal} · ${mealRows[0].recipe}`, ...mealRows.map((row) => `- ${row.food}: ${row.grams} g · ${row.kcal} kcal · P ${row.protein} g · C ${row.carbs} g · G ${row.fat} g`)]
+              : [];
+          }),
+        ];
+      }),
+    ].join("\n");
+  };
+  const downloadWeeklyFile = (content: string, type: string, extension: string) => {
+    const url = URL.createObjectURL(new Blob([content], { type }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `tavola-mia-settimana.${extension}`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+  const copyWeeklyPlan = async () => {
+    await navigator.clipboard.writeText(weeklyPlanText());
+    setReplanNote("Piano settimanale copiato.");
+  };
+  const exportWeeklyCsv = () => {
+    const header = ["Giorno", "Pasto", "Ricetta", "Alimento", "Grammi", "kcal", "Proteine g", "Carboidrati g", "Grassi g"];
+    const rows = weeklyExportRows().map((row) => [row.day, row.meal, row.recipe, row.food, row.grams, row.kcal, row.protein, row.carbs, row.fat]);
+    const csv = [header, ...rows]
+      .map((row) => row.map((value) => `"${String(value).replaceAll('"', '""')}"`).join(";"))
+      .join("\r\n");
+    downloadWeeklyFile(`\uFEFF${csv}`, "text/csv;charset=utf-8", "csv");
+  };
+  const exportWeeklyWord = () => {
+    const html = `<html><head><meta charset="utf-8"><title>Tavola Mia</title></head><body><pre style="font-family:Arial;white-space:pre-wrap">${weeklyPlanText().replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")}</pre></body></html>`;
+    downloadWeeklyFile(html, "application/msword", "doc");
+  };
   const selectedIngredients = selected
     ? selectedMealKey
       ? actualIngredients(selectedMealKey, selected)
@@ -13216,9 +13279,10 @@ export function FoodPlanner() {
             </div>
             <footer className="print-preview-actions">
               <button onClick={() => setPrintPreviewOpen(false)}>Chiudi</button>
-              <button type="button" disabled title="Attivazione nella revisione di stampa">
-                Stampa
-              </button>
+              <button type="button" onClick={copyWeeklyPlan}>Copia tutto</button>
+              <button type="button" onClick={exportWeeklyCsv}>CSV</button>
+              <button type="button" onClick={exportWeeklyWord}>Word</button>
+              <button type="button" onClick={() => window.print()}>Stampa</button>
             </footer>
           </article>
         </div>
