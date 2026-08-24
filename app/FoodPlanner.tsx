@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.20";
+const VERSION = "1.18.21";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -1601,6 +1601,20 @@ const occasionalFoodRows: OccasionalFoodRow[] = [
   ["Panna cotta",300,4,25,20,0,"RICETTA CALCOLATA"],
   ["Gelato alla crema",210,4,25,11,0,"ETICHETTA"],
   ["Gelato al cioccolato",220,4,27,11,1.5,"ETICHETTA"],
+  ["Gelato fiordilatte",200,3.8,24,10,0,"ETICHETTA"],
+  ["Gelato stracciatella",225,4.1,26,12,0.5,"ETICHETTA"],
+  ["Gelato al pistacchio",240,4.5,24,14,1.2,"ETICHETTA"],
+  ["Gelato alla nocciola",235,4.2,24,13,1.1,"ETICHETTA"],
+  ["Gelato alla vaniglia",205,3.8,25,10,0,"ETICHETTA"],
+  ["Gelato al caffe",215,3.8,26,11,0,"ETICHETTA"],
+  ["Gelato alla fragola",160,2.5,29,4,1,"ETICHETTA"],
+  ["Gelato al limone",145,0.5,33,1,0.5,"ETICHETTA"],
+  ["Gelato al mango",160,1,34,2,1,"ETICHETTA"],
+  ["Gelato allo yogurt",175,4.2,27,6,0,"ETICHETTA"],
+  ["Gelato al cocco",230,3,25,14,1.5,"ETICHETTA"],
+  ["Gelato al caramello",225,3.8,29,11,0,"ETICHETTA"],
+  ["Gelato al tiramisu",230,4.5,27,12,0.5,"ETICHETTA"],
+  ["Gelato all'amarena",180,2.8,32,5,0.7,"ETICHETTA"],
   ["Torta al cioccolato",385,6,50,19,2.5,"RICETTA CALCOLATA"],
   ["Crostata alla confettura",350,5,55,13,2,"RICETTA CALCOLATA"],
   ["Cannolo siciliano",350,9,38,18,1,"RICETTA CALCOLATA"],

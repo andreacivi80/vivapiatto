@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.20"/);
+  assert.match(app, /VERSION = "1\.18\.21"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1361,4 +1361,19 @@ test("v1.18.20 prevents recipe ingredients from silently counting as zero", asyn
     "Peperoni cotti",
   ]) assert.match(app, new RegExp(`foods\\[?[^\\n]*${food}`));
   assert.match(pkg.scripts.test, /audit-nutrition-coverage\.mjs/);
+});
+
+test("v1.18.21 gives every selectable gelato flavor a nutrition estimate", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  const audit = await readFile("scripts/audit-nutrition-coverage.mjs", "utf8");
+  for (const flavor of [
+    "Gelato fiordilatte",
+    "Gelato stracciatella",
+    "Gelato al pistacchio",
+    "Gelato alla nocciola",
+    "Gelato al limone",
+    "Gelato al mango",
+    "Gelato al tiramisu",
+  ]) assert.match(app, new RegExp(`\\["${flavor.replace(/[.*+?^${}()|[\\]\\]/g, "\\$&")}"\\s*,`));
+  assert.match(audit, /const gelatoStart = source\.indexOf\("const GELATO_FLAVORS"\)/);
 });
