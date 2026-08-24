@@ -64,6 +64,21 @@ const incomplete = expected.flatMap((id) => {
   return issues.length ? [`${id}: ${issues.join(", ")}`] : [];
 });
 
+const dedicatedSnackPhotos = new Map([
+  ["matrix-s11-banana-peanut", "recipe-s11-banana-peanut-v11867"],
+  ["matrix-s27-apricot-almond", "recipe-s27-apricot-almond-v11867"],
+  ["matrix-s28-kefir-blackberries-flax", "recipe-s28-kefir-blackberries-flax-v11867"],
+  ["matrix-s29-ricotta-apple", "recipe-s29-ricotta-apple-v11867"],
+  ["matrix-s30-rice-cakes-hummus", "recipe-s30-rice-cakes-hummus-v11867"],
+  ["matrix-s31-orange-peanuts", "recipe-s31-orange-peanuts-v11867"],
+  ["matrix-s32-cottage-carrot-cucumber", "recipe-s32-cottage-carrot-cucumber-v11867"],
+  ["matrix-s33-yogurt-pineapple-sesame", "recipe-s33-yogurt-pineapple-sesame-v11867"],
+  ["matrix-s34-rye-ricotta-radish", "recipe-s34-rye-ricotta-radish-v11867"],
+]);
+const missingDedicatedSnackPhotos = [...dedicatedSnackPhotos].filter(
+  ([id, asset]) => !source.includes(id) || !source.includes(asset),
+);
+
 if (missing.length) throw new Error(`Ricette matrice mancanti: ${missing.join(", ")}`);
 if (duplicates.length) {
   throw new Error(
@@ -72,5 +87,10 @@ if (duplicates.length) {
 }
 if (unexpected.length) throw new Error(`ID matrice inattesi: ${unexpected.join(", ")}`);
 if (incomplete.length) throw new Error(`Ricette matrice incomplete: ${incomplete.join("; ")}`);
+if (missingDedicatedSnackPhotos.length) {
+  throw new Error(
+    `Foto dedicate spuntini mancanti: ${missingDedicatedSnackPhotos.map(([id]) => id).join(", ")}`,
+  );
+}
 
 console.log(`Matrice ricette: ${expected.length}/${expected.length} complete e univoche (C44, S42, P64, D64).`);

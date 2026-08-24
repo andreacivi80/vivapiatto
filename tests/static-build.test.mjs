@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.66"/);
+  assert.match(app, /VERSION = "1[.]18[.]67"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1817,4 +1817,11 @@ test("v1.18.66 adds the complete pictured aromatic and spice pantry", async () =
   for (const name of names) assert.match(source, new RegExp(`food: "${name}"`));
   assert.match(source, /part-garlic-v11866/);
   assert.match(source, /part-chili-v11866/);
+});
+
+test("v1.18.67 gives the remaining matrix snacks faithful full-dish photos", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const ids = ["s11", "s27", "s28", "s29", "s30", "s31", "s32", "s33", "s34"];
+  for (const id of ids) assert.match(source, new RegExp(`recipe-${id}-[^\"]+-v11867`));
+  assert.match(source, /const VERSION = "1\.18\.67"/);
 });

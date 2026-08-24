@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.66";
+const VERSION = "1.18.67";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -3240,7 +3240,7 @@ const matrixSnacks: Recipe[] = [
     course: "Spuntino",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("part-banana-v7"),
+    image: photo("recipe-s11-banana-peanut-v11867"),
     time: 2,
     ingredients: [
       { food: "Banana", grams: 150 },
@@ -3273,6 +3273,22 @@ const matrixSnacks: Recipe[] = [
   { id: "matrix-s32-cottage-carrot-cucumber", name: "Fiocchi di latte con carote crude e cetrioli", kicker: "Spuntino fresco · matrice S32", course: "Spuntino", cuisine: "Italiano", kind: "combination", image: photo("part-cottage-cheese-v11512"), time: 7, ingredients: [{ food: "Fiocchi di latte", grams: 80 }, { food: "Carote crude", grams: 100 }, { food: "Cetrioli", grams: 100 }], parts: [{ category: "Latticino", food: "Fiocchi di latte", grams: 80, label: "Fiocchi di latte", image: photo("part-cottage-cheese-v11512") }, { category: "Contorno", food: "Carote crude", grams: 100, label: "Carote crude a bastoncino", image: photo("part-carrots-raw-v11512") }, { category: "Contorno", food: "Cetrioli", grams: 100, label: "Cetriolo a bastoncino", image: photo("part-cucumber-v8") }], steps: ["Lava e pela le carote, lava il cetriolo e tagliali a bastoncino. Servi con i fiocchi di latte e erbe aromatiche."], alternatives: ["Conserva refrigerato", "Contiene latte"] },
   { id: "matrix-s33-yogurt-pineapple-sesame", name: "Yogurt con ananas e sesamo", kicker: "Spuntino fresco · matrice S33", course: "Spuntino", cuisine: "Internazionale", kind: "combination", image: photo("part-pineapple-v11513"), time: 3, ingredients: [{ food: "Yogurt greco 2%", grams: 125 }, { food: "Ananas", grams: 150 }, { food: "Semi di sesamo", grams: 5 }], parts: [{ category: "Latticino", food: "Yogurt greco 2%", grams: 125, label: "Yogurt bianco", image: photo("part-greek-yogurt-2-v11663") }, { category: "Frutta", food: "Ananas", grams: 150, label: "Ananas fresco · parte edibile", image: photo("part-pineapple-v11513") }, { category: "Extra", food: "Semi di sesamo", grams: 5, label: "Semi di sesamo", image: photo("part-sesame-v11512") }], steps: ["Taglia l'ananas fresco a cubetti, uniscilo allo yogurt e completa con 5 g di semi di sesamo."], alternatives: ["Conserva refrigerato", "Contiene latte e sesamo"] },
   { id: "matrix-s34-rye-ricotta-radish", name: "Pane di segale con ricotta e ravanelli", kicker: "Spuntino salato · matrice S34", course: "Spuntino", cuisine: "Italiano", kind: "combination", image: photo("part-radishes-v11512"), time: 5, ingredients: [{ food: "Pane di segale", grams: 40 }, { food: "Ricotta vaccina", grams: 60 }, { food: "Ravanelli crudi", grams: 100 }], parts: [{ category: "Carboidrato", food: "Pane di segale", grams: 40, label: "Pane di segale", image: photo("part-bread-rye-v1156") }, { category: "Latticino", food: "Ricotta vaccina", grams: 60, label: "Ricotta vaccina", image: photo("part-ricotta-v7") }, { category: "Contorno", food: "Ravanelli crudi", grams: 100, label: "Ravanelli crudi", image: photo("part-radishes-v11512") }], steps: ["Lava e affetta sottilmente i ravanelli. Spalma la ricotta sul pane di segale e aggiungi i ravanelli."], alternatives: ["Trasportabile separando pane e farcitura", "Contiene latte e segale"] },];
+
+const matrixSnackPhotoById: Record<string, string> = {
+  "matrix-s27-apricot-almond": "recipe-s27-apricot-almond-v11867",
+  "matrix-s28-kefir-blackberries-flax": "recipe-s28-kefir-blackberries-flax-v11867",
+  "matrix-s29-ricotta-apple": "recipe-s29-ricotta-apple-v11867",
+  "matrix-s30-rice-cakes-hummus": "recipe-s30-rice-cakes-hummus-v11867",
+  "matrix-s31-orange-peanuts": "recipe-s31-orange-peanuts-v11867",
+  "matrix-s32-cottage-carrot-cucumber": "recipe-s32-cottage-carrot-cucumber-v11867",
+  "matrix-s33-yogurt-pineapple-sesame": "recipe-s33-yogurt-pineapple-sesame-v11867",
+  "matrix-s34-rye-ricotta-radish": "recipe-s34-rye-ricotta-radish-v11867",
+};
+
+matrixSnacks.forEach((recipe) => {
+  const dedicatedPhoto = matrixSnackPhotoById[recipe.id];
+  if (dedicatedPhoto) recipe.image = photo(dedicatedPhoto);
+});
 const attachmentMissingSnacks: Recipe[] = [
   {
     id: "matrix-s02-yogurt-blueberries",
