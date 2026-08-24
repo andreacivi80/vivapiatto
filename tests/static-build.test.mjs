@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.2"/);
+  assert.match(app, /VERSION = "1\.18\.3"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1170,4 +1170,14 @@ test("v1.18.2 expands exact occasional-food autocomplete coverage", async () => 
   ];
   for (const food of required) assert.match(app, new RegExp(food));
   assert.match(app, /const foodSearchDatabase: Record<string, Food> = \{ \.\.\.foods, \.\.\.occasionalFoods \}/);
+});
+
+test("v1.18.3 completes weekly TXT CSV Word and copy exports", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  assert.match(app, /const exportWeeklyTxt = \(\) =>/);
+  assert.match(app, /text\/plain;charset=utf-8/);
+  assert.match(app, /onClick=\{exportWeeklyTxt\}>TXT/);
+  assert.match(app, /onClick=\{exportWeeklyCsv\}>CSV/);
+  assert.match(app, /onClick=\{exportWeeklyWord\}>Word/);
+  assert.match(app, /onClick=\{copyWeeklyPlan\}>Copia tutto/);
 });

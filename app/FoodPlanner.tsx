@@ -79,7 +79,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.2";
+const VERSION = "1.18.3";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -11923,6 +11923,9 @@ export function FoodPlanner() {
       .join("\r\n");
     downloadWeeklyFile(`\uFEFF${csv}`, "text/csv;charset=utf-8", "csv");
   };
+  const exportWeeklyTxt = () => {
+    downloadWeeklyFile(`\uFEFF${weeklyPlanText()}`, "text/plain;charset=utf-8", "txt");
+  };
   const exportWeeklyWord = () => {
     const html = `<html><head><meta charset="utf-8"><title>Tavola Mia</title></head><body><pre style="font-family:Arial;white-space:pre-wrap">${weeklyPlanText().replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")}</pre></body></html>`;
     downloadWeeklyFile(html, "application/msword", "doc");
@@ -14127,6 +14130,7 @@ export function FoodPlanner() {
             <footer className="print-preview-actions">
               <button onClick={() => setPrintPreviewOpen(false)}>Chiudi</button>
               <button type="button" onClick={copyWeeklyPlan}>Copia tutto</button>
+              <button type="button" onClick={exportWeeklyTxt}>TXT</button>
               <button type="button" onClick={exportWeeklyCsv}>CSV</button>
               <button type="button" onClick={exportWeeklyWord}>Word</button>
               <button type="button" onClick={() => window.print()}>Stampa</button>
