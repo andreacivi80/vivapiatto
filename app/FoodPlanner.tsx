@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.25";
+const VERSION = "1.18.26";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -1804,6 +1804,12 @@ const proteinFamilyForItems = (items: RecipeIngredient[]): WeeklyProteinFamily =
   return "altro";
 };
 const recipeProteinFamily = (recipe: Recipe) => proteinFamilyForItems(recipe.parts || recipe.ingredients);
+const eggUnitsForItems = (items: RecipeIngredient[]) =>
+  items.reduce((total, item) => {
+    const food = item.food.toLowerCase();
+    if (!food.includes("uovo") && !food.includes("uova")) return total;
+    return total + item.grams / 50;
+  }, 0);
 const WEEKLY_MAIN_ROTATION: WeeklyProteinFamily[] = [
   "legumi", "pesce", "carne-bianca", "uova", "legumi", "pesce", "latticini",
   "carne-bianca", "uova", "latticini", "legumi", "carne-rossa", "latticini", "uova",
@@ -11724,25 +11730,28 @@ export function FoodPlanner() {
       Formaggi: 0,
       Salumi: 0,
     };
+    let weeklyEggUnits = 0;
     days.forEach((_, day) => {
       getDayIds(day).forEach((id, slot) => {
-        if (slot !== 2 && slot !== 4) return;
+        if (!isActiveMealSlot(slot)) return;
         const key = `${day}-${slot}`;
         const recordedId = completed[key] ? completedRecipes[key] || id : id;
         const recipe = recipeMap[recordedId];
         const items = completed[key]
           ? actualIngredients(key, recipe)
           : plannedIngredients(key, recipe);
+        weeklyEggUnits += eggUnitsForItems(items);
+        if (slot !== 2 && slot !== 4) return;
         const family = proteinFamilyForItems(items);
         if (family === "pesce") counts.Pesce += 1;
         if (family === "carne-bianca") counts["Carne bianca"] += 1;
         if (family === "carne-rossa") counts["Carne rossa"] += 1;
-        if (family === "uova") counts.Uova += 1;
         if (family === "legumi") counts["Legumi e vegetali"] += 1;
         if (family === "latticini") counts.Formaggi += 1;
         if (family === "salumi") counts.Salumi += 1;
       });
     });
+    counts.Uova = Math.round(weeklyEggUnits);
     return counts;
   };  const weeklyCounts = weeklyProteinCounts();
   const weeklyPlannedKcal = days.map((_, day) =>

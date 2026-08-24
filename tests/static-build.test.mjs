@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.25"/);
+  assert.match(app, /VERSION = "1\.18\.26"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1416,4 +1416,12 @@ test("v1.18.25 declares nutrition variability and blocks prohibited health claim
   assert.match(app, /Valori stimati: marche, cottura e peso effettivo possono variare/);
   assert.match(css, /\.nutrition-variability-note/);
   assert.match(pkg.scripts.test, /audit-copy-safety\.mjs/);
+});
+
+test("v1.18.26 counts whole eggs from every active meal in the weekly rotation", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  assert.match(app, /const eggUnitsForItems =/);
+  assert.match(app, /weeklyEggUnits \+= eggUnitsForItems\(items\)/);
+  assert.match(app, /counts\.Uova = Math\.round\(weeklyEggUnits\)/);
+  assert.match(app, /if \(!isActiveMealSlot\(slot\)\) return/);
 });
