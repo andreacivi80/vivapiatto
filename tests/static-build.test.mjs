@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.45"/);
+  assert.match(app, /VERSION = "1\.18\.46"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1610,4 +1610,14 @@ test("v1.18.45 validates functional metadata for every selectable recipe", async
   assert.match(source, /metodo di preparazione mancante/);
   assert.match(source, /grammatura ingrediente non valida/);
   assert.match(source, /fonte nutrizionale mancante/);
+});
+
+test("v1.18.46 permanently audits the explicitly requested pictured pantry", async () => {
+  const audit = await readFile("scripts/audit-requested-pantry.mjs", "utf8");
+  assert.match(audit, /Carote crude/);
+  assert.match(audit, /Carote cotte bollite/);
+  assert.match(audit, /Ciliegie fresche/);
+  assert.match(audit, /Hummus di barbabietola/);
+  assert.match(audit, /Provolone Dolce Auricchio/);
+  assert.match(audit, /alimenti selezionabili con foto dedicata/);
 });
