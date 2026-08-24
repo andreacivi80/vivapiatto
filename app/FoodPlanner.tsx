@@ -75,7 +75,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.74";
+const VERSION = "1.16.75";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -7529,7 +7529,7 @@ const attachmentBaseBreakfasts: Recipe[] = [
     course: "Colazione",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-breakfast-v1121"),
+    image: photo("recipe-c10-cottage-peach-bread-v11675"),
     time: 7,
     ingredients: [
       { food: "Fiocchi di latte", grams: 100 },
@@ -7547,7 +7547,7 @@ const attachmentBaseBreakfasts: Recipe[] = [
     course: "Colazione",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-breakfast-v1121"),
+    image: photo("recipe-c11-buckwheat-apple-v11675"),
     time: 15,
     ingredients: [
       { food: "Farina di grano saraceno", grams: 40 },
@@ -7566,7 +7566,7 @@ const attachmentBaseBreakfasts: Recipe[] = [
     course: "Colazione",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-breakfast-v1121"),
+    image: photo("recipe-c12-peanut-banana-toast-v11675"),
     time: 5,
     ingredients: [
       { food: "Pane integrale", grams: 50 },
@@ -8054,7 +8054,7 @@ const attachmentBreakfastsC13C20: Recipe[] = [
     course: "Colazione",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-breakfast-v1121"),
+    image: photo("recipe-c13-pear-cocoa-porridge-v11675"),
     time: 10,
     ingredients: [
       { food: "Fiocchi d'avena", grams: 40 },
@@ -8073,7 +8073,7 @@ const attachmentBreakfastsC13C20: Recipe[] = [
     course: "Colazione",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-breakfast-v1121"),
+    image: photo("recipe-c14-yogurt-pineapple-oats-v11675"),
     time: 5,
     ingredients: [
       { food: "Yogurt greco 2%", grams: 170 },
@@ -8091,7 +8091,7 @@ const attachmentBreakfastsC13C20: Recipe[] = [
     course: "Colazione",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-breakfast-v1121"),
+    image: photo("recipe-c15-poached-egg-toast-v11675"),
     time: 15,
     ingredients: [
       { food: "Pane integrale", grams: 50 },
@@ -8110,7 +8110,7 @@ const attachmentBreakfastsC13C20: Recipe[] = [
     course: "Colazione",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-breakfast-v1121"),
+    image: photo("recipe-c16-ricotta-blueberry-pistachio-v11675"),
     time: 7,
     ingredients: [
       { food: "Ricotta vaccina", grams: 100 },
@@ -8128,7 +8128,7 @@ const attachmentBreakfastsC13C20: Recipe[] = [
     course: "Colazione",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-breakfast-v1121"),
+    image: photo("recipe-c17-chia-kefir-mango-v11675"),
     time: 5,
     ingredients: [
       { food: "Kefir bianco magro", grams: 170 },

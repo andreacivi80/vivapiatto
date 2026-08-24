@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.74"/);
+  assert.match(app, /VERSION = "1\.16\.75"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -660,6 +660,24 @@ test("v1.16.71 repairs almond cream imagery and ranks complete meal replacements
 test("v1.16.74 gives the first breakfast matrix recipes their own faithful photos", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   const assets = [["matrix-c01-porridge-apple-walnuts-chia","recipe-c01-apple-walnut-chia-v11674"],["matrix-c02-overnight-oats-berries","recipe-c02-overnight-berries-v11674"],["matrix-c03-skyr-pear-hazelnuts","recipe-c03-skyr-pear-hazelnut-v11674"],["matrix-c04-rye-ricotta-orange","recipe-c04-rye-ricotta-orange-v11674"],["matrix-c06-omelette-spinach-bread","recipe-c06-spinach-omelette-v11674"],["matrix-c07-kefir-muesli-peach","recipe-c07-kefir-muesli-peach-v11674"],["matrix-c08-soy-mango-chia","recipe-c08-soy-mango-chia-v11674"],["matrix-c09-yogurt-pomegranate-pistachios","recipe-c09-yogurt-pomegranate-pistachio-v11674"]];
+  for (const [id, asset] of assets) {
+    assert.match(app, new RegExp('id: "' + id + '"[\\s\\S]{0,500}image: photo\\("' + asset + '"\\)'));
+    await access(new URL("../dist/food/" + asset + ".png", import.meta.url));
+  }
+});
+
+test("v1.16.75 gives the second breakfast matrix block faithful recipe photos", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const assets = [
+    ["matrix-c10-cottage-cheese-peach-bread", "recipe-c10-cottage-peach-bread-v11675"],
+    ["matrix-c11-buckwheat-pancake-apple", "recipe-c11-buckwheat-apple-v11675"],
+    ["matrix-c12-toast-peanut-banana", "recipe-c12-peanut-banana-toast-v11675"],
+    ["matrix-c13-pear-cocoa-hazelnut-porridge", "recipe-c13-pear-cocoa-porridge-v11675"],
+    ["matrix-c14-yogurt-pineapple-oats-pumpkin-seeds", "recipe-c14-yogurt-pineapple-oats-v11675"],
+    ["matrix-c15-poached-egg-toast", "recipe-c15-poached-egg-toast-v11675"],
+    ["matrix-c16-ricotta-blueberries-pistachios", "recipe-c16-ricotta-blueberry-pistachio-v11675"],
+    ["matrix-c17-chia-kefir-mango-pudding", "recipe-c17-chia-kefir-mango-v11675"],
+  ];
   for (const [id, asset] of assets) {
     assert.match(app, new RegExp('id: "' + id + '"[\\s\\S]{0,500}image: photo\\("' + asset + '"\\)'));
     await access(new URL("../dist/food/" + asset + ".png", import.meta.url));
