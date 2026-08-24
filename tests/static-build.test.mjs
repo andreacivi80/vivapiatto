@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.46"/);
+  assert.match(app, /VERSION = "1\.18\.47"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1620,4 +1620,13 @@ test("v1.18.46 permanently audits the explicitly requested pictured pantry", asy
   assert.match(audit, /Hummus di barbabietola/);
   assert.match(audit, /Provolone Dolce Auricchio/);
   assert.match(audit, /alimenti selezionabili con foto dedicata/);
+});
+
+test("v1.18.47 permanently audits the occasional-food database", async () => {
+  const audit = await readFile("scripts/audit-occasional-foods.mjs", "utf8");
+  assert.match(audit, /rows\.length < 100/);
+  assert.match(audit, /duplicateNames/);
+  assert.match(audit, /kcal, proteine, carboidrati, grassi, fibre e fonte/);
+  assert.match(audit, /vino bianco/);
+  assert.match(audit, /vino rosso/);
 });
