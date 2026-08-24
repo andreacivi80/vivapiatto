@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.24"/);
+  assert.match(app, /VERSION = "1\.18\.25"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1406,4 +1406,14 @@ test("v1.18.24 labels international recipes as original inspirations", async () 
   assert.match(app, /internationalInspirationNote\(selected\)/);
   assert.match(app, /internationalInspirationNote\(recipe\)/);
   assert.match(css, /\.recipe-inspiration-note/);
+});
+
+test("v1.18.25 declares nutrition variability and blocks prohibited health claims", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  const css = await readFile("app/globals.css", "utf8");
+  const pkg = JSON.parse(await readFile("package.json", "utf8"));
+  assert.match(app, /Valori nutrizionali stimati: alimenti, marche e cottura possono variare/);
+  assert.match(app, /Valori stimati: marche, cottura e peso effettivo possono variare/);
+  assert.match(css, /\.nutrition-variability-note/);
+  assert.match(pkg.scripts.test, /audit-copy-safety\.mjs/);
 });

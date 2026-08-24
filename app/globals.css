@@ -3115,6 +3115,13 @@ button {
   line-height: 1.25;
 }
 
+.nutrition-variability-note {
+  margin: 3px 0 5px;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.25;
+}
+
 .meal-balance-status {
   margin: 3px 0 5px;
   color: var(--muted);

@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.24";
+const VERSION = "1.18.25";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -12020,6 +12020,7 @@ export function FoodPlanner() {
     const text = [
       recipe.name,
       "Porzioni standard non personalizzate · 1 persona",
+      "Valori nutrizionali stimati: alimenti, marche e cottura possono variare; verifica etichetta e peso effettivo.",
       `${round(macros.kcal)} kcal · ${round(macros.protein)} g proteine · ${round(macros.carbs)} g carboidrati · ${round(macros.fat)} g grassi`,
       `Composizione: ${recipeBalanceSummary(recipe)}`,
       internationalInspirationNote(recipe),
@@ -14166,6 +14167,9 @@ export function FoodPlanner() {
                     ? `Target indicato dall’utente · ${peopleCount} ${peopleCount === 1 ? "persona" : "persone"}`
                     : `Porzioni standard non personalizzate · ${peopleCount} ${peopleCount === 1 ? "persona" : "persone"}`}
               </p>
+              <p className="nutrition-variability-note">
+                Valori nutrizionali stimati: alimenti, marche e cottura possono variare. Verifica etichetta e peso effettivo.
+              </p>
               <p className="recipe-quality-note">
                 Indice varietà {recipeVarietyScore(selected)}/5
                 {recipeSeasonalityScore(selected) > 0 ? ` · stagione ${recipeSeasonalityScore(selected)}%` : ""}
@@ -14349,6 +14353,7 @@ export function FoodPlanner() {
             <div className="print-preview-summary">
               <b>Media {weeklyAverageKcal} kcal al giorno</b>
               <span>{weeklyAverageFiber} g fibre/giorno</span>
+              <small>Valori stimati: marche, cottura e peso effettivo possono variare.</small>
             </div>
             <div className="print-preview-days">
               {days.map((day, dayNumber) => {
