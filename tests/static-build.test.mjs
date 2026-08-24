@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.17\.2"/);
+  assert.match(app, /VERSION = "1\.17\.3"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1028,4 +1028,14 @@ test("v1.17.2 applies mensa and restaurant context without inventing venues", as
   assert.match(app, /<option>Ristorante<\/option>/);
   assert.match(app, /Ministero della Salute ↗/);
   assert.match(css, /\.outside-context-note/);
+});
+
+test("v1.17.3 adapts after yesterday without punitive calorie compensation", async () => {
+  const source = await readFile("app/FoodPlanner.tsx", "utf8");
+  assert.match(source, /next\.feeling === "bene" && next\.yesterday === "molto"/);
+  assert.match(source, /energyDensity\(a\) - energyDensity\(b\)/);
+  assert.match(source, /next\.feeling === "bene" && next\.yesterday === "poco"/);
+  assert.match(source, /calc\(b\.ingredients\)\.protein - calc\(a\.ingredients\)\.protein/);
+  assert.match(source, /niente digiuno compensatorio/);
+  assert.doesNotMatch(source, /next\.yesterday === "molto"[^\n]+plannedCalories/);
 });

@@ -79,7 +79,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.17.2";
+const VERSION = "1.17.3";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -10910,6 +10910,33 @@ export function FoodPlanner() {
           Math.abs(calc(b.ingredients).kcal - 550),
       );
     }
+    if (next.feeling === "bene" && next.yesterday === "molto") {
+      const energyDensity = (recipe: Recipe) => {
+        const nutrition = calc(recipe.ingredients);
+        return nutrition.kcal / Math.max(1, nutrition.weight);
+      };
+      mains = [...mains].sort(
+        (a, b) =>
+          energyDensity(a) - energyDensity(b) ||
+          calc(b.ingredients).fiber - calc(a.ingredients).fiber,
+      );
+      snacks = [...snacks].sort(
+        (a, b) =>
+          calc(b.ingredients).fiber - calc(a.ingredients).fiber ||
+          calc(a.ingredients).kcal - calc(b.ingredients).kcal,
+      );
+    } else if (next.feeling === "bene" && next.yesterday === "poco") {
+      mains = [...mains].sort(
+        (a, b) =>
+          calc(b.ingredients).protein - calc(a.ingredients).protein ||
+          calc(b.ingredients).fiber - calc(a.ingredients).fiber,
+      );
+      snacks = [...snacks].sort(
+        (a, b) =>
+          calc(b.ingredients).protein - calc(a.ingredients).protein ||
+          calc(b.ingredients).kcal - calc(a.ingredients).kcal,
+      );
+    }
     if (!breakfasts.length || !snacks.length || !mains.length) return;
     const homeMains = mains.filter(
       (r) =>
@@ -11021,7 +11048,11 @@ export function FoodPlanner() {
             ? "Fame: più proteine e fibre per la sazietà."
             : next.todayActivity === "intensa"
               ? "Attività intensa: più energia vicino all'attività."
-              : "Menu aggiornato.",
+              : next.yesterday === "molto"
+                ? "Ieri hai mangiato di più: oggi pasti regolari, verdure e fibre; niente digiuno compensatorio."
+                : next.yesterday === "poco"
+                  ? "Ieri hai mangiato meno: oggi pasti completi e regolari."
+                  : "Menu aggiornato.",
     );
   };
   const answerCheck = (key: keyof typeof check, value: string) => {
