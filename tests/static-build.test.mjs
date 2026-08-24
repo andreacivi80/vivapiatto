@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.94"/);
+  assert.match(app, /VERSION = "1\.16\.95"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -941,4 +941,15 @@ test("v1.16.94 shows a neutral variety index and current season signal", async (
   assert.match(app, /recipeHasSeasonalProduce/);
   assert.match(app, /Varietà \{recipeVarietyScore\(r\)\}\/5/);
   assert.match(app, /indicatore descrittivo, non voto sanitario/);
+});
+
+test("v1.16.95 separates allergies, intolerances and clinical conditions", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(app, /allergyGroups/);
+  assert.match(app, /intoleranceGroups/);
+  assert.match(app, /healthConditions/);
+  assert.match(app, /Celiachia diagnosticata/);
+  assert.match(app, /recipeAllergens/);
+  assert.match(app, /Controlla sempre etichetta, certificazione e possibili contaminazioni/);
+  assert.match(app, /non crea una dieta terapeutica/);
 });

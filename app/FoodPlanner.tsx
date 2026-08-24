@@ -75,7 +75,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.94";
+const VERSION = "1.16.95";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -9162,6 +9162,9 @@ export function FoodPlanner() {
   const [preferencesOpen, setPreferencesOpen] = useState(false);
   const [checkinOpen, setCheckinOpen] = useState(false);
   const [excludedGroups, setExcludedGroups] = useState<string[]>([]);
+  const [allergyGroups, setAllergyGroups] = useState<string[]>([]);
+  const [intoleranceGroups, setIntoleranceGroups] = useState<string[]>([]);
+  const [healthConditions, setHealthConditions] = useState<string[]>([]);
   const [dislikedFoods, setDislikedFoods] = useState<string[]>([]);
   const [foodToAvoid, setFoodToAvoid] = useState("");
   const [choices, setChoices] = useState<Record<string, string>>({});
@@ -9252,6 +9255,9 @@ export function FoodPlanner() {
     mealView,
     check,
     excludedGroups,
+    allergyGroups,
+    intoleranceGroups,
+    healthConditions,
     dislikedFoods,
     choices,
     drinks,
@@ -9388,7 +9394,10 @@ export function FoodPlanner() {
         setPartSelections(s.partSelections || {});
         setMealView(s.mealView || {});
         setCheck({ ...check, ...(s.check || {}) });
-        setExcludedGroups(s.excludedGroups || []);
+        setExcludedGroups([]);
+        setAllergyGroups(Array.isArray(s.allergyGroups) ? s.allergyGroups : s.excludedGroups || []);
+        setIntoleranceGroups(Array.isArray(s.intoleranceGroups) ? s.intoleranceGroups : []);
+        setHealthConditions(Array.isArray(s.healthConditions) ? s.healthConditions : []);
         setDislikedFoods(s.dislikedFoods || []);
         setChoices(s.choices || {});
         setDrinks(s.drinks || {});
@@ -9431,6 +9440,9 @@ export function FoodPlanner() {
         mealView,
         check,
         excludedGroups,
+        allergyGroups,
+        intoleranceGroups,
+        healthConditions,
         dislikedFoods,
         choices,
         drinks,
@@ -9467,6 +9479,9 @@ export function FoodPlanner() {
     mealView,
     check,
     excludedGroups,
+    allergyGroups,
+    intoleranceGroups,
+    healthConditions,
     dislikedFoods,
     choices,
     drinks,
@@ -9500,11 +9515,27 @@ export function FoodPlanner() {
     ],
     "Frutta a guscio": ["Noci", "Mandorle", "Pistacchi", "Nocciole", "Anacardi non salati"],
     Arachidi: ["Arachidi", "Crema 100% arachidi"],
+    Soia: Object.keys(foods).filter((food) => /soia|tofu|tempeh|edamame/i.test(food)),
+    Sesamo: Object.keys(foods).filter((food) => /sesamo/i.test(food)),
+    Crostacei: Object.keys(foods).filter((food) => /gamber|scamp|aragost|granchio/i.test(food)),
+    Molluschi: Object.keys(foods).filter((food) => /cozze|vongole|seppia|calamar|polpo|ostric/i.test(food)),
+    Sedano: Object.keys(foods).filter((food) => /sedano/i.test(food)),
+    Senape: Object.keys(foods).filter((food) => /senape/i.test(food)),
+    Lupini: Object.keys(foods).filter((food) => /lupin/i.test(food)),
+    Solfiti: Object.keys(foods).filter((food) => /vino|solfit/i.test(food)),
   };
+  const conditionBlockedGroups = healthConditions.includes("Celiachia diagnosticata")
+    ? ["Glutine"]
+    : [];
   const blockedFoods = [
     ...dislikedFoods,
-    ...excludedGroups.flatMap((g) => groupFoods[g] || []),
+    ...[...excludedGroups, ...allergyGroups, ...intoleranceGroups, ...conditionBlockedGroups]
+      .flatMap((group) => groupFoods[group] || []),
   ];
+  const recipeAllergens = (recipe: Recipe) =>
+    Object.entries(groupFoods)
+      .filter(([, members]) => recipe.ingredients.some((ingredient) => members.includes(ingredient.food)))
+      .map(([group]) => group);
   const isAllowed = (recipe: Recipe) =>
     recipe.ingredients.every((i) => !blockedFoods.includes(i.food));
   const matchesFoodStyle = (recipe: Recipe) => {
@@ -11396,6 +11427,9 @@ export function FoodPlanner() {
                       className="text-btn"
                       onClick={() => {
                         setExcludedGroups([]);
+                        setAllergyGroups([]);
+                        setIntoleranceGroups([]);
+                        setHealthConditions([]);
                         setDislikedFoods([]);
                       }}
                     >
@@ -11466,14 +11500,14 @@ export function FoodPlanner() {
                 {ageGroup === "Minore" && (
                   <p className="profile-stop">Le porzioni standard per adulti non vengono applicate ai minori: serve un professionista sanitario.</p>
                 )}
-                <b>Allergie o intolleranze</b>
+                <b>Allergie diagnosticate</b>
                 <div className="chips">
                   {Object.keys(groupFoods).map((g) => (
                     <button
                       key={g}
-                      className={excludedGroups.includes(g) ? "active" : ""}
+                      className={allergyGroups.includes(g) ? "active" : ""}
                       onClick={() =>
-                        setExcludedGroups((v) =>
+                        setAllergyGroups((v) =>
                           v.includes(g) ? v.filter((x) => x !== g) : [...v, g],
                         )
                       }
@@ -11482,6 +11516,47 @@ export function FoodPlanner() {
                     </button>
                   ))}
                 </div>
+                <b>Intolleranze o sensibilità riferite</b>
+                <div className="chips">
+                  {["Latte", "Glutine", "Soia"].map((group) => (
+                    <button
+                      key={group}
+                      className={intoleranceGroups.includes(group) ? "active" : ""}
+                      onClick={() =>
+                        setIntoleranceGroups((current) =>
+                          current.includes(group)
+                            ? current.filter((item) => item !== group)
+                            : [...current, group],
+                        )
+                      }
+                    >
+                      {group}
+                    </button>
+                  ))}
+                </div>
+                <b>Condizioni da dichiarare</b>
+                <div className="chips">
+                  {["Celiachia diagnosticata", "Diabete", "Ipertensione", "Malattia renale", "Gravidanza"].map((condition) => (
+                    <button
+                      key={condition}
+                      className={healthConditions.includes(condition) ? "active" : ""}
+                      onClick={() =>
+                        setHealthConditions((current) =>
+                          current.includes(condition)
+                            ? current.filter((item) => item !== condition)
+                            : [...current, condition],
+                        )
+                      }
+                    >
+                      {condition}
+                    </button>
+                  ))}
+                </div>
+                {healthConditions.length > 0 && (
+                  <p className="profile-stop">
+                    Le condizioni selezionate richiedono indicazioni personalizzate del professionista sanitario. L'app applica solo esclusioni prudenziali e non crea una dieta terapeutica.
+                  </p>
+                )}
                 <b>Oggi non voglio mangiare</b>
                 <div className="avoid-add">
                   <select
@@ -12380,6 +12455,7 @@ export function FoodPlanner() {
               )}
               <small>
                 Filtri pratici sul catalogo: non attribuiscono proprietà dimagranti o terapeutiche.
+                Le opzioni senza lattosio o glutine indicano compatibilità degli ingredienti registrati, non certificazione contro contaminazioni.
               </small>
             </details>
             <div className="library-tools">
@@ -13166,6 +13242,11 @@ export function FoodPlanner() {
                 {recipeHasSeasonalProduce(selected) ? " · contiene ingredienti di stagione" : ""}
                 {" · indicatore descrittivo, non voto sanitario"}
               </p>
+              <div className="recipe-allergen-note">
+                <b>Allergeni rilevati</b>
+                <span>{recipeAllergens(selected).join(", ") || "nessuno tra quelli mappati"}</span>
+                <small>Controlla sempre etichetta, certificazione e possibili contaminazioni. “Adattabile” non significa certificato senza allergeni.</small>
+              </div>
               <div className="recipe-macros">
                 <span>
                   <b>{round(selectedMacros.kcal)}</b> kcal
