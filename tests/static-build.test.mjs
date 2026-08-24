@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.50"/);
+  assert.match(app, /VERSION = "1\.18\.51"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1664,4 +1664,12 @@ test("v1.18.50 distinguishes parmesan, turnip states, apple vinegar and roast po
   assert.match(app, /CREA 005660/);
   assert.match(app, /CREA 005665/);
   assert.match(app, /CREA 006511/);
+});
+
+test("v1.18.51 ranks the new fresh produce by season", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  assert.match(app, /"Nettarina fresca": \[6, 7, 8, 9\]/);
+  assert.match(app, /"Rape crude": \[10, 11, 12, 1, 2, 3\]/);
+  assert.match(app, /"Rape cotte bollite": \[10, 11, 12, 1, 2, 3\]/);
+  assert.match(app, /seasonalFirst\(mealPartOptions\[part\.category\]\)/);
 });

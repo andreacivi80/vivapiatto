@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.50";
+const VERSION = "1.18.51";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -6813,6 +6813,7 @@ const seasonalMonths: Record<string, number[]> = {
   "Melone estivo": [6, 7, 8],
   Fragole: [4, 5, 6],
   Pesca: [6, 7, 8],
+  "Nettarina fresca": [6, 7, 8, 9],
   Uva: [8, 9, 10],
   Arancia: [11, 12, 1, 2, 3],
   Kiwi: [11, 12, 1, 2, 3, 4],
@@ -6820,6 +6821,8 @@ const seasonalMonths: Record<string, number[]> = {
   Pera: [8, 9, 10, 11, 12, 1, 2],
   "Asparagi crudi": [3, 4, 5, 6],
   "Broccoli bolliti": [10, 11, 12, 1, 2, 3],
+  "Rape crude": [10, 11, 12, 1, 2, 3],
+  "Rape cotte bollite": [10, 11, 12, 1, 2, 3],
   Cavolfiore: [10, 11, 12, 1, 2, 3],
   "Finocchi crudi": [10, 11, 12, 1, 2, 3, 4, 5],
   "Sedano crudo": [9, 10, 11, 12, 1, 2, 3, 4, 5],
