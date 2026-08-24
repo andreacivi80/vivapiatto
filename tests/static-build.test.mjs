@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.34"/);
+  assert.match(app, /VERSION = "1\.18\.35"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1489,4 +1489,12 @@ test("v1.18.34 permanently audits every referenced food and recipe photograph", 
   assert.match(audit, /file mancante/);
   assert.match(audit, /risoluzione insufficiente/);
   assert.match(audit, /jpegDimensions/);
+});
+
+test("v1.18.35 blocks identical photographs across semantically different foods or recipes", async () => {
+  const audit = await readFile("scripts/audit-photo-assets.mjs", "utf8");
+  assert.match(audit, /reviewedSameFoodDuplicates/);
+  assert.match(audit, /ricette con fotografia identica/);
+  assert.match(audit, /alimenti o momenti diversi con fotografia identica/);
+  assert.match(audit, /createHash\("sha256"\)/);
 });
