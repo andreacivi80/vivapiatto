@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.33"/);
+  assert.match(app, /VERSION = "1\.18\.34"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1479,4 +1479,14 @@ test("v1.18.33 caps automatic whole-egg breakfasts while preserving manual freed
   assert.match(app, /if \(hasWholeEgg\(breakfast\.ingredients\)\) plannedWholeEggBreakfasts \+= 1/);
   assert.match(app, /const otherWholeEggBreakfasts = days\.reduce/);
   assert.match(app, /const checkinBreakfastPool =/);
+});
+
+test("v1.18.34 permanently audits every referenced food and recipe photograph", async () => {
+  const pkg = JSON.parse(await readFile("package.json", "utf8"));
+  const audit = await readFile("scripts/audit-photo-assets.mjs", "utf8");
+  assert.match(pkg.scripts.test, /audit-photo-assets\.mjs/);
+  assert.match(audit, /source\.matchAll/);
+  assert.match(audit, /file mancante/);
+  assert.match(audit, /risoluzione insufficiente/);
+  assert.match(audit, /jpegDimensions/);
 });
