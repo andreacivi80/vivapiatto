@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.39";
+const VERSION = "1.18.40";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -9555,6 +9555,25 @@ const allRecipes: Recipe[] = rawRecipes.map((recipe) => {
     : enrichedRecipe;
 });
 const recipeMap = Object.fromEntries(allRecipes.map((r) => [r.id, r]));
+const defaultWeeklyMainIds = (() => {
+  const used = new Set<string>();
+  return WEEKLY_MAIN_ROTATION.map((family, index) => {
+    const candidates = allRecipes
+      .filter(
+        (recipe) =>
+          !recipe.id.startsWith("occasional-") &&
+          ["Piatto unico", "Piatto completo", "Primo", "Secondo"].includes(recipe.course || "") &&
+          recipeProteinFamily(recipe) === family,
+      )
+      .sort((left, right) =>
+        index % 2 === 0 ? left.time - right.time : right.time - left.time,
+      );
+    const selected = candidates.find((recipe) => !used.has(recipe.id)) || candidates[0];
+    if (!selected) throw new Error(`Nessun pasto principale disponibile per ${family}`);
+    used.add(selected.id);
+    return selected.id;
+  });
+})();
 const days: Day[] = [
   {
     label: "Giorno 1",
@@ -9562,9 +9581,9 @@ const days: Day[] = [
     recipes: [
       "breakfast-rusks-jam",
       "catalog-snack-1",
-      "work-bresaola",
+      defaultWeeklyMainIds[0],
       "catalog-snack-2",
-      "plant-burger-broccoli-bread",
+      defaultWeeklyMainIds[1],
     ],
   },
   {
@@ -9573,9 +9592,9 @@ const days: Day[] = [
     recipes: [
       "breakfast-milk-biscuits",
       "catalog-snack-3",
-      "work-rice-salad",
+      defaultWeeklyMainIds[2],
       "catalog-snack-4",
-      "dinner-three-italian",
+      defaultWeeklyMainIds[3],
     ],
   },
   {
@@ -9584,9 +9603,9 @@ const days: Day[] = [
     recipes: [
       "breakfast-crackers-ricotta",
       "catalog-snack-5",
-      "work-turkey",
+      defaultWeeklyMainIds[4],
       "catalog-snack-6",
-      "dinner-three-eggs",
+      defaultWeeklyMainIds[5],
     ],
   },
   {
@@ -9595,9 +9614,9 @@ const days: Day[] = [
     recipes: [
       "breakfast-rusks-butter",
       "matrix-s11-banana-peanut",
-      "simple-pasta-tomato",
+      defaultWeeklyMainIds[6],
       "quick-wafer",
-      "sweet-ricotta",
+      defaultWeeklyMainIds[7],
     ],
   },
   {
@@ -9606,9 +9625,9 @@ const days: Day[] = [
     recipes: [
       "jar",
       "catalog-snack-9",
-      "work-turkey",
+      defaultWeeklyMainIds[8],
       "catalog-snack-10",
-      "matrix-p43-farro-eggs-green-beans",
+      defaultWeeklyMainIds[9],
     ],
   },
   {
@@ -9617,9 +9636,9 @@ const days: Day[] = [
     recipes: [
       "breakfast-milk-biscuits",
       "catalog-snack-11",
-      "chicken-farro",
+      defaultWeeklyMainIds[10],
       "catalog-snack-12",
-      "salmon-rice",
+      defaultWeeklyMainIds[11],
     ],
   },
   {
@@ -9628,9 +9647,9 @@ const days: Day[] = [
     recipes: [
       "apple-oats",
       "quick-protein-yogurt-strawberries",
-      "simple-pasta-tomato",
+      defaultWeeklyMainIds[12],
       "quick-protein-pudding-pear",
-      "tuna-chickpeas",
+      defaultWeeklyMainIds[13],
     ],
   },
 ];

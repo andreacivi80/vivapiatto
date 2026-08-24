@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.39"/);
+  assert.match(app, /VERSION = "1\.18\.40"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1543,4 +1543,16 @@ test("v1.18.39 updates daily totals immediately after every visible weight chang
   assert.doesNotMatch(totalsBlock, /completed\[key\][\s\S]*?plannedIngredients\(key, recipe\)/);
   assert.match(source, /Rispetto al piano previsto/);
   assert.match(source, /percentOf\(effectiveDayTotals\.protein, dayTotals\.protein\)/);
+});
+
+test("v1.18.40 builds the first visible week from the same balanced protein rotation", async () => {
+  const source = await readFile("app/FoodPlanner.tsx", "utf8");
+  assert.match(source, /const defaultWeeklyMainIds = \(\(\) => \{/);
+  assert.match(source, /return WEEKLY_MAIN_ROTATION\.map\(\(family, index\) => \{/);
+  assert.match(source, /recipeProteinFamily\(recipe\) === family/);
+  assert.match(source, /index % 2 === 0 \? left\.time - right\.time : right\.time - left\.time/);
+  for (let index = 0; index < 14; index += 1) {
+    assert.match(source, new RegExp(`defaultWeeklyMainIds\\[${index}\\]`));
+  }
+  assert.match(source, /Nessun pasto principale disponibile per/);
 });
