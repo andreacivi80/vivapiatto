@@ -79,7 +79,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.1";
+const VERSION = "1.18.2";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -1623,6 +1623,25 @@ const occasionalFoodRows: OccasionalFoodRow[] = [
   ["Prosecco",75,0.1,2,0,0,"ETICHETTA"],
   ["Liquore",250,0,20,0,0,"ETICHETTA"],
   ["Amaro",240,0,25,0,0,"ETICHETTA"],
+  ["Pizza farcita",290,13,32,13,2,"RICETTA CALCOLATA"],
+  ["Pesce fritto",235,17,16,12,0.8,"RICETTA CALCOLATA"],
+  ["Frittura di calamari",250,18,17,13,0.8,"RICETTA CALCOLATA"],
+  ["Salatini",480,8,58,24,3,"ETICHETTA"],
+  ["Toast molto farcito",310,16,28,15,1.7,"RICETTA CALCOLATA"],
+  ["Tramezzini con maionese",290,11,26,16,1.3,"RICETTA CALCOLATA"],
+  ["Panino con salumi e formaggi",320,17,29,16,1.7,"RICETTA CALCOLATA"],
+  ["Risotto molto mantecato",190,5,26,8,1,"RICETTA CALCOLATA"],
+  ["Burro in quantità abbondante",717,0.9,0.1,81.1,0,"CREA"],
+  ["Salse industriali",250,1.5,15,21,0.6,"ETICHETTA"],
+  ["Krapfen",380,7,48,18,1.5,"RICETTA CALCOLATA"],
+  ["Pancake con creme e sciroppi",350,7,49,15,1.5,"RICETTA CALCOLATA"],
+  ["Semifreddo",310,5,30,19,0.6,"RICETTA CALCOLATA"],
+  ["Cassata siciliana",360,8,45,17,1,"RICETTA CALCOLATA"],
+  ["Babà al rum",280,5,47,7,1,"RICETTA CALCOLATA"],
+  ["Cioccolato bianco",539,5.9,59,32,0.2,"ETICHETTA"],
+  ["Barrette dolci",490,7,60,25,2,"ETICHETTA"],
+  ["Snack salati",500,7,57,27,4,"ETICHETTA"],
+  ["Cocktail alcolici",150,0.2,15,0,0,"RICETTA CALCOLATA"],
 ];
 const occasionalFoods: Record<string, Food> = Object.fromEntries(
   occasionalFoodRows.map(([name,kcal,protein,carbs,fat,fiber,source]) => [name,{kcal,protein,carbs,fat,fiber,source}]),

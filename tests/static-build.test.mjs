@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.1"/);
+  assert.match(app, /VERSION = "1\.18\.2"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1146,4 +1146,28 @@ test("v1.18.1 completes missing everyday condiments, soups, cheese and baked tur
     assert.match(app, new RegExp('photo\\("' + asset + '"\\)'));
     await access(new URL("../dist/food/" + asset + ".png", import.meta.url));
   }
+});
+
+test("v1.18.2 expands exact occasional-food autocomplete coverage", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  const required = [
+    "Pizza farcita",
+    "Pesce fritto",
+    "Frittura di calamari",
+    "Salatini",
+    "Toast molto farcito",
+    "Tramezzini con maionese",
+    "Panino con salumi e formaggi",
+    "Risotto molto mantecato",
+    "Krapfen",
+    "Semifreddo",
+    "Cassata siciliana",
+    "Babà al rum",
+    "Cioccolato bianco",
+    "Barrette dolci",
+    "Snack salati",
+    "Cocktail alcolici",
+  ];
+  for (const food of required) assert.match(app, new RegExp(food));
+  assert.match(app, /const foodSearchDatabase: Record<string, Food> = \{ \.\.\.foods, \.\.\.occasionalFoods \}/);
 });
