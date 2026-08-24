@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.17\.8"/);
+  assert.match(app, /VERSION = "1\.17\.9"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1102,4 +1102,13 @@ test("v1.17.8 distinguishes chicken methods and lean beef alternatives", async (
     await access(new URL("../dist/food/" + asset + ".png", import.meta.url));
   }
   assert.match(app, /Carpaccio di manzo · peso a crudo[\s\S]*source: "CREA"/);
+});
+
+test("v1.17.9 recognises practical cooking methods in recipe metadata", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  assert.match(app, /\["Cartoccio", \/cartoccio\/\]/);
+  assert.match(app, /\["Friggitrice ad aria", \/friggitrice ad aria\|air fryer\/\]/);
+  assert.match(app, /\["In umido", \/in umido\|stufat\/\]/);
+  assert.match(app, /name: "Orata al cartoccio con verdure e pane"/);
+  assert.match(app, /Cuoci il salmone in forno o friggitrice ad aria/);
 });

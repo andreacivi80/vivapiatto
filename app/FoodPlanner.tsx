@@ -79,7 +79,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.17.8";
+const VERSION = "1.17.9";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -9173,6 +9173,9 @@ const inferRecipeAllergens = (recipe: Recipe) => {
 const inferRecipeMethods = (recipe: Recipe) => {
   const text = recipe.steps.join(" ").toLowerCase();
   const rules: Array<[string, RegExp]> = [
+    ["Cartoccio", /cartoccio/],
+    ["Friggitrice ad aria", /friggitrice ad aria|air fryer/],
+    ["In umido", /in umido|stufat/],
     ["Forno", /forno|inforna/],
     ["Vapore", /vapore/],
     ["Padella", /padella|salta|rosola/],
