@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.21"/);
+  assert.match(app, /VERSION = "1\.18\.22"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1376,4 +1376,11 @@ test("v1.18.21 gives every selectable gelato flavor a nutrition estimate", async
     "Gelato al tiramisu",
   ]) assert.match(app, new RegExp(`\\["${flavor.replace(/[.*+?^${}()|[\\]\\]/g, "\\$&")}"\\s*,`));
   assert.match(audit, /const gelatoStart = source\.indexOf\("const GELATO_FLAVORS"\)/);
+});
+
+test("v1.18.22 audits nutrition coverage for every manual alternative", async () => {
+  const audit = await readFile("scripts/audit-nutrition-coverage.mjs", "utf8");
+  assert.match(audit, /const partCatalogStart = source\.indexOf\("const mealPartOptions"\)/);
+  assert.match(audit, /partCatalogEnd = source\.indexOf\("const normalizeMealPart"/);
+  assert.match(audit, /voci selezionabili/);
 });

@@ -23,6 +23,9 @@ for (const block of source.slice(recipeStart, recipeEnd).matchAll(/ingredients:\
 const gelatoStart = source.indexOf("const GELATO_FLAVORS");
 const gelatoEnd = source.indexOf("] as const", gelatoStart);
 for (const match of source.slice(gelatoStart, gelatoEnd).matchAll(/"([^"]+)"/g)) ingredients.add(match[1]);
+const partCatalogStart = source.indexOf("const mealPartOptions");
+const partCatalogEnd = source.indexOf("const normalizeMealPart", partCatalogStart);
+for (const match of source.slice(partCatalogStart, partCatalogEnd).matchAll(/food:\s*"([^"]+)"/g)) ingredients.add(match[1]);
 const missing = [...ingredients].filter((food) => !known.has(food)).sort();
 if (missing.length) throw new Error(`Ingredienti senza dati nutrizionali: ${missing.join(", ")}`);
-console.log(`Copertura nutrizionale: ${ingredients.size}/${ingredients.size} ingredienti ricetta.`);
+console.log(`Copertura nutrizionale: ${ingredients.size}/${ingredients.size} voci selezionabili.`);
