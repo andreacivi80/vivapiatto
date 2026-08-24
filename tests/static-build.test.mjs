@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.96"/);
+  assert.match(app, /VERSION = "1\.16\.97"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -963,4 +963,14 @@ test("v1.16.96 prevents repeated recipes and applies meal-level balance rules", 
   assert.match(app, /hasLegumes \? 180 : 250/);
   assert.match(app, /hasFattyFish \? 5 : 15/);
   assert.match(app, /recipeProteinFamily\(recipe\) !== recipeProteinFamily\(lunch\)/);
+});
+
+test("v1.16.97 enriches every recipe with auditable metadata and a source", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(app, /inferRecipeAllergens/);
+  assert.match(app, /inferRecipeMethods/);
+  assert.match(app, /inferRecipeTags/);
+  assert.match(app, /inferRecipeSeasonMonths/);
+  assert.match(app, /Valori degli ingredienti da banca dati CREA, USDA, FRIDA o etichetta/);
+  assert.match(app, /recipe-meta-chips/);
 });

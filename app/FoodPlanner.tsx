@@ -29,6 +29,10 @@ type Recipe = {
   kind?: "recipe" | "combination";
   sourceLabel?: string;
   sourceUrl?: string;
+  allergens?: string[];
+  tags?: string[];
+  seasonMonths?: number[];
+  methods?: string[];
 };
 type Day = { label: string; mood: string; recipes: string[] };
 
@@ -75,7 +79,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.96";
+const VERSION = "1.16.97";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -8979,6 +8983,56 @@ const attachmentMainsP35P40: Recipe[] = [
   },
 ];
 
+const inferRecipeAllergens = (recipe: Recipe) => {
+  const text = recipe.ingredients.map((item) => item.food).join(" ").toLowerCase();
+  const rules: Array<[string, RegExp]> = [
+    ["Glutine", /pasta|pane|farro|orzo|bulgur|cous cous|cracker|fette biscottate|biscott|wafer|muesli|frumento|segale|grissini/],
+    ["Latte", /latte|yogurt|skyr|kefir|ricotta|feta|mozzarella|crescenza|scamorza|provolone|grana|parmigiano|burro/],
+    ["Uova", /uov|albume/],
+    ["Pesce", /salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|rombo/],
+    ["Crostacei", /gamber|scamp|aragost|granchio/],
+    ["Molluschi", /cozze|vongole|seppia|calamar|polpo|ostric/],
+    ["Soia", /soia|tofu|tempeh|edamame/],
+    ["Arachidi", /arachid/],
+    ["Frutta a guscio", /noci|mandorle|nocciole|pistacchi|anacardi|pecan/],
+    ["Sesamo", /sesamo/],
+    ["Sedano", /sedano/],
+    ["Senape", /senape/],
+    ["Lupini", /lupin/],
+    ["Solfiti", /vino|solfit/],
+  ];
+  return rules.filter(([, pattern]) => pattern.test(text)).map(([label]) => label);
+};
+const inferRecipeMethods = (recipe: Recipe) => {
+  const text = recipe.steps.join(" ").toLowerCase();
+  const rules: Array<[string, RegExp]> = [
+    ["Forno", /forno|inforna/],
+    ["Vapore", /vapore/],
+    ["Padella", /padella|salta|rosola/],
+    ["Piastra o griglia", /piastra|griglia/],
+    ["Bollitura", /boll|lessa|acqua salata/],
+    ["Senza cottura", /senza cottura|assembla|mescola/],
+  ];
+  const methods = rules.filter(([, pattern]) => pattern.test(text)).map(([label]) => label);
+  return methods.length ? methods : ["Preparazione semplice"];
+};
+const inferRecipeTags = (recipe: Recipe) => {
+  const text = recipe.ingredients.map((item) => item.food).join(" ").toLowerCase();
+  return [
+    recipe.course || "Piatto",
+    recipe.cuisine || "Italiano",
+    recipe.time <= 15 ? "Veloce" : "Da cucinare",
+    /ceci|lenticchie|fagioli|piselli|tofu|tempeh/.test(text) ? "Proteine vegetali" : "",
+    /integrale|farro|orzo|quinoa|miglio|grano saraceno/.test(text) ? "Cereali e fibre" : "",
+  ].filter(Boolean);
+};
+const inferRecipeSeasonMonths = (recipe: Recipe) =>
+  Array.from(
+    new Set(
+      recipe.ingredients.flatMap((ingredient) => seasonalMonths[ingredient.food] || []),
+    ),
+  ).sort((left, right) => left - right);
+
 const rawRecipes: Recipe[] = [
   ...simpleBreakfasts,
   ...attachmentBaseBreakfasts,
@@ -9021,8 +9075,19 @@ const pantryPartByFood = new Map(
   ),
 );
 const allRecipes: Recipe[] = rawRecipes.map((recipe) => {
-  if (recipe.parts?.length) return recipe;
-  const inferredParts = recipe.ingredients
+  const enrichedRecipe: Recipe = {
+    ...recipe,
+    allergens: recipe.allergens || inferRecipeAllergens(recipe),
+    tags: recipe.tags || inferRecipeTags(recipe),
+    seasonMonths: recipe.seasonMonths || inferRecipeSeasonMonths(recipe),
+    methods: recipe.methods || inferRecipeMethods(recipe),
+    sourceLabel:
+      recipe.sourceLabel ||
+      "Valori degli ingredienti da banca dati CREA, USDA, FRIDA o etichetta",
+    sourceUrl: recipe.sourceUrl || "https://www.alimentinutrizione.it/",
+  };
+  if (enrichedRecipe.parts?.length) return enrichedRecipe;
+  const inferredParts = enrichedRecipe.ingredients
     .map((ingredient) => {
       const known = pantryPartByFood.get(ingredient.food);
       return known
@@ -9035,8 +9100,8 @@ const allRecipes: Recipe[] = rawRecipes.map((recipe) => {
     })
     .filter((part): part is MealPart => Boolean(part));
   return inferredParts.length >= 2
-    ? { ...recipe, parts: inferredParts }
-    : recipe;
+    ? { ...enrichedRecipe, parts: inferredParts }
+    : enrichedRecipe;
 });
 const recipeMap = Object.fromEntries(allRecipes.map((r) => [r.id, r]));
 const days: Day[] = [
@@ -9533,9 +9598,11 @@ export function FoodPlanner() {
       .flatMap((group) => groupFoods[group] || []),
   ];
   const recipeAllergens = (recipe: Recipe) =>
-    Object.entries(groupFoods)
-      .filter(([, members]) => recipe.ingredients.some((ingredient) => members.includes(ingredient.food)))
-      .map(([group]) => group);
+    recipe.allergens?.length
+      ? recipe.allergens
+      : Object.entries(groupFoods)
+          .filter(([, members]) => recipe.ingredients.some((ingredient) => members.includes(ingredient.food)))
+          .map(([group]) => group);
   const isAllowed = (recipe: Recipe) =>
     recipe.ingredients.every((i) => !blockedFoods.includes(i.food));
   const matchesFoodStyle = (recipe: Recipe) => {
@@ -13315,6 +13382,10 @@ export function FoodPlanner() {
                 <b>Allergeni rilevati</b>
                 <span>{recipeAllergens(selected).join(", ") || "nessuno tra quelli mappati"}</span>
                 <small>Controlla sempre etichetta, certificazione e possibili contaminazioni. “Adattabile” non significa certificato senza allergeni.</small>
+              </div>
+              <div className="recipe-meta-chips">
+                {(selected.methods || []).map((method) => <span key={method}>{method}</span>)}
+                {(selected.tags || []).slice(0, 3).map((tag) => <span key={tag}>{tag}</span>)}
               </div>
               <div className="recipe-macros">
                 <span>
