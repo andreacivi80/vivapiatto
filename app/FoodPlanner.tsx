@@ -75,7 +75,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.81";
+const VERSION = "1.16.82";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -7959,7 +7959,7 @@ const attachmentBaseMainsC: Recipe[] = [
     course: "Piatto unico",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p13-legume-pasta-aubergine-ricotta-v11682"),
     time: 25,
     ingredients: [
       { food: "Pasta di lenticchie secca", grams: 80 },
@@ -7978,7 +7978,7 @@ const attachmentBaseMainsC: Recipe[] = [
     course: "Piatto unico",
     cuisine: "Asiatico",
     kind: "combination",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p14-buckwheat-tofu-vegetables-v11682"),
     time: 25,
     ingredients: [
       { food: "Grano saraceno cotto", grams: 180 },
@@ -7999,7 +7999,7 @@ const attachmentBaseMainsC: Recipe[] = [
     course: "Piatto unico",
     cuisine: "Vegetale",
     kind: "combination",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p15-millet-tempeh-pumpkin-radicchio-v11682"),
     time: 35,
     ingredients: [
       { food: "Miglio cotto", grams: 190 },
@@ -8018,7 +8018,7 @@ const attachmentBaseMainsC: Recipe[] = [
     course: "Piatto unico",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p16-potatoes-eggs-green-beans-v11682"),
     time: 30,
     ingredients: [
       { food: "Patate lesse", grams: 200 },
@@ -8530,7 +8530,7 @@ const attachmentMainsP17P22: Recipe[] = [
     kicker: "Piatto unico di pesce",
     course: "Piatto unico",
     cuisine: "Italiano",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p17-brown-risotto-peas-shrimp-v11682"),
     time: 35,
     ingredients: [
       { food: "Riso integrale secco", grams: 70 },
@@ -8548,7 +8548,7 @@ const attachmentMainsP17P22: Recipe[] = [
     kicker: "Piatto unico di carne bianca",
     course: "Piatto unico",
     cuisine: "Mediterraneo",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p18-quinoa-chicken-peppers-turmeric-v11682"),
     time: 30,
     ingredients: [
       { food: "Quinoa cotta", grams: 185 },
@@ -8566,7 +8566,7 @@ const attachmentMainsP17P22: Recipe[] = [
     kicker: "Piatto unico di pesce",
     course: "Piatto unico",
     cuisine: "Italiano",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p19-spelt-pasta-mackerel-broccoli-v11682"),
     time: 25,
     ingredients: [
       { food: "Pasta di farro secca", grams: 80 },
@@ -8583,7 +8583,7 @@ const attachmentMainsP17P22: Recipe[] = [
     kicker: "Piatto unico vegetale",
     course: "Piatto unico",
     cuisine: "Mediterraneo",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p20-bulgur-red-beans-cabbage-v11682"),
     time: 20,
     ingredients: [
       { food: "Bulgur cotto", grams: 180 },

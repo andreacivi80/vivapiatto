@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.81"/);
+  assert.match(app, /VERSION = "1\.16\.82"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -782,6 +782,24 @@ test("v1.16.81 gives P05-P12 faithful main-meal photos", async () => {
     ["matrix-p10-greek-quinoa-salad", "recipe-p10-greek-quinoa-salad-v11681"],
     ["matrix-p11-polenta-mushrooms-ricotta", "recipe-p11-polenta-mushrooms-ricotta-v11681"],
     ["matrix-p12-red-rice-prawns-courgettes", "recipe-p12-red-rice-prawns-courgettes-v11681"],
+  ];
+  for (const [id, asset] of assets) {
+    assert.match(app, new RegExp('id: "' + id + '"[\\s\\S]{0,500}image: photo\\("' + asset + '"\\)'));
+    await access(new URL("../dist/food/" + asset + ".png", import.meta.url));
+  }
+});
+
+test("v1.16.82 gives P13-P20 faithful main-meal photos", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const assets = [
+    ["matrix-p13-legume-pasta-aubergine-ricotta", "recipe-p13-legume-pasta-aubergine-ricotta-v11682"],
+    ["matrix-p14-buckwheat-tofu-vegetables", "recipe-p14-buckwheat-tofu-vegetables-v11682"],
+    ["matrix-p15-millet-tempeh-pumpkin-radicchio", "recipe-p15-millet-tempeh-pumpkin-radicchio-v11682"],
+    ["matrix-p16-potatoes-eggs-green-beans", "recipe-p16-potatoes-eggs-green-beans-v11682"],
+    ["matrix-p17-brown-risotto-peas-shrimp", "recipe-p17-brown-risotto-peas-shrimp-v11682"],
+    ["matrix-p18-quinoa-chicken-peppers-turmeric", "recipe-p18-quinoa-chicken-peppers-turmeric-v11682"],
+    ["matrix-p19-spelt-pasta-mackerel-broccoli", "recipe-p19-spelt-pasta-mackerel-broccoli-v11682"],
+    ["matrix-p20-bulgur-red-beans-cabbage", "recipe-p20-bulgur-red-beans-cabbage-v11682"],
   ];
   for (const [id, asset] of assets) {
     assert.match(app, new RegExp('id: "' + id + '"[\\s\\S]{0,500}image: photo\\("' + asset + '"\\)'));
