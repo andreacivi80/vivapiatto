@@ -3052,6 +3052,48 @@ button {
   line-height: 1.3;
 }
 
+.library-more {
+  display: block;
+  width: 100%;
+  margin: 12px 0 4px;
+  border: 1px solid var(--ink);
+  border-radius: 13px;
+  background: var(--ink);
+  color: #fff;
+  padding: 11px;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.35px;
+}
+.standard-portion-note {
+  margin: -4px 0 10px;
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 800;
+}
+.recipe-utility-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+  margin: 9px 0 12px;
+}
+.recipe-utility-actions button {
+  min-width: 0;
+  border: 1px solid var(--ink);
+  border-radius: 11px;
+  background: #fff;
+  color: var(--ink);
+  padding: 9px 6px;
+  font: inherit;
+  font-size: 9px;
+  font-weight: 900;
+}
+.recipe-utility-actions button:last-child {
+  background: var(--lime2);
+}
+
 .week-lock .week-lock-actions {
   flex: 0 0 auto;
   display: grid;

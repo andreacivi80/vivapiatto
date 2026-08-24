@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.86"/);
+  assert.match(app, /VERSION = "1\.16\.87"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -864,4 +864,15 @@ test("v1.16.86 preserves the exact scroll position across automatic releases", a
   assert.match(app, /sessionStorage\.getItem\("vivapiatto-release-scroll-y"\)/);
   assert.match(app, /window\.scrollTo\(\{ top: savedScrollY, left: 0, behavior: "auto" \}\)/);
   assert.match(app, /localStorage\.setItem\("vivapiatto-v1", refreshSnapshotRef\.current\)/);
+});
+
+test("v1.16.87 exposes recipe pagination, copy and direct shopping actions", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(app, /const \[visibleRecipeCount, setVisibleRecipeCount\] = useState\(10\)/);
+  assert.match(app, /Mostra altre 10 ricette/);
+  assert.match(app, /Copia ricetta/);
+  assert.match(app, /navigator\.clipboard\.writeText\(text\)/);
+  assert.match(app, /Aggiungi alla lista della spesa/);
+  assert.match(app, /Porzioni standard non personalizzate · 1 persona/);
+  assert.match(app, /shoppingAdditions/);
 });

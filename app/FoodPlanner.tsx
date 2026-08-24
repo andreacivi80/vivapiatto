@@ -75,7 +75,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.86";
+const VERSION = "1.16.87";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -9171,6 +9171,7 @@ export function FoodPlanner() {
   } | null>(null);
   const [swapReturnTab, setSwapReturnTab] = useState<Tab>("today");
   const [libraryQuery, setLibraryQuery] = useState("");
+  const [visibleRecipeCount, setVisibleRecipeCount] = useState(10);
   const [cuisineChoice, setCuisineChoice] = useState("Italiano");
   const [dayContext, setDayContext] = useState("Lavoro");
   const [plannedDrink, setPlannedDrink] = useState("Acqua");
@@ -9200,6 +9201,9 @@ export function FoodPlanner() {
     {},
   );
   const [groceryAmounts, setGroceryAmounts] = useState<Record<string, number>>(
+    {},
+  );
+  const [shoppingAdditions, setShoppingAdditions] = useState<Record<string, number>>(
     {},
   );
   const [check, setCheck] = useState({
@@ -9239,6 +9243,7 @@ export function FoodPlanner() {
     gelatoFlavors,
     groceryChecked,
     groceryAmounts,
+    shoppingAdditions,
     plannedDrink,
     dayContext,
     weekLocked,
@@ -9365,6 +9370,7 @@ export function FoodPlanner() {
         setExtras(s.extras || {});
         setGroceryChecked(s.groceryChecked || {});
         setGroceryAmounts(s.groceryAmounts || {});
+        setShoppingAdditions(s.shoppingAdditions || {});
         setPlannedDrink(s.plannedDrink || "Acqua");
         setDayContext(s.dayContext || "Lavoro");
         setWeekLocked(Boolean(s.weekLocked));
@@ -9399,6 +9405,7 @@ export function FoodPlanner() {
         extras,
         groceryChecked,
         groceryAmounts,
+        shoppingAdditions,
         plannedDrink,
         dayContext,
         weekLocked,
@@ -9427,6 +9434,7 @@ export function FoodPlanner() {
     extras,
     groceryChecked,
     groceryAmounts,
+    shoppingAdditions,
     plannedDrink,
     dayContext,
     weekLocked,
@@ -9622,6 +9630,18 @@ export function FoodPlanner() {
       }
       return 0;
     });
+  const visibleRecipes = filteredRecipes.slice(0, visibleRecipeCount);
+  useEffect(() => {
+    setVisibleRecipeCount(10);
+  }, [
+    libraryQuery,
+    cuisineFilter,
+    healthyFilters,
+    swapTarget?.day,
+    swapTarget?.slot,
+    dayContext,
+    cuisineChoice,
+  ]);
   const swapFoodOptions: MealPart[] = swapTarget
     ? Array.from(
         new Map(
@@ -10882,6 +10902,9 @@ export function FoodPlanner() {
       (plannedDrinkMap[plannedDrink] || []).forEach((x) => {
         totals[x.food] = (totals[x.food] || 0) + x.grams;
       });
+    Object.entries(shoppingAdditions).forEach(([food, grams]) => {
+      totals[food] = (totals[food] || 0) + grams;
+    });
     return Object.entries(totals)
       .map(([food, grams]) => ({ food, grams: round(grams) }))
       .sort((a, b) => a.food.localeCompare(b.food));
@@ -10893,7 +10916,38 @@ export function FoodPlanner() {
     plannedDrink,
     partSelections,
     removedIngredients,
+    shoppingAdditions,
   ]);
+  const copyRecipe = async (recipe: Recipe) => {
+    const macros = calc(recipe.ingredients);
+    const text = [
+      recipe.name,
+      "Porzioni standard non personalizzate · 1 persona",
+      `${round(macros.kcal)} kcal · ${round(macros.protein)} g proteine · ${round(macros.carbs)} g carboidrati · ${round(macros.fat)} g grassi`,
+      "",
+      "Ingredienti",
+      ...recipe.ingredients.map((item) => `• ${item.label || item.food}: ${item.grams} g`),
+      "",
+      "Preparazione",
+      ...recipe.steps.map((step, index) => `${index + 1}. ${step}`),
+      "",
+      "Sostituzioni",
+      ...recipe.alternatives.map((item) => `• ${item}`),
+    ].join("\n");
+    await navigator.clipboard.writeText(text);
+    setReplanNote("Ricetta copiata negli appunti.");
+  };
+  const addRecipeToShopping = (recipe: Recipe) => {
+    setShoppingAdditions((current) => {
+      const next = { ...current };
+      recipe.ingredients.forEach((item) => {
+        next[item.food] = round((next[item.food] || 0) + item.grams);
+      });
+      return next;
+    });
+    setReplanNote("Ingredienti aggiunti alla lista della spesa.");
+    setShoppingOpen(true);
+  };
   const shareShopping = async () => {
     const text =
       `Lista spesa ${shoppingScope === "day" ? days[dayIndex].label : "settimanale"}\n` +
@@ -11945,7 +11999,7 @@ export function FoodPlanner() {
               </div>
             )}
             <div className="recipe-grid">
-              {filteredRecipes.map((r) => {
+              {visibleRecipes.map((r) => {
                 const m = calc(r.ingredients);
                 return (
                   <article
@@ -11980,6 +12034,15 @@ export function FoodPlanner() {
                 );
               })}
             </div>
+            {visibleRecipeCount < filteredRecipes.length && (
+              <button
+                type="button"
+                className="library-more"
+                onClick={() => setVisibleRecipeCount((count) => count + 10)}
+              >
+                Mostra altre 10 ricette
+              </button>
+            )}
             {swapTarget && (
               <div className="swap-food-catalog">
                 <div className="swap-food-heading">
@@ -12575,6 +12638,9 @@ export function FoodPlanner() {
             <div className="recipe-content">
               <span className="eyebrow">DA ZERO · {selected.time} MIN</span>
               <h2>{selected.name}</h2>
+              <p className="standard-portion-note">
+                Porzioni standard non personalizzate · 1 persona
+              </p>
               <div className="recipe-macros">
                 <span>
                   <b>{round(selectedMacros.kcal)}</b> kcal
@@ -12588,6 +12654,14 @@ export function FoodPlanner() {
                 <span>
                   <b>{round(selectedMacros.fat)}g</b> grassi
                 </span>
+              </div>
+              <div className="recipe-utility-actions">
+                <button type="button" onClick={() => copyRecipe(selected)}>
+                  Copia ricetta
+                </button>
+                <button type="button" onClick={() => addRecipeToShopping(selected)}>
+                  Aggiungi alla lista della spesa
+                </button>
               </div>
               {selectedMealKey && (
                 <div className="recipe-mode-actions">
