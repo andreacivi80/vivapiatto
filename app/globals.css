@@ -3308,6 +3308,17 @@ button {
   font-weight: 850;
 }
 
+.recommended-swap-label {
+  display: block;
+  width: max-content;
+  max-width: 100%;
+  margin: 0 0 2px;
+  color: #2e6a55;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.45px;
+}
+
 .recipe-quality-note {
   margin: -3px 0 9px;
   color: #4d6e60;

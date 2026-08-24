@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.35";
+const VERSION = "1.18.36";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -10342,6 +10342,12 @@ export function FoodPlanner() {
         r.name.toLowerCase().includes(libraryQuery.toLowerCase()),
     )
     .sort((a, b) => {
+      if (swapTarget) {
+        const slotCompatibilityDelta =
+          Number(fitsSlot(b, swapTarget.slot)) -
+          Number(fitsSlot(a, swapTarget.slot));
+        if (slotCompatibilityDelta) return slotCompatibilityDelta;
+      }
       const cuisineDelta =
         Number(recipeCuisine(b) === cuisineChoice) -
         Number(recipeCuisine(a) === cuisineChoice);
@@ -13480,8 +13486,12 @@ export function FoodPlanner() {
               </div>
             )}
             <div className="recipe-grid">
-              {visibleRecipes.map((r) => {
+              {visibleRecipes.map((r, recipeIndex) => {
                 const m = calc(r.ingredients);
+                const isRecommendedSwap =
+                  Boolean(swapTarget) &&
+                  recipeIndex < 3 &&
+                  fitsSlot(r, swapTarget?.slot ?? 0);
                 return (
                   <article
                     key={r.id}
@@ -13490,6 +13500,11 @@ export function FoodPlanner() {
                   >
                     <RecipeVisual recipe={r} />
                     <div>
+                      {isRecommendedSwap && (
+                        <small className="recommended-swap-label">
+                          SCELTA CONSIGLIATA
+                        </small>
+                      )}
                       <span>
                         {r.course || recipeCuisine(r)} · {round(m.kcal)} kcal ·{" "}
                         {r.time} min

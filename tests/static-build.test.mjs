@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.35"/);
+  assert.match(app, /VERSION = "1\.18\.36"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1497,4 +1497,15 @@ test("v1.18.35 blocks identical photographs across semantically different foods 
   assert.match(audit, /ricette con fotografia identica/);
   assert.match(audit, /alimenti o momenti diversi con fotografia identica/);
   assert.match(audit, /createHash\("sha256"\)/);
+});
+
+test("v1.18.36 ranks slot-compatible replacement dishes first without removing free choice", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  const css = await readFile("app/globals.css", "utf8");
+  assert.match(app, /const slotCompatibilityDelta =/);
+  assert.match(app, /Number\(fitsSlot\(b, swapTarget\.slot\)\)/);
+  assert.match(app, /recipeIndex < 3/);
+  assert.match(app, /SCELTA CONSIGLIATA/);
+  assert.match(css, /\.recommended-swap-label/);
+  assert.match(app, /CATALOGO COMPLETO/);
 });
