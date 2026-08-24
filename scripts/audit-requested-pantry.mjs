@@ -20,6 +20,7 @@ const required = [
   "Uova sode", "Uova alla coque", "Uova strapazzate o in frittata", "Burger vegetale di soia",
   "Petto di pollo arrosto", "Coscia di pollo arrosto", "Merluzzo cotto", "Orata cotta", "Salmone cotto",
   "Nettarina fresca", "Seitan alla piastra", "Stracchino", "Prosciutto crudo sgrassato",
+  "Parmigiano Reggiano DOP", "Rape crude", "Rape cotte bollite", "Patate cotte arrosto", "Aceto di mele",
   "Pesce spada cotto", "Palombo · peso a crudo", "Alici fresche · peso a crudo", "Lupini ammollati",
   "Yogurt greco 0%", "Yogurt proteico alla vaniglia", "Budino proteico al cioccolato",
   "Ricotta vaccina", "Mozzarella light", "Crescenza", "Primo sale", "Scamorza", "Provolone Dolce Auricchio",

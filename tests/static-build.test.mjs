@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.49"/);
+  assert.match(app, /VERSION = "1\.18\.50"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1651,4 +1651,17 @@ test("v1.18.49 adds nectarine, seitan, stracchino and raw ham with dedicated pho
   assert.match(app, /CREA 007330/);
   assert.match(app, /CREA 167250/);
   assert.match(app, /CREA 110511/);
+});
+
+test("v1.18.50 distinguishes parmesan, turnip states, apple vinegar and roast potatoes", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  assert.match(app, /food: "Parmigiano Reggiano DOP"[\s\S]{0,240}part-parmigiano-v11850/);
+  assert.match(app, /food: "Rape crude"[\s\S]{0,240}part-turnips-raw-v11850/);
+  assert.match(app, /food: "Rape cotte bollite"[\s\S]{0,260}part-turnips-boiled-v11850/);
+  assert.match(app, /food: "Patate cotte arrosto"[\s\S]{0,260}part-potatoes-roasted-v11850/);
+  assert.match(app, /food: "Aceto di mele"[\s\S]{0,240}part-apple-cider-vinegar-v11850/);
+  assert.match(app, /CREA 166000/);
+  assert.match(app, /CREA 005660/);
+  assert.match(app, /CREA 005665/);
+  assert.match(app, /CREA 006511/);
 });

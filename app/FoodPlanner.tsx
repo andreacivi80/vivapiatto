@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.49";
+const VERSION = "1.18.50";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -1790,6 +1790,11 @@ foods["Nettarina fresca"] = { kcal: 36, protein: 1.4, carbs: 7, fat: 0.1, fiber:
 foods["Seitan alla piastra"] = { kcal: 141, protein: 24.7, carbs: 12.3, fat: 1.9, fiber: 0.6, source: "ETICHETTA: verificare confezione" };
 foods.Stracchino = { kcal: 300, protein: 18.5, carbs: 0, fat: 25.1, fiber: 0, source: "CREA 167250" };
 foods["Prosciutto crudo sgrassato"] = { kcal: 176, protein: 29.1, carbs: 0.4, fat: 6.4, fiber: 0, source: "CREA 110511" };
+foods["Parmigiano Reggiano DOP"] = { kcal: 397, protein: 32.4, carbs: 0, fat: 29.7, fiber: 0, source: "CREA 166000" };
+foods["Rape crude"] = { kcal: 24, protein: 1, carbs: 4, fat: 0, fiber: 2.6, source: "CREA 005660" };
+foods["Rape cotte bollite"] = { kcal: 26, protein: 1.1, carbs: 4.3, fat: 0, fiber: 2.8, source: "CREA 005665" };
+foods["Patate cotte arrosto"] = { kcal: 152, protein: 2.9, carbs: 25.7, fat: 4.5, fiber: 1.8, source: "CREA 006511" };
+foods["Aceto di mele"] = { kcal: 21, protein: 0, carbs: 0.9, fat: 0, fiber: 0, source: "USDA FoodData Central" };
 
 const calc = (
   ingredients: RecipeIngredient[],
@@ -5784,6 +5789,7 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       label: "Patate al vapore · 200 g",
       image: photo("part-potatoes-steamed-v1177"),
     },
+    { category: "Carboidrato", food: "Patate cotte arrosto", grams: 200, label: "Patate arrosto · 200 g", image: photo("part-potatoes-roasted-v11850") },
     {
       category: "Carboidrato",
       food: "Patata dolce cotta",
@@ -6119,6 +6125,8 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     { category: "Proteina", food: "Prosciutto crudo sgrassato", grams: 50, label: "Prosciutto crudo sgrassato · 50 g", image: photo("part-prosciutto-crudo-v11849") },
   ],
   Contorno: [
+    { category: "Contorno", food: "Rape crude", grams: 200, label: "Rape crude · parte edibile 200 g", image: photo("part-turnips-raw-v11850") },
+    { category: "Contorno", food: "Rape cotte bollite", grams: 200, label: "Rape bollite e scolate · 200 g", image: photo("part-turnips-boiled-v11850") },
     { category: "Contorno", food: "Lattuga fresca", grams: 100, label: "Lattuga fresca · 100 g", image: photo("part-lettuce-v11668") },
     { category: "Contorno", food: "Songino fresco", grams: 100, label: "Songino fresco · 100 g", image: photo("part-lambs-lettuce-v11668") },
     { category: "Contorno", food: "Catalogna fresca", grams: 150, label: "Catalogna fresca · 150 g", image: photo("part-catalogna-v11668") },
@@ -6419,6 +6427,7 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     },
     { category: "Latticino", food: "Fiocchi di latte", grams: 80, label: "Fiocchi di latte", image: photo("part-cottage-cheese-v11512") },
     { category: "Latticino", food: "Stracchino", grams: 50, label: "Stracchino · 50 g", image: photo("part-stracchino-v11849") },
+    { category: "Latticino", food: "Parmigiano Reggiano DOP", grams: 30, label: "Parmigiano Reggiano DOP · 30 g", image: photo("part-parmigiano-v11850") },
   ],
   Frutta: [
     { category: "Frutta", food: "Nettarina fresca", grams: 150, label: "Nettarina · parte edibile 150 g", image: photo("part-nectarine-v11849") },
@@ -6544,6 +6553,7 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     { category: "Frutta", food: "Melagrana fresca", grams: 150, label: "Melagrana · parte edibile", image: photo("part-pomegranate-v1160") },
   ],
   Extra: [
+    { category: "Extra", food: "Aceto di mele", grams: 10, label: "Aceto di mele · 10 g", image: photo("part-apple-cider-vinegar-v11850") },
     { category: "Extra", food: "Succo di limone", grams: 15, label: "Succo di limone · 15 g", image: photo("part-lemon-juice-v1181") },
     { category: "Extra", food: "Aceto di vino", grams: 10, label: "Aceto di vino · 10 g", image: photo("part-wine-vinegar-v1181") },
     { category: "Extra", food: "Aceto balsamico", grams: 10, label: "Aceto balsamico · 10 g", image: photo("part-balsamic-vinegar-v1181") },
