@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.13"/);
+  assert.match(app, /VERSION = "1\.18\.14"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1281,4 +1281,16 @@ test("v1.18.13 prevents automatic plans from proposing multiple smoothies per da
   assert.match(app, /!smoothieAlreadyPlanned \|\| !isSmoothieRecipe\(recipe\)/);
   assert.match(app, /let tomorrowSmoothiePlanned = false/);
   assert.match(app, /pool\.find\(\(recipe\) => !isSmoothieRecipe\(recipe\)\)/);
+});
+
+test("v1.18.14 displays and copies the recipe balance components", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  const css = await readFile("app/globals.css", "utf8");
+  assert.match(app, /const recipeBalanceSummary = \(recipe: Recipe\)/);
+  for (const component of ["cereale/tubero", "proteina", "verdura", "latticino", "frutta", "grasso/condimento"]) {
+    assert.match(app, new RegExp(component));
+  }
+  assert.match(app, /Composizione: \$\{recipeBalanceSummary\(recipe\)\}/);
+  assert.match(app, /recipeBalanceSummary\(selected\)/);
+  assert.match(css, /\.recipe-balance-note/);
 });

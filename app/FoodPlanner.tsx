@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.13";
+const VERSION = "1.18.14";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -9254,6 +9254,20 @@ const inferRecipeTags = (recipe: Recipe) => {
     /integrale|farro|orzo|quinoa|miglio|grano saraceno/.test(text) ? "Cereali e fibre" : "",
   ].filter(Boolean);
 };
+const recipeBalanceSummary = (recipe: Recipe) => {
+  const categoryLabels: Record<MealPart["category"], string> = {
+    Carboidrato: "cereale/tubero",
+    Proteina: "proteina",
+    Contorno: "verdura",
+    Latticino: "latticino",
+    Frutta: "frutta",
+    Extra: "grasso/condimento",
+  };
+  const components = Array.from(
+    new Set((recipe.parts || []).filter((part) => part.grams > 0).map((part) => categoryLabels[part.category])),
+  );
+  return components.length ? components.join(" + ") : "componenti indicati negli ingredienti";
+};
 const inferRecipeSeasonMonths = (recipe: Recipe) =>
   Array.from(
     new Set(
@@ -11906,6 +11920,7 @@ export function FoodPlanner() {
       recipe.name,
       "Porzioni standard non personalizzate · 1 persona",
       `${round(macros.kcal)} kcal · ${round(macros.protein)} g proteine · ${round(macros.carbs)} g carboidrati · ${round(macros.fat)} g grassi`,
+      `Composizione: ${recipeBalanceSummary(recipe)}`,
       "",
       "Ingredienti",
       ...recipe.ingredients.map((item) => `• ${item.label || item.food}: ${item.grams} g`),
@@ -14022,6 +14037,9 @@ export function FoodPlanner() {
                 Indice varietà {recipeVarietyScore(selected)}/5
                 {recipeHasSeasonalProduce(selected) ? " · contiene ingredienti di stagione" : ""}
                 {" · indicatore descrittivo, non voto sanitario"}
+              </p>
+              <p className="recipe-balance-note">
+                <b>Composizione</b> {recipeBalanceSummary(selected)}
               </p>
               <div className="recipe-allergen-note">
                 <b>Allergeni rilevati</b>

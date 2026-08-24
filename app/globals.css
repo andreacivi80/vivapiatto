@@ -3098,6 +3098,15 @@ button {
   font-size: 9px;
   line-height: 1.15;
 }
+.recipe-balance-note {
+  margin: 5px 0;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.25;
+}
+.recipe-balance-note b {
+  color: var(--text);
+}
 
 .app-recovery {
   min-height: 100dvh;
