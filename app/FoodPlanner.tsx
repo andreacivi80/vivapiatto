@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.53";
+const VERSION = "1.18.54";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -10537,8 +10537,8 @@ export function FoodPlanner() {
     setCuisineFilter("Tutte");
     setLibraryQuery("");
   }, [swapTarget]);
-  const replanFollowingDays = (changedDay: number) => {
-    if (weekLocked) return;
+  const replanFollowingDays = (changedDay: number, forceConfirmedWeek = false) => {
+    if (weekLocked && !forceConfirmedWeek) return;
     const breakfasts = availableBreakfasts();
     const snacks = [...quickSnacks, ...matrixSnacks, ...attachmentMissingSnacks, ...catalogSnacks].filter(isAllowed);
     const mains = allRecipes.filter(
@@ -12399,7 +12399,7 @@ export function FoodPlanner() {
                   <button
                     onClick={() => {
                       rebalanceDayPreservingEdits(weekEditingDay);
-                      replanFollowingDays(weekEditingDay);
+                      replanFollowingDays(weekEditingDay, true);
                       setWeekEditingDay(null);
                       setTab("week");
                       scrollTo({ top: 0, behavior: "smooth" });
