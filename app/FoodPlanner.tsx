@@ -75,7 +75,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.79";
+const VERSION = "1.16.80";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -7719,7 +7719,7 @@ const attachmentBaseMainsA: Recipe[] = [
     course: "Piatto unico",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p01-whole-pasta-chickpeas-v11680"),
     time: 20,
     ingredients: [
       { food: "Pasta integrale secca", grams: 70 },
@@ -7738,7 +7738,7 @@ const attachmentBaseMainsA: Recipe[] = [
     course: "Piatto unico",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p02-farro-lentils-roasted-vegetables-v11680"),
     time: 35,
     ingredients: [
       { food: "Farro cotto", grams: 180 },
@@ -7758,7 +7758,7 @@ const attachmentBaseMainsA: Recipe[] = [
     course: "Piatto unico",
     cuisine: "Asiatico",
     kind: "combination",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p03-quinoa-edamame-ginger-v11680"),
     time: 25,
     ingredients: [
       { food: "Quinoa cotta", grams: 180 },
@@ -7778,7 +7778,7 @@ const attachmentBaseMainsA: Recipe[] = [
     course: "Piatto unico",
     cuisine: "Asiatico",
     kind: "combination",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p04-basmati-light-chicken-curry-v11680"),
     time: 30,
     ingredients: [
       { food: "Riso basmati secco", grams: 70 },

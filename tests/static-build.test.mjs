@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.79"/);
+  assert.match(app, /VERSION = "1\.16\.80"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -755,4 +755,18 @@ test("v1.16.79 completes faithful photos for the remaining snack matrix", async 
     await access(new URL("../dist/food/" + asset + ".png", import.meta.url));
   }
   assert.equal((app.match(/image: photo\("moment-snack-v1121"\)/g) || []).length, 0);
+});
+
+test("v1.16.80 starts faithful photos for the main-meal matrix", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const assets = [
+    ["matrix-p01-whole-pasta-chickpeas", "recipe-p01-whole-pasta-chickpeas-v11680"],
+    ["matrix-p02-farro-lentils-roasted-vegetables", "recipe-p02-farro-lentils-roasted-vegetables-v11680"],
+    ["matrix-p03-quinoa-edamame-ginger", "recipe-p03-quinoa-edamame-ginger-v11680"],
+    ["matrix-p04-basmati-light-chicken-curry", "recipe-p04-basmati-light-chicken-curry-v11680"],
+  ];
+  for (const [id, asset] of assets) {
+    assert.match(app, new RegExp('id: "' + id + '"[\\s\\S]{0,500}image: photo\\("' + asset + '"\\)'));
+    await access(new URL("../dist/food/" + asset + ".png", import.meta.url));
+  }
 });
