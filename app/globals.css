@@ -3115,6 +3115,12 @@ button {
   line-height: 1.2;
 }
 
+.weekly-protein-warning {
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.25;
+}
+
 .app-recovery {
   min-height: 100dvh;
   display: grid;

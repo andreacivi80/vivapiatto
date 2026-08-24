@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.22";
+const VERSION = "1.18.23";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -1806,7 +1806,7 @@ const proteinFamilyForItems = (items: RecipeIngredient[]): WeeklyProteinFamily =
 const recipeProteinFamily = (recipe: Recipe) => proteinFamilyForItems(recipe.parts || recipe.ingredients);
 const WEEKLY_MAIN_ROTATION: WeeklyProteinFamily[] = [
   "legumi", "pesce", "carne-bianca", "uova", "legumi", "pesce", "latticini",
-  "latticini", "carne-bianca", "uova", "legumi", "carne-rossa", "latticini", "uova",
+  "carne-bianca", "uova", "latticini", "legumi", "carne-rossa", "latticini", "uova",
 ];
 const recipes: Recipe[] = [
   {
@@ -11778,6 +11778,14 @@ export function FoodPlanner() {
     status: item.count >= item.min && item.count <= item.max ? "Nel range" : "Da riequilibrare",
   }));
   const weeklyKcalDelta = weeklyAverageKcal - calories;
+  const consecutiveProteinRepeats = days
+    .flatMap((_, day) => [2, 4].map((slot) => ({ day, slot })))
+    .map(({ day, slot }) => {
+      const key = `${day}-${slot}`;
+      return proteinFamilyForItems(plannedIngredients(key, recipeMap[getDayIds(day)[slot]]));
+    })
+    .filter((family, index, sequence) => index > 0 && family !== "altro" && family === sequence[index - 1])
+    .length;
   const rebalanceWeeklyProteinRotation = () => {
     const requestedFamilies = WEEKLY_MAIN_ROTATION;
     const mainSlots = days.flatMap((_, day) => [2, 4].map((slot) => ({ day, slot })));
@@ -13140,6 +13148,11 @@ export function FoodPlanner() {
                 Le proposte successive useranno ciò che registri per aumentare
                 la varietà; i riferimenti non sono obblighi clinici.
               </p>
+              {consecutiveProteinRepeats > 0 && (
+                <p className="weekly-protein-warning">
+                  {consecutiveProteinRepeats} ripetizione consecutiva della stessa fonte proteica. La scelta manuale resta valida; puoi riequilibrare se vuoi alternative.
+                </p>
+              )}
               <button className="weekly-rotation-fix" type="button" onClick={rebalanceWeeklyProteinRotation}>
                 Riequilibra la rotazione dei 14 pasti
               </button>

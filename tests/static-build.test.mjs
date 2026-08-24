@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.22"/);
+  assert.match(app, /VERSION = "1\.18\.23"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1383,4 +1383,17 @@ test("v1.18.22 audits nutrition coverage for every manual alternative", async ()
   assert.match(audit, /const partCatalogStart = source\.indexOf\("const mealPartOptions"\)/);
   assert.match(audit, /partCatalogEnd = source\.indexOf\("const normalizeMealPart"/);
   assert.match(audit, /voci selezionabili/);
+});
+
+test("v1.18.23 avoids consecutive automatic protein families and preserves manual choices", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  const rotation = app.match(/const WEEKLY_MAIN_ROTATION:[^=]+ = \[([\s\S]*?)\];/)?.[1]
+    .match(/"([^"]+)"/g)
+    .map((value) => value.slice(1, -1));
+  assert.equal(rotation.length, 14);
+  for (let index = 1; index < rotation.length; index += 1) {
+    assert.notEqual(rotation[index], rotation[index - 1]);
+  }
+  assert.match(app, /const consecutiveProteinRepeats = days/);
+  assert.match(app, /La scelta manuale resta valida/);
 });
