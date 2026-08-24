@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.48";
+const VERSION = "1.18.49";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -1786,6 +1786,10 @@ foods["Pesce spada cotto"] = { kcal: 172, protein: 23.5, carbs: 0, fat: 7.9, fib
 foods["Palombo · peso a crudo"] = { kcal: 80, protein: 16, carbs: 1.3, fat: 1.2, fiber: 0, source: "CREA 122000" };
 foods["Alici fresche · peso a crudo"] = { kcal: 96, protein: 16.8, carbs: 1.5, fat: 2.6, fiber: 0, source: "CREA 120010" };
 foods["Lupini ammollati"] = { kcal: 119, protein: 16.4, carbs: 7.1, fat: 2.4, fiber: 2.8, source: "CREA 004600" };
+foods["Nettarina fresca"] = { kcal: 36, protein: 1.4, carbs: 7, fat: 0.1, fiber: 1.5, source: "CREA 007330" };
+foods["Seitan alla piastra"] = { kcal: 141, protein: 24.7, carbs: 12.3, fat: 1.9, fiber: 0.6, source: "ETICHETTA: verificare confezione" };
+foods.Stracchino = { kcal: 300, protein: 18.5, carbs: 0, fat: 25.1, fiber: 0, source: "CREA 167250" };
+foods["Prosciutto crudo sgrassato"] = { kcal: 176, protein: 29.1, carbs: 0.4, fat: 6.4, fiber: 0, source: "CREA 110511" };
 
 const calc = (
   ingredients: RecipeIngredient[],
@@ -6111,6 +6115,8 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     { category: "Proteina", food: "Palombo · peso a crudo", grams: 150, label: "Palombo al forno · 150 g a crudo", image: photo("part-palombo-baked-v11848") },
     { category: "Proteina", food: "Alici fresche · peso a crudo", grams: 150, label: "Alici al forno · 150 g a crudo", image: photo("part-anchovies-fresh-v11848") },
     { category: "Proteina", food: "Lupini ammollati", grams: 150, label: "Lupini ammollati e sgocciolati · 150 g", image: photo("part-lupins-soaked-v11848") },
+    { category: "Proteina", food: "Seitan alla piastra", grams: 100, label: "Seitan alla piastra · 100 g", image: photo("part-seitan-grilled-v11849") },
+    { category: "Proteina", food: "Prosciutto crudo sgrassato", grams: 50, label: "Prosciutto crudo sgrassato · 50 g", image: photo("part-prosciutto-crudo-v11849") },
   ],
   Contorno: [
     { category: "Contorno", food: "Lattuga fresca", grams: 100, label: "Lattuga fresca · 100 g", image: photo("part-lettuce-v11668") },
@@ -6412,8 +6418,10 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       image: photo("part-almond-drink-v1177"),
     },
     { category: "Latticino", food: "Fiocchi di latte", grams: 80, label: "Fiocchi di latte", image: photo("part-cottage-cheese-v11512") },
+    { category: "Latticino", food: "Stracchino", grams: 50, label: "Stracchino · 50 g", image: photo("part-stracchino-v11849") },
   ],
   Frutta: [
+    { category: "Frutta", food: "Nettarina fresca", grams: 150, label: "Nettarina · parte edibile 150 g", image: photo("part-nectarine-v11849") },
     { category: "Frutta", food: "Pompelmo rosa fresco", grams: 200, label: "Pompelmo rosa · parte edibile 200 g", image: photo("part-grapefruit-v11668") },
     {
       category: "Frutta",

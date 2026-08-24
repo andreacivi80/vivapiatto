@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.48"/);
+  assert.match(app, /VERSION = "1\.18\.49"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1640,4 +1640,15 @@ test("v1.18.48 adds four verified missing pantry proteins with dedicated photos"
   assert.match(app, /CREA 120010/);
   assert.match(app, /CREA 122000/);
   assert.match(app, /CREA 004600/);
+});
+
+test("v1.18.49 adds nectarine, seitan, stracchino and raw ham with dedicated photos", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  assert.match(app, /food: "Nettarina fresca"[\s\S]{0,220}part-nectarine-v11849/);
+  assert.match(app, /food: "Seitan alla piastra"[\s\S]{0,220}part-seitan-grilled-v11849/);
+  assert.match(app, /food: "Stracchino"[\s\S]{0,220}part-stracchino-v11849/);
+  assert.match(app, /food: "Prosciutto crudo sgrassato"[\s\S]{0,240}part-prosciutto-crudo-v11849/);
+  assert.match(app, /CREA 007330/);
+  assert.match(app, /CREA 167250/);
+  assert.match(app, /CREA 110511/);
 });
