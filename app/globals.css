@@ -3052,6 +3052,99 @@ button {
   line-height: 1.3;
 }
 
+.builder-settings {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.builder-settings label {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.builder-settings span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.builder-settings select {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  padding: 10px 8px;
+  color: var(--ink);
+}
+
+.builder-generate {
+  margin-top: 8px;
+  background: #1f6b4f;
+}
+
+.builder-balance-note {
+  margin-top: 10px;
+}
+
+.generated-builder-card {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+  overflow: hidden;
+  border: 1px solid #cfe2d8;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(32, 74, 58, 0.08);
+}
+
+.generated-builder-card > img,
+.generated-builder-card > .recipe-visual-parts {
+  width: 112px;
+  height: 100%;
+  min-height: 154px;
+  border-radius: 0;
+  object-fit: cover;
+}
+
+.generated-builder-card > div:last-child {
+  min-width: 0;
+  padding: 12px 12px 12px 0;
+}
+
+.generated-builder-card span {
+  color: #1f6b4f;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+}
+
+.generated-builder-card h2 {
+  margin: 4px 0;
+  font-size: 1rem;
+  line-height: 1.15;
+}
+
+.generated-builder-card p {
+  margin: 0 0 9px;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.generated-builder-card button {
+  border: 0;
+  border-radius: 10px;
+  background: #eaf5ef;
+  padding: 8px 9px;
+  color: #15563f;
+  font-size: 0.74rem;
+  font-weight: 850;
+}
+
 .library-more {
   display: block;
   width: 100%;

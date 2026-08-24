@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.87"/);
+  assert.match(app, /VERSION = "1\.16\.88"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -875,4 +875,13 @@ test("v1.16.87 exposes recipe pagination, copy and direct shopping actions", asy
   assert.match(app, /Aggiungi alla lista della spesa/);
   assert.match(app, /Porzioni standard non personalizzate · 1 persona/);
   assert.match(app, /shoppingAdditions/);
+});
+
+test("v1.16.88 creates a real recipe from the ingredients on hand", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(app, /Crea con gli ingredienti che hai/);
+  assert.match(app, /Crea la ricetta con questi ingredienti/);
+  assert.match(app, /generateBuilderRecipe/);
+  assert.match(app, /Tempo massimo/);
+  assert.match(app, /Preparazione completa|Vedi preparazione completa/);
 });

@@ -75,7 +75,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.87";
+const VERSION = "1.16.88";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -9220,6 +9220,9 @@ export function FoodPlanner() {
     { food: "Quinoa cotta", grams: 100 },
     { food: "Olio extravergine", grams: 8 },
   ]);
+  const [builderTime, setBuilderTime] = useState(20);
+  const [builderMethod, setBuilderMethod] = useState("Padella e pentola");
+  const [generatedBuilderRecipe, setGeneratedBuilderRecipe] = useState<Recipe | null>(null);
   const updateBlockedRef = useRef(false);
   const userInteractionUntilRef = useRef(0);
   const refreshSnapshotRef = useRef("");
@@ -10088,6 +10091,77 @@ export function FoodPlanner() {
     (_, slot) => completed[`${dayIndex}-${slot}`],
   ).length;
   const builderTotals = useMemo(() => calc(builder), [builder]);
+  const builderRoles = useMemo(
+    () =>
+      new Set(
+        builder.map((item) =>
+          (Object.keys(mealPartOptions) as MealPart["category"][]).find((role) =>
+            mealPartOptions[role].some((option) => option.food === item.food),
+          ),
+        ),
+      ),
+    [builder],
+  );
+  const builderBalanceNotes = [
+    !builderRoles.has("Carboidrato") ? "Manca una fonte di carboidrati" : "",
+    !builderRoles.has("Proteina") && !builderRoles.has("Latticino")
+      ? "Manca una fonte proteica"
+      : "",
+    !builderRoles.has("Contorno") ? "Mancano verdure" : "",
+  ].filter(Boolean);
+  const generateBuilderRecipe = () => {
+    const usable = builder.filter(
+      (item) => item.grams > 0 && Boolean(foodSearchDatabase[item.food]),
+    );
+    if (!usable.length) {
+      setReplanNote("Aggiungi almeno un ingrediente con una quantità maggiore di zero.");
+      return;
+    }
+    const parts = usable
+      .map((ingredient) => {
+        const known = pantryPartByFood.get(ingredient.food);
+        return known ? { ...known, grams: ingredient.grams } : null;
+      })
+      .filter((part): part is MealPart => Boolean(part));
+    const names = usable.map((item) => item.label || item.food);
+    const hasRaw = usable.some((item) => /crudo|insalata|rucola|pomodor|cetriol/i.test(item.food));
+    const steps = [
+      `Pesa prima tutti gli ingredienti: ${usable.map((item) => `${item.grams} g di ${item.label || item.food}`).join(", ")}.`,
+      hasRaw
+        ? "Lava e asciuga accuratamente gli ingredienti da consumare crudi; tagliali solo dopo il lavaggio."
+        : "Prepara gli ingredienti sul piano di lavoro e separa quelli già cotti da quelli ancora da cuocere.",
+      builderMethod === "Senza cottura"
+        ? "Unisci gli ingredienti in una ciotola, mescola e condisci soltanto alla fine."
+        : builderMethod === "Forno"
+          ? `Cuoci gli ingredienti che lo richiedono in forno, controllando la cottura entro ${builderTime} minuti; unisci poi gli elementi freddi.`
+          : builderMethod === "Vapore"
+            ? `Cuoci al vapore gli ingredienti che lo richiedono finché sono teneri; completa e condisci entro ${builderTime} minuti.`
+            : `Cuoci separatamente gli ingredienti che lo richiedono, poi componi il piatto e completa entro ${builderTime} minuti.`,
+      "Assaggia prima di aggiungere sale e servi subito; per il trasporto lascia raffreddare e conserva in frigorifero.",
+    ];
+    setGeneratedBuilderRecipe({
+      id: `builder-${Date.now()}`,
+      name: names.length <= 3 ? names.join(", ") : `${names.slice(0, 3).join(", ")} e altri ingredienti`,
+      kicker: "CREATA CON I TUOI INGREDIENTI",
+      image: parts[0]?.image || photo("moment-lunch-v1121"),
+      time: builderTime,
+      ingredients: usable,
+      steps,
+      alternatives: [
+        builderBalanceNotes.length
+          ? builderBalanceNotes.join(" · ")
+          : "Composizione completa: carboidrati, proteine e verdure presenti.",
+        "Le quantità restano modificabili: il calcolo nutrizionale si aggiorna sui grammi reali.",
+        "Conserva gli ingredienti deperibili in frigorifero e non usare alimenti con conservazione dubbia.",
+      ],
+      cuisine: cuisineChoice,
+      course: "Piatto completo",
+      parts,
+      kind: "recipe",
+      sourceLabel: "Valori ingredienti da banca dati CREA, USDA, FRIDA ed etichette",
+      sourceUrl: "https://www.alimentinutrizione.it/",
+    });
+  };
   const doneCount = Object.values(completed).filter(Boolean).length;
   const guidance =
     check.yesterday === "molto"
@@ -12066,11 +12140,29 @@ export function FoodPlanner() {
         {tab === "builder" && (
           <section>
             <span className="eyebrow">LABORATORIO DEL PIATTO</span>
-            <h1 className="page-title">Componi la tua insalatona</h1>
+            <h1 className="page-title">Crea con gli ingredienti che hai</h1>
             <p className="page-lead">
-              Aggiungi ciò che vuoi e indica i grammi. Il totale cambia in tempo
-              reale.
+              Inserisci alimenti e grammi: ottieni una ricetta completa da zero,
+              con preparazione e valori aggiornati.
             </p>
+            <div className="builder-settings">
+              <label>
+                <span>Tempo massimo</span>
+                <select value={builderTime} onChange={(event) => setBuilderTime(Number(event.target.value))}>
+                  {[10, 15, 20, 30, 45].map((minutes) => (
+                    <option key={minutes} value={minutes}>{minutes} minuti</option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                <span>Preparazione</span>
+                <select value={builderMethod} onChange={(event) => setBuilderMethod(event.target.value)}>
+                  {["Padella e pentola", "Senza cottura", "Forno", "Vapore"].map((method) => (
+                    <option key={method}>{method}</option>
+                  ))}
+                </select>
+              </label>
+            </div>
             <div className="builder-score">
               <div>
                 <span>Peso totale</span>
@@ -12166,6 +12258,9 @@ export function FoodPlanner() {
             >
               ＋ Aggiungi ingrediente
             </button>
+            <button className="primary-btn builder-generate" onClick={generateBuilderRecipe}>
+              Crea la ricetta con questi ingredienti
+            </button>
             <div className="builder-macros">
               <span>
                 <b>{round(builderTotals.carbs)}g</b> carboidrati
@@ -12177,14 +12272,31 @@ export function FoodPlanner() {
                 <b>{round(builderTotals.protein)}g</b> proteine
               </span>
             </div>
-            <div className="tip-card">
-              <b>Idea “particolare”</b>
-              <p>
-                Prova una base di rucola, farro tiepido, salmone, kiwi a cubetti
-                e semi di zucca. Pesa l'olio: è nutriente, ma molto concentrato
-                in energia.
-              </p>
-            </div>
+            {builderBalanceNotes.length > 0 && (
+              <div className="tip-card builder-balance-note">
+                <b>Per completare il piatto</b>
+                <p>{builderBalanceNotes.join(" · ")}.</p>
+              </div>
+            )}
+            {generatedBuilderRecipe && (
+              <article className="generated-builder-card">
+                <RecipeVisual recipe={generatedBuilderRecipe} />
+                <div>
+                  <span>RICETTA GENERATA</span>
+                  <h2>{generatedBuilderRecipe.name}</h2>
+                  <p>{generatedBuilderRecipe.time} min · {round(calc(generatedBuilderRecipe.ingredients).kcal)} kcal</p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedMealKey(null);
+                      setSelected(generatedBuilderRecipe);
+                    }}
+                  >
+                    Vedi preparazione completa
+                  </button>
+                </div>
+              </article>
+            )}
           </section>
         )}
         {tab === "progress" &&
