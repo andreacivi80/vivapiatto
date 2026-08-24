@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.14";
+const VERSION = "1.18.15";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -10083,6 +10083,17 @@ export function FoodPlanner() {
     const month = new Date().getMonth() + 1;
     return recipe.ingredients.some((ingredient) => seasonalMonths[ingredient.food]?.includes(month));
   };
+  const recipeSeasonalityScore = (recipe: Recipe) => {
+    const month = new Date().getMonth() + 1;
+    const seasonalIngredients = recipe.ingredients.filter(
+      (ingredient) => seasonalMonths[ingredient.food]?.length,
+    );
+    if (!seasonalIngredients.length) return 0;
+    const inSeason = seasonalIngredients.filter((ingredient) =>
+      seasonalMonths[ingredient.food].includes(month),
+    ).length;
+    return round((inSeason / seasonalIngredients.length) * 100);
+  };
   const cleanKicker = (text: string) =>
     text.replace(/\s*·?\s*matrice\s+[cspd]\d+/gi, "").trim();
   const fitsSlot = (r: Recipe, slot: number) =>
@@ -11047,6 +11058,8 @@ export function FoodPlanner() {
     offset: number,
   ) => {
     const ranked = [...pool].sort((a, b) => {
+      const seasonalDelta = recipeSeasonalityScore(b) - recipeSeasonalityScore(a);
+      if (seasonalDelta) return seasonalDelta;
       if (dayContext === "Mensa" && [2, 4].includes(slot)) {
         const mensaDelta = Number(isMensaFriendly(b)) - Number(isMensaFriendly(a));
         if (mensaDelta) return mensaDelta;
@@ -13269,7 +13282,7 @@ export function FoodPlanner() {
                       <p>{cleanKicker(r.kicker)}</p>
                       <small className="recipe-card-quality">
                         Varietà {recipeVarietyScore(r)}/5
-                        {recipeHasSeasonalProduce(r) ? " · ingredienti di stagione" : ""}
+                        {recipeSeasonalityScore(r) > 0 ? ` · stagione ${recipeSeasonalityScore(r)}%` : ""}
                         {` · ${budgetLabel(r)}`}
                       </small>
                     </div>
@@ -14035,7 +14048,7 @@ export function FoodPlanner() {
               </p>
               <p className="recipe-quality-note">
                 Indice varietà {recipeVarietyScore(selected)}/5
-                {recipeHasSeasonalProduce(selected) ? " · contiene ingredienti di stagione" : ""}
+                {recipeSeasonalityScore(selected) > 0 ? ` · stagione ${recipeSeasonalityScore(selected)}%` : ""}
                 {" · indicatore descrittivo, non voto sanitario"}
               </p>
               <p className="recipe-balance-note">

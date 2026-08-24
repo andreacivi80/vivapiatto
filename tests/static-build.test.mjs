@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.14"/);
+  assert.match(app, /VERSION = "1\.18\.15"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1293,4 +1293,13 @@ test("v1.18.14 displays and copies the recipe balance components", async () => {
   assert.match(app, /Composizione: \$\{recipeBalanceSummary\(recipe\)\}/);
   assert.match(app, /recipeBalanceSummary\(selected\)/);
   assert.match(css, /\.recipe-balance-note/);
+});
+
+test("v1.18.15 applies current seasonality to automatic recipe ranking", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  assert.match(app, /const recipeSeasonalityScore = \(recipe: Recipe\)/);
+  assert.match(app, /inSeason \/ seasonalIngredients\.length/);
+  assert.match(app, /const seasonalDelta = recipeSeasonalityScore\(b\) - recipeSeasonalityScore\(a\)/);
+  assert.match(app, /if \(seasonalDelta\) return seasonalDelta/);
+  assert.match(app, /stagione \$\{recipeSeasonalityScore\(r\)\}%/);
 });
