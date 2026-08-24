@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.58";
+const VERSION = "1.18.59";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -12265,6 +12265,26 @@ export function FoodPlanner() {
     await navigator.clipboard.writeText(text);
     setReplanNote("Ricetta copiata negli appunti.");
   };
+  const copyVisibleRecipes = async () => {
+    const text = visibleRecipes
+      .map((recipe, recipeIndex) => {
+        const macros = calc(recipe.ingredients);
+        return [
+          String(recipeIndex + 1) + ". " + recipe.name,
+          "Porzioni standard non personalizzate · " + recipe.time + " min",
+          round(macros.kcal) + " kcal · " + round(macros.protein) + " g proteine · " + round(macros.carbs) + " g carboidrati · " + round(macros.fat) + " g grassi",
+          "Ingredienti",
+          ...recipe.ingredients.map(
+            (item) => "• " + (item.label || item.food) + ": " + item.grams + " g · peso " + ingredientWeightState(item.food),
+          ),
+          "Preparazione",
+          ...recipe.steps.map((step, stepIndex) => String(stepIndex + 1) + ". " + step),
+        ].join("\n");
+      })
+      .join("\n\n--------------------\n\n");
+    await navigator.clipboard.writeText(text);
+    setReplanNote(visibleRecipes.length + " ricette mostrate copiate negli appunti.");
+  };
   const addRecipeToShopping = (recipe: Recipe) => {
     setShoppingAdditions((current) => {
       const next = { ...current };
@@ -13693,6 +13713,15 @@ export function FoodPlanner() {
                 );
               })}
             </div>
+            {visibleRecipes.length > 0 && (
+              <button
+                type="button"
+                className="library-more secondary"
+                onClick={copyVisibleRecipes}
+              >
+                Copia le {visibleRecipes.length} ricette mostrate
+              </button>
+            )}
             {visibleRecipeCount < filteredRecipes.length && (
               <button
                 type="button"
