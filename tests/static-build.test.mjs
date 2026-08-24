@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.75"/);
+  assert.match(app, /VERSION = "1\.16\.76"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -677,6 +677,24 @@ test("v1.16.75 gives the second breakfast matrix block faithful recipe photos", 
     ["matrix-c15-poached-egg-toast", "recipe-c15-poached-egg-toast-v11675"],
     ["matrix-c16-ricotta-blueberries-pistachios", "recipe-c16-ricotta-blueberry-pistachio-v11675"],
     ["matrix-c17-chia-kefir-mango-pudding", "recipe-c17-chia-kefir-mango-v11675"],
+  ];
+  for (const [id, asset] of assets) {
+    assert.match(app, new RegExp('id: "' + id + '"[\\s\\S]{0,500}image: photo\\("' + asset + '"\\)'));
+    await access(new URL("../dist/food/" + asset + ".png", import.meta.url));
+  }
+});
+
+test("v1.16.76 gives the third breakfast matrix block faithful recipe photos", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const assets = [
+    ["matrix-c18-whole-pancakes-ricotta-cherries", "recipe-c18-pancakes-ricotta-cherries-v11676"],
+    ["matrix-c19-cottage-melon-walnut-bowl", "recipe-c19-cottage-melon-walnuts-v11676"],
+    ["matrix-c20-cold-papaya-porridge", "recipe-c20-cold-papaya-porridge-v11676"],
+    ["matrix-c22-yogurt-apple-oats-sunflower", "recipe-c22-yogurt-apple-sunflower-v11676"],
+    ["matrix-c23-bread-cottage-pear-pecans", "recipe-c23-cottage-pear-pecans-v11676"],
+    ["matrix-c24-kefir-strawberry-oat-smoothie", "recipe-c24-kefir-strawberry-smoothie-v11676"],
+    ["matrix-c25-scrambled-eggs-asparagus-rye", "recipe-c25-eggs-asparagus-kiwi-v11676"],
+    ["matrix-c26-skyr-grapes-pistachio-muesli", "recipe-c26-skyr-grapes-pistachio-v11676"],
   ];
   for (const [id, asset] of assets) {
     assert.match(app, new RegExp('id: "' + id + '"[\\s\\S]{0,500}image: photo\\("' + asset + '"\\)'));
