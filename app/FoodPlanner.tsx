@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.9";
+const VERSION = "1.18.10";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -11867,6 +11867,7 @@ export function FoodPlanner() {
   ]);
   const copyRecipe = async (recipe: Recipe) => {
     const macros = calc(recipe.ingredients);
+    const safeAlternatives = recipe.alternatives.filter(isAlternativeAllowed);
     const text = [
       recipe.name,
       "Porzioni standard non personalizzate · 1 persona",
@@ -11879,7 +11880,9 @@ export function FoodPlanner() {
       ...recipe.steps.map((step, index) => `${index + 1}. ${step}`),
       "",
       "Sostituzioni",
-      ...recipe.alternatives.map((item) => `• ${item}`),
+      ...(safeAlternatives.length
+        ? safeAlternatives.map((item) => `• ${item}`)
+        : ["• Nessuna sostituzione compatibile con il profilo attuale"]),
     ].join("\n");
     await navigator.clipboard.writeText(text);
     setReplanNote("Ricetta copiata negli appunti.");

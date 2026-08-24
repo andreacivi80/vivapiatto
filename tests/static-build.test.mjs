@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.9"/);
+  assert.match(app, /VERSION = "1\.18\.10"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1239,4 +1239,11 @@ test("v1.18.9 shows nutrition estimate and allergens for logged extras", async (
   assert.match(app, /P \{fmt\(x\.protein \|\| 0\)\} · C \{fmt\(x\.carbs \|\| 0\)\} · G/);
   assert.match(app, /Allergeni: \$\{x\.allergens\.join\(", "\)\}/);
   assert.match(app, /fibre \{fmt\(x\.fiber \|\| 0\)\} g/);
+});
+
+test("v1.18.10 copies only substitutions compatible with the active profile", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  assert.match(app, /const safeAlternatives = recipe\.alternatives\.filter\(isAlternativeAllowed\)/);
+  assert.match(app, /safeAlternatives\.map\(\(item\) => `• \$\{item\}`\)/);
+  assert.match(app, /Nessuna sostituzione compatibile con il profilo attuale/);
 });
