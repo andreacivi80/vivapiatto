@@ -75,7 +75,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.95";
+const VERSION = "1.16.96";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -9557,12 +9557,23 @@ export function FoodPlanner() {
       return /microonde|già cott|senza cottura|assembla|mescola/.test(method);
     return true;
   };
+  const isProfileEligible = (recipe: Recipe) =>
+    isAllowed(recipe) &&
+    matchesFoodStyle(recipe) &&
+    matchesEquipment(recipe) &&
+    recipe.time <= maxPrepTime;
+  const recipeProteinSignature = (recipe: Recipe) => {
+    const protein = recipe.ingredients.find((ingredient) =>
+      /pollo|tacchino|coniglio|manzo|vitello|maiale|cavallo|bresaola|prosciutto|salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|gamber|polpo|cozze|calamari|rombo|seppia|uov|ceci|lenticchie|fagioli|piselli|tofu|tempeh|ricotta|feta|mozzarella|crescenza|scamorza|provolone/i.test(ingredient.food),
+    );
+    return protein?.food || recipeProteinFamily(recipe);
+  };
   const availableBreakfasts = () =>
     [
       ...matrixBreakfasts.filter((recipe) => dayContext === "Casa" || recipe.time <= 7),
       ...simpleBreakfasts,
       ...catalogBreakfasts,
-    ].filter(isAllowed);
+    ].filter(isProfileEligible);
   const recipeCuisine = (r: Recipe) =>
     r.cuisine ||
     (r.id.includes("toast") || r.id.includes("sweet")
@@ -10026,6 +10037,9 @@ export function FoodPlanner() {
     );
     const adjustable = items.filter((item) => adjustableFoods.has(item.food));
     const fixed = items.filter((item) => !adjustableFoods.has(item.food));
+    const mealFoodText = items.map((item) => item.food).join(" ").toLowerCase();
+    const hasLegumes = /ceci|lenticchie|fagioli|piselli|fave|edamame|lupini|cicerchie/.test(mealFoodText);
+    const hasFattyFish = /salmone|sgombro|sardine|trota/.test(mealFoodText);
     const adjustableKcal = calc(adjustable).kcal;
     const fixedKcal = calc(fixed).kcal;
     if (!adjustableKcal || target <= fixedKcal) return items;
@@ -10041,8 +10055,8 @@ export function FoodPlanner() {
       const cookedGrain =
         /riso|pasta|farro|quinoa|orzo|bulgur|cous cous|grano saraceno/.test(food) &&
         /cott/.test(food);
-      if (cookedGrain) return roundWithin(120, 250, 10);
-      if (/pasta|riso/.test(food)) return roundWithin(50, 100, 10);
+      if (cookedGrain) return roundWithin(120, hasLegumes ? 180 : 250, 10);
+      if (/pasta|riso/.test(food)) return roundWithin(50, hasLegumes ? 80 : 100, 10);
       if (food.includes("gnocchi")) return roundWithin(120, 220, 10);
       if (food.includes("patate")) return roundWithin(150, 300, 25);
       if (/fette biscottate|biscott|cracker|grissini/.test(food))
@@ -10050,7 +10064,8 @@ export function FoodPlanner() {
       if (food.includes("pane")) return roundWithin(30, 120, 10);
       if (/confettura|miele|crema 100%|nutella/.test(food))
         return roundWithin(10, 30, 5);
-      if (/olio|burro/.test(food)) return roundWithin(5, 15, 5);
+      if (/olio/.test(food)) return roundWithin(5, hasFattyFish ? 5 : 15, 5);
+      if (/burro/.test(food)) return roundWithin(5, 15, 5);
       if (/noci|mandorle|pistacchi|arachidi|nocciole|anacardi|semi/.test(food))
         return roundWithin(10, 30, 5);
       if (/latte|bevanda di soia|bevanda d.avena/.test(food))
@@ -10543,10 +10558,10 @@ export function FoodPlanner() {
           : 2) +
       (plannedDrink === "Acqua" ? 0 : 1);
     const styled = allRecipes.filter(
-      (r) => isAllowed(r) && recipeCuisine(r) === cuisineChoice,
+      (r) => isProfileEligible(r) && recipeCuisine(r) === cuisineChoice,
     );
     const breakfasts = availableBreakfasts();
-    const snacks = [...quickSnacks, ...matrixSnacks, ...attachmentMissingSnacks, ...catalogSnacks].filter(isAllowed);
+    const snacks = [...quickSnacks, ...matrixSnacks, ...attachmentMissingSnacks, ...catalogSnacks].filter(isProfileEligible);
     const mains = styled.filter((r) =>
       ["Piatto unico", "Piatto completo", "Primo", "Secondo"].includes(recipeCourse(r)),
     );
@@ -10577,6 +10592,7 @@ export function FoodPlanner() {
     setChoices((current) => {
       const next = { ...current };
       const usedRecipes = new Set<string>();
+      const usedProteinSignatures = new Set<string>();
       const chooseMain = (
         pool: Recipe[],
         family: WeeklyProteinFamily,
@@ -10590,7 +10606,7 @@ export function FoodPlanner() {
         );
         const sameCuisineFamily = allRecipes.filter(
           (recipe) =>
-            isAllowed(recipe) &&
+            isProfileEligible(recipe) &&
             fitsSlot(recipe, slot) &&
             recipeCuisine(recipe) === cuisineChoice &&
             recipeProteinFamily(recipe) === family &&
@@ -10598,7 +10614,7 @@ export function FoodPlanner() {
         );
         const anyCuisineFamily = allRecipes.filter(
           (recipe) =>
-            isAllowed(recipe) &&
+            isProfileEligible(recipe) &&
             fitsSlot(recipe, slot) &&
             recipeProteinFamily(recipe) === family &&
             !usedRecipes.has(recipe.id),
@@ -10612,8 +10628,17 @@ export function FoodPlanner() {
               : unused.length
                 ? unused
                 : pool;
-        const chosen = closestForSlot(candidates, slot, target, offset);
+        const unusedSpecies = candidates.filter(
+          (recipe) => !usedProteinSignatures.has(recipeProteinSignature(recipe)),
+        );
+        const chosen = closestForSlot(
+          unusedSpecies.length ? unusedSpecies : candidates,
+          slot,
+          target,
+          offset,
+        );
         usedRecipes.add(chosen.id);
+        usedProteinSignatures.add(recipeProteinSignature(chosen));
         return chosen;
       };
       profileDays.forEach((day) => {
@@ -10665,10 +10690,10 @@ export function FoodPlanner() {
           ? 3
           : 2);
     const breakfasts = availableBreakfasts();
-    let snacks = [...quickSnacks, ...matrixSnacks, ...attachmentMissingSnacks, ...catalogSnacks].filter(isAllowed);
+    let snacks = [...quickSnacks, ...matrixSnacks, ...attachmentMissingSnacks, ...catalogSnacks].filter(isProfileEligible);
     let mains = allRecipes.filter(
       (r) =>
-        isAllowed(r) &&
+        isProfileEligible(r) &&
         recipeCuisine(r) === cuisineChoice &&
         ["Piatto unico", "Piatto completo", "Primo", "Secondo"].includes(recipeCourse(r)),
     );
@@ -10706,7 +10731,7 @@ export function FoodPlanner() {
         (a, b) => calc(b.ingredients).carbs - calc(a.ingredients).carbs,
       );
       snacks = allRecipes
-        .filter((r) => isAllowed(r) && recipeCourse(r) === "Spuntino")
+        .filter((r) => isProfileEligible(r) && recipeCourse(r) === "Spuntino")
         .sort((a, b) => calc(b.ingredients).carbs - calc(a.ingredients).carbs);
     } else {
       mains = [...mains].sort(
@@ -11057,14 +11082,14 @@ export function FoodPlanner() {
     ];
     const mainSlots = days.flatMap((_, day) => [2, 4].map((slot) => ({ day, slot })));
     const used = new Set<string>();
+    const usedProteinSignatures = new Set<string>();
     const updates: Record<string, string> = {};
     mainSlots.forEach(({ day, slot }, index) => {
       const family = requestedFamilies[index];
       const targetKcal = targetForDay(day) * mealCalorieShares[slot];
       const suitable = allRecipes.filter((recipe) => {
         if (recipe.id.startsWith("occasional-")) return false;
-        if (!fitsSlot(recipe, slot) || !isAllowed(recipe) || !matchesFoodStyle(recipe)) return false;
-        if (!matchesEquipment(recipe) || recipe.time > maxPrepTime) return false;
+        if (!fitsSlot(recipe, slot) || !isProfileEligible(recipe)) return false;
         return proteinFamilyForItems(recipe.ingredients) === family;
       });
       const ranked = suitable.sort((left, right) => {
@@ -11078,10 +11103,16 @@ export function FoodPlanner() {
         if (cuisineDelta) return cuisineDelta;
         return Math.abs(calc(left.ingredients).kcal - targetKcal) - Math.abs(calc(right.ingredients).kcal - targetKcal);
       });
-      const selectedRecipe = ranked.find((recipe) => !used.has(recipe.id)) || ranked[0];
+      const freshSpecies = ranked.find(
+        (recipe) =>
+          !used.has(recipe.id) &&
+          !usedProteinSignatures.has(recipeProteinSignature(recipe)),
+      );
+      const selectedRecipe = freshSpecies || ranked.find((recipe) => !used.has(recipe.id)) || ranked[0];
       if (selectedRecipe) {
         updates[`${day}-${slot}`] = selectedRecipe.id;
         used.add(selectedRecipe.id);
+        usedProteinSignatures.add(recipeProteinSignature(selectedRecipe));
       }
     });
     setChoices((current) => ({ ...current, ...updates }));
@@ -11107,11 +11138,21 @@ export function FoodPlanner() {
     }
     const total = loggedTotal(day);
     const target = targetForDay(day);
-    const safe = allRecipes.filter(
-      (r) =>
-        isAllowed(r) &&
-        ["Piatto unico", "Piatto completo", "Primo", "Secondo"].includes(recipeCourse(r)),
+    const usedRecipeIds = new Set(
+      days
+        .slice(0, day + 1)
+        .flatMap((_, previousDay) => getDayIds(previousDay)),
     );
+    const safe = allRecipes.filter(
+      (recipe) =>
+        isProfileEligible(recipe) &&
+        !recipe.id.startsWith("occasional-") &&
+        ["Piatto unico", "Piatto completo", "Primo", "Secondo"].includes(recipeCourse(recipe)),
+    );
+    if (!safe.length) {
+      setReplanNote("Nessuna ricetta compatibile con tutte le esclusioni e le attrezzature selezionate.");
+      return;
+    }
     const ranked = [...safe].sort(
       (a, b) => calc(a.ingredients).kcal - calc(b.ingredients).kcal,
     );
@@ -11121,10 +11162,22 @@ export function FoodPlanner() {
         : total < target * 0.8
           ? ranked.slice(Math.floor(ranked.length / 2))
           : safe;
+    const unused = pool.filter((recipe) => !usedRecipeIds.has(recipe.id));
+    const lunchPool = unused.length ? unused : pool;
+    const lunch = lunchPool[(day * 2) % lunchPool.length];
+    const dinnerCandidates = lunchPool.filter(
+      (recipe) =>
+        recipe.id !== lunch.id &&
+        recipeProteinFamily(recipe) !== recipeProteinFamily(lunch),
+    );
+    const dinnerPool = dinnerCandidates.length
+      ? dinnerCandidates
+      : lunchPool.filter((recipe) => recipe.id !== lunch.id);
+    const dinner = (dinnerPool.length ? dinnerPool : pool)[(day * 2 + 1) % (dinnerPool.length || pool.length)];
     setChoices((v) => ({
       ...v,
-      [`${day + 1}-2`]: pool[(day * 2) % pool.length].id,
-      [`${day + 1}-4`]: pool[(day * 2 + 1) % pool.length].id,
+      [`${day + 1}-2`]: lunch.id,
+      [`${day + 1}-4`]: dinner.id,
     }));
     setReplanNote(
       total > target * 1.1
@@ -11142,16 +11195,24 @@ export function FoodPlanner() {
     }
     const remaining = Math.max(0, targetForDay(day) - loggedTotal(day));
     const average = remaining / open.length;
-    const safe = allRecipes.filter(isAllowed);
+    const usedRecipeIds = new Set(getDayIds(day));
+    const safe = allRecipes.filter(
+      (recipe) => isProfileEligible(recipe) && !recipe.id.startsWith("occasional-"),
+    );
     const updates: Record<string, string> = {};
     open.forEach((slot, n) => {
       const coursePool = safe.filter((r) => fitsSlot(r, slot));
       const ranked = [...(coursePool.length ? coursePool : safe)].sort(
         (a, b) =>
+          Number(usedRecipeIds.has(a.id)) - Number(usedRecipeIds.has(b.id)) ||
           Math.abs(calc(a.ingredients).kcal - average) -
           Math.abs(calc(b.ingredients).kcal - average),
       );
-      updates[`${day}-${slot}`] = ranked[n % Math.min(ranked.length, 12)].id;
+      if (ranked.length) {
+        const chosen = ranked[n % Math.min(ranked.length, 12)];
+        updates[`${day}-${slot}`] = chosen.id;
+        usedRecipeIds.add(chosen.id);
+      }
     });
     setChoices((v) => ({ ...v, ...updates }));
     setReplanNote(
@@ -11181,16 +11242,24 @@ export function FoodPlanner() {
         );
       }, 0);
     const average = Math.max(80, targetForDay(day) - fixedKcal) / adjustable.length;
-    const safe = allRecipes.filter(isAllowed);
+    const usedRecipeIds = new Set(getDayIds(day));
+    const safe = allRecipes.filter(
+      (recipe) => isProfileEligible(recipe) && !recipe.id.startsWith("occasional-"),
+    );
     const updates: Record<string, string> = {};
     adjustable.forEach((slot, index) => {
       const pool = safe.filter((recipe) => fitsSlot(recipe, slot));
       const ranked = [...pool].sort(
         (a, b) =>
+          Number(usedRecipeIds.has(a.id)) - Number(usedRecipeIds.has(b.id)) ||
           Math.abs(calc(a.ingredients).kcal - average) -
           Math.abs(calc(b.ingredients).kcal - average),
       );
-      if (ranked.length) updates[`${day}-${slot}`] = ranked[index % ranked.length].id;
+      if (ranked.length) {
+        const chosen = ranked[index % ranked.length];
+        updates[`${day}-${slot}`] = chosen.id;
+        usedRecipeIds.add(chosen.id);
+      }
     });
     setChoices((current) => ({ ...current, ...updates }));
     setReplanNote("Giornata riequilibrata mantenendo gli elementi modificati; aggiornati anche i giorni successivi.");

@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.95"/);
+  assert.match(app, /VERSION = "1\.16\.96"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -70,7 +70,7 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /recipeCuisine\(b\) === cuisineChoice/);
   assert.match(app, /calibratePlannedIngredients/);
   assert.match(app, /const cookedGrain/);
-  assert.match(app, /roundWithin\(120, 250, 10\)/);
+  assert.match(app, /roundWithin\(120, hasLegumes \? 180 : 250, 10\)/);
   assert.match(app, /\.\.\.mealPartOptions\.Proteina/);
   assert.match(app, /targetAdditionsFor\(slot, targetForDay\(day\)\)/);
   assert.match(app, /mealCalorieShares/);
@@ -952,4 +952,15 @@ test("v1.16.95 separates allergies, intolerances and clinical conditions", async
   assert.match(app, /recipeAllergens/);
   assert.match(app, /Controlla sempre etichetta, certificazione e possibili contaminazioni/);
   assert.match(app, /non crea una dieta terapeutica/);
+});
+
+test("v1.16.96 prevents repeated recipes and applies meal-level balance rules", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(app, /isProfileEligible/);
+  assert.match(app, /usedProteinSignatures/);
+  assert.match(app, /recipeProteinSignature/);
+  assert.match(app, /usedRecipeIds/);
+  assert.match(app, /hasLegumes \? 180 : 250/);
+  assert.match(app, /hasFattyFish \? 5 : 15/);
+  assert.match(app, /recipeProteinFamily\(recipe\) !== recipeProteinFamily\(lunch\)/);
 });
