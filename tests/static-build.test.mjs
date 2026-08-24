@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.92"/);
+  assert.match(app, /VERSION = "1\.16\.93"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -924,4 +924,13 @@ test("v1.16.92 generates another compatible recipe page without widening filters
   assert.match(app, /rotatedCompatibleRecipes/);
   assert.match(app, /Genera altre ricette compatibili/);
   assert.match(app, /setVisibleRecipeCount\(10\)/);
+});
+
+test("v1.16.93 rebuilds the 14 main meals into a coherent weekly protein rotation", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(app, /rebalanceWeeklyProteinRotation/);
+  assert.match(app, /requestedFamilies/);
+  assert.match(app, /Riequilibra la rotazione dei 14 pasti/);
+  assert.match(app, /3 pesci, 3 legumi, 3 carni bianche/);
+  assert.match(app, /used\.has\(recipe\.id\)/);
 });

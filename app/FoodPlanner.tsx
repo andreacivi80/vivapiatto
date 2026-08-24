@@ -75,7 +75,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.92";
+const VERSION = "1.16.93";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -10997,7 +10997,56 @@ export function FoodPlanner() {
     { label: "Uova", target: "2–4", count: weeklyCounts.Uova },
     { label: "Formaggi", target: "2–3", count: weeklyCounts.Formaggi },
     { label: "Salumi", target: "<1", count: weeklyCounts.Salumi },
-  ];  const replanNextDay = (day: number) => {
+  ];
+  const rebalanceWeeklyProteinRotation = () => {
+    const requestedFamilies = [
+      "pesce", "legumi", "carne-bianca", "uova", "latticini", "pesce", "carne-rossa",
+      "legumi", "carne-bianca", "uova", "latticini", "pesce", "legumi", "carne-bianca",
+    ];
+    const mainSlots = days.flatMap((_, day) => [2, 4].map((slot) => ({ day, slot })));
+    const used = new Set<string>();
+    const updates: Record<string, string> = {};
+    mainSlots.forEach(({ day, slot }, index) => {
+      const family = requestedFamilies[index];
+      const targetKcal = targetForDay(day) * mealCalorieShares[slot];
+      const suitable = allRecipes.filter((recipe) => {
+        if (recipe.id.startsWith("occasional-")) return false;
+        if (!fitsSlot(recipe, slot) || !isAllowed(recipe) || !matchesFoodStyle(recipe)) return false;
+        if (!matchesEquipment(recipe) || recipe.time > maxPrepTime) return false;
+        return proteinFamilyForItems(recipe.ingredients) === family;
+      });
+      const ranked = suitable.sort((left, right) => {
+        const uniqueDelta = Number(used.has(left.id)) - Number(used.has(right.id));
+        if (uniqueDelta) return uniqueDelta;
+        if (dayContext === "Lavoro" && slot === 2) {
+          const practicalDelta = Number(isWorkFriendly(right)) - Number(isWorkFriendly(left));
+          if (practicalDelta) return practicalDelta;
+        }
+        const cuisineDelta = Number(recipeCuisine(right) === cuisineChoice) - Number(recipeCuisine(left) === cuisineChoice);
+        if (cuisineDelta) return cuisineDelta;
+        return Math.abs(calc(left.ingredients).kcal - targetKcal) - Math.abs(calc(right.ingredients).kcal - targetKcal);
+      });
+      const selectedRecipe = ranked.find((recipe) => !used.has(recipe.id)) || ranked[0];
+      if (selectedRecipe) {
+        updates[`${day}-${slot}`] = selectedRecipe.id;
+        used.add(selectedRecipe.id);
+      }
+    });
+    setChoices((current) => ({ ...current, ...updates }));
+    setPartSelections((current) => {
+      const next = { ...current };
+      mainSlots.forEach(({ day, slot }) => delete next[`${day}-${slot}`]);
+      return next;
+    });
+    setMealView((current) => {
+      const next = { ...current };
+      mainSlots.forEach(({ day, slot }) => delete next[`${day}-${slot}`]);
+      return next;
+    });
+    setWeekLocked(false);
+    setReplanNote("Rotazione settimanale ricostruita: 3 pesci, 3 legumi, 3 carni bianche, 1 carne rossa, 2 uova e 2 formaggi, senza ripetere la stessa famiglia consecutivamente.");
+  };
+  const replanNextDay = (day: number) => {
     if (day >= days.length - 1) {
       setReplanNote(
         "Settimana completata: usa il diario per impostare la prossima.",
@@ -12116,6 +12165,9 @@ export function FoodPlanner() {
                 Le proposte successive useranno ciò che registri per aumentare
                 la varietà; i riferimenti non sono obblighi clinici.
               </p>
+              <button className="weekly-rotation-fix" type="button" onClick={rebalanceWeeklyProteinRotation}>
+                Riequilibra la rotazione dei 14 pasti
+              </button>
             </div>
             <div className="week-plan">
               {days.map((d, i) => (
