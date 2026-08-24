@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.36"/);
+  assert.match(app, /VERSION = "1\.18\.37"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -403,7 +403,7 @@ test("v1.16.17 keeps swap navigation visible and exposes occasional choices", as
   assert.match(app, /aria-label="Torna indietro senza cambiare piatto"/);
   assert.match(app, /<summary>Sgarri<\/summary>/);
   assert.match(app, /r\.id\.startsWith\("occasional-"\)/);
-  assert.match(css, /\.swap-back-bar\s*\{[\s\S]*position:\s*fixed/);
+  assert.match(css, /\.swap-back-bar\s*\{[\s\S]*position:\s*sticky/);
   await access(new URL("../dist/food/part-pasta-whole-v11618.png", import.meta.url));
   await access(new URL("../dist/food/part-pasta-semolina-v11618.png", import.meta.url));
   assert.match(app, /photo\("part-pasta-whole-v11618"\)/);
@@ -1508,4 +1508,16 @@ test("v1.18.36 ranks slot-compatible replacement dishes first without removing f
   assert.match(app, /SCELTA CONSIGLIATA/);
   assert.match(css, /\.recommended-swap-label/);
   assert.match(app, /CATALOGO COMPLETO/);
+});
+
+test("v1.18.37 keeps the swap return control visible without covering mobile recipes", async () => {
+  const source = await readFile("app/FoodPlanner.tsx", "utf8");
+  const css = await readFile("app/globals.css", "utf8");
+
+  assert.match(source, /swapTarget\s*&&\s*\([\s\S]*?className="swap-back-bar"/);
+  assert.match(css, /\.swap-back-bar\s*\{[\s\S]*?position:\s*sticky;[\s\S]*?top:\s*56px;/);
+  assert.match(css, /\.library-section\.swapping \.library-tools\s*\{\s*top:\s*100px;/);
+  assert.doesNotMatch(css, /\.swap-back-bar\s*\{[\s\S]*?position:\s*fixed;/);
+  assert.match(css, /\.week-part-strip img\s*\{[\s\S]*?object-fit:\s*contain/);
+  assert.match(css, /\.app-shell\s*\{[\s\S]*?overflow-x:\s*hidden;/);
 });
