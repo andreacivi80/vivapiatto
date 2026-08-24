@@ -3052,6 +3052,21 @@ button {
   line-height: 1.3;
 }
 
+.recipe-card-quality {
+  display: block;
+  margin-top: 4px;
+  color: #37715a;
+  font-size: 0.67rem;
+  font-weight: 850;
+}
+
+.recipe-quality-note {
+  margin: -3px 0 9px;
+  color: #4d6e60;
+  font-size: 0.72rem;
+  line-height: 1.3;
+}
+
 .weekly-rotation-fix {
   width: calc(100% - 20px);
   margin: 0 10px 10px;

@@ -75,7 +75,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.93";
+const VERSION = "1.16.94";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -9544,6 +9544,27 @@ export function FoodPlanner() {
       : r.id.startsWith("snack-")
         ? "Spuntino"
         : "Piatto unico");
+  const recipeVarietyScore = (recipe: Recipe) => {
+    const text = recipe.ingredients.map((item) => item.food).join(" ").toLowerCase();
+    const categories = new Set(
+      recipe.ingredients.flatMap((ingredient) => {
+        const known = pantryPartByFood.get(ingredient.food);
+        return known ? [known.category] : [];
+      }),
+    );
+    const macros = calc(recipe.ingredients);
+    let score = 0;
+    if (categories.has("Carboidrato")) score += 1;
+    if (categories.has("Proteina") || categories.has("Latticino")) score += 1;
+    if (categories.has("Contorno") || categories.has("Frutta")) score += 1;
+    if (/integrale|farro|orzo|avena|quinoa|miglio|legum|ceci|lenticchie|fagioli/.test(text)) score += 1;
+    if (macros.fiber >= 5 || recipe.ingredients.length >= 4) score += 1;
+    return Math.min(5, score);
+  };
+  const recipeHasSeasonalProduce = (recipe: Recipe) => {
+    const month = new Date().getMonth() + 1;
+    return recipe.ingredients.some((ingredient) => seasonalMonths[ingredient.food]?.includes(month));
+  };
   const cleanKicker = (text: string) =>
     text.replace(/\s*·?\s*matrice\s+[cspd]\d+/gi, "").trim();
   const fitsSlot = (r: Recipe, slot: number) =>
@@ -12398,6 +12419,10 @@ export function FoodPlanner() {
                       </span>
                       <h3>{r.name}</h3>
                       <p>{cleanKicker(r.kicker)}</p>
+                      <small className="recipe-card-quality">
+                        Varietà {recipeVarietyScore(r)}/5
+                        {recipeHasSeasonalProduce(r) ? " · ingredienti di stagione" : ""}
+                      </small>
                     </div>
                     {swapTarget && (
                       <button
@@ -13135,6 +13160,11 @@ export function FoodPlanner() {
                 {ageGroup === "Minore"
                   ? "Porzioni standard per adulti non applicabili ai minori · chiedere al professionista sanitario"
                   : `Porzioni standard non personalizzate · ${peopleCount} ${peopleCount === 1 ? "persona" : "persone"}`}
+              </p>
+              <p className="recipe-quality-note">
+                Indice varietà {recipeVarietyScore(selected)}/5
+                {recipeHasSeasonalProduce(selected) ? " · contiene ingredienti di stagione" : ""}
+                {" · indicatore descrittivo, non voto sanitario"}
               </p>
               <div className="recipe-macros">
                 <span>
