@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.83"/);
+  assert.match(app, /VERSION = "1\.16\.84"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -818,6 +818,24 @@ test("v1.16.83 gives P21-P28 faithful main-meal photos", async () => {
     ["matrix-p26-farro-bresaola-rucola-tomatoes", "recipe-p26-farro-bresaola-rucola-tomatoes-v11683"],
     ["matrix-p27-millet-chickpeas-cauliflower-curry", "recipe-p27-millet-chickpeas-cauliflower-curry-v11683"],
     ["matrix-p28-red-rice-tofu-edamame-vegetables", "recipe-p28-red-rice-tofu-edamame-vegetables-v11683"],
+  ];
+  for (const [id, asset] of assets) {
+    assert.match(app, new RegExp('id: "' + id + '"[\\s\\S]{0,500}image: photo\\("' + asset + '"\\)'));
+    await access(new URL("../dist/food/" + asset + ".png", import.meta.url));
+  }
+});
+
+test("v1.16.84 gives P29-P36 faithful main-meal photos", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const assets = [
+    ["matrix-p29-whole-pasta-cannellini-broccoli", "recipe-p29-whole-pasta-cannellini-broccoli-v11684"],
+    ["matrix-p30-basmati-chicken-vegetable-salad", "recipe-p30-basmati-chicken-vegetable-salad-v11684"],
+    ["matrix-p31-barley-chickpeas-artichokes-tomatoes", "recipe-p31-barley-chickpeas-artichokes-tomatoes-v11684"],
+    ["matrix-p32-quinoa-trout-asparagus-tomatoes", "recipe-p32-quinoa-trout-asparagus-tomatoes-v11684"],
+    ["matrix-p33-couscous-turkey-pumpkin-radicchio", "recipe-p33-couscous-turkey-pumpkin-radicchio-v11684"],
+    ["matrix-p34-venere-octopus-crunchy-vegetables", "recipe-p34-venere-octopus-crunchy-vegetables-v11684"],
+    ["matrix-p35-farro-tofu-eggplant-tomatoes", "recipe-p35-farro-tofu-eggplant-tomatoes-v11684"],
+    ["matrix-p36-legume-pasta-tuna-peppers", "recipe-p36-legume-pasta-tuna-peppers-v11684"],
   ];
   for (const [id, asset] of assets) {
     assert.match(app, new RegExp('id: "' + id + '"[\\s\\S]{0,500}image: photo\\("' + asset + '"\\)'));

@@ -75,7 +75,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.83";
+const VERSION = "1.16.84";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -8758,7 +8758,7 @@ const attachmentMainsP28P34: Recipe[] = [
     kicker: "Piatto unico vegetale",
     course: "Piatto unico",
     cuisine: "Italiano",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p29-whole-pasta-cannellini-broccoli-v11684"),
     time: 25,
     ingredients: [
       { food: "Pasta integrale secca", grams: 70 },
@@ -8775,7 +8775,7 @@ const attachmentMainsP28P34: Recipe[] = [
     kicker: "Pranzo trasportabile di carne bianca",
     course: "Piatto unico",
     cuisine: "Italiano",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p30-basmati-chicken-vegetable-salad-v11684"),
     time: 30,
     ingredients: [
       { food: "Riso basmati secco", grams: 70 },
@@ -8794,7 +8794,7 @@ const attachmentMainsP28P34: Recipe[] = [
     kicker: "Piatto unico vegetale",
     course: "Piatto unico",
     cuisine: "Italiano",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p31-barley-chickpeas-artichokes-tomatoes-v11684"),
     time: 35,
     ingredients: [
       { food: "Orzo perlato cotto", grams: 160 },
@@ -8812,7 +8812,7 @@ const attachmentMainsP28P34: Recipe[] = [
     kicker: "Piatto unico di pesce",
     course: "Piatto unico",
     cuisine: "Italiano",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p32-quinoa-trout-asparagus-tomatoes-v11684"),
     time: 30,
     ingredients: [
       { food: "Quinoa cotta", grams: 185 },
@@ -8830,7 +8830,7 @@ const attachmentMainsP28P34: Recipe[] = [
     kicker: "Piatto unico di carne bianca",
     course: "Piatto unico",
     cuisine: "Mediterraneo",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p33-couscous-turkey-pumpkin-radicchio-v11684"),
     time: 30,
     ingredients: [
       { food: "Cous cous integrale cotto", grams: 210 },
@@ -8848,7 +8848,7 @@ const attachmentMainsP28P34: Recipe[] = [
     kicker: "Piatto unico di pesce",
     course: "Piatto unico",
     cuisine: "Mediterraneo",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p34-venere-octopus-crunchy-vegetables-v11684"),
     time: 30,
     ingredients: [
       { food: "Riso Venere secco", grams: 70 },
@@ -8871,7 +8871,7 @@ const attachmentMainsP35P40: Recipe[] = [
     kicker: "Piatto unico vegetale",
     course: "Piatto unico",
     cuisine: "Mediterraneo",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p35-farro-tofu-eggplant-tomatoes-v11684"),
     time: 30,
     ingredients: [
       { food: "Farro cotto", grams: 180 },
@@ -8889,7 +8889,7 @@ const attachmentMainsP35P40: Recipe[] = [
     kicker: "Piatto unico di pesce",
     course: "Piatto unico",
     cuisine: "Italiano",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p36-legume-pasta-tuna-peppers-v11684"),
     time: 25,
     ingredients: [
       { food: "Pasta di lenticchie secca", grams: 70 },
