@@ -80,7 +80,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.7";
+const VERSION = "1.18.8";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -9527,6 +9527,7 @@ export function FoodPlanner() {
   const [completedRecipes, setCompletedRecipes] = useState<
     Record<string, string>
   >({});
+  const [historyConsent, setHistoryConsent] = useState(false);
   const [actualWeights, setActualWeights] = useState<Record<string, number[]>>(
     {},
   );
@@ -9637,9 +9638,10 @@ export function FoodPlanner() {
   refreshSnapshotRef.current = JSON.stringify({
     calories,
     goal,
-    completed,
-    completedRecipes,
-    actualWeights,
+    historyConsent,
+    completed: historyConsent ? completed : {},
+    completedRecipes: historyConsent ? completedRecipes : {},
+    actualWeights: historyConsent ? actualWeights : {},
     removedIngredients,
     partSelections,
     mealView,
@@ -9650,8 +9652,8 @@ export function FoodPlanner() {
     healthConditions,
     dislikedFoods,
     choices,
-    drinks,
-    extras,
+    drinks: historyConsent ? drinks : {},
+    extras: historyConsent ? extras : {},
     gelatoScoops,
     gelatoComposerOpen,
     gelatoFlavors,
@@ -9780,9 +9782,11 @@ export function FoodPlanner() {
         const s = JSON.parse(raw);
         setCalories(s.calories || 1800);
         setGoal(s.goal || "Equilibrio");
-        setCompleted(s.completed || {});
-        setCompletedRecipes(s.completedRecipes || {});
-        setActualWeights(s.actualWeights || {});
+        const canLoadHistory = s.historyConsent === true;
+        setHistoryConsent(canLoadHistory);
+        setCompleted(canLoadHistory ? s.completed || {} : {});
+        setCompletedRecipes(canLoadHistory ? s.completedRecipes || {} : {});
+        setActualWeights(canLoadHistory ? s.actualWeights || {} : {});
         setRemovedIngredients(s.removedIngredients || {});
         setPartSelections(s.partSelections || {});
         setMealView(s.mealView || {});
@@ -9793,8 +9797,8 @@ export function FoodPlanner() {
         setHealthConditions(Array.isArray(s.healthConditions) ? s.healthConditions : []);
         setDislikedFoods(s.dislikedFoods || []);
         setChoices(s.choices || {});
-        setDrinks(s.drinks || {});
-        setExtras(s.extras || {});
+        setDrinks(canLoadHistory ? s.drinks || {} : {});
+        setExtras(canLoadHistory ? s.extras || {} : {});
         setGroceryChecked(s.groceryChecked || {});
         setGroceryAmounts(s.groceryAmounts || {});
         setShoppingAdditions(s.shoppingAdditions || {});
@@ -9828,9 +9832,10 @@ export function FoodPlanner() {
       JSON.stringify({
         calories,
         goal,
-        completed,
-        completedRecipes,
-        actualWeights,
+        historyConsent,
+        completed: historyConsent ? completed : {},
+        completedRecipes: historyConsent ? completedRecipes : {},
+        actualWeights: historyConsent ? actualWeights : {},
         removedIngredients,
         partSelections,
         mealView,
@@ -9841,8 +9846,8 @@ export function FoodPlanner() {
         healthConditions,
         dislikedFoods,
         choices,
-        drinks,
-        extras,
+        drinks: historyConsent ? drinks : {},
+        extras: historyConsent ? extras : {},
         groceryChecked,
         groceryAmounts,
         shoppingAdditions,
@@ -9870,6 +9875,7 @@ export function FoodPlanner() {
   }, [
     calories,
     goal,
+    historyConsent,
     completed,
     completedRecipes,
     actualWeights,
@@ -13494,6 +13500,27 @@ export function FoodPlanner() {
               <section>
                 <span className="eyebrow">DIARIO</span>
                 <h1 className="page-title">{days[diaryDay].label}</h1>
+                <label className="history-consent">
+                  <input
+                    type="checkbox"
+                    checked={historyConsent}
+                    onChange={(event) => {
+                      const enabled = event.target.checked;
+                      setHistoryConsent(enabled);
+                      if (!enabled) {
+                        setCompleted({});
+                        setCompletedRecipes({});
+                        setActualWeights({});
+                        setDrinks({});
+                        setExtras({});
+                      }
+                    }}
+                  />
+                  <span>
+                    <b>Salva lo storico su questo dispositivo</b>
+                    <small>{historyConsent ? "Attivo · puoi revocarlo quando vuoi" : "Disattivo · la sessione non viene conservata"}</small>
+                  </span>
+                </label>
                 <div className="diary-tabs">
                   {days.map((d, i) => (
                     <button

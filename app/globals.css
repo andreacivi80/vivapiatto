@@ -3051,6 +3051,33 @@ button {
   font-size: 8px;
   line-height: 1.3;
 }
+.history-consent {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 10px;
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+}
+.history-consent input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--lime);
+}
+.history-consent span,
+.history-consent small {
+  display: block;
+}
+.history-consent b {
+  font-size: 11px;
+}
+.history-consent small {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 9px;
+}
 .ingredient-weight-state {
   display: block;
   margin-top: 2px;

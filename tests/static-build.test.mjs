@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.7"/);
+  assert.match(app, /VERSION = "1\.18\.8"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1217,4 +1217,17 @@ test("v1.18.7 filters recipe substitutions by allergens and food style", async (
   assert.match(app, /const isAlternativeAllowed = \(alternative: string\)/);
   assert.match(app, /selected\.alternatives\.filter\(isAlternativeAllowed\)/);
   assert.match(app, /Alternative incompatibili con il profilo nascoste\./);
+});
+
+test("v1.18.8 persists food history only after explicit revocable consent", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  const css = await readFile("app/globals.css", "utf8");
+  assert.match(app, /const \[historyConsent, setHistoryConsent\] = useState\(false\)/);
+  assert.match(app, /const canLoadHistory = s\.historyConsent === true/);
+  assert.match(app, /completed: historyConsent \? completed : \{\}/);
+  assert.match(app, /drinks: historyConsent \? drinks : \{\}/);
+  assert.match(app, /Salva lo storico su questo dispositivo/);
+  assert.match(app, /setCompleted\(\{\}\)/);
+  assert.match(app, /setExtras\(\{\}\)/);
+  assert.match(css, /\.history-consent/);
 });
