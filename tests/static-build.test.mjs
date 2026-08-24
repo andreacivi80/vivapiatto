@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.10"/);
+  assert.match(app, /VERSION = "1\.18\.11"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1246,4 +1246,16 @@ test("v1.18.10 copies only substitutions compatible with the active profile", as
   assert.match(app, /const safeAlternatives = recipe\.alternatives\.filter\(isAlternativeAllowed\)/);
   assert.match(app, /safeAlternatives\.map\(\(item\) => `• \$\{item\}`\)/);
   assert.match(app, /Nessuna sostituzione compatibile con il profilo attuale/);
+});
+
+test("v1.18.11 distinguishes an orientation example from a defined calorie target", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  const css = await readFile("app/globals.css", "utf8");
+  assert.match(app, /const \[targetDefined, setTargetDefined\] = useState\(false\)/);
+  assert.match(app, /setTargetDefined\(s\.targetDefined === true\)/);
+  assert.match(app, /setTargetDefined\(true\)/);
+  assert.match(app, /Target già definito/);
+  assert.match(app, /targetDefined \? "Target" : "Esempio"/);
+  assert.match(app, /Target indicato dall’utente/);
+  assert.match(css, /\.target-confirmation/);
 });

@@ -3070,6 +3070,19 @@ button {
 .history-consent small {
   display: block;
 }
+.target-confirmation {
+  display: flex !important;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  font-size: 8px !important;
+  color: var(--muted);
+}
+.target-confirmation input {
+  width: 13px;
+  height: 13px;
+  accent-color: var(--lime);
+}
 .history-consent b {
   font-size: 11px;
 }

@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.10";
+const VERSION = "1.18.11";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -9520,6 +9520,7 @@ function percentOf(value: number, reference: number) {
 export function FoodPlanner() {
   const [tab, setTab] = useState<Tab>("today");
   const [calories, setCalories] = useState(1800);
+  const [targetDefined, setTargetDefined] = useState(false);
   const [goal, setGoal] = useState("Equilibrio");
   const [dayIndex, setDayIndex] = useState(0);
   const [selected, setSelected] = useState<Recipe | null>(null);
@@ -9638,6 +9639,7 @@ export function FoodPlanner() {
   const refreshSnapshotRef = useRef("");
   refreshSnapshotRef.current = JSON.stringify({
     calories,
+    targetDefined,
     goal,
     historyConsent,
     completed: historyConsent ? completed : {},
@@ -9782,6 +9784,7 @@ export function FoodPlanner() {
       if (raw) {
         const s = JSON.parse(raw);
         setCalories(s.calories || 1800);
+        setTargetDefined(s.targetDefined === true);
         setGoal(s.goal || "Equilibrio");
         const canLoadHistory = s.historyConsent === true;
         setHistoryConsent(canLoadHistory);
@@ -9832,6 +9835,7 @@ export function FoodPlanner() {
       "vivapiatto-v1",
       JSON.stringify({
         calories,
+        targetDefined,
         goal,
         historyConsent,
         completed: historyConsent ? completed : {},
@@ -9875,6 +9879,7 @@ export function FoodPlanner() {
     );
   }, [
     calories,
+    targetDefined,
     goal,
     historyConsent,
     completed,
@@ -12035,7 +12040,7 @@ export function FoodPlanner() {
                   {days[dayIndex].label} · piano {round(dayTotals.kcal)} · scelto {calories} kcal
                 </b>
                 <small>
-                  Target oggi {plannedCalories} · scarto {round(dayTotals.kcal - plannedCalories) > 0 ? "+" : ""}
+                  {targetDefined ? "Target" : "Esempio"} oggi {plannedCalories} · scarto {round(dayTotals.kcal - plannedCalories) > 0 ? "+" : ""}
                   {round(dayTotals.kcal - plannedCalories)} kcal
                 </small>
               </div>
@@ -12268,10 +12273,13 @@ export function FoodPlanner() {
                 </select>
               </div>
               <div>
-                <label>Base kcal</label>
+                <label>{targetDefined ? "Target kcal" : "Esempio kcal"}</label>
                 <select
                   value={calories}
-                  onChange={(e) => setCalories(Number(e.target.value))}
+                  onChange={(e) => {
+                    setCalories(Number(e.target.value));
+                    setTargetDefined(true);
+                  }}
                 >
                   {[1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000].map(
                     (x) => (
@@ -12316,6 +12324,14 @@ export function FoodPlanner() {
                   <option>Mensa</option>
                   <option>Ristorante</option>
                 </select>
+                <label className="target-confirmation">
+                  <input
+                    type="checkbox"
+                    checked={targetDefined}
+                    onChange={(event) => setTargetDefined(event.target.checked)}
+                  />
+                  Target già definito
+                </label>
               </div>
             </section>
             {(dayContext === "Mensa" || dayContext === "Ristorante") && (
@@ -13554,7 +13570,7 @@ export function FoodPlanner() {
                     </strong>
                   </div>
                   <div>
-                    <span>Target</span>
+                    <span>{targetDefined ? "Target" : "Esempio"}</span>
                     <b>{target} kcal</b>
                     <em
                       className={
@@ -13969,7 +13985,9 @@ export function FoodPlanner() {
               <p className="standard-portion-note">
                 {ageGroup === "Minore"
                   ? "Porzioni standard per adulti non applicabili ai minori · chiedere al professionista sanitario"
-                  : `Porzioni standard non personalizzate · ${peopleCount} ${peopleCount === 1 ? "persona" : "persone"}`}
+                  : targetDefined
+                    ? `Target indicato dall’utente · ${peopleCount} ${peopleCount === 1 ? "persona" : "persone"}`
+                    : `Porzioni standard non personalizzate · ${peopleCount} ${peopleCount === 1 ? "persona" : "persone"}`}
               </p>
               <p className="recipe-quality-note">
                 Indice varietà {recipeVarietyScore(selected)}/5
