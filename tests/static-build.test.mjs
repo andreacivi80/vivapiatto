@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.60"/);
+  assert.match(app, /VERSION = "1\.18\.61"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1755,4 +1755,13 @@ test("v1.18.60 never validates raw leftovers generically or treats smell and app
   assert.match(app, /Odore e aspetto normali non dimostrano la sicurezza/);
   assert.match(app, /Avanzo cotto refrigerato da più di 3 giorni/);
   assert.doesNotMatch(app, /Consuma solo se odore, aspetto e conservazione sono normali/);
+});
+
+test("v1.18.61 audits every matrix recipe as a complete selectable recipe, not only an id", async () => {
+  const audit = await readFile("scripts/audit-recipe-matrix.mjs", "utf8");
+  assert.match(audit, /const extractObjectAt =/);
+  assert.match(audit, /ingredienti e grammi/);
+  assert.match(audit, /preparazione/);
+  assert.match(audit, /alternative/);
+  assert.match(audit, /Ricette matrice incomplete/);
 });

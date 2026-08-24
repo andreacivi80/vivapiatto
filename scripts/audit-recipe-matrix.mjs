@@ -16,6 +16,54 @@ const missing = expected.filter((id) => !counts.has(id));
 const duplicates = [...counts.entries()].filter(([, count]) => count !== 1);
 const unexpected = [...counts.keys()].filter((id) => !expected.includes(id));
 
+const extractObjectAt = (id) => {
+  const idMatch = new RegExp(`id:\\s*"${id}-`).exec(source);
+  const idIndex = idMatch?.index ?? -1;
+  if (idIndex < 0) return "";
+  const start = source.lastIndexOf("{", idIndex);
+  let depth = 0;
+  let quote = "";
+  let escaped = false;
+  for (let index = start; index < source.length; index += 1) {
+    const character = source[index];
+    if (escaped) {
+      escaped = false;
+      continue;
+    }
+    if (quote && character === "\\") {
+      escaped = true;
+      continue;
+    }
+    if (quote) {
+      if (character === quote) quote = "";
+      continue;
+    }
+    if (character === '"' || character === "'" || character === "`") {
+      quote = character;
+      continue;
+    }
+    if (character === "{") depth += 1;
+    if (character === "}") {
+      depth -= 1;
+      if (depth === 0) return source.slice(start, index + 1);
+    }
+  }
+  return "";
+};
+
+const incomplete = expected.flatMap((id) => {
+  const recipe = extractObjectAt(id);
+  const issues = [];
+  if (!/name:\s*"[^"]+"/.test(recipe)) issues.push("nome");
+  if (!/course:\s*"[^"]+"/.test(recipe)) issues.push("pasto");
+  if (!/image:\s*photo\("[^"]+"\)/.test(recipe)) issues.push("foto");
+  if (!/time:\s*[1-9]\d*/.test(recipe)) issues.push("tempo");
+  if (!/ingredients:\s*\[[\s\S]*?food:[\s\S]*?grams:\s*[1-9]/.test(recipe)) issues.push("ingredienti e grammi");
+  if (!/steps:\s*\[[\s\S]*?["`][^"`]+["`]/.test(recipe)) issues.push("preparazione");
+  if (!/alternatives:\s*\[[\s\S]*?["`][^"`]+["`]/.test(recipe)) issues.push("alternative");
+  return issues.length ? [`${id}: ${issues.join(", ")}`] : [];
+});
+
 if (missing.length) throw new Error(`Ricette matrice mancanti: ${missing.join(", ")}`);
 if (duplicates.length) {
   throw new Error(
@@ -23,5 +71,6 @@ if (duplicates.length) {
   );
 }
 if (unexpected.length) throw new Error(`ID matrice inattesi: ${unexpected.join(", ")}`);
+if (incomplete.length) throw new Error(`Ricette matrice incomplete: ${incomplete.join("; ")}`);
 
-console.log(`Matrice ricette: ${expected.length}/${expected.length} ID univoci presenti (C44, S42, P64, D64).`);
+console.log(`Matrice ricette: ${expected.length}/${expected.length} complete e univoche (C44, S42, P64, D64).`);
