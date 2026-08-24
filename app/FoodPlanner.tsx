@@ -75,7 +75,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.91";
+const VERSION = "1.16.92";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -9172,6 +9172,7 @@ export function FoodPlanner() {
   const [swapReturnTab, setSwapReturnTab] = useState<Tab>("today");
   const [libraryQuery, setLibraryQuery] = useState("");
   const [visibleRecipeCount, setVisibleRecipeCount] = useState(10);
+  const [compatibleRecipePage, setCompatibleRecipePage] = useState(0);
   const [cuisineChoice, setCuisineChoice] = useState("Italiano");
   const [dayContext, setDayContext] = useState("Lavoro");
   const [plannedDrink, setPlannedDrink] = useState("Acqua");
@@ -9690,9 +9691,17 @@ export function FoodPlanner() {
       }
       return 0;
     });
-  const visibleRecipes = filteredRecipes.slice(0, visibleRecipeCount);
+  const compatibleRecipeOffset = filteredRecipes.length
+    ? (compatibleRecipePage * 10) % filteredRecipes.length
+    : 0;
+  const rotatedCompatibleRecipes = [
+    ...filteredRecipes.slice(compatibleRecipeOffset),
+    ...filteredRecipes.slice(0, compatibleRecipeOffset),
+  ];
+  const visibleRecipes = rotatedCompatibleRecipes.slice(0, visibleRecipeCount);
   useEffect(() => {
     setVisibleRecipeCount(10);
+    setCompatibleRecipePage(0);
   }, [
     libraryQuery,
     cuisineFilter,
@@ -12363,6 +12372,19 @@ export function FoodPlanner() {
                 onClick={() => setVisibleRecipeCount((count) => count + 10)}
               >
                 Mostra altre 10 ricette
+              </button>
+            )}
+            {filteredRecipes.length > 10 && (
+              <button
+                type="button"
+                className="library-more secondary"
+                onClick={() => {
+                  setCompatibleRecipePage((page) => page + 1);
+                  setVisibleRecipeCount(10);
+                  scrollTo({ top: 0, behavior: "smooth" });
+                }}
+              >
+                Genera altre ricette compatibili
               </button>
             )}
             {swapTarget && (

@@ -3285,6 +3285,13 @@ button {
   text-transform: uppercase;
   letter-spacing: 0.35px;
 }
+
+.library-more.secondary {
+  margin-top: 7px;
+  border-color: #b9d3c6;
+  background: #edf7f2;
+  color: #185a43;
+}
 .standard-portion-note {
   margin: -4px 0 10px;
   color: var(--muted);

@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.91"/);
+  assert.match(app, /VERSION = "1\.16\.92"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -916,4 +916,12 @@ test("v1.16.91 exports the whole weekly plan", async () => {
   assert.match(app, /exportWeeklyWord/);
   assert.match(app, /window\.print\(\)/);
   assert.match(css, /@media print/);
+});
+
+test("v1.16.92 generates another compatible recipe page without widening filters", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(app, /compatibleRecipePage/);
+  assert.match(app, /rotatedCompatibleRecipes/);
+  assert.match(app, /Genera altre ricette compatibili/);
+  assert.match(app, /setVisibleRecipeCount\(10\)/);
 });
