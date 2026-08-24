@@ -79,7 +79,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.17.5";
+const VERSION = "1.17.6";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -9247,6 +9247,7 @@ export function FoodPlanner() {
   const [compatibleRecipePage, setCompatibleRecipePage] = useState(0);
   const [cuisineChoice, setCuisineChoice] = useState("Italiano");
   const [dayContext, setDayContext] = useState("Lavoro");
+  const [restaurantArea, setRestaurantArea] = useState("");
   const [plannedDrink, setPlannedDrink] = useState("Acqua");
   const [cuisineFilter, setCuisineFilter] = useState("Tutte");
   const [healthyFilters, setHealthyFilters] = useState<HealthyFilterId[]>([]);
@@ -9341,6 +9342,7 @@ export function FoodPlanner() {
     shoppingAdditions,
     plannedDrink,
     dayContext,
+    restaurantArea,
     weekLocked,
     cuisineChoice,
     healthyFilters,
@@ -9480,6 +9482,7 @@ export function FoodPlanner() {
         setShoppingAdditions(s.shoppingAdditions || {});
         setPlannedDrink(s.plannedDrink || "Acqua");
         setDayContext(s.dayContext || "Lavoro");
+        setRestaurantArea(s.restaurantArea || "");
         setWeekLocked(Boolean(s.weekLocked));
         setCuisineChoice(s.cuisineChoice || "Italiano");
         setHealthyFilters(Array.isArray(s.healthyFilters) ? s.healthyFilters : []);
@@ -9527,6 +9530,7 @@ export function FoodPlanner() {
         shoppingAdditions,
         plannedDrink,
         dayContext,
+        restaurantArea,
         weekLocked,
         cuisineChoice,
         healthyFilters,
@@ -9568,6 +9572,7 @@ export function FoodPlanner() {
     shoppingAdditions,
     plannedDrink,
     dayContext,
+    restaurantArea,
     weekLocked,
     cuisineChoice,
     healthyFilters,
@@ -11977,6 +11982,30 @@ export function FoodPlanner() {
                 {" "}
                 <a href="https://www.salute.gov.it/new/it/tema/nutrizione/ristorazione-collettiva/" target="_blank" rel="noreferrer">Ministero della Salute ↗</a>
               </p>
+            )}
+            {dayContext === "Ristorante" && (
+              <section className="restaurant-area">
+                <label htmlFor="restaurant-area-input">Zona o città</label>
+                <div>
+                  <input
+                    id="restaurant-area-input"
+                    value={restaurantArea}
+                    onChange={(event) => setRestaurantArea(event.target.value)}
+                    placeholder="Es. Torino centro o Bangkok"
+                    autoComplete="address-level2"
+                  />
+                  {restaurantArea.trim() && (
+                    <a
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`ristoranti ${restaurantArea.trim()}`)}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Cerca nella zona ↗
+                    </a>
+                  )}
+                </div>
+                <small>I locali mostrati sono risultati aggiornati di Google Maps; Tavola Mia suggerisce cosa scegliere, senza inventare nomi o disponibilità.</small>
+              </section>
             )}
             <section className="checkin compact">
               <button

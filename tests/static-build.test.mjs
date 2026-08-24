@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.17\.5"/);
+  assert.match(app, /VERSION = "1\.17\.6"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1058,4 +1058,14 @@ test("v1.17.5 shows a mobile loading state while the large planner loads", async
   assert.match(main, /<Suspense fallback=/);
   assert.match(main, /className="app-loading"/);
   assert.match(css, /\.app-loading\s*\{[\s\S]*min-height:\s*100dvh/);
+});
+
+test("v1.17.6 searches live restaurants by area without inventing venues", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  const css = await readFile("app/globals.css", "utf8");
+  assert.match(app, /const \[restaurantArea, setRestaurantArea\]/);
+  assert.match(app, /google\.com\/maps\/search\/\?api=1&query=/);
+  assert.match(app, /encodeURIComponent\(`ristoranti \$\{restaurantArea\.trim\(\)\}`\)/);
+  assert.match(app, /senza inventare nomi o disponibilità/);
+  assert.match(css, /\.restaurant-area > div\s*\{[\s\S]*minmax\(0, 1fr\)/);
 });
