@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.99"/);
+  assert.match(app, /VERSION = "1\.17\.0"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -185,8 +185,8 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /part-black-beans-v11646/);
   assert.match(app, /className="recipe-card-info"/);
   assert.match(app, /containsCommonBloatingTriggers/);
-  assert.match(app, /target: "2–3", count: weeklyCounts\["Legumi e vegetali"\]/);
-  assert.match(app, /target: "1–3", count: weeklyCounts\["Carne bianca"\]/);
+  assert.match(app, /label: "Legumi e vegetali".*count: weeklyCounts\["Legumi e vegetali"\]/);
+  assert.match(app, /label: "Carne bianca".*count: weeklyCounts\["Carne bianca"\]/);
   assert.match(app, /className="weekly-source"/);
   assert.match(app, /part-soy-drink-v11649/);
   assert.match(app, /part-oat-drink-v11649/);
@@ -993,4 +993,16 @@ test("v1.16.99 applies breakfast, meal-prep and quick-time preferences", async (
   assert.match(app, /\[5, 15, 30, 45, 60\]/);
   assert.match(app, /setBreakfastStyle/);
   assert.match(app, /setMealPrepMode/);
+});
+
+test("v1.17.0 makes weekly calorie and rotation status explicit", async () => {
+  const [app, css] = await Promise.all([
+    readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+  assert.match(app, /weeklyKcalDelta/);
+  assert.match(app, /status: item\.count >= item\.min/);
+  assert.match(app, /Nel range/);
+  assert.match(app, /Da riequilibrare/);
+  assert.match(css, /\.weekly-frequency \.within-target/);
 });

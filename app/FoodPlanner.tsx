@@ -79,7 +79,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.99";
+const VERSION = "1.17.0";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -11223,14 +11223,18 @@ export function FoodPlanner() {
       weeklyPlannedFiber.length,
   );
   const weeklyTargets = [
-    { label: "Pesce", target: "2–3", count: weeklyCounts.Pesce },
-    { label: "Legumi e vegetali", target: "2–3", count: weeklyCounts["Legumi e vegetali"] },
-    { label: "Carne bianca", target: "1–3", count: weeklyCounts["Carne bianca"] },
-    { label: "Carne rossa", target: "1–2", count: weeklyCounts["Carne rossa"] },
-    { label: "Uova", target: "2–4", count: weeklyCounts.Uova },
-    { label: "Formaggi", target: "2–3", count: weeklyCounts.Formaggi },
-    { label: "Salumi", target: "<1", count: weeklyCounts.Salumi },
-  ];
+    { label: "Pesce", target: "2–3", min: 2, max: 3, count: weeklyCounts.Pesce },
+    { label: "Legumi e vegetali", target: "2–3", min: 2, max: 3, count: weeklyCounts["Legumi e vegetali"] },
+    { label: "Carne bianca", target: "1–3", min: 1, max: 3, count: weeklyCounts["Carne bianca"] },
+    { label: "Carne rossa", target: "1–2", min: 1, max: 2, count: weeklyCounts["Carne rossa"] },
+    { label: "Uova", target: "2–4", min: 2, max: 4, count: weeklyCounts.Uova },
+    { label: "Formaggi", target: "2–3", min: 2, max: 3, count: weeklyCounts.Formaggi },
+    { label: "Salumi", target: "0–1", min: 0, max: 1, count: weeklyCounts.Salumi },
+  ].map((item) => ({
+    ...item,
+    status: item.count >= item.min && item.count <= item.max ? "Nel range" : "Da riequilibrare",
+  }));
+  const weeklyKcalDelta = weeklyAverageKcal - calories;
   const rebalanceWeeklyProteinRotation = () => {
     const requestedFamilies = [
       "pesce", "legumi", "carne-bianca", "uova", "latticini", "pesce", "carne-rossa",
@@ -12459,14 +12463,19 @@ export function FoodPlanner() {
             <div className="week-kcal-summary">
               <header>
                 <b>Calorie pianificate</b>
-                <span>media {weeklyAverageKcal} kcal · {weeklyAverageFiber} g fibre/giorno</span>
+                <span>
+                  media {weeklyAverageKcal} kcal · target {calories} · {weeklyKcalDelta > 0 ? "+" : ""}{weeklyKcalDelta} kcal/giorno
+                </span>
               </header>
               <div>
                 {weeklyPlannedKcal.map((kcal, index) => (
-                  <span key={days[index].label}>
+                  <span
+                    key={days[index].label}
+                    className={Math.abs(kcal - targetForDay(index)) <= targetForDay(index) * 0.1 ? "within-target" : "outside-target"}
+                  >
                     <small>G{index + 1}</small>
                     <b>{kcal} <em>kcal</em></b>
-                    <i>{weeklyPlannedFiber[index]} g fibre</i>
+                    <i>{kcal - targetForDay(index) > 0 ? "+" : ""}{kcal - targetForDay(index)} · {weeklyPlannedFiber[index]} g fibre</i>
                   </span>
                 ))}
               </div>
@@ -12495,10 +12504,10 @@ export function FoodPlanner() {
               </header>
               <div>
                 {weeklyTargets.map((item) => (
-                  <span key={item.label}>
+                  <span key={item.label} className={item.status === "Nel range" ? "within-target" : "outside-target"}>
                     <b>{item.count}</b>
                     {item.label}
-                    <small>su {item.target}</small>
+                    <small>{item.status} · {item.target}</small>
                   </span>
                 ))}
               </div>

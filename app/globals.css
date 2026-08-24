@@ -3052,6 +3052,18 @@ button {
   line-height: 1.3;
 }
 
+.week-kcal-summary .within-target,
+.weekly-frequency .within-target {
+  border-color: #8eb99b;
+  background: #f2faf4;
+}
+
+.week-kcal-summary .outside-target,
+.weekly-frequency .outside-target {
+  border-color: #d9aa79;
+  background: #fff8ef;
+}
+
 .recipe-card-quality {
   display: block;
   margin-top: 4px;
