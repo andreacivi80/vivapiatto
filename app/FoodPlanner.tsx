@@ -75,7 +75,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.76";
+const VERSION = "1.16.77";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -7587,24 +7587,11 @@ const attachmentBaseSnacks: Recipe[] = [
     course: "Spuntino",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-snack-v1121"),
+    image: photo("recipe-s01-apple-almonds-v11677"),
     time: 2,
     ingredients: [{ food: "Mela", grams: 150 }, { food: "Mandorle", grams: 15 }],
     steps: ["Lava la mela e porziona le mandorle separatamente."],
     alternatives: ["Pera con nocciole", "Arancia con pistacchi"],
-  },
-  {
-    id: "matrix-s02-yogurt-blueberries",
-    name: "Yogurt e mirtilli",
-    kicker: "Spuntino fresco · matrice S02",
-    course: "Spuntino",
-    cuisine: "Italiano",
-    kind: "combination",
-    image: photo("moment-snack-v1121"),
-    time: 2,
-    ingredients: [{ food: "Yogurt greco 2%", grams: 125 }, { food: "Mirtilli freschi", grams: 150 }],
-    steps: ["Lava i mirtilli e aggiungili allo yogurt senza zucchero."],
-    alternatives: ["Yogurt greco 0% al posto del 2%", "Fragole al posto dei mirtilli"],
   },
   {
     id: "matrix-s03-skyr-kiwi",
@@ -7613,7 +7600,7 @@ const attachmentBaseSnacks: Recipe[] = [
     course: "Spuntino",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-snack-v1121"),
+    image: photo("recipe-s03-skyr-kiwi-v11677"),
     time: 3,
     ingredients: [{ food: "Skyr bianco", grams: 170 }, { food: "Kiwi", grams: 150 }],
     steps: ["Sbuccia il kiwi e servilo a pezzi con lo skyr."],
@@ -7626,7 +7613,7 @@ const attachmentBaseSnacks: Recipe[] = [
     course: "Spuntino",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-snack-v1121"),
+    image: photo("recipe-s04-kefir-pear-v11677"),
     time: 2,
     ingredients: [{ food: "Kefir bianco magro", grams: 125 }, { food: "Pera", grams: 150 }],
     steps: ["Servi il kefir freddo con la pera intera o tagliata al momento."],
@@ -7639,7 +7626,7 @@ const attachmentBaseSnacks: Recipe[] = [
     course: "Spuntino",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-snack-v1121"),
+    image: photo("recipe-s05-hummus-vegetables-v11677"),
     time: 5,
     ingredients: [
       { food: "Hummus di ceci", grams: 40 },
@@ -7656,7 +7643,7 @@ const attachmentBaseSnacks: Recipe[] = [
     course: "Spuntino",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-snack-v1121"),
+    image: photo("recipe-s06-ricotta-strawberries-v11677"),
     time: 3,
     ingredients: [{ food: "Ricotta vaccina", grams: 80 }, { food: "Fragole", grams: 150 }],
     steps: ["Lava e taglia le fragole.", "Servile con la ricotta senza aggiungere automaticamente zucchero."],
@@ -7669,7 +7656,7 @@ const attachmentBaseSnacks: Recipe[] = [
     course: "Spuntino",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-snack-v1121"),
+    image: photo("recipe-s07-rye-cottage-tomatoes-v11677"),
     time: 4,
     ingredients: [
       { food: "Pane di segale", grams: 40 },
@@ -8298,7 +8285,7 @@ const attachmentBreakfastsC22C28: Recipe[] = [
     course: "Colazione",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-breakfast-v1121"),
+    image: photo("recipe-c27-oat-pancakes-blueberries-v11677"),
     time: 15,
     ingredients: [
       { food: "Farina d'avena", grams: 40 },
@@ -8317,7 +8304,7 @@ const attachmentBreakfastsC22C28: Recipe[] = [
     course: "Colazione",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-breakfast-v1121"),
+    image: photo("recipe-c28-ricotta-pineapple-rye-v11677"),
     time: 5,
     ingredients: [
       { food: "Ricotta vaccina", grams: 100 },
