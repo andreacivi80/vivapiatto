@@ -1,7 +1,10 @@
-import React, { Component, type ErrorInfo, type ReactNode } from "react";
+import React, { Component, Suspense, lazy, type ErrorInfo, type ReactNode } from "react";
 import ReactDOM from "react-dom/client";
-import { FoodPlanner } from "./app/FoodPlanner";
 import "./app/globals.css";
+
+const FoodPlanner = lazy(() =>
+  import("./app/FoodPlanner").then((module) => ({ default: module.FoodPlanner })),
+);
 
 type AppGuardState = { failed: boolean };
 
@@ -49,5 +52,11 @@ class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
 }
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode><AppGuard><FoodPlanner /></AppGuard></React.StrictMode>,
+  <React.StrictMode>
+    <AppGuard>
+      <Suspense fallback={<main className="app-loading" aria-live="polite">Tavola Mia</main>}>
+        <FoodPlanner />
+      </Suspense>
+    </AppGuard>
+  </React.StrictMode>,
 );

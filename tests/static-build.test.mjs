@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.17\.4"/);
+  assert.match(app, /VERSION = "1\.17\.5"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1049,4 +1049,13 @@ test("v1.17.4 prevents a blank page and preserves a recovery backup", async () =
   assert.match(main, /Ricarica app/);
   assert.match(main, /Ripristina dati locali/);
   assert.match(css, /\.app-recovery\s*\{[\s\S]*min-height:\s*100dvh/);
+});
+
+test("v1.17.5 shows a mobile loading state while the large planner loads", async () => {
+  const main = await readFile("main.tsx", "utf8");
+  const css = await readFile("app/globals.css", "utf8");
+  assert.match(main, /const FoodPlanner = lazy/);
+  assert.match(main, /<Suspense fallback=/);
+  assert.match(main, /className="app-loading"/);
+  assert.match(css, /\.app-loading\s*\{[\s\S]*min-height:\s*100dvh/);
 });
