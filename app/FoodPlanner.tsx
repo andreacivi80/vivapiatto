@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.40";
+const VERSION = "1.18.41";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -12190,18 +12190,28 @@ export function FoodPlanner() {
       await navigator.share({ title: "Lista spesa - Tavola Mia", text });
     else await navigator.clipboard.writeText(text);
   };
+  const weeklyMealSnapshot = (dayNumber: number, slot: number, plannedRecipeId: string) => {
+    const key = `${dayNumber}-${slot}`;
+    const isRecorded = Boolean(completed[key]);
+    const recipeId = isRecorded ? completedRecipes[key] || plannedRecipeId : plannedRecipeId;
+    const recipe = recipeMap[recipeId];
+    const ingredients = isRecorded
+      ? actualIngredients(key, recipe)
+      : plannedIngredients(key, recipe);
+    return { key, isRecorded, recipe, ingredients };
+  };
   const weeklyExportRows = () =>
     days.flatMap((day, dayNumber) =>
       getDayIds(dayNumber).flatMap((recipeId, slot) => {
         if (!isActiveMealSlot(slot)) return [];
-        const key = `${dayNumber}-${slot}`;
-        const recipe = recipeMap[recipeId];
-        return plannedIngredients(key, recipe).map((ingredient) => {
+        const snapshot = weeklyMealSnapshot(dayNumber, slot, recipeId);
+        return snapshot.ingredients.map((ingredient) => {
           const nutrients = calc([ingredient]);
           return {
             day: day.label,
             meal: SLOT_LABELS[slot],
-            recipe: recipe.name,
+            status: snapshot.isRecorded ? "registrato" : "pianificato",
+            recipe: snapshot.recipe.name,
             food: ingredient.label || ingredient.food,
             weightState: ingredientWeightState(ingredient.food),
             grams: ingredient.grams,
@@ -12225,7 +12235,7 @@ export function FoodPlanner() {
             const mealRows = dayRows.filter((row) => row.meal === meal);
             return mealRows.length
               ? [
-                  `${meal} · ${mealRows[0].recipe}`,
+                  `${meal} · ${mealRows[0].recipe} · ${mealRows[0].status}`,
                   ...mealRows.map(
                     (row) =>
                       `- ${row.food}: ${row.grams} g · peso ${row.weightState} · ${row.kcal} kcal · P ${row.protein} g · C ${row.carbs} g · G ${row.fat} g`,
@@ -12250,8 +12260,8 @@ export function FoodPlanner() {
     setReplanNote("Piano settimanale copiato.");
   };
   const exportWeeklyCsv = () => {
-    const header = ["Giorno", "Pasto", "Ricetta", "Alimento", "Stato peso", "Grammi", "kcal", "Proteine g", "Carboidrati g", "Grassi g"];
-    const rows = weeklyExportRows().map((row) => [row.day, row.meal, row.recipe, row.food, row.weightState, row.grams, row.kcal, row.protein, row.carbs, row.fat]);
+    const header = ["Giorno", "Pasto", "Stato", "Ricetta", "Alimento", "Stato peso", "Grammi", "kcal", "Proteine g", "Carboidrati g", "Grassi g"];
+    const rows = weeklyExportRows().map((row) => [row.day, row.meal, row.status, row.recipe, row.food, row.weightState, row.grams, row.kcal, row.protein, row.carbs, row.fat]);
     const csv = [header, ...rows]
       .map((row) => row.map((value) => `"${String(value).replaceAll('"', '""')}"`).join(";"))
       .join("\r\n");
@@ -14510,29 +14520,33 @@ export function FoodPlanner() {
             <div className="print-preview-days">
               {days.map((day, dayNumber) => {
                 const dayIds = getDayIds(dayNumber);
+                const daySnapshots = dayIds
+                  .map((recipeId, slot) => ({ recipeId, slot }))
+                  .filter(({ slot }) => isActiveMealSlot(slot))
+                  .map(({ recipeId, slot }) => weeklyMealSnapshot(dayNumber, slot, recipeId));
+                const previewDayMacros = calc(daySnapshots.flatMap((snapshot) => snapshot.ingredients));
                 return (
                   <section key={day.label} className="print-day">
                     <header>
                       <b>{day.label}</b>
                       <span>
-                        {weeklyPlannedKcal[dayNumber]} kcal ·{" "}
-                        {weeklyPlannedFiber[dayNumber]} g fibre
+                        {round(previewDayMacros.kcal)} kcal ·{" "}
+                        {fmt(previewDayMacros.fiber)} g fibre
                       </span>
                     </header>
                     {dayIds
                       .map((recipeId, slot) => ({ recipeId, slot }))
                       .filter(({ slot }) => isActiveMealSlot(slot))
                       .map(({ recipeId, slot }) => {
-                      const key = `${dayNumber}-${slot}`;
-                      const recipe = recipeMap[recipeId];
-                      const ingredients = plannedIngredients(key, recipe);
+                      const snapshot = weeklyMealSnapshot(dayNumber, slot, recipeId);
+                      const { key, recipe, ingredients } = snapshot;
                       const mealMacros = calc(ingredients);
                       return (
                         <div className="print-meal" key={key}>
                           <div className="print-meal-title">
                             <span>{SLOT_LABELS[slot]}</span>
                             <b>{recipe.name}</b>
-                            <i>{round(mealMacros.kcal)} kcal</i>
+                            <i>{round(mealMacros.kcal)} kcal · {snapshot.isRecorded ? "registrato" : "pianificato"}</i>
                           </div>
                           <div className="print-food-head" aria-hidden="true">
                             <span>Alimento</span>

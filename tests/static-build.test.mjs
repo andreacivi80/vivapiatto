@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.40"/);
+  assert.match(app, /VERSION = "1\.18\.41"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1555,4 +1555,16 @@ test("v1.18.40 builds the first visible week from the same balanced protein rota
     assert.match(source, new RegExp(`defaultWeeklyMainIds\\[${index}\\]`));
   }
   assert.match(source, /Nessun pasto principale disponibile per/);
+});
+
+test("v1.18.41 keeps print and every weekly export aligned with recorded meals", async () => {
+  const source = await readFile("app/FoodPlanner.tsx", "utf8");
+  assert.match(source, /const weeklyMealSnapshot = \(dayNumber: number, slot: number, plannedRecipeId: string\) =>/);
+  assert.match(source, /completedRecipes\[key\] \|\| plannedRecipeId/);
+  assert.match(source, /isRecorded[\s\S]*?actualIngredients\(key, recipe\)[\s\S]*?plannedIngredients\(key, recipe\)/);
+  assert.match(source, /status: snapshot\.isRecorded \? "registrato" : "pianificato"/);
+  assert.match(source, /mealRows\[0\]\.status/);
+  assert.match(source, /"Stato", "Ricetta"/);
+  assert.match(source, /previewDayMacros = calc\(daySnapshots\.flatMap/);
+  assert.match(source, /snapshot\.isRecorded \? "registrato" : "pianificato"/);
 });
