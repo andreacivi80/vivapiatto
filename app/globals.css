@@ -3145,6 +3145,91 @@ button {
   font-weight: 850;
 }
 
+.leftover-builder {
+  margin-top: 14px;
+  border: 1px solid #ead9bd;
+  border-radius: 18px;
+  background: #fffaf2;
+  padding: 12px;
+}
+
+.leftover-builder summary {
+  cursor: pointer;
+  color: #764918;
+  font-weight: 900;
+}
+
+.leftover-builder > p {
+  margin: 7px 0 10px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.leftover-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.leftover-fields label {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.leftover-fields label.wide {
+  grid-column: 1 / -1;
+}
+
+.leftover-fields span {
+  color: #725a3e;
+  font-size: 0.69rem;
+  font-weight: 850;
+}
+
+.leftover-fields select,
+.leftover-fields input {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #dfcfb8;
+  border-radius: 10px;
+  background: #fff;
+  padding: 9px 7px;
+  color: var(--ink);
+}
+
+.leftover-number {
+  display: grid;
+  grid-template-columns: 1fr 22px;
+  align-items: center;
+  gap: 3px;
+}
+
+.leftover-number i {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-style: normal;
+}
+
+.leftover-status {
+  margin: 9px 0 0 !important;
+  border-radius: 10px;
+  padding: 9px;
+  font-weight: 750;
+}
+
+.leftover-status.ok {
+  background: #eaf5ef;
+  color: #15563f;
+}
+
+.leftover-status.stop {
+  background: #fff0ed;
+  color: #9a3428;
+}
+
 .library-more {
   display: block;
   width: 100%;

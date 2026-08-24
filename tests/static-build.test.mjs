@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.88"/);
+  assert.match(app, /VERSION = "1\.16\.89"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -884,4 +884,14 @@ test("v1.16.88 creates a real recipe from the ingredients on hand", async () => 
   assert.match(app, /generateBuilderRecipe/);
   assert.match(app, /Tempo massimo/);
   assert.match(app, /Preparazione completa|Vedi preparazione completa/);
+});
+
+test("v1.16.89 validates storage before creating a leftovers recipe", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(app, /Crea una ricetta con gli avanzi/);
+  assert.match(app, /generateLeftoverRecipe/);
+  assert.match(app, /Frigorifero entro 2 ore/);
+  assert.match(app, /non utilizzare l'alimento/);
+  assert.match(app, /più di 3 giorni/);
+  assert.match(app, /USDA Food Safety and Inspection Service/);
 });

@@ -75,7 +75,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.88";
+const VERSION = "1.16.89";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -9223,6 +9223,13 @@ export function FoodPlanner() {
   const [builderTime, setBuilderTime] = useState(20);
   const [builderMethod, setBuilderMethod] = useState("Padella e pentola");
   const [generatedBuilderRecipe, setGeneratedBuilderRecipe] = useState<Recipe | null>(null);
+  const [leftoverFood, setLeftoverFood] = useState("Riso basmati cotto");
+  const [leftoverGrams, setLeftoverGrams] = useState(150);
+  const [leftoverState, setLeftoverState] = useState<"Cotto" | "Crudo">("Cotto");
+  const [leftoverDate, setLeftoverDate] = useState("");
+  const [leftoverStorage, setLeftoverStorage] = useState("Frigorifero entro 2 ore");
+  const [leftoverResult, setLeftoverResult] = useState<Recipe | null>(null);
+  const [leftoverWarning, setLeftoverWarning] = useState("");
   const updateBlockedRef = useRef(false);
   const userInteractionUntilRef = useRef(0);
   const refreshSnapshotRef = useRef("");
@@ -10160,6 +10167,70 @@ export function FoodPlanner() {
       kind: "recipe",
       sourceLabel: "Valori ingredienti da banca dati CREA, USDA, FRIDA ed etichette",
       sourceUrl: "https://www.alimentinutrizione.it/",
+    });
+  };
+  const generateLeftoverRecipe = () => {
+    setLeftoverResult(null);
+    const prepared = leftoverDate ? new Date(`${leftoverDate}T12:00:00`) : null;
+    const ageDays = prepared
+      ? Math.floor((Date.now() - prepared.getTime()) / 86400000)
+      : Number.NaN;
+    if (!prepared || Number.isNaN(ageDays)) {
+      setLeftoverWarning("Data di preparazione sconosciuta: non utilizzare l'alimento.");
+      return;
+    }
+    if (ageDays < 0) {
+      setLeftoverWarning("La data indicata è futura: correggila prima di continuare.");
+      return;
+    }
+    if (leftoverStorage !== "Frigorifero entro 2 ore") {
+      setLeftoverWarning("Conservazione non sicura o non verificabile: non utilizzare l'alimento.");
+      return;
+    }
+    if (ageDays > 3) {
+      setLeftoverWarning("Sono trascorsi più di 3 giorni: per prudenza non utilizzare l'alimento.");
+      return;
+    }
+    const leftoverIngredient = { food: leftoverFood, grams: leftoverGrams };
+    const supporting = builder
+      .filter((item) => item.food !== leftoverFood && item.grams > 0)
+      .slice(0, 4);
+    const ingredients = [leftoverIngredient, ...supporting];
+    const parts = ingredients
+      .map((ingredient) => {
+        const known = pantryPartByFood.get(ingredient.food);
+        return known ? { ...known, grams: ingredient.grams } : null;
+      })
+      .filter((part): part is MealPart => Boolean(part));
+    const mustReheat = leftoverState === "Cotto";
+    setLeftoverWarning(
+      "Compatibile con il limite prudenziale impostato. Consuma solo se odore, aspetto e conservazione sono normali.",
+    );
+    setLeftoverResult({
+      id: `leftover-${Date.now()}`,
+      name: `${leftoverFood} recuperato con ${supporting.slice(0, 2).map((item) => item.food).join(" e ") || "ingredienti disponibili"}`,
+      kicker: "RICETTA ANTI-SPRECO",
+      image: parts[0]?.image || photo("moment-lunch-v1121"),
+      time: Math.max(10, builderTime),
+      ingredients,
+      steps: [
+        `Verifica che i ${leftoverGrams} g di ${leftoverFood} siano stati conservati in frigorifero entro 2 ore dalla preparazione.`,
+        mustReheat
+          ? "Riscalda completamente l'avanzo fino a renderlo ben caldo anche al centro; non limitarti a intiepidirlo."
+          : "Lava e prepara l'ingrediente crudo su utensili puliti, separandolo dagli alimenti già pronti.",
+        `Prepara separatamente ${supporting.map((item) => item.food).join(", ") || "gli altri ingredienti"}, poi unisci tutto soltanto alla fine.`,
+        "Consuma subito la porzione preparata e non rimettere nuovamente in frigorifero ciò che è già stato riscaldato.",
+      ],
+      alternatives: [
+        "Se non ricordi data o modalità di conservazione, non usare l'avanzo.",
+        "La verifica dell'app è prudenziale e non certifica la sicurezza del singolo alimento.",
+      ],
+      cuisine: cuisineChoice,
+      course: "Piatto completo",
+      parts,
+      kind: "recipe",
+      sourceLabel: "USDA Food Safety and Inspection Service · Leftovers",
+      sourceUrl: "https://www.fsis.usda.gov/food-safety/safe-food-handling-and-preparation/food-safety-basics/leftovers-and-food-safety",
     });
   };
   const doneCount = Object.values(completed).filter(Boolean).length;
@@ -12297,6 +12368,65 @@ export function FoodPlanner() {
                 </div>
               </article>
             )}
+            <details className="leftover-builder">
+              <summary>Crea una ricetta con gli avanzi</summary>
+              <p>Prima verifica data e conservazione. Se i dati non sono sicuri, l'app non genera la ricetta.</p>
+              <div className="leftover-fields">
+                <label className="wide">
+                  <span>Alimento avanzato</span>
+                  <select value={leftoverFood} onChange={(event) => setLeftoverFood(event.target.value)}>
+                    {Object.keys(foodSearchDatabase).sort((a, b) => a.localeCompare(b, "it")).map((food) => (
+                      <option key={food}>{food}</option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  <span>Quantità</span>
+                  <div className="leftover-number">
+                    <input type="number" min="1" max="1500" value={leftoverGrams} onChange={(event) => setLeftoverGrams(Number(event.target.value))} />
+                    <i>g</i>
+                  </div>
+                </label>
+                <label>
+                  <span>Stato</span>
+                  <select value={leftoverState} onChange={(event) => setLeftoverState(event.target.value as "Cotto" | "Crudo")}>
+                    <option>Cotto</option>
+                    <option>Crudo</option>
+                  </select>
+                </label>
+                <label>
+                  <span>Preparato il</span>
+                  <input type="date" value={leftoverDate} onChange={(event) => setLeftoverDate(event.target.value)} />
+                </label>
+                <label>
+                  <span>Conservazione</span>
+                  <select value={leftoverStorage} onChange={(event) => setLeftoverStorage(event.target.value)}>
+                    <option>Frigorifero entro 2 ore</option>
+                    <option>Lasciato a temperatura ambiente</option>
+                    <option>Non ricordo</option>
+                  </select>
+                </label>
+              </div>
+              <button className="primary-btn" type="button" onClick={generateLeftoverRecipe}>
+                Verifica e crea ricetta anti-spreco
+              </button>
+              {leftoverWarning && (
+                <p className={leftoverResult ? "leftover-status ok" : "leftover-status stop"}>{leftoverWarning}</p>
+              )}
+              {leftoverResult && (
+                <article className="generated-builder-card">
+                  <RecipeVisual recipe={leftoverResult} />
+                  <div>
+                    <span>AVANZO VERIFICATO</span>
+                    <h2>{leftoverResult.name}</h2>
+                    <p>{round(calc(leftoverResult.ingredients).kcal)} kcal · {leftoverResult.time} min</p>
+                    <button type="button" onClick={() => { setSelectedMealKey(null); setSelected(leftoverResult); }}>
+                      Vedi preparazione completa
+                    </button>
+                  </div>
+                </article>
+              )}
+            </details>
           </section>
         )}
         {tab === "progress" &&
