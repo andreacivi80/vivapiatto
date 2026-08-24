@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.18"/);
+  assert.match(app, /VERSION = "1\.18\.19"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1328,4 +1328,23 @@ test("v1.18.18 prioritizes balanced target-aware main meals with neutral gap fee
   assert.match(app, /Math\.abs\(profileRecipeKcal\(recipe, slot\) - target\)/);
   assert.match(app, /Da completare: \{balanceMissing\.join\(", "\)\}/);
   assert.match(css, /\.meal-balance-status/);
+});
+
+test("v1.18.19 maps every audited recipe ingredient to its own component image", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  assert.match(app, /const ingredientPartCatalog: Record<string, MealPart>/);
+  for (const asset of [
+    "part-soy-sauce-v11819",
+    "part-gochujang-v11819",
+    "part-mirin-v11819",
+    "part-sugar-v11819",
+    "part-buckwheat-cooked-v11819",
+    "part-cucumber-raw-v11819",
+    "part-peppers-cooked-v11819",
+  ]) {
+    assert.match(app, new RegExp(asset));
+    await access(new URL(`../dist/food/${asset}.png`, import.meta.url));
+  }
+  assert.match(app, /\.\.\.Object\.values\(ingredientPartCatalog\)/);
+  assert.match(app, /const known = pantryPartByFood\.get\(item\.food\)/);
 });

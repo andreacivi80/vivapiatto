@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.18";
+const VERSION = "1.18.19";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -6662,6 +6662,37 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
   ],
 };
 
+const ingredientPartCatalog: Record<string, MealPart> = {
+  "Arancino di riso": { category: "Carboidrato", food: "Arancino di riso", grams: 180, label: "Arancino di riso", image: photo("cheat-arancino-v11630") },
+  "Bevanda di soia": { category: "Latticino", food: "Bevanda di soia", grams: 200, label: "Bevanda di soia", image: photo("part-soy-drink-plain-v11663") },
+  "Cannolo siciliano": { category: "Extra", food: "Cannolo siciliano", grams: 100, label: "Cannolo siciliano", image: photo("cheat-cannolo-v11627") },
+  Cheesecake: { category: "Extra", food: "Cheesecake", grams: 120, label: "Cheesecake", image: photo("cheat-cheesecake-v11626") },
+  "Cetrioli crudi": { category: "Contorno", food: "Cetrioli crudi", grams: 150, label: "Cetrioli crudi", image: photo("part-cucumber-raw-v11819") },
+  "Funghi cotti": { category: "Contorno", food: "Funghi cotti", grams: 150, label: "Funghi cotti", image: photo("part-mushrooms-v8") },
+  "Gelato al cioccolato": { category: "Extra", food: "Gelato al cioccolato", grams: 60, label: "Gelato al cioccolato", image: photo("part-gelato-chocolate-v11664") },
+  "Gelato fiordilatte": { category: "Extra", food: "Gelato fiordilatte", grams: 60, label: "Gelato fiordilatte", image: photo("part-gelato-fiordilatte-v11664") },
+  "Germogli di soia": { category: "Contorno", food: "Germogli di soia", grams: 100, label: "Germogli di soia", image: photo("part-sprouts-v11520") },
+  Gochujang: { category: "Extra", food: "Gochujang", grams: 10, label: "Gochujang", image: photo("part-gochujang-v11819") },
+  "Grano saraceno cotto": { category: "Carboidrato", food: "Grano saraceno cotto", grams: 160, label: "Grano saraceno cotto", image: photo("part-buckwheat-cooked-v11819") },
+  Mirin: { category: "Extra", food: "Mirin", grams: 10, label: "Mirin", image: photo("part-mirin-v11819") },
+  "Noodles di riso cotti": { category: "Carboidrato", food: "Noodles di riso cotti", grams: 180, label: "Noodles di riso cotti", image: photo("part-rice-noodles-v11652") },
+  "Panna cotta": { category: "Extra", food: "Panna cotta", grams: 120, label: "Panna cotta", image: photo("cheat-panna-cotta-v11628") },
+  "Passata di pomodoro": { category: "Contorno", food: "Passata di pomodoro", grams: 100, label: "Passata di pomodoro", image: photo("part-passata-v11652") },
+  "Pasta all'amatriciana": { category: "Carboidrato", food: "Pasta all'amatriciana", grams: 250, label: "Pasta all’amatriciana", image: photo("cheat-amatriciana-v11625") },
+  "Pasta alla carbonara": { category: "Carboidrato", food: "Pasta alla carbonara", grams: 250, label: "Pasta alla carbonara", image: photo("cheat-carbonara-v11619") },
+  "Pasta cotta": { category: "Carboidrato", food: "Pasta cotta", grams: 180, label: "Pasta cotta", image: photo("simple-pasta-white-v5") },
+  Pastiera: { category: "Extra", food: "Pastiera", grams: 100, label: "Pastiera", image: photo("cheat-pastiera-v11629") },
+  "Patatine fritte": { category: "Carboidrato", food: "Patatine fritte", grams: 120, label: "Patatine fritte", image: photo("cheat-fries-v11619") },
+  "Peperoni cotti": { category: "Contorno", food: "Peperoni cotti", grams: 150, label: "Peperoni cotti", image: photo("part-peppers-cooked-v11819") },
+  "Pizza margherita": { category: "Carboidrato", food: "Pizza margherita", grams: 300, label: "Pizza margherita", image: photo("pizza-margherita-v7") },
+  "Riso basmati cotto": { category: "Carboidrato", food: "Riso basmati cotto", grams: 180, label: "Riso basmati cotto", image: photo("part-basmati-cooked-v11650") },
+  "Salsa di soia": { category: "Extra", food: "Salsa di soia", grams: 10, label: "Salsa di soia", image: photo("part-soy-sauce-v11819") },
+  Tiramisu: { category: "Extra", food: "Tiramisu", grams: 120, label: "Tiramisù", image: photo("cheat-tiramisu-v11619") },
+  Uovo: { category: "Proteina", food: "Uovo", grams: 50, label: "Uovo", image: photo("part-whole-egg-v11651") },
+  "Wafer confezionati": { category: "Carboidrato", food: "Wafer confezionati", grams: 30, label: "Wafer confezionati", image: photo("part-wafer-v115") },
+  Zucchero: { category: "Extra", food: "Zucchero", grams: 5, label: "Zucchero", image: photo("part-sugar-v11819") },
+};
+
 const normalizeMealPart = (part: MealPart): MealPart => {
   if (GELATO_FLAVORS.includes(part.food as (typeof GELATO_FLAVORS)[number]))
     return { ...part, image: gelatoFlavorPhoto(part.food) };
@@ -6669,6 +6700,9 @@ const normalizeMealPart = (part: MealPart): MealPart => {
     (option) => option.food === part.food,
   );
   if (localOption) return { ...part, image: localOption.image };
+  const catalogOption = ingredientPartCatalog[part.food];
+  if (catalogOption)
+    return { ...part, category: catalogOption.category, image: catalogOption.image };
   const canonicalCategory = (
     Object.keys(mealPartOptions) as MealPart["category"][]
   ).find((category) =>
@@ -9406,7 +9440,10 @@ const rawRecipes: Recipe[] = [
   ...recipes,
 ];
 const pantryPartByFood = new Map(
-  (Object.values(mealPartOptions).flat() as MealPart[]).map(
+  [
+    ...(Object.values(mealPartOptions).flat() as MealPart[]),
+    ...Object.values(ingredientPartCatalog),
+  ].map(
     (part) => [part.food, part] as const,
   ),
 );
@@ -10307,7 +10344,10 @@ export function FoodPlanner() {
   const swapFoodOptions: MealPart[] = swapTarget
     ? Array.from(
         new Map(
-          (Object.values(mealPartOptions).flat() as MealPart[]).map((part) => [
+          [
+            ...(Object.values(mealPartOptions).flat() as MealPart[]),
+            ...Object.values(ingredientPartCatalog),
+          ].map((part) => [
             part.food,
             part,
           ]),
@@ -10510,11 +10550,8 @@ export function FoodPlanner() {
   };
 
   const additionAsPart = (item: RecipeIngredient): MealPart => {
-    const category =
-      (Object.keys(mealPartOptions) as MealPart["category"][]).find((role) =>
-        mealPartOptions[role].some((option) => option.food === item.food),
-      ) || "Extra";
-    const known = mealPartOptions[category].find((x) => x.food === item.food);
+    const known = pantryPartByFood.get(item.food);
+    const category = known?.category || "Extra";
     return {
       category,
       food: item.food,
