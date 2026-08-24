@@ -79,7 +79,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.17.7";
+const VERSION = "1.17.8";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -1120,6 +1120,46 @@ const foods: Record<string, Food> = {
     fat: 0.1,
     fiber: 0,
     source: "USDA",
+  },
+  "Petto di pollo alla griglia": {
+    kcal: 165,
+    protein: 31,
+    carbs: 0,
+    fat: 3.6,
+    fiber: 0,
+    source: "USDA",
+  },
+  "Petto di pollo lesso": {
+    kcal: 165,
+    protein: 31,
+    carbs: 0,
+    fat: 3.6,
+    fiber: 0,
+    source: "USDA",
+  },
+  "Petto di pollo al vapore": {
+    kcal: 165,
+    protein: 31,
+    carbs: 0,
+    fat: 3.6,
+    fiber: 0,
+    source: "USDA",
+  },
+  "Roast beef magro": {
+    kcal: 149,
+    protein: 26.5,
+    carbs: 0,
+    fat: 4.3,
+    fiber: 0,
+    source: "USDA",
+  },
+  "Carpaccio di manzo · peso a crudo": {
+    kcal: 110,
+    protein: 21.4,
+    carbs: 0,
+    fat: 2.6,
+    fiber: 0,
+    source: "CREA",
   },
   "Latte senza lattosio parzialmente scremato": {
     kcal: 46,
@@ -5777,8 +5817,43 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       category: "Proteina",
       food: "Petto di pollo cotto",
       grams: 100,
-      label: "Pollo",
+      label: "Petto di pollo cotto · 100 g",
       image: photo("part-chicken-cooked-v11651"),
+    },
+    {
+      category: "Proteina",
+      food: "Petto di pollo alla griglia",
+      grams: 100,
+      label: "Petto di pollo alla griglia · 100 g",
+      image: photo("part-chicken-grilled-v1178"),
+    },
+    {
+      category: "Proteina",
+      food: "Petto di pollo lesso",
+      grams: 100,
+      label: "Petto di pollo lesso · 100 g",
+      image: photo("part-chicken-poached-v1178"),
+    },
+    {
+      category: "Proteina",
+      food: "Petto di pollo al vapore",
+      grams: 100,
+      label: "Petto di pollo al vapore · 100 g",
+      image: photo("part-chicken-steamed-v1178"),
+    },
+    {
+      category: "Proteina",
+      food: "Roast beef magro",
+      grams: 100,
+      label: "Roast beef magro · 100 g",
+      image: photo("part-roast-beef-v1178"),
+    },
+    {
+      category: "Proteina",
+      food: "Carpaccio di manzo · peso a crudo",
+      grams: 100,
+      label: "Carpaccio di manzo · 100 g a crudo",
+      image: photo("part-beef-carpaccio-v1178"),
     },
     {
       category: "Proteina",
@@ -6940,9 +7015,9 @@ type MainBaseFamily = "pane" | "pasta" | "riso" | "tubero" | "altro";
 const mainCompatibilityMatrix: Record<MainBaseFamily, string[]> = {
   pane: ["Fesa di tacchino", "Bresaola", "Tonno al naturale sgocciolato", "Prosciutto cotto", "Feta", "Uova sode", "Burger vegetale di soia"],
   pasta: ["Tonno al naturale sgocciolato", "Salmone cotto", "Feta", "Ceci cotti", "Piselli cotti", "Lenticchie cotte", "Fagioli cannellini cotti"],
-  riso: ["Petto di pollo cotto", "Petto di pollo arrosto", "Salmone cotto", "Merluzzo cotto", "Orata cotta", "Tonno al naturale sgocciolato", "Uova sode", "Uova strapazzate o in frittata", "Ceci cotti", "Piselli cotti", "Lenticchie cotte", "Fagioli cannellini cotti"],
-  tubero: ["Bistecca di manzo · peso a crudo", "Bistecca di vitello · peso a crudo", "Lonza di maiale · peso a crudo", "Bistecca di cavallo magra · peso a crudo", "Petto di pollo cotto", "Merluzzo cotto", "Orata cotta", "Salmone cotto", "Uova sode", "Burger vegetale di soia"],
-  altro: ["Petto di pollo cotto", "Merluzzo cotto", "Orata cotta", "Salmone cotto", "Uova sode", "Uova strapazzate o in frittata", "Ceci cotti", "Lenticchie cotte", "Fagioli cannellini cotti", "Burger vegetale di soia"],
+  riso: ["Petto di pollo cotto", "Petto di pollo alla griglia", "Petto di pollo lesso", "Petto di pollo al vapore", "Petto di pollo arrosto", "Salmone cotto", "Merluzzo cotto", "Orata cotta", "Tonno al naturale sgocciolato", "Uova sode", "Uova strapazzate o in frittata", "Ceci cotti", "Piselli cotti", "Lenticchie cotte", "Fagioli cannellini cotti"],
+  tubero: ["Bistecca di manzo · peso a crudo", "Bistecca di vitello · peso a crudo", "Lonza di maiale · peso a crudo", "Bistecca di cavallo magra · peso a crudo", "Roast beef magro", "Carpaccio di manzo · peso a crudo", "Petto di pollo cotto", "Petto di pollo alla griglia", "Petto di pollo lesso", "Petto di pollo al vapore", "Merluzzo cotto", "Orata cotta", "Salmone cotto", "Uova sode", "Burger vegetale di soia"],
+  altro: ["Petto di pollo cotto", "Petto di pollo alla griglia", "Petto di pollo lesso", "Petto di pollo al vapore", "Roast beef magro", "Carpaccio di manzo · peso a crudo", "Merluzzo cotto", "Orata cotta", "Salmone cotto", "Uova sode", "Uova strapazzate o in frittata", "Ceci cotti", "Lenticchie cotte", "Fagioli cannellini cotti", "Burger vegetale di soia"],
 };
 const mainBaseFamily = (food: string): MainBaseFamily => {
   if (["Pane", "Cracker", "Grissini"].some((term) => food.includes(term))) return "pane";

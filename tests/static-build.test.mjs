@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.17\.7"/);
+  assert.match(app, /VERSION = "1\.17\.8"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1085,4 +1085,21 @@ test("v1.17.7 adds missing everyday alternatives with faithful assets", async ()
     await access(new URL("../dist/food/" + asset + ".png", import.meta.url));
   }
   assert.match(app, /const breakfastMilkAlternatives = \[[\s\S]*Bevanda di mandorla senza zucchero/);
+});
+
+test("v1.17.8 distinguishes chicken methods and lean beef alternatives", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  const required = [
+    ["Petto di pollo alla griglia", "part-chicken-grilled-v1178"],
+    ["Petto di pollo lesso", "part-chicken-poached-v1178"],
+    ["Petto di pollo al vapore", "part-chicken-steamed-v1178"],
+    ["Roast beef magro", "part-roast-beef-v1178"],
+    ["Carpaccio di manzo · peso a crudo", "part-beef-carpaccio-v1178"],
+  ];
+  for (const [food, asset] of required) {
+    assert.match(app, new RegExp(food));
+    assert.match(app, new RegExp('photo\\("' + asset + '"\\)'));
+    await access(new URL("../dist/food/" + asset + ".png", import.meta.url));
+  }
+  assert.match(app, /Carpaccio di manzo · peso a crudo[\s\S]*source: "CREA"/);
 });
