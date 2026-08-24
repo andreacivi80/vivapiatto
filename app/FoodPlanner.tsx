@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.47";
+const VERSION = "1.18.48";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -1782,6 +1782,10 @@ foods["Cetrioli crudi"] = { ...foods.Cetriolo };
 foods["Funghi cotti"] = { kcal: 28, protein: 3.6, carbs: 5.3, fat: 0.5, fiber: 2.2, source: "USDA" };
 foods["Gelato fiordilatte"] = { ...occasionalFoods["Gelato alla crema"] };
 foods["Peperoni cotti"] = { ...foods["Peperoni cotti senza olio"] };
+foods["Pesce spada cotto"] = { kcal: 172, protein: 23.5, carbs: 0, fat: 7.9, fiber: 0, source: "USDA FoodData Central" };
+foods["Palombo · peso a crudo"] = { kcal: 80, protein: 16, carbs: 1.3, fat: 1.2, fiber: 0, source: "CREA 122000" };
+foods["Alici fresche · peso a crudo"] = { kcal: 96, protein: 16.8, carbs: 1.5, fat: 2.6, fiber: 0, source: "CREA 120010" };
+foods["Lupini ammollati"] = { kcal: 119, protein: 16.4, carbs: 7.1, fat: 2.4, fiber: 2.8, source: "CREA 004600" };
 
 const calc = (
   ingredients: RecipeIngredient[],
@@ -6103,6 +6107,10 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     { category: "Proteina", food: "Edamame cotti", grams: 80, label: "Edamame cotti", image: photo("part-edamame-v11634") },
     { category: "Proteina", food: "Trota cotta", grams: 150, label: "Trota cotta al forno o al vapore", image: photo("part-trout-v11645") },
     { category: "Proteina", food: "Polpo cotto", grams: 150, label: "Polpo cotto", image: photo("part-octopus-v11645") },
+    { category: "Proteina", food: "Pesce spada cotto", grams: 150, label: "Pesce spada alla griglia · 150 g cotti", image: photo("part-swordfish-grilled-v11848") },
+    { category: "Proteina", food: "Palombo · peso a crudo", grams: 150, label: "Palombo al forno · 150 g a crudo", image: photo("part-palombo-baked-v11848") },
+    { category: "Proteina", food: "Alici fresche · peso a crudo", grams: 150, label: "Alici al forno · 150 g a crudo", image: photo("part-anchovies-fresh-v11848") },
+    { category: "Proteina", food: "Lupini ammollati", grams: 150, label: "Lupini ammollati e sgocciolati · 150 g", image: photo("part-lupins-soaked-v11848") },
   ],
   Contorno: [
     { category: "Contorno", food: "Lattuga fresca", grams: 100, label: "Lattuga fresca · 100 g", image: photo("part-lettuce-v11668") },

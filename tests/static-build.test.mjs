@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.47"/);
+  assert.match(app, /VERSION = "1\.18\.48"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1629,4 +1629,15 @@ test("v1.18.47 permanently audits the occasional-food database", async () => {
   assert.match(audit, /kcal, proteine, carboidrati, grassi, fibre e fonte/);
   assert.match(audit, /vino bianco/);
   assert.match(audit, /vino rosso/);
+});
+
+test("v1.18.48 adds four verified missing pantry proteins with dedicated photos", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  assert.match(app, /food: "Pesce spada cotto"[\s\S]{0,220}part-swordfish-grilled-v11848/);
+  assert.match(app, /food: "Palombo · peso a crudo"[\s\S]{0,220}part-palombo-baked-v11848/);
+  assert.match(app, /food: "Alici fresche · peso a crudo"[\s\S]{0,220}part-anchovies-fresh-v11848/);
+  assert.match(app, /food: "Lupini ammollati"[\s\S]{0,220}part-lupins-soaked-v11848/);
+  assert.match(app, /CREA 120010/);
+  assert.match(app, /CREA 122000/);
+  assert.match(app, /CREA 004600/);
 });
