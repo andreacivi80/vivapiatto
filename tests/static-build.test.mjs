@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.55"/);
+  assert.match(app, /VERSION = "1\.18\.56"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1706,4 +1706,18 @@ test("v1.18.55 blocks every automatic adult-portion planner for minors", async (
   assert.match(app, /const rebalanceWeeklyProteinRotation[\s\S]{0,240}ageGroup === "Minore"/);
   assert.match(app, /const rebalanceDayPreservingEdits[\s\S]{0,240}ageGroup === "Minore"/);
   assert.match(app, /Pianificazione automatica per minori disattivata/);
+});
+
+test("v1.18.56 audits the comprehensive food list only against truly selectable pictured alternatives", async () => {
+  const audit = await readFile("scripts/audit-requested-pantry.mjs", "utf8");
+  const listing = await readFile("scripts/list-selectable-foods.mjs", "utf8");
+  assert.match(audit, /const selectableBlocks =/);
+  assert.match(audit, /const mealPartOptions:/);
+  assert.match(audit, /const ingredientPartCatalog:/);
+  assert.match(audit, /duplicateRequired/);
+  assert.match(audit, /"Pompelmo rosa fresco"/);
+  assert.match(audit, /"Riso parboiled cotto"/);
+  assert.match(audit, /"Vongole cotte"/);
+  assert.match(audit, /"Cavolini di Bruxelles cotti"/);
+  assert.match(listing, /Totale alimenti selezionabili/);
 });
