@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.42";
+const VERSION = "1.18.43";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -11813,10 +11813,36 @@ export function FoodPlanner() {
           : 0)
       );
     }, 0);
-  const loggedTotal = (day: number) =>
-    loggedMealKcal(day) +
-    (drinks[day] || []).reduce((s, x) => s + x.kcal, 0) +
-    (extras[day] || []).reduce((s, x) => s + x.kcal, 0);
+  const loggedDayNutrition = (day: number) => {
+    const meals = getDayIds(day).reduce(
+      (sum, id, slot) => {
+        if (!isActiveMealSlot(slot)) return sum;
+        const key = `${day}-${slot}`;
+        if (!completed[key]) return sum;
+        const recipe = recipeMap[completedRecipes[key] || id];
+        const value = calc(actualIngredients(key, recipe));
+        return {
+          kcal: sum.kcal + value.kcal,
+          protein: sum.protein + value.protein,
+          carbs: sum.carbs + value.carbs,
+          fat: sum.fat + value.fat,
+          fiber: sum.fiber + value.fiber,
+        };
+      },
+      { kcal: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 },
+    );
+    return [...(drinks[day] || []), ...(extras[day] || [])].reduce(
+      (sum, item) => ({
+        kcal: sum.kcal + item.kcal,
+        protein: sum.protein + (item.protein || 0),
+        carbs: sum.carbs + (item.carbs || 0),
+        fat: sum.fat + (item.fat || 0),
+        fiber: sum.fiber + (item.fiber || 0),
+      }),
+      meals,
+    );
+  };
+  const loggedTotal = (day: number) => loggedDayNutrition(day).kcal;
   const weeklyProteinCounts = () => {
     const counts: Record<string, number> = {
       Pesce: 0,
@@ -13861,7 +13887,8 @@ export function FoodPlanner() {
         )}
         {tab === "progress" &&
           (() => {
-            const total = loggedTotal(diaryDay);
+            const loggedNutrition = loggedDayNutrition(diaryDay);
+            const total = loggedNutrition.kcal;
             const target = targetForDay(diaryDay);
             const difference = round(total - target);
             const completedMeals = getDayIds(diaryDay)
@@ -13933,6 +13960,12 @@ export function FoodPlanner() {
                       {difference > 0 ? "+" : ""}
                       {difference} kcal
                     </em>
+                  </div>
+                  <div className="diary-nutrients" aria-label="Nutrienti registrati">
+                    <span><b>{fmt(loggedNutrition.protein)}</b> g proteine</span>
+                    <span><b>{fmt(loggedNutrition.carbs)}</b> g carboidrati</span>
+                    <span><b>{fmt(loggedNutrition.fat)}</b> g grassi</span>
+                    <span><b>{fmt(loggedNutrition.fiber)}</b> g fibre</span>
                   </div>
                 </div>
                 <h2 className="mini-title">Cosa hai mangiato</h2>

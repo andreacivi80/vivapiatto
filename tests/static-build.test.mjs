@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.42"/);
+  assert.match(app, /VERSION = "1\.18\.43"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1576,4 +1576,17 @@ test("v1.18.42 derives exported weekly averages from the same visible snapshots"
   assert.match(source, /const weeklySnapshotAverageKcal = round/);
   assert.match(source, /settimana aggiornata · media \$\{weeklySnapshotAverageKcal\}/);
   assert.match(source, /Media aggiornata \{weeklySnapshotAverageKcal\}/);
+});
+
+test("v1.18.43 totals every recorded nutrient in the compact diary summary", async () => {
+  const source = await readFile("app/FoodPlanner.tsx", "utf8");
+  const css = await readFile("app/globals.css", "utf8");
+  assert.match(source, /const loggedDayNutrition = \(day: number\) =>/);
+  assert.match(source, /calc\(actualIngredients\(key, recipe\)\)/);
+  assert.match(source, /\.\.\.\(drinks\[day\] \|\| \[\]\), \.\.\.\(extras\[day\] \|\| \[\]\)/);
+  assert.match(source, /const loggedTotal = \(day: number\) => loggedDayNutrition\(day\)\.kcal/);
+  assert.match(source, /aria-label="Nutrienti registrati"/);
+  assert.match(source, /loggedNutrition\.protein/);
+  assert.match(source, /loggedNutrition\.fiber/);
+  assert.match(css, /\.diary-total > \.diary-nutrients/);
 });

@@ -2404,6 +2404,28 @@ button {
   background: #dcecff;
   color: #244c7b;
 }
+.diary-total > .diary-nutrients {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+}
+.diary-nutrients span {
+  display: block;
+  min-width: 0;
+  padding: 5px 6px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #dce8e3;
+  font-size: 9px;
+  text-transform: none;
+}
+.diary-nutrients b {
+  font-size: 11px;
+  color: var(--lime);
+}
 .mini-title {
   font-size: 13px;
   margin: 14px 0 6px;
