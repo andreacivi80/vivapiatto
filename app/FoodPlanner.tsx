@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.41";
+const VERSION = "1.18.42";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -12223,10 +12223,22 @@ export function FoodPlanner() {
         });
       }),
     );
+  const weeklySnapshotKcal = days.map((_, dayNumber) =>
+    round(
+      getDayIds(dayNumber).reduce((total, recipeId, slot) => {
+        if (!isActiveMealSlot(slot)) return total;
+        const snapshot = weeklyMealSnapshot(dayNumber, slot, recipeId);
+        return total + calc(snapshot.ingredients).kcal;
+      }, 0),
+    ),
+  );
+  const weeklySnapshotAverageKcal = round(
+    weeklySnapshotKcal.reduce((sum, value) => sum + value, 0) / days.length,
+  );
   const weeklyPlanText = () => {
     const rows = weeklyExportRows();
     return [
-      `Tavola Mia · piano settimanale · media ${weeklyAverageKcal} kcal/giorno`,
+      `Tavola Mia · settimana aggiornata · media ${weeklySnapshotAverageKcal} kcal/giorno`,
       ...days.flatMap((day) => {
         const dayRows = rows.filter((row) => row.day === day.label);
         return [
@@ -14513,7 +14525,7 @@ export function FoodPlanner() {
               </button>
             </header>
             <div className="print-preview-summary">
-              <b>Media {weeklyAverageKcal} kcal al giorno</b>
+              <b>Media aggiornata {weeklySnapshotAverageKcal} kcal al giorno</b>
               <span>{weeklyAverageFiber} g fibre/giorno</span>
               <small>Valori stimati: marche, cottura e peso effettivo possono variare.</small>
             </div>

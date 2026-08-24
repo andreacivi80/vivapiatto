@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.41"/);
+  assert.match(app, /VERSION = "1\.18\.42"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1567,4 +1567,13 @@ test("v1.18.41 keeps print and every weekly export aligned with recorded meals",
   assert.match(source, /"Stato", "Ricetta"/);
   assert.match(source, /previewDayMacros = calc\(daySnapshots\.flatMap/);
   assert.match(source, /snapshot\.isRecorded \? "registrato" : "pianificato"/);
+});
+
+test("v1.18.42 derives exported weekly averages from the same visible snapshots", async () => {
+  const source = await readFile("app/FoodPlanner.tsx", "utf8");
+  assert.match(source, /const weeklySnapshotKcal = days\.map/);
+  assert.match(source, /weeklyMealSnapshot\(dayNumber, slot, recipeId\)/);
+  assert.match(source, /const weeklySnapshotAverageKcal = round/);
+  assert.match(source, /settimana aggiornata · media \$\{weeklySnapshotAverageKcal\}/);
+  assert.match(source, /Media aggiornata \{weeklySnapshotAverageKcal\}/);
 });
