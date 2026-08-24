@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.12";
+const VERSION = "1.18.13";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -11065,6 +11065,8 @@ export function FoodPlanner() {
     );
     return right.ingredients.some((ingredient) => leftFruit.has(ingredient.food));
   };
+  const isSmoothieRecipe = (recipe: Recipe) =>
+    /frullato|smoothie/i.test(`${recipe.name} ${recipe.kicker}`);
   const applyCuisine = () => {
     const profileSeed =
       (calories >= 2400 ? 1 : calories >= 2000 ? 2 : 0) +
@@ -11162,11 +11164,22 @@ export function FoodPlanner() {
         const profileTarget = day === dayIndex ? plannedCalories : calories;
         const offset = profileSeed + day;
         const breakfast = closestForSlot(breakfasts, 0, profileTarget * shares[0], offset);
-        const morningSnack = closestForSlot(snacks, 1, profileTarget * shares[1], offset);
+        const morningSnackPool = isSmoothieRecipe(breakfast)
+          ? snacks.filter((recipe) => !isSmoothieRecipe(recipe))
+          : snacks;
+        const morningSnack = closestForSlot(
+          morningSnackPool.length ? morningSnackPool : snacks,
+          1,
+          profileTarget * shares[1],
+          offset,
+        );
+        const smoothieAlreadyPlanned =
+          isSmoothieRecipe(breakfast) || isSmoothieRecipe(morningSnack);
         const differentFruitSnacks = snacks.filter(
           (recipe) =>
             recipe.id !== morningSnack.id &&
-            !sharesFruit(morningSnack, recipe),
+            !sharesFruit(morningSnack, recipe) &&
+            (!smoothieAlreadyPlanned || !isSmoothieRecipe(recipe)),
         );
         const afternoonPool = differentFruitSnacks.length
           ? differentFruitSnacks
@@ -11316,10 +11329,20 @@ export function FoodPlanner() {
           ? 1
           : 0) +
       profileSeed;
-    const morningSnack = snacks[(dayIndex + offset) % snacks.length];
+    const breakfast = breakfasts[(dayIndex + offset) % breakfasts.length];
+    const morningSnackPool = isSmoothieRecipe(breakfast)
+      ? snacks.filter((recipe) => !isSmoothieRecipe(recipe))
+      : snacks;
+    const morningSnack = (morningSnackPool.length ? morningSnackPool : snacks)[
+      (dayIndex + offset) % (morningSnackPool.length || snacks.length)
+    ];
+    const smoothieAlreadyPlanned =
+      isSmoothieRecipe(breakfast) || isSmoothieRecipe(morningSnack);
     const afternoonCandidates = snacks.filter(
       (recipe) =>
-        recipe.id !== morningSnack.id && !sharesFruit(morningSnack, recipe),
+        recipe.id !== morningSnack.id &&
+        !sharesFruit(morningSnack, recipe) &&
+        (!smoothieAlreadyPlanned || !isSmoothieRecipe(recipe)),
     );
     const afternoonPool = afternoonCandidates.length
       ? afternoonCandidates
@@ -11333,7 +11356,7 @@ export function FoodPlanner() {
         [`${dayIndex}-0`]: keepRecordedChoice(
           v,
           0,
-          breakfasts[(dayIndex + offset) % breakfasts.length].id,
+          breakfast.id,
         ),
         [`${dayIndex}-1`]: keepRecordedChoice(v, 1, morningSnack.id),
         [`${dayIndex}-2`]: keepRecordedChoice(
@@ -11372,16 +11395,25 @@ export function FoodPlanner() {
           highCarbSnacks.filter((recipe) => recipe.id !== highCarbSnacks[0]?.id),
           highCarbDinners,
         ];
+        let tomorrowSmoothiePlanned = false;
         pools.forEach((pool, slot) => {
           const key = `${tomorrow}-${slot}`;
           if (completed[key] || !pool.length) return;
           const target = tomorrowTarget * mealCalorieShares[slot];
-          updated[key] = closestForSlot(
+          let chosen = closestForSlot(
             pool,
             slot,
             target,
             offset + tomorrow + slot,
-          ).id;
+          );
+          if ([0, 1, 3].includes(slot) && isSmoothieRecipe(chosen)) {
+            if (tomorrowSmoothiePlanned) {
+              chosen = pool.find((recipe) => !isSmoothieRecipe(recipe)) || chosen;
+            } else {
+              tomorrowSmoothiePlanned = true;
+            }
+          }
+          updated[key] = chosen.id;
         });
       }
       return updated;

@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.12"/);
+  assert.match(app, /VERSION = "1\.18\.13"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1272,4 +1272,13 @@ test("v1.18.12 aligns the automatic 14-meal protein rotation with the supplied m
   assert.equal(count("latticini"), 3);
   assert.match(app, /const requestedFamilies = WEEKLY_MAIN_ROTATION/);
   assert.match(app, /target: "0–1", min: 0, max: 1/);
+});
+
+test("v1.18.13 prevents automatic plans from proposing multiple smoothies per day", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  assert.match(app, /const isSmoothieRecipe = \(recipe: Recipe\)/);
+  assert.match(app, /const smoothieAlreadyPlanned =/);
+  assert.match(app, /!smoothieAlreadyPlanned \|\| !isSmoothieRecipe\(recipe\)/);
+  assert.match(app, /let tomorrowSmoothiePlanned = false/);
+  assert.match(app, /pool\.find\(\(recipe\) => !isSmoothieRecipe\(recipe\)\)/);
 });
