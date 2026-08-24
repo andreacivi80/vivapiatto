@@ -25,7 +25,20 @@ const gelatoEnd = source.indexOf("] as const", gelatoStart);
 for (const match of source.slice(gelatoStart, gelatoEnd).matchAll(/"([^"]+)"/g)) ingredients.add(match[1]);
 const partCatalogStart = source.indexOf("const mealPartOptions");
 const partCatalogEnd = source.indexOf("const normalizeMealPart", partCatalogStart);
-for (const match of source.slice(partCatalogStart, partCatalogEnd).matchAll(/food:\s*"([^"]+)"/g)) ingredients.add(match[1]);
+const partCatalogBlock = source.slice(partCatalogStart, partCatalogEnd);
+const picturedParts = new Set();
+for (const match of partCatalogBlock.matchAll(/food:\s*"([^"]+)"[\s\S]*?image:\s*photo\("([^"]+)"\)/g)) {
+  ingredients.add(match[1]);
+  picturedParts.add(match[1]);
+}
 const missing = [...ingredients].filter((food) => !known.has(food)).sort();
 if (missing.length) throw new Error(`Ingredienti senza dati nutrizionali: ${missing.join(", ")}`);
-console.log(`Copertura nutrizionale: ${ingredients.size}/${ingredients.size} voci selezionabili.`);
+const recipeIngredientParts = new Set();
+for (const block of source.slice(recipeStart, recipeEnd).matchAll(/ingredients:\s*\[([\s\S]*?)\]/g)) {
+  for (const match of block[1].matchAll(/food:\s*"([^"]+)"/g)) recipeIngredientParts.add(match[1]);
+}
+const missingPictures = [...recipeIngredientParts].filter((food) => !picturedParts.has(food)).sort();
+if (missingPictures.length) {
+  throw new Error(`Ingredienti ricetta senza componente selezionabile e foto: ${missingPictures.join(", ")}`);
+}
+console.log(`Copertura nutrizionale: ${ingredients.size}/${ingredients.size} voci selezionabili; ${recipeIngredientParts.size}/${recipeIngredientParts.size} ingredienti ricetta con componente e foto.`);

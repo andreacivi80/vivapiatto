@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.61"/);
+  assert.match(app, /VERSION = "1\.18\.62"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1764,4 +1764,12 @@ test("v1.18.61 audits every matrix recipe as a complete selectable recipe, not o
   assert.match(audit, /preparazione/);
   assert.match(audit, /alternative/);
   assert.match(audit, /Ricette matrice incomplete/);
+});
+
+test("v1.18.62 keeps every recipe ingredient inside the selectable pictured pantry", async () => {
+  const audit = await readFile("scripts/audit-nutrition-coverage.mjs", "utf8");
+  assert.match(audit, /const picturedParts = new Set/);
+  assert.match(audit, /const recipeIngredientParts = new Set/);
+  assert.match(audit, /Ingredienti ricetta senza componente selezionabile e foto/);
+  assert.match(audit, /ingredienti ricetta con componente e foto/);
 });
