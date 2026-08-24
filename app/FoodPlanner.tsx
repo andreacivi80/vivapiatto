@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.19";
+const VERSION = "1.18.20";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -1746,6 +1746,13 @@ foods["Verza fresca"] = { kcal: 27, protein: 2, carbs: 6.1, fat: 0.1, fiber: 3.1
 foods["Cavolini di Bruxelles cotti"] = { kcal: 36, protein: 2.6, carbs: 7.1, fat: 0.5, fiber: 2.6, source: "USDA" };
 foods["Cime di rapa cotte"] = { kcal: 27, protein: 3.2, carbs: 3.1, fat: 0.5, fiber: 2.7, source: "USDA" };
 foods["Cipollotti freschi"] = { kcal: 32, protein: 1.8, carbs: 7.3, fat: 0.2, fiber: 2.6, source: "USDA" };
+
+foods["Bevanda di soia"] = { ...foods["Bevanda di soia senza zucchero"] };
+foods.Cetrioli = { ...foods.Cetriolo };
+foods["Cetrioli crudi"] = { ...foods.Cetriolo };
+foods["Funghi cotti"] = { kcal: 28, protein: 3.6, carbs: 5.3, fat: 0.5, fiber: 2.2, source: "USDA" };
+foods["Gelato fiordilatte"] = { ...occasionalFoods["Gelato alla crema"] };
+foods["Peperoni cotti"] = { ...foods["Peperoni cotti senza olio"] };
 
 const calc = (
   ingredients: RecipeIngredient[],

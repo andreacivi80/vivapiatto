@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.19"/);
+  assert.match(app, /VERSION = "1\.18\.20"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1347,4 +1347,18 @@ test("v1.18.19 maps every audited recipe ingredient to its own component image",
   }
   assert.match(app, /\.\.\.Object\.values\(ingredientPartCatalog\)/);
   assert.match(app, /const known = pantryPartByFood\.get\(item\.food\)/);
+});
+
+test("v1.18.20 prevents recipe ingredients from silently counting as zero", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  const pkg = JSON.parse(await readFile("package.json", "utf8"));
+  for (const food of [
+    "Bevanda di soia",
+    "Cetrioli",
+    "Cetrioli crudi",
+    "Funghi cotti",
+    "Gelato fiordilatte",
+    "Peperoni cotti",
+  ]) assert.match(app, new RegExp(`foods\\[?[^\\n]*${food}`));
+  assert.match(pkg.scripts.test, /audit-nutrition-coverage\.mjs/);
 });
