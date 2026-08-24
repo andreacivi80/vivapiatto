@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.26";
+const VERSION = "1.18.27";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -4103,13 +4103,13 @@ const balancedDinnerRecipes: Recipe[] = [
     image: photo("recipe-pasta-lentils-pumpkin-v1151"),
     time: 30,
     ingredients: [
-      { food: "Pasta integrale secca", grams: 80 },
+      { food: "Pasta integrale secca", grams: 70 },
       { food: "Lenticchie cotte", grams: 120 },
       { food: "Zucca", grams: 200 },
       { food: "Olio extravergine", grams: 10 },
     ],
     parts: [
-      { category: "Carboidrato", food: "Pasta integrale secca", grams: 80, label: "Pasta integrale · peso a crudo", image: photo("part-pasta-whole-v11618") },
+      { category: "Carboidrato", food: "Pasta integrale secca", grams: 70, label: "Pasta integrale · peso a crudo", image: photo("part-pasta-whole-v11618") },
       { category: "Proteina", food: "Lenticchie cotte", grams: 120, label: "Lenticchie cotte", image: photo("part-lentils-v1141") },
       { category: "Contorno", food: "Zucca", grams: 200, label: "Zucca cotta", image: photo("part-pumpkin-v8") },
       { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio extravergine", image: photo("part-olive-oil-v8") },

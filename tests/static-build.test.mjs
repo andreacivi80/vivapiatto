@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.26"/);
+  assert.match(app, /VERSION = "1\.18\.27"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1424,4 +1424,12 @@ test("v1.18.26 counts whole eggs from every active meal in the weekly rotation",
   assert.match(app, /weeklyEggUnits \+= eggUnitsForItems\(items\)/);
   assert.match(app, /counts\.Uova = Math\.round\(weeklyEggUnits\)/);
   assert.match(app, /if \(!isActiveMealSlot\(slot\)\) return/);
+});
+
+test("v1.18.27 permanently audits reduced dry pasta portions in pasta and legume meals", async () => {
+  const pkg = JSON.parse(await readFile("package.json", "utf8"));
+  const audit = await readFile("scripts/audit-pasta-legume-portions.mjs", "utf8");
+  assert.match(pkg.scripts.test, /audit-pasta-legume-portions\.mjs/);
+  assert.match(audit, /item\.grams > 70/);
+  assert.match(audit, /Pasta a porzione piena nelle combinazioni con legumi/);
 });
