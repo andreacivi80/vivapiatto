@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.54"/);
+  assert.match(app, /VERSION = "1\.18\.55"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1696,4 +1696,14 @@ test("v1.18.54 explicitly rebalances a reopened confirmed week without changing 
   assert.match(app, /if \(weekLocked && !forceConfirmedWeek\) return/);
   assert.match(app, /rebalanceDayPreservingEdits\(weekEditingDay\);[\s\S]{0,180}replanFollowingDays\(weekEditingDay, true\)/);
   assert.match(app, /const key = `\$\{day\}-\$\{slot\}`/);
+});
+
+test("v1.18.55 blocks every automatic adult-portion planner for minors", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  assert.match(app, /const replanFollowingDays[\s\S]{0,260}ageGroup === "Minore"/);
+  assert.match(app, /const applyCuisine[\s\S]{0,220}ageGroup === "Minore"/);
+  assert.match(app, /const planFromCheck[\s\S]{0,220}ageGroup === "Minore"/);
+  assert.match(app, /const rebalanceWeeklyProteinRotation[\s\S]{0,240}ageGroup === "Minore"/);
+  assert.match(app, /const rebalanceDayPreservingEdits[\s\S]{0,240}ageGroup === "Minore"/);
+  assert.match(app, /Pianificazione automatica per minori disattivata/);
 });

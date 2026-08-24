@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.54";
+const VERSION = "1.18.55";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -10538,6 +10538,10 @@ export function FoodPlanner() {
     setLibraryQuery("");
   }, [swapTarget]);
   const replanFollowingDays = (changedDay: number, forceConfirmedWeek = false) => {
+    if (ageGroup === "Minore") {
+      setReplanNote("Pianificazione automatica per minori disattivata: serve un professionista sanitario.");
+      return;
+    }
     if (weekLocked && !forceConfirmedWeek) return;
     const breakfasts = availableBreakfasts();
     const snacks = [...quickSnacks, ...matrixSnacks, ...attachmentMissingSnacks, ...catalogSnacks].filter(isAllowed);
@@ -11298,6 +11302,10 @@ export function FoodPlanner() {
   const isSmoothieRecipe = (recipe: Recipe) =>
     /frullato|smoothie/i.test(`${recipe.name} ${recipe.kicker}`);
   const applyCuisine = () => {
+    if (ageGroup === "Minore") {
+      setReplanNote("Pianificazione automatica per minori disattivata: le ricette restano consultabili.");
+      return;
+    }
     const profileSeed =
       (calories >= 2400 ? 1 : calories >= 2000 ? 2 : 0) +
       (goal === "Dimagrimento graduale"
@@ -11453,6 +11461,10 @@ export function FoodPlanner() {
     );
   };
   const planFromCheck = (next: typeof check) => {
+    if (ageGroup === "Minore") {
+      setReplanNote("Check-in salvato senza ricalcolare porzioni da adulto per un minore.");
+      return;
+    }
     const profileSeed =
       (calories >= 2400 ? 1 : calories >= 2000 ? 2 : 0) +
       (goal === "Dimagrimento graduale"
@@ -11811,6 +11823,7 @@ export function FoodPlanner() {
     budgetLevel,
     breakfastStyle,
     mealPrepMode,
+    ageGroup,
     profileHydrated,
   ]);
   const addDrink = (day: number, item: LogItem) =>
@@ -11969,6 +11982,10 @@ export function FoodPlanner() {
     .filter((family, index, sequence) => index > 0 && family !== "altro" && family === sequence[index - 1])
     .length;
   const rebalanceWeeklyProteinRotation = () => {
+    if (ageGroup === "Minore") {
+      setReplanNote("Rotazione automatica per minori disattivata: serve un professionista sanitario.");
+      return;
+    }
     const nonMainEggMeals = days.reduce(
       (total, _, day) =>
         total +
@@ -12132,6 +12149,10 @@ export function FoodPlanner() {
     );
   };
   const rebalanceDayPreservingEdits = (day: number) => {
+    if (ageGroup === "Minore") {
+      setReplanNote("Riequilibrio automatico per minori disattivato: serve un professionista sanitario.");
+      return;
+    }
     const adjustable = activeMealSlots.filter((slot) => {
       const key = `${day}-${slot}`;
       return !completed[key] && !partSelections[key];
