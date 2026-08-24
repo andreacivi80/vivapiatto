@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.51"/);
+  assert.match(app, /VERSION = "1\.18\.52"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1672,4 +1672,13 @@ test("v1.18.51 ranks the new fresh produce by season", async () => {
   assert.match(app, /"Rape crude": \[10, 11, 12, 1, 2, 3\]/);
   assert.match(app, /"Rape cotte bollite": \[10, 11, 12, 1, 2, 3\]/);
   assert.match(app, /seasonalFirst\(mealPartOptions\[part\.category\]\)/);
+});
+
+test("v1.18.52 always publishes the active release manifest", async () => {
+  const packageFile = JSON.parse(await readFile("package.json", "utf8"));
+  const release = JSON.parse(await readFile("dist/version.json", "utf8"));
+  const config = await readFile("vite.config.ts", "utf8");
+  assert.equal(release.version, packageFile.version);
+  assert.match(config, /vivapiatto-release-version/);
+  assert.match(config, /dist\/version\.json/);
 });
