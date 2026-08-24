@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.57";
+const VERSION = "1.18.58";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -10141,8 +10141,12 @@ export function FoodPlanner() {
   const conditionBlockedGroups = healthConditions.includes("Celiachia diagnosticata")
     ? ["Glutine"]
     : [];
+  const conditionBlockedFoods = healthConditions.includes("Favismo")
+    ? ["Fave cotte"]
+    : [];
   const blockedFoods = [
     ...dislikedFoods,
+    ...conditionBlockedFoods,
     ...[...excludedGroups, ...allergyGroups, ...intoleranceGroups, ...conditionBlockedGroups]
       .flatMap((group) => groupFoods[group] || []),
   ];
@@ -12596,7 +12600,7 @@ export function FoodPlanner() {
                 </div>
                 <b>Condizioni da dichiarare</b>
                 <div className="chips">
-                  {["Celiachia diagnosticata", "Diabete", "Ipertensione", "Malattia renale", "Gravidanza"].map((condition) => (
+                  {["Celiachia diagnosticata", "Favismo", "Diabete", "Ipertensione", "Malattia renale", "Gravidanza"].map((condition) => (
                     <button
                       key={condition}
                       className={healthConditions.includes(condition) ? "active" : ""}

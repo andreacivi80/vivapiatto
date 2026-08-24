@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.57"/);
+  assert.match(app, /VERSION = "1\.18\.58"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1730,4 +1730,12 @@ test("v1.18.57 permanently audits the initial 14-meal weekly protein rotation", 
   assert.match(audit, /Proteine consecutive duplicate/);
   assert.match(audit, /"carne-rossa": \[0, 1\]/);
   assert.match(audit, /legumi: \[3, 3\]/);
+});
+
+test("v1.18.58 exposes favism and blocks broad-bean foods from recipes and alternatives", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  assert.match(app, /healthConditions\.includes\("Favismo"\)[\s\S]{0,80}\["Fave cotte"\]/);
+  assert.match(app, /\.\.\.conditionBlockedFoods/);
+  assert.match(app, /"Celiachia diagnosticata", "Favismo", "Diabete"/);
+  assert.match(app, /recipe\.ingredients\.every\(\(i\) => !blockedFoods\.includes\(i\.food\)\)/);
 });
