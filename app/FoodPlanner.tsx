@@ -79,7 +79,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.97";
+const VERSION = "1.16.98";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -9670,6 +9670,20 @@ export function FoodPlanner() {
     if (macros.fiber >= 5 || recipe.ingredients.length >= 4) score += 1;
     return Math.min(5, score);
   };
+  const recipeBudgetScore = (recipe: Recipe) => {
+    const text = recipe.ingredients.map((item) => item.food).join(" ").toLowerCase();
+    let score = 1;
+    if (/salmone|orata|branzino|gamber|tonno fresco|cavallo|bresaola|frutti di mare|pistacch/.test(text)) score += 2;
+    else if (/manzo|vitello|merluzzo|scamorza|mozzarella|feta|grana|prosciutto crudo/.test(text)) score += 1;
+    if (/uova|lenticchie|ceci|fagioli|piselli|pasta|riso|patate|verdure di stagione/.test(text)) score -= 1;
+    return Math.max(0, score);
+  };
+  const budgetLabel = (recipe: Recipe) =>
+    recipeBudgetScore(recipe) === 0
+      ? "ingredienti economici"
+      : recipeBudgetScore(recipe) === 1
+        ? "costo medio"
+        : "ingredienti più costosi";
   const recipeHasSeasonalProduce = (recipe: Recipe) => {
     const month = new Date().getMonth() + 1;
     return recipe.ingredients.some((ingredient) => seasonalMonths[ingredient.food]?.includes(month));
@@ -9690,6 +9704,12 @@ export function FoodPlanner() {
         : fallback;
     });
   const currentIds = getDayIds(dayIndex);
+  const activeMealSlots = dailyMeals === 3
+    ? [0, 2, 4]
+    : dailyMeals === 4
+      ? [0, 1, 2, 4]
+      : [0, 1, 2, 3, 4];
+  const isActiveMealSlot = (slot: number) => activeMealSlots.includes(slot);
   const activityDelta =
     check.todayActivity === "intensa"
       ? 200
@@ -9706,7 +9726,14 @@ export function FoodPlanner() {
   const plannedDrinkMacros = calc(plannedDrinkMap[plannedDrink] || []);
   const targetForDay = (day: number) =>
     day === dayIndex ? plannedCalories : calories;
-  const mealCalorieShares = [0.22, 0.09, 0.3, 0.09, 0.3];
+  const baseMealCalorieShares = [0.22, 0.09, 0.3, 0.09, 0.3];
+  const activeShareTotal = activeMealSlots.reduce(
+    (sum, slot) => sum + baseMealCalorieShares[slot],
+    0,
+  );
+  const mealCalorieShares = baseMealCalorieShares.map((share, slot) =>
+    isActiveMealSlot(slot) ? share / activeShareTotal : 0,
+  );
   const compatibleWithSlot = (r: Recipe) =>
     !swapTarget || fitsSlot(r, swapTarget.slot);
   const isWorkFriendly = (r: Recipe) =>
@@ -9810,6 +9837,10 @@ export function FoodPlanner() {
         const workDelta =
           Number(isWorkFriendly(b)) - Number(isWorkFriendly(a));
         if (workDelta) return workDelta;
+      }
+      if (budgetLevel === "Economico") {
+        const budgetDelta = recipeBudgetScore(a) - recipeBudgetScore(b);
+        if (budgetDelta) return budgetDelta;
       }
       if (swapTarget) {
         const target =
@@ -10199,6 +10230,7 @@ export function FoodPlanner() {
     () =>
       currentIds.reduce(
         (s, id, slot) => {
+          if (!isActiveMealSlot(slot)) return s;
           const key = `${dayIndex}-${slot}`;
           const removed = removedIngredients[key] || [];
           const ingredients = plannedIngredients(key, recipeMap[id]).filter(
@@ -10233,6 +10265,7 @@ export function FoodPlanner() {
   const effectiveDayTotals = useMemo(() => {
     const meals = currentIds.reduce(
       (sum, id, slot) => {
+        if (!isActiveMealSlot(slot)) return sum;
         const key = `${dayIndex}-${slot}`;
         const recipe = recipeMap[completedRecipes[key] || id];
         const nutrients = completed[key]
@@ -10295,7 +10328,7 @@ export function FoodPlanner() {
     drinks,
   ]);
   const completedToday = currentIds.filter(
-    (_, slot) => completed[`${dayIndex}-${slot}`],
+    (_, slot) => isActiveMealSlot(slot) && completed[`${dayIndex}-${slot}`],
   ).length;
   const builderTotals = useMemo(() => calc(builder), [builder]);
   const builderRoles = useMemo(
@@ -10599,11 +10632,16 @@ export function FoodPlanner() {
     target: number,
     offset: number,
   ) => {
-    const ranked = [...pool].sort(
-      (a, b) =>
+    const ranked = [...pool].sort((a, b) => {
+      if (budgetLevel === "Economico") {
+        const budgetDelta = recipeBudgetScore(a) - recipeBudgetScore(b);
+        if (budgetDelta) return budgetDelta;
+      }
+      return (
         Math.abs(profileRecipeKcal(a, slot) - target) -
-        Math.abs(profileRecipeKcal(b, slot) - target),
-    );
+        Math.abs(profileRecipeKcal(b, slot) - target)
+      );
+    });
     return ranked[offset % Math.min(5, ranked.length)];
   };
   const sharesFruit = (left: Recipe, right: Recipe) => {
@@ -11065,6 +11103,7 @@ export function FoodPlanner() {
   const dayScale = (_day: number) => 1;
   const loggedMealKcal = (day: number) =>
     getDayIds(day).reduce((sum, id, slot) => {
+      if (!isActiveMealSlot(slot)) return sum;
       const key = `${day}-${slot}`;
       const recordedId = completedRecipes[key] || id;
       return (
@@ -11112,6 +11151,7 @@ export function FoodPlanner() {
   const weeklyPlannedKcal = days.map((_, day) =>
     round(
       getDayIds(day).reduce((total, id, slot) => {
+        if (!isActiveMealSlot(slot)) return total;
         const key = `${day}-${slot}`;
         return total + calc(plannedIngredients(key, recipeMap[id])).kcal;
       }, 0),
@@ -11120,6 +11160,7 @@ export function FoodPlanner() {
   const weeklyPlannedFiber = days.map((_, day) =>
     fmt(
       getDayIds(day).reduce((total, id, slot) => {
+        if (!isActiveMealSlot(slot)) return total;
         const key = `${day}-${slot}`;
         return total + calc(plannedIngredients(key, recipeMap[id])).fiber;
       }, 0),
@@ -11255,7 +11296,7 @@ export function FoodPlanner() {
     );
   };
   const rebalanceRemaining = (day: number) => {
-    const open = [0, 1, 2, 3, 4].filter((slot) => !completed[`${day}-${slot}`]);
+    const open = activeMealSlots.filter((slot) => !completed[`${day}-${slot}`]);
     if (!open.length) {
       setReplanNote("Tutti i pasti di oggi sono già registrati.");
       return;
@@ -11287,7 +11328,7 @@ export function FoodPlanner() {
     );
   };
   const rebalanceDayPreservingEdits = (day: number) => {
-    const adjustable = [0, 1, 2, 3, 4].filter((slot) => {
+    const adjustable = activeMealSlots.filter((slot) => {
       const key = `${day}-${slot}`;
       return !completed[key] && !partSelections[key];
     });
@@ -11295,7 +11336,7 @@ export function FoodPlanner() {
       setReplanNote("Modifiche salvate; non ci sono altri momenti liberi da riequilibrare oggi.");
       return;
     }
-    const fixedKcal = [0, 1, 2, 3, 4]
+    const fixedKcal = activeMealSlots
       .filter((slot) => !adjustable.includes(slot))
       .reduce((sum, slot) => {
         const key = `${day}-${slot}`;
@@ -11337,6 +11378,7 @@ export function FoodPlanner() {
       shoppingScope === "day" ? [dayIndex] : days.map((_, i) => i);
     targetDays.forEach((day) =>
       getDayIds(day).forEach((id, slot) => {
+        if (!isActiveMealSlot(slot)) return;
         const key = `${day}-${slot}`;
         const removed = removedIngredients[key] || [];
         plannedIngredients(key, recipeMap[id])
@@ -11410,6 +11452,7 @@ export function FoodPlanner() {
   const weeklyExportRows = () =>
     days.flatMap((day, dayNumber) =>
       getDayIds(dayNumber).flatMap((recipeId, slot) => {
+        if (!isActiveMealSlot(slot)) return [];
         const key = `${dayNumber}-${slot}`;
         const recipe = recipeMap[recipeId];
         return plannedIngredients(key, recipe).map((ingredient) => {
@@ -11940,14 +11983,17 @@ export function FoodPlanner() {
               <div className="section-title">
                 <div>
                   <span className="eyebrow">IL TUO MENU</span>
-                  <h2>Cinque momenti pratici</h2>
+                  <h2>{dailyMeals} momenti pratici</h2>
                 </div>
                 <button className="text-btn" onClick={() => setTab("week")}>
                   7 giorni
                 </button>
               </div>
               <div className="meal-list">
-                {currentIds.map((id, i) => {
+                {currentIds
+                  .map((id, i) => ({ id, i }))
+                  .filter(({ i }) => isActiveMealSlot(i))
+                  .map(({ id, i }) => {
                   const r = recipeMap[id];
                   const key = `${dayIndex}-${i}`;
                   const visibleIngredients = actualIngredients(key, r);
@@ -12239,12 +12285,12 @@ export function FoodPlanner() {
                 <header>
                   <div>
                     <span>DOPO CENA</span>
-                    <b>{completedToday === 5 ? "Totale consumato" : "Totale aggiornato"}</b>
+                    <b>{completedToday === activeMealSlots.length ? "Totale consumato" : "Totale aggiornato"}</b>
                   </div>
                   <small>
-                    {completedToday === 5
-                      ? "5 pasti registrati · bevande ed extra inclusi"
-                      : `${completedToday}/5 registrati · il resto è ancora pianificato`}
+                    {completedToday === activeMealSlots.length
+                      ? `${activeMealSlots.length} pasti registrati · bevande ed extra inclusi`
+                      : `${completedToday}/${activeMealSlots.length} registrati · il resto è ancora pianificato`}
                   </small>
                 </header>
                 <div className="actual-day-values">
@@ -12420,7 +12466,10 @@ export function FoodPlanner() {
                       Apri
                     </button>
                   </header>
-                  {getDayIds(i).map((id, slot) => {
+                  {getDayIds(i)
+                    .map((id, slot) => ({ id, slot }))
+                    .filter(({ slot }) => isActiveMealSlot(slot))
+                    .map(({ id, slot }) => {
                     const r = recipeMap[id];
                     const key = `${i}-${slot}`;
                     const weekParts = activeMealParts(key, r)
@@ -12634,6 +12683,7 @@ export function FoodPlanner() {
                       <small className="recipe-card-quality">
                         Varietà {recipeVarietyScore(r)}/5
                         {recipeHasSeasonalProduce(r) ? " · ingredienti di stagione" : ""}
+                        {` · ${budgetLabel(r)}`}
                       </small>
                     </div>
                     {swapTarget && (
@@ -12929,7 +12979,7 @@ export function FoodPlanner() {
                 slot,
                 key: `${diaryDay}-${slot}`,
               }))
-              .filter((x) => completed[x.key]);
+              .filter((x) => isActiveMealSlot(x.slot) && completed[x.key]);
             const coffeeCount = (drinks[diaryDay] || []).filter((x) =>
               x.label.includes("Caffè"),
             ).length;
@@ -13040,7 +13090,7 @@ export function FoodPlanner() {
                 {replanNote && <div className="replan-note">{replanNote}</div>}
                 <div className="history">
                   {days.map((d, i) => {
-                    const n = [0, 1, 2, 3, 4].filter(
+                    const n = activeMealSlots.filter(
                       (slot) => completed[`${i}-${slot}`],
                     ).length;
                     const dayLogged = loggedTotal(i);
@@ -13048,9 +13098,9 @@ export function FoodPlanner() {
                       <div key={d.label}>
                         <span>{d.label}</span>
                         <div>
-                          <i style={{ width: `${(n / 5) * 100}%` }} />
+                          <i style={{ width: `${(n / activeMealSlots.length) * 100}%` }} />
                         </div>
-                        <b>{dayLogged ? `${round(dayLogged)}k` : `${n}/5`}</b>
+                        <b>{dayLogged ? `${round(dayLogged)}k` : `${n}/${activeMealSlots.length}`}</b>
                       </div>
                     );
                   })}
@@ -13559,7 +13609,10 @@ export function FoodPlanner() {
                         {weeklyPlannedFiber[dayNumber]} g fibre
                       </span>
                     </header>
-                    {dayIds.map((recipeId, slot) => {
+                    {dayIds
+                      .map((recipeId, slot) => ({ recipeId, slot }))
+                      .filter(({ slot }) => isActiveMealSlot(slot))
+                      .map(({ recipeId, slot }) => {
                       const key = `${dayNumber}-${slot}`;
                       const recipe = recipeMap[recipeId];
                       const ingredients = plannedIngredients(key, recipe);

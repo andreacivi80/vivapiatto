@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.97"/);
+  assert.match(app, /VERSION = "1\.16\.98"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -973,4 +973,14 @@ test("v1.16.97 enriches every recipe with auditable metadata and a source", asyn
   assert.match(app, /inferRecipeSeasonMonths/);
   assert.match(app, /Valori degli ingredienti da banca dati CREA, USDA, FRIDA o etichetta/);
   assert.match(app, /recipe-meta-chips/);
+});
+
+test("v1.16.98 applies meal count and budget to planning, totals and exports", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(app, /const activeMealSlots = dailyMeals === 3/);
+  assert.match(app, /share \/ activeShareTotal/);
+  assert.match(app, /if \(!isActiveMealSlot\(slot\)\) return \[\]/);
+  assert.match(app, /recipeBudgetScore/);
+  assert.match(app, /budgetLevel === "Economico"/);
+  assert.match(app, /ingredienti economici/);
 });
