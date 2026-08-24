@@ -79,7 +79,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.98";
+const VERSION = "1.16.99";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -9253,6 +9253,8 @@ export function FoodPlanner() {
   const [maxPrepTime, setMaxPrepTime] = useState(45);
   const [availableEquipment, setAvailableEquipment] = useState("Piano cottura e forno");
   const [budgetLevel, setBudgetLevel] = useState("Medio");
+  const [breakfastStyle, setBreakfastStyle] = useState("Indifferente");
+  const [mealPrepMode, setMealPrepMode] = useState("No");
   const [drinks, setDrinks] = useState<Record<string, LogItem[]>>({});
   const [extras, setExtras] = useState<Record<string, LogItem[]>>({});
   const [diaryDay, setDiaryDay] = useState(0);
@@ -9345,6 +9347,8 @@ export function FoodPlanner() {
     maxPrepTime,
     availableEquipment,
     budgetLevel,
+    breakfastStyle,
+    mealPrepMode,
     dayIndex,
     diaryDay,
     tab,
@@ -9479,9 +9483,11 @@ export function FoodPlanner() {
         setAgeGroup(s.ageGroup || "Adulto");
         setFoodStyle(s.foodStyle || "Onnivoro");
         setDailyMeals([3, 4, 5].includes(Number(s.dailyMeals)) ? Number(s.dailyMeals) : 5);
-        setMaxPrepTime([15, 30, 45, 60].includes(Number(s.maxPrepTime)) ? Number(s.maxPrepTime) : 45);
+        setMaxPrepTime([5, 15, 30, 45, 60].includes(Number(s.maxPrepTime)) ? Number(s.maxPrepTime) : 45);
         setAvailableEquipment(s.availableEquipment || "Piano cottura e forno");
         setBudgetLevel(s.budgetLevel || "Medio");
+        setBreakfastStyle(s.breakfastStyle || "Indifferente");
+        setMealPrepMode(s.mealPrepMode || "No");
         setDayIndex(Math.max(0, Math.min(days.length - 1, Number(s.dayIndex) || 0)));
         setDiaryDay(Math.max(0, Math.min(days.length - 1, Number(s.diaryDay) || 0)));
         if (["today", "week", "library", "builder", "progress"].includes(s.tab)) setTab(s.tab);
@@ -9527,6 +9533,8 @@ export function FoodPlanner() {
         maxPrepTime,
         availableEquipment,
         budgetLevel,
+        breakfastStyle,
+        mealPrepMode,
         dayIndex,
         diaryDay,
         tab,
@@ -9559,6 +9567,15 @@ export function FoodPlanner() {
     weekLocked,
     cuisineChoice,
     healthyFilters,
+    peopleCount,
+    ageGroup,
+    foodStyle,
+    dailyMeals,
+    maxPrepTime,
+    availableEquipment,
+    budgetLevel,
+    breakfastStyle,
+    mealPrepMode,
     dayIndex,
     diaryDay,
     tab,
@@ -9635,12 +9652,18 @@ export function FoodPlanner() {
     );
     return protein?.food || recipeProteinFamily(recipe);
   };
+  const breakfastStyleScore = (recipe: Recipe) => {
+    if (breakfastStyle === "Indifferente") return 0;
+    const text = `${recipe.name} ${recipe.ingredients.map((item) => item.food).join(" ")}`.toLowerCase();
+    const savoury = /uov|prosciutto|bresaola|tacchino|pomodor|avocado|salmone|tonno|formaggio/.test(text);
+    return Number(breakfastStyle === "Salata" ? !savoury : savoury);
+  };
   const availableBreakfasts = () =>
     [
       ...matrixBreakfasts.filter((recipe) => dayContext === "Casa" || recipe.time <= 7),
       ...simpleBreakfasts,
       ...catalogBreakfasts,
-    ].filter(isProfileEligible);
+    ].filter(isProfileEligible).sort((a, b) => breakfastStyleScore(a) - breakfastStyleScore(b));
   const recipeCuisine = (r: Recipe) =>
     r.cuisine ||
     (r.id.includes("toast") || r.id.includes("sweet")
@@ -9684,6 +9707,13 @@ export function FoodPlanner() {
       : recipeBudgetScore(recipe) === 1
         ? "costo medio"
         : "ingredienti più costosi";
+  const isMealPrepFriendly = (recipe: Recipe) => {
+    const text = `${recipe.name} ${recipe.ingredients.map((item) => item.food).join(" ")}`.toLowerCase();
+    return (
+      recipe.time <= 30 &&
+      !/uovo alla coque|fritto|gelato|spremuta|frullato|pesce crudo/.test(text)
+    );
+  };
   const recipeHasSeasonalProduce = (recipe: Recipe) => {
     const month = new Date().getMonth() + 1;
     return recipe.ingredients.some((ingredient) => seasonalMonths[ingredient.food]?.includes(month));
@@ -10633,6 +10663,10 @@ export function FoodPlanner() {
     offset: number,
   ) => {
     const ranked = [...pool].sort((a, b) => {
+      if (mealPrepMode === "Sì" && slot === 2) {
+        const prepDelta = Number(!isMealPrepFriendly(a)) - Number(!isMealPrepFriendly(b));
+        if (prepDelta) return prepDelta;
+      }
       if (budgetLevel === "Economico") {
         const budgetDelta = recipeBudgetScore(a) - recipeBudgetScore(b);
         if (budgetDelta) return budgetDelta;
@@ -11067,7 +11101,21 @@ export function FoodPlanner() {
       return;
     }
     applyCuisine();
-  }, [goal, calories, cuisineChoice, dayContext, plannedDrink, profileHydrated]);
+  }, [
+    goal,
+    calories,
+    cuisineChoice,
+    dayContext,
+    plannedDrink,
+    foodStyle,
+    dailyMeals,
+    maxPrepTime,
+    availableEquipment,
+    budgetLevel,
+    breakfastStyle,
+    mealPrepMode,
+    profileHydrated,
+  ]);
   const addDrink = (day: number, item: LogItem) =>
     setDrinks((v) => ({ ...v, [day]: [...(v[day] || []), item] }));
   const addExtra = (day = diaryDay) => {
@@ -11655,7 +11703,7 @@ export function FoodPlanner() {
                   <label>
                     <span>Tempo massimo</span>
                     <select value={maxPrepTime} onChange={(event) => setMaxPrepTime(Number(event.target.value))}>
-                      {[15, 30, 45, 60].map((minutes) => <option key={minutes} value={minutes}>{minutes} min</option>)}
+                      {[5, 15, 30, 45, 60].map((minutes) => <option key={minutes} value={minutes}>{minutes} min</option>)}
                     </select>
                   </label>
                   <label>
@@ -11673,6 +11721,21 @@ export function FoodPlanner() {
                       <option>Economico</option>
                       <option>Medio</option>
                       <option>Libero</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>Colazione</span>
+                    <select value={breakfastStyle} onChange={(event) => setBreakfastStyle(event.target.value)}>
+                      <option>Indifferente</option>
+                      <option>Dolce</option>
+                      <option>Salata</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>Meal prep</span>
+                    <select value={mealPrepMode} onChange={(event) => setMealPrepMode(event.target.value)}>
+                      <option>No</option>
+                      <option>Sì</option>
                     </select>
                   </label>
                 </div>
