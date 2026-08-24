@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.84"/);
+  assert.match(app, /VERSION = "1\.16\.85"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -841,4 +841,19 @@ test("v1.16.84 gives P29-P36 faithful main-meal photos", async () => {
     assert.match(app, new RegExp('id: "' + id + '"[\\s\\S]{0,500}image: photo\\("' + asset + '"\\)'));
     await access(new URL("../dist/food/" + asset + ".png", import.meta.url));
   }
+});
+
+test("v1.16.85 completes faithful photos for the main-meal matrix", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const assets = [
+    ["matrix-p37-polenta-lentils-black-kale", "recipe-p37-polenta-lentils-black-kale-v11685"],
+    ["matrix-p38-bulgur-salmon-fennel-orange", "recipe-p38-bulgur-salmon-fennel-orange-v11685"],
+    ["matrix-p39-millet-black-beans-pumpkin-cabbage", "recipe-p39-millet-black-beans-pumpkin-cabbage-v11685"],
+    ["matrix-p40-brown-rice-eggs-peas-vegetables", "recipe-p40-brown-rice-eggs-peas-vegetables-v11685"],
+  ];
+  for (const [id, asset] of assets) {
+    assert.match(app, new RegExp('id: "' + id + '"[\\s\\S]{0,500}image: photo\\("' + asset + '"\\)'));
+    await access(new URL("../dist/food/" + asset + ".png", import.meta.url));
+  }
+  assert.doesNotMatch(app, /image: photo\("moment-(?:lunch|dinner)-v1121"\)/);
 });

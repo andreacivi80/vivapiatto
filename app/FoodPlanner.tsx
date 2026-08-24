@@ -75,7 +75,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.84";
+const VERSION = "1.16.85";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -8907,7 +8907,7 @@ const attachmentMainsP35P40: Recipe[] = [
     kicker: "Piatto unico vegetale caldo",
     course: "Piatto unico",
     cuisine: "Italiano",
-    image: photo("moment-dinner-v1121"),
+    image: photo("recipe-p37-polenta-lentils-black-kale-v11685"),
     time: 40,
     ingredients: [
       { food: "Polenta cotta", grams: 280 },
@@ -8927,7 +8927,7 @@ const attachmentMainsP35P40: Recipe[] = [
     kicker: "Piatto unico di pesce",
     course: "Piatto unico",
     cuisine: "Mediterraneo",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p38-bulgur-salmon-fennel-orange-v11685"),
     time: 25,
     ingredients: [
       { food: "Bulgur cotto", grams: 190 },
@@ -8945,7 +8945,7 @@ const attachmentMainsP35P40: Recipe[] = [
     kicker: "Piatto unico vegetale",
     course: "Piatto unico",
     cuisine: "Internazionale",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p39-millet-black-beans-pumpkin-cabbage-v11685"),
     time: 35,
     ingredients: [
       { food: "Miglio cotto", grams: 180 },
@@ -8963,7 +8963,7 @@ const attachmentMainsP35P40: Recipe[] = [
     kicker: "Piatto unico con uova",
     course: "Piatto unico",
     cuisine: "Asiatico",
-    image: photo("moment-dinner-v1121"),
+    image: photo("recipe-p40-brown-rice-eggs-peas-vegetables-v11685"),
     time: 30,
     ingredients: [
       { food: "Riso integrale secco", grams: 70 },
