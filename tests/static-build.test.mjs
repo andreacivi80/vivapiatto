@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.64"/);
+  assert.match(app, /VERSION = "1\.18\.65"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1796,4 +1796,12 @@ test("v1.18.64 automatically quarantines a crashing local state and keeps full b
   assert.match(main, /_safe_recovery/);
   assert.match(main, /Apri con copia di sicurezza/);
   assert.match(main, /dati attuali vengono copiati integralmente/);
+});
+
+test("v1.18.65 creates the searchable nutrition catalog after all food aliases", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const aliasesEnd = source.indexOf('foods["Aceto di mele"]');
+  const databaseSnapshot = source.indexOf("const foodSearchDatabase");
+  assert.ok(aliasesEnd >= 0);
+  assert.ok(databaseSnapshot > aliasesEnd);
 });

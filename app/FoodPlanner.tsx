@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.64";
+const VERSION = "1.18.65";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -1677,7 +1677,6 @@ const occasionalFoodRows: OccasionalFoodRow[] = [
 const occasionalFoods: Record<string, Food> = Object.fromEntries(
   occasionalFoodRows.map(([name,kcal,protein,carbs,fat,fiber,source]) => [name,{kcal,protein,carbs,fat,fiber,source}]),
 );
-const foodSearchDatabase: Record<string, Food> = { ...foods, ...occasionalFoods };
 const GELATO_FLAVORS = [
   "Gelato fiordilatte",
   "Gelato alla crema",
@@ -1795,6 +1794,11 @@ foods["Rape crude"] = { kcal: 24, protein: 1, carbs: 4, fat: 0, fiber: 2.6, sour
 foods["Rape cotte bollite"] = { kcal: 26, protein: 1.1, carbs: 4.3, fat: 0, fiber: 2.8, source: "CREA 005665" };
 foods["Patate cotte arrosto"] = { kcal: 152, protein: 2.9, carbs: 25.7, fat: 4.5, fiber: 1.8, source: "CREA 006511" };
 foods["Aceto di mele"] = { kcal: 21, protein: 0, carbs: 0.9, fat: 0, fiber: 0, source: "USDA FoodData Central" };
+
+// Build the searchable database only after every verified alias has been added.
+// Creating this snapshot earlier made valid aliases look missing and crashed the
+// whole application before the first screen could render.
+const foodSearchDatabase: Record<string, Food> = { ...foods, ...occasionalFoods };
 
 const calc = (
   ingredients: RecipeIngredient[],
@@ -9553,9 +9557,17 @@ const produceGramsForItems = (items: RecipeIngredient[]) =>
     const category = pantryPartByFood.get(item.food)?.category;
     return category === "Frutta" || category === "Contorno" ? sum + item.grams : sum;
   }, 0);
+const inferRecipeCourse = (recipe: Recipe) => {
+  if (/snack/i.test(recipe.id) || /spuntino/i.test(recipe.kicker)) return "Spuntino";
+  if (["jar", "toast", "apple-oats"].includes(recipe.id) || /colazione/i.test(recipe.kicker)) {
+    return "Colazione";
+  }
+  return "Piatto unico";
+};
 const allRecipes: Recipe[] = rawRecipes.map((recipe) => {
   const enrichedRecipe: Recipe = {
     ...recipe,
+    course: recipe.course || inferRecipeCourse(recipe),
     allergens: recipe.allergens || inferRecipeAllergens(recipe),
     tags: recipe.tags || inferRecipeTags(recipe),
     seasonMonths: recipe.seasonMonths || inferRecipeSeasonMonths(recipe),
