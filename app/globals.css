@@ -3108,6 +3108,13 @@ button {
   color: var(--text);
 }
 
+.meal-balance-status {
+  margin: 3px 0 5px;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.2;
+}
+
 .app-recovery {
   min-height: 100dvh;
   display: grid;

@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.17";
+const VERSION = "1.18.18";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -11051,36 +11051,52 @@ export function FoodPlanner() {
       mergeTargetAdditions(source, targetAdditionsFor(slot)).map(lowEnergyAdjusted),
     ).kcal;
   };
+  const recipePartCategories = (recipe: Recipe) =>
+    new Set(
+      (recipe.parts || recipe.ingredients.map(additionAsPart))
+        .filter((part) => part.grams > 0)
+        .map((part) => part.category),
+    );
+  const mainMealBalanceScore = (recipe: Recipe) => {
+    const categories = recipePartCategories(recipe);
+    return (
+      Number(categories.has("Carboidrato")) +
+      Number(categories.has("Proteina") || categories.has("Latticino")) +
+      Number(categories.has("Contorno"))
+    );
+  };
   const closestForSlot = (
     pool: Recipe[],
     slot: number,
     target: number,
     offset: number,
   ) => {
-    const ranked = [...pool].sort((a, b) => {
-      const seasonalDelta = recipeSeasonalityScore(b) - recipeSeasonalityScore(a);
-      if (seasonalDelta) return seasonalDelta;
-      if (dayContext === "Mensa" && [2, 4].includes(slot)) {
-        const mensaDelta = Number(isMensaFriendly(b)) - Number(isMensaFriendly(a));
-        if (mensaDelta) return mensaDelta;
-      }
-      if (dayContext === "Ristorante" && [2, 4].includes(slot)) {
-        const restaurantDelta = Number(isRestaurantFriendly(b)) - Number(isRestaurantFriendly(a));
-        if (restaurantDelta) return restaurantDelta;
-      }
-      if (mealPrepMode === "Sì" && slot === 2) {
-        const prepDelta = Number(!isMealPrepFriendly(a)) - Number(!isMealPrepFriendly(b));
-        if (prepDelta) return prepDelta;
-      }
-      if (budgetLevel === "Economico") {
-        const budgetDelta = recipeBudgetScore(a) - recipeBudgetScore(b);
-        if (budgetDelta) return budgetDelta;
-      }
+    const rankingScore = (recipe: Recipe) => {
+      const mainMeal = [2, 4].includes(slot);
+      const balancePenalty = mainMeal ? (3 - mainMealBalanceScore(recipe)) * 450 : 0;
+      const contextPenalty =
+        dayContext === "Mensa" && mainMeal
+          ? Number(!isMensaFriendly(recipe)) * 180
+          : dayContext === "Ristorante" && mainMeal
+            ? Number(!isRestaurantFriendly(recipe)) * 180
+            : 0;
+      const prepPenalty =
+        mealPrepMode === "Sì" && slot === 2
+          ? Number(!isMealPrepFriendly(recipe)) * 120
+          : 0;
+      const budgetPenalty =
+        budgetLevel === "Economico" ? recipeBudgetScore(recipe) * 30 : 0;
+      const seasonalBonus = recipeSeasonalityScore(recipe) * 0.35;
       return (
-        Math.abs(profileRecipeKcal(a, slot) - target) -
-        Math.abs(profileRecipeKcal(b, slot) - target)
+        balancePenalty +
+        contextPenalty +
+        prepPenalty +
+        budgetPenalty +
+        Math.abs(profileRecipeKcal(recipe, slot) - target) -
+        seasonalBonus
       );
-    });
+    };
+    const ranked = [...pool].sort((a, b) => rankingScore(a) - rankingScore(b));
     return ranked[offset % Math.min(5, ranked.length)];
   };
   const sharesFruit = (left: Recipe, right: Recipe) => {
@@ -12618,6 +12634,14 @@ export function FoodPlanner() {
                         "Wafer confezionati",
                       ].includes(x.food),
                     );
+                  const activeCategories = new Set(activeParts.map((part) => part.category));
+                  const balanceMissing = [
+                    !activeCategories.has("Carboidrato") ? "carboidrato" : "",
+                    !activeCategories.has("Proteina") && !activeCategories.has("Latticino")
+                      ? "proteina"
+                      : "",
+                    !activeCategories.has("Contorno") ? "verdura" : "",
+                  ].filter(Boolean);
                   return (
                     <article
                       className={`meal-card ${hasPartCards && !fullDishView ? "composed" : "detailed"} ${allowed ? "" : "blocked"} ${caution ? "caution" : ""}`}
@@ -12640,6 +12664,11 @@ export function FoodPlanner() {
                               }`
                             : r.name}
                         </h3>
+                        {[2, 4].includes(i) && balanceMissing.length > 0 && (
+                          <p className="meal-balance-status">
+                            Da completare: {balanceMissing.join(", ")}. Puoi cambiare o aggiungere un elemento.
+                          </p>
+                        )}
                         {!fullDishView && (
                           <div className="dish-view-actions" onClick={(e) => e.stopPropagation()}>
                             <button
