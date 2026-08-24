@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.43";
+const VERSION = "1.18.44";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -3261,7 +3261,7 @@ const attachmentMissingSnacks: Recipe[] = [
     alternatives: ["Conserva refrigerato fino al consumo", "Contiene latte"],
   },
   {
-    id: "matrix-s09-unsweetened-yogurt-smoothie",
+    id: "extra-snack-yogurt-blueberry-smoothie",
     name: "Frullato di yogurt e mirtilli senza zucchero",
     kicker: "Spuntino occasionale · frutta intera di norma preferita",
     course: "Spuntino",

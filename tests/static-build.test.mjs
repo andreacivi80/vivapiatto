@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.43"/);
+  assert.match(app, /VERSION = "1\.18\.44"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -288,7 +288,7 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /matrix-s27-apricot-almond/);
   assert.match(app, /matrix-s34-rye-ricotta-radish/);
   assert.match(app, /matrix-s02-yogurt-blueberries/);
-  assert.match(app, /matrix-s09-unsweetened-yogurt-smoothie/);
+  assert.match(app, /extra-snack-yogurt-blueberry-smoothie/);
   assert.match(app, /matrix-s12-mandarins-walnuts/);
   assert.match(app, /matrix-s13-skyr-pomegranate/);
   assert.match(app, /matrix-s19-peach-cashews/);
@@ -1589,4 +1589,16 @@ test("v1.18.43 totals every recorded nutrient in the compact diary summary", asy
   assert.match(source, /loggedNutrition\.protein/);
   assert.match(source, /loggedNutrition\.fiber/);
   assert.match(css, /\.diary-total > \.diary-nutrients/);
+});
+
+test("v1.18.44 permanently audits every recipe supplied by the four matrices", async () => {
+  const audit = await readFile("scripts/audit-recipe-matrix.mjs", "utf8");
+  const packageFile = await readFile("package.json", "utf8");
+  assert.match(audit, /length: 44/);
+  assert.match(audit, /length: 42/);
+  assert.match(audit, /length: 64/);
+  assert.match(audit, /Ricette matrice mancanti/);
+  assert.match(audit, /ID matrice duplicati/);
+  assert.match(audit, /expected\.length/);
+  assert.match(packageFile, /audit-recipe-matrix\.mjs/);
 });
