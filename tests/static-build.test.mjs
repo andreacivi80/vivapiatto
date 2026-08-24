@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.52"/);
+  assert.match(app, /VERSION = "1\.18\.53"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1681,4 +1681,11 @@ test("v1.18.52 always publishes the active release manifest", async () => {
   assert.equal(release.version, packageFile.version);
   assert.match(config, /vivapiatto-release-version/);
   assert.match(config, /dist\/version\.json/);
+});
+
+test("v1.18.53 permanently rejects duplicate and blank alternative cards", async () => {
+  const audit = await readFile("scripts/audit-alternative-catalog.mjs", "utf8");
+  assert.match(audit, /Alternative duplicate/);
+  assert.match(audit, /Segnaposto vuoto/);
+  assert.match(audit, /Carboidrato.*Proteina.*Contorno.*Latticino.*Frutta.*Extra/);
 });
