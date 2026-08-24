@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.29";
+const VERSION = "1.18.30";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -9490,6 +9490,11 @@ const pantryPartByFood = new Map(
     (part) => [part.food, part] as const,
   ),
 );
+const produceGramsForItems = (items: RecipeIngredient[]) =>
+  items.reduce((sum, item) => {
+    const category = pantryPartByFood.get(item.food)?.category;
+    return category === "Frutta" || category === "Contorno" ? sum + item.grams : sum;
+  }, 0);
 const allRecipes: Recipe[] = rawRecipes.map((recipe) => {
   const enrichedRecipe: Recipe = {
     ...recipe,
@@ -10748,6 +10753,7 @@ export function FoodPlanner() {
             carbs: s.carbs + m.carbs,
             fat: s.fat + m.fat,
             fiber: s.fiber + m.fiber,
+            produce: s.produce + produceGramsForItems(ingredients),
           };
         },
         {
@@ -10756,6 +10762,7 @@ export function FoodPlanner() {
           carbs: plannedDrinkMacros.carbs,
           fat: plannedDrinkMacros.fat,
           fiber: 0,
+          produce: 0,
         },
       ),
     [
@@ -12673,6 +12680,13 @@ export function FoodPlanner() {
                 <span>fibre</span>
               </div>
             </section>
+            <div
+              className={`produce-status ${dayTotals.produce >= 400 ? "reached" : "open"}`}
+              aria-label="Totale giornaliero di frutta e verdura"
+            >
+              <b>{round(dayTotals.produce)} g</b>
+              <span>frutta + verdura · riferimento pratico 400 g</span>
+            </div>
             {getDayIds(dayIndex).some(
               (_, slot) => completed[`${dayIndex}-${slot}`],
             ) && (

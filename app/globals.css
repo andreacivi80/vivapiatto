@@ -300,6 +300,20 @@ button {
   text-transform: uppercase;
   letter-spacing: 0.7px;
 }
+.produce-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: -2px 4px 10px;
+  color: #6d6255;
+  font-size: 10px;
+}
+.produce-status b {
+  color: #7b5f12;
+}
+.produce-status.reached b {
+  color: #28644f;
+}
 .meal-list {
   display: grid;
   gap: 10px;

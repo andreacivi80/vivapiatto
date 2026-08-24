@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.29"/);
+  assert.match(app, /VERSION = "1\.18\.30"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1447,4 +1447,13 @@ test("v1.18.29 evaluates an actual vegetable portion in lunch and dinner", async
   assert.match(app, /const vegetablePortionForItems =/);
   assert.match(app, /adequate: total >= 200 \|\| leafy >= 80/);
   assert.match(app, /Verdure \{round\(vegetablePortion\.total\)\} g: quota contenuta/);
+});
+
+test("v1.18.30 shows the planned daily fruit and vegetable quantity", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  const css = await readFile("app/globals.css", "utf8");
+  assert.match(app, /const produceGramsForItems =/);
+  assert.match(app, /produce: s\.produce \+ produceGramsForItems\(ingredients\)/);
+  assert.match(app, /frutta \+ verdura · riferimento pratico 400 g/);
+  assert.match(css, /\.produce-status/);
 });
