@@ -80,7 +80,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.6";
+const VERSION = "1.18.7";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -9186,8 +9186,8 @@ const attachmentMainsP35P40: Recipe[] = [
   },
 ];
 
-const inferRecipeAllergens = (recipe: Recipe) => {
-  const text = recipe.ingredients.map((item) => item.food).join(" ").toLowerCase();
+const inferTextAllergens = (textValue: string) => {
+  const text = textValue.toLowerCase();
   const rules: Array<[string, RegExp]> = [
     ["Glutine", /pasta|pane|farro|orzo|bulgur|cous cous|cracker|fette biscottate|biscott|wafer|muesli|frumento|segale|grissini/],
     ["Latte", /latte|yogurt|skyr|kefir|ricotta|feta|mozzarella|crescenza|scamorza|provolone|grana|parmigiano|burro/],
@@ -9206,6 +9206,8 @@ const inferRecipeAllergens = (recipe: Recipe) => {
   ];
   return rules.filter(([, pattern]) => pattern.test(text)).map(([label]) => label);
 };
+const inferRecipeAllergens = (recipe: Recipe) =>
+  inferTextAllergens(recipe.ingredients.map((item) => item.food).join(" "));
 const inferRecipeMethods = (recipe: Recipe) => {
   const text = recipe.steps.join(" ").toLowerCase();
   const rules: Array<[string, RegExp]> = [
@@ -9953,8 +9955,8 @@ export function FoodPlanner() {
   const isAllowed = (recipe: Recipe) =>
     recipe.ingredients.every((i) => !blockedFoods.includes(i.food)) &&
     recipeAllergens(recipe).every((allergen) => !blockedAllergenGroups.has(allergen));
-  const matchesFoodStyle = (recipe: Recipe) => {
-    const text = recipe.ingredients.map((item) => item.food).join(" ").toLowerCase();
+  const textMatchesFoodStyle = (textValue: string) => {
+    const text = textValue.toLowerCase();
     const meat = /pollo|tacchino|coniglio|manzo|vitello|maiale|cavallo|bresaola|prosciutto|mortadella|salame|salsiccia|porchetta|pancetta/.test(text);
     const fish = /salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|gamber|polpo|cozze|calamari|rombo|seppia/.test(text);
     const animal = meat || fish || /uov|albume|latte|yogurt|skyr|kefir|ricotta|feta|mozzarella|crescenza|scamorza|provolone|burro/.test(text);
@@ -9963,6 +9965,12 @@ export function FoodPlanner() {
     if (foodStyle === "Pescetariano") return !meat;
     return true;
   };
+  const matchesFoodStyle = (recipe: Recipe) =>
+    textMatchesFoodStyle(recipe.ingredients.map((item) => item.food).join(" "));
+  const isAlternativeAllowed = (alternative: string) =>
+    inferTextAllergens(alternative).every(
+      (allergen) => !blockedAllergenGroups.has(allergen),
+    ) && textMatchesFoodStyle(alternative);
   const matchesEquipment = (recipe: Recipe) => {
     const method = recipe.steps.join(" ").toLowerCase();
     if (availableEquipment === "Nessuna cottura")
@@ -14056,9 +14064,12 @@ export function FoodPlanner() {
               </ol>
               <h3>Note utili</h3>
               <div className="alternatives">
-                {selected.alternatives.map((x) => (
+                {selected.alternatives.filter(isAlternativeAllowed).map((x) => (
                   <span key={x}>{x}</span>
                 ))}
+                {selected.alternatives.some((x) => !isAlternativeAllowed(x)) && (
+                  <small>Alternative incompatibili con il profilo nascoste.</small>
+                )}
               </div>
               {selected.sourceUrl && selected.sourceLabel && (
                 <a
