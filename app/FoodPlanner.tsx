@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.65";
+const VERSION = "1.18.66";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -1557,6 +1557,20 @@ foods["Polpo cotto"] = {
   fiber: 0,
   source: "USDA",
 };
+
+foods["Aglio crudo"] = { kcal: 149, protein: 6.36, carbs: 33.06, fat: 0.5, fiber: 2.1, source: "USDA" };
+foods["Prezzemolo fresco"] = { kcal: 36, protein: 2.97, carbs: 6.33, fat: 0.79, fiber: 3.3, source: "USDA" };
+foods["Basilico fresco"] = { kcal: 23, protein: 3.15, carbs: 2.65, fat: 0.64, fiber: 1.6, source: "USDA" };
+foods["Rosmarino fresco"] = { kcal: 131, protein: 3.31, carbs: 20.7, fat: 5.86, fiber: 14.1, source: "USDA" };
+foods["Salvia fresca"] = { kcal: 49, protein: 3.7, carbs: 8.1, fat: 0.7, fiber: 3.9, source: "USDA" };
+foods["Origano secco"] = { kcal: 265, protein: 9, carbs: 68.9, fat: 4.3, fiber: 42.5, source: "USDA" };
+foods["Timo fresco"] = { kcal: 101, protein: 5.56, carbs: 24.45, fat: 1.68, fiber: 14, source: "USDA" };
+foods["Pepe nero"] = { kcal: 251, protein: 10.4, carbs: 64, fat: 3.3, fiber: 25.3, source: "USDA" };
+foods["Curcuma in polvere"] = { kcal: 312, protein: 9.68, carbs: 67.14, fat: 3.25, fiber: 22.7, source: "USDA" };
+foods["Paprika dolce"] = { kcal: 282, protein: 14.14, carbs: 53.99, fat: 12.89, fiber: 34.9, source: "USDA" };
+foods["Zenzero fresco"] = { kcal: 80, protein: 1.82, carbs: 17.77, fat: 0.75, fiber: 2, source: "USDA" };
+foods["Curry in polvere"] = { kcal: 325, protein: 14.29, carbs: 55.83, fat: 14.01, fiber: 53.2, source: "USDA" };
+foods["Peperoncino rosso fresco"] = { kcal: 40, protein: 1.87, carbs: 8.81, fat: 0.44, fiber: 1.5, source: "USDA" };
 
 const occasionalFoodRows: OccasionalFoodRow[] = [
   ["Pizza margherita da pizzeria",266,11,33,10,2.3,"RICETTA CALCOLATA"],
@@ -6769,6 +6783,19 @@ const ingredientPartCatalog: Record<string, MealPart> = {
   Uovo: { category: "Proteina", food: "Uovo", grams: 50, label: "Uovo", image: photo("part-whole-egg-v11651") },
   "Wafer confezionati": { category: "Carboidrato", food: "Wafer confezionati", grams: 30, label: "Wafer confezionati", image: photo("part-wafer-v115") },
   Zucchero: { category: "Extra", food: "Zucchero", grams: 5, label: "Zucchero", image: photo("part-sugar-v11819") },
+  "Aglio crudo": { category: "Extra", food: "Aglio crudo", grams: 3, label: "Aglio · 1 spicchio piccolo", image: photo("part-garlic-v11866") },
+  "Prezzemolo fresco": { category: "Extra", food: "Prezzemolo fresco", grams: 5, label: "Prezzemolo fresco · 5 g", image: photo("part-parsley-v11866") },
+  "Basilico fresco": { category: "Extra", food: "Basilico fresco", grams: 5, label: "Basilico fresco · 5 g", image: photo("part-basil-v11866") },
+  "Rosmarino fresco": { category: "Extra", food: "Rosmarino fresco", grams: 2, label: "Rosmarino fresco · 2 g", image: photo("part-rosemary-v11866") },
+  "Salvia fresca": { category: "Extra", food: "Salvia fresca", grams: 2, label: "Salvia fresca · 2 g", image: photo("part-sage-v11866") },
+  "Origano secco": { category: "Extra", food: "Origano secco", grams: 1, label: "Origano secco · 1 g", image: photo("part-oregano-v11866") },
+  "Timo fresco": { category: "Extra", food: "Timo fresco", grams: 2, label: "Timo fresco · 2 g", image: photo("part-thyme-v11866") },
+  "Pepe nero": { category: "Extra", food: "Pepe nero", grams: 1, label: "Pepe nero · 1 g", image: photo("part-black-pepper-v11866") },
+  "Curcuma in polvere": { category: "Extra", food: "Curcuma in polvere", grams: 2, label: "Curcuma · 2 g", image: photo("part-turmeric-v11866") },
+  "Paprika dolce": { category: "Extra", food: "Paprika dolce", grams: 2, label: "Paprika dolce · 2 g", image: photo("part-paprika-v11866") },
+  "Zenzero fresco": { category: "Extra", food: "Zenzero fresco", grams: 5, label: "Zenzero fresco · 5 g", image: photo("part-ginger-v11866") },
+  "Curry in polvere": { category: "Extra", food: "Curry in polvere", grams: 2, label: "Curry · 2 g", image: photo("part-curry-v11866") },
+  "Peperoncino rosso fresco": { category: "Extra", food: "Peperoncino rosso fresco", grams: 3, label: "Peperoncino fresco · 3 g", image: photo("part-chili-v11866") },
 };
 
 const normalizeMealPart = (part: MealPart): MealPart => {

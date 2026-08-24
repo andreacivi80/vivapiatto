@@ -54,7 +54,9 @@ required.push(
   "Cavolo cappuccio cotto", "Cavolo rosso crudo", "Verza fresca", "Cavolini di Bruxelles cotti", "Cime di rapa cotte",
   "Fagiolini", "Porro cotto", "Cipolle crude", "Cipollotti freschi", "Barbabietole cotte", "Ravanelli crudi",
   "Passato di verdure", "Vellutata di verdure senza panna", "Succo di limone", "Aceto di vino", "Aceto balsamico",
-  "Sale iodato", "Erba cipollina fresca",
+  "Sale iodato", "Erba cipollina fresca", "Aglio crudo", "Prezzemolo fresco", "Basilico fresco",
+  "Rosmarino fresco", "Salvia fresca", "Origano secco", "Timo fresco", "Pepe nero",
+  "Curcuma in polvere", "Paprika dolce", "Zenzero fresco", "Curry in polvere", "Peperoncino rosso fresco",
 );
 
 const duplicateRequired = required.filter(
