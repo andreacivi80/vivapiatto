@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.37";
+const VERSION = "1.18.38";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -9493,6 +9493,24 @@ const rawRecipes: Recipe[] = [
   ...occasionalRecipes,
   ...recipes,
 ];
+const recipeCatalogIds = new Set<string>();
+const recipeCatalogIssues = rawRecipes.flatMap((recipe) => {
+  const issues: string[] = [];
+  if (!recipe.id.trim() || recipeCatalogIds.has(recipe.id)) issues.push("id mancante o duplicato");
+  recipeCatalogIds.add(recipe.id);
+  if (!recipe.name.trim()) issues.push("nome mancante");
+  if (!recipe.image.trim()) issues.push("foto mancante");
+  if (!recipe.ingredients.length) issues.push("ingredienti mancanti");
+  if (!recipe.steps.length || recipe.steps.every((step) => !step.trim())) issues.push("preparazione mancante");
+  const unknownIngredients = recipe.ingredients
+    .filter((ingredient) => !foodSearchDatabase[ingredient.food])
+    .map((ingredient) => ingredient.food);
+  if (unknownIngredients.length) issues.push(`senza dati nutrizionali: ${unknownIngredients.join(", ")}`);
+  return issues.map((issue) => `${recipe.id || "senza-id"}: ${issue}`);
+});
+if (recipeCatalogIssues.length) {
+  throw new Error(`Catalogo ricette non valido:\n${recipeCatalogIssues.join("\n")}`);
+}
 const pantryPartByFood = new Map(
   [
     ...(Object.values(mealPartOptions).flat() as MealPart[]),
@@ -13472,7 +13490,9 @@ export function FoodPlanner() {
                 value={libraryQuery}
                 onChange={(e) => setLibraryQuery(e.target.value)}
               />
-              <b>{filteredRecipes.length}</b>
+              <b title={`${allRecipes.length} ricette totali`}>
+                {filteredRecipes.length}/{allRecipes.length}
+              </b>
             </div>
             {!libraryQuery && filteredRecipes.length > 0 && (
               <div className="start-here">

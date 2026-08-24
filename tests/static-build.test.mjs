@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.37"/);
+  assert.match(app, /VERSION = "1\.18\.38"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1520,4 +1520,15 @@ test("v1.18.37 keeps the swap return control visible without covering mobile rec
   assert.doesNotMatch(css, /\.swap-back-bar\s*\{[\s\S]*?position:\s*fixed;/);
   assert.match(css, /\.week-part-strip img\s*\{[\s\S]*?object-fit:\s*contain/);
   assert.match(css, /\.app-shell\s*\{[\s\S]*?overflow-x:\s*hidden;/);
+});
+
+test("v1.18.38 keeps every recipe inside one validated selectable catalog", async () => {
+  const source = await readFile("app/FoodPlanner.tsx", "utf8");
+  assert.match(source, /const recipeCatalogIds = new Set<string>\(\)/);
+  assert.match(source, /id mancante o duplicato/);
+  assert.match(source, /preparazione mancante/);
+  assert.match(source, /senza dati nutrizionali/);
+  assert.match(source, /Catalogo ricette non valido/);
+  assert.match(source, /\{filteredRecipes\.length\}\/\{allRecipes\.length\}/);
+  assert.match(source, /const allRecipes: Recipe\[\] = rawRecipes\.map/);
 });
