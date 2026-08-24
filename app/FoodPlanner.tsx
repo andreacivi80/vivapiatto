@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.16";
+const VERSION = "1.18.17";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -11936,7 +11936,10 @@ export function FoodPlanner() {
       `Composizione: ${recipeBalanceSummary(recipe)}`,
       "",
       "Ingredienti",
-      ...recipe.ingredients.map((item) => `• ${item.label || item.food}: ${item.grams} g`),
+      ...recipe.ingredients.map(
+        (item) =>
+          `• ${item.label || item.food}: ${item.grams} g · peso ${ingredientWeightState(item.food)}`,
+      ),
       "",
       "Preparazione",
       ...recipe.steps.map((step, index) => `${index + 1}. ${step}`),
@@ -11984,6 +11987,7 @@ export function FoodPlanner() {
             meal: SLOT_LABELS[slot],
             recipe: recipe.name,
             food: ingredient.label || ingredient.food,
+            weightState: ingredientWeightState(ingredient.food),
             grams: ingredient.grams,
             kcal: round(nutrients.kcal),
             protein: fmt(nutrients.protein),
@@ -12004,7 +12008,13 @@ export function FoodPlanner() {
           ...SLOT_LABELS.flatMap((meal) => {
             const mealRows = dayRows.filter((row) => row.meal === meal);
             return mealRows.length
-              ? [`${meal} · ${mealRows[0].recipe}`, ...mealRows.map((row) => `- ${row.food}: ${row.grams} g · ${row.kcal} kcal · P ${row.protein} g · C ${row.carbs} g · G ${row.fat} g`)]
+              ? [
+                  `${meal} · ${mealRows[0].recipe}`,
+                  ...mealRows.map(
+                    (row) =>
+                      `- ${row.food}: ${row.grams} g · peso ${row.weightState} · ${row.kcal} kcal · P ${row.protein} g · C ${row.carbs} g · G ${row.fat} g`,
+                  ),
+                ]
               : [];
           }),
         ];
@@ -12024,8 +12034,8 @@ export function FoodPlanner() {
     setReplanNote("Piano settimanale copiato.");
   };
   const exportWeeklyCsv = () => {
-    const header = ["Giorno", "Pasto", "Ricetta", "Alimento", "Grammi", "kcal", "Proteine g", "Carboidrati g", "Grassi g"];
-    const rows = weeklyExportRows().map((row) => [row.day, row.meal, row.recipe, row.food, row.grams, row.kcal, row.protein, row.carbs, row.fat]);
+    const header = ["Giorno", "Pasto", "Ricetta", "Alimento", "Stato peso", "Grammi", "kcal", "Proteine g", "Carboidrati g", "Grassi g"];
+    const rows = weeklyExportRows().map((row) => [row.day, row.meal, row.recipe, row.food, row.weightState, row.grams, row.kcal, row.protein, row.carbs, row.fat]);
     const csv = [header, ...rows]
       .map((row) => row.map((value) => `"${String(value).replaceAll('"', '""')}"`).join(";"))
       .join("\r\n");
@@ -14272,7 +14282,10 @@ export function FoodPlanner() {
                                 className="print-food-row"
                                 key={`${ingredient.food}-${ingredientIndex}`}
                               >
-                                <span>{ingredient.label || ingredient.food}</span>
+                                <span>
+                                  {ingredient.label || ingredient.food}
+                                  <small>peso {ingredientWeightState(ingredient.food)}</small>
+                                </span>
                                 <b>{ingredient.grams}</b>
                                 <i>{round(nutrient.kcal)}</i>
                                 <i>{fmt(nutrient.protein)}</i>
