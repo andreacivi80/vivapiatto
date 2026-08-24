@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.23";
+const VERSION = "1.18.24";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -9323,6 +9323,12 @@ const recipeBalanceSummary = (recipe: Recipe) => {
   );
   return components.length ? components.join(" + ") : "componenti indicati negli ingredienti";
 };
+const internationalInspirationNote = (recipe: Recipe) => {
+  const cuisine = recipe.cuisine || "Italiano";
+  return ["Italiano", "Vegetale", "Gourmet", "Creativo"].includes(cuisine)
+    ? ""
+    : `Ispirata alla cucina ${cuisine.toLowerCase()} · adattamento originale, non versione tradizionale autentica`;
+};
 const inferRecipeSeasonMonths = (recipe: Recipe) =>
   Array.from(
     new Set(
@@ -12016,6 +12022,7 @@ export function FoodPlanner() {
       "Porzioni standard non personalizzate · 1 persona",
       `${round(macros.kcal)} kcal · ${round(macros.protein)} g proteine · ${round(macros.carbs)} g carboidrati · ${round(macros.fat)} g grassi`,
       `Composizione: ${recipeBalanceSummary(recipe)}`,
+      internationalInspirationNote(recipe),
       "",
       "Ingredienti",
       ...recipe.ingredients.map(
@@ -14149,6 +14156,9 @@ export function FoodPlanner() {
             <div className="recipe-content">
               <span className="eyebrow">DA ZERO · {selected.time} MIN</span>
               <h2>{selected.name}</h2>
+              {internationalInspirationNote(selected) && (
+                <p className="recipe-inspiration-note">{internationalInspirationNote(selected)}</p>
+              )}
               <p className="standard-portion-note">
                 {ageGroup === "Minore"
                   ? "Porzioni standard per adulti non applicabili ai minori · chiedere al professionista sanitario"

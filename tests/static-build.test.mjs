@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.23"/);
+  assert.match(app, /VERSION = "1\.18\.24"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1396,4 +1396,14 @@ test("v1.18.23 avoids consecutive automatic protein families and preserves manua
   }
   assert.match(app, /const consecutiveProteinRepeats = days/);
   assert.match(app, /La scelta manuale resta valida/);
+});
+
+test("v1.18.24 labels international recipes as original inspirations", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  const css = await readFile("app/globals.css", "utf8");
+  assert.match(app, /const internationalInspirationNote = \(recipe: Recipe\)/);
+  assert.match(app, /adattamento originale, non versione tradizionale autentica/);
+  assert.match(app, /internationalInspirationNote\(selected\)/);
+  assert.match(app, /internationalInspirationNote\(recipe\)/);
+  assert.match(css, /\.recipe-inspiration-note/);
 });
