@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.38"/);
+  assert.match(app, /VERSION = "1\.18\.39"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1531,4 +1531,16 @@ test("v1.18.38 keeps every recipe inside one validated selectable catalog", asyn
   assert.match(source, /Catalogo ricette non valido/);
   assert.match(source, /\{filteredRecipes\.length\}\/\{allRecipes\.length\}/);
   assert.match(source, /const allRecipes: Recipe\[\] = rawRecipes\.map/);
+});
+
+test("v1.18.39 updates daily totals immediately after every visible weight change", async () => {
+  const source = await readFile("app/FoodPlanner.tsx", "utf8");
+  const totalsBlock = source.slice(
+    source.indexOf("const effectiveDayTotals = useMemo"),
+    source.indexOf("const completedToday"),
+  );
+  assert.match(totalsBlock, /const nutrients = calc\(actualIngredients\(key, recipe\)\)/);
+  assert.doesNotMatch(totalsBlock, /completed\[key\][\s\S]*?plannedIngredients\(key, recipe\)/);
+  assert.match(source, /Rispetto al piano previsto/);
+  assert.match(source, /percentOf\(effectiveDayTotals\.protein, dayTotals\.protein\)/);
 });

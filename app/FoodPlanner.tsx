@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.38";
+const VERSION = "1.18.39";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -10815,9 +10815,9 @@ export function FoodPlanner() {
         if (!isActiveMealSlot(slot)) return sum;
         const key = `${dayIndex}-${slot}`;
         const recipe = recipeMap[completedRecipes[key] || id];
-        const nutrients = completed[key]
-          ? calc(actualIngredients(key, recipe))
-          : calc(plannedIngredients(key, recipe));
+        // Il riepilogo segue sempre ciò che l'utente vede nelle card: anche una
+        // grammatura modificata prima della registrazione deve aggiornare subito i totali.
+        const nutrients = calc(actualIngredients(key, recipe));
         return {
           kcal: sum.kcal + nutrients.kcal,
           protein: sum.protein + nutrients.protein,
