@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.27";
+const VERSION = "1.18.28";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -1902,7 +1902,7 @@ const recipes: Recipe[] = [
       { food: "Salmone cotto", grams: 140 },
       { food: "Patata dolce cotta", grams: 230 },
       { food: "Fagiolini", grams: 180 },
-      { food: "Olio extravergine", grams: 8 },
+      { food: "Olio extravergine", grams: 5 },
     ],
     steps: [
       "Scalda il forno a 200 °C. Lava la patata dolce, tagliala a cubetti di 2 cm e distribuiscila su carta forno senza sovrapporla.",
@@ -4055,7 +4055,7 @@ const balancedDinnerRecipes: Recipe[] = [
       { food: "Gnocchi di patate", grams: 150 },
       { food: "Salmone cotto", grams: 150 },
       { food: "Spinaci", grams: 200 },
-      { food: "Olio extravergine", grams: 10 },
+      { food: "Olio extravergine", grams: 5 },
     ],
     parts: [
       {
@@ -4082,8 +4082,8 @@ const balancedDinnerRecipes: Recipe[] = [
       {
         category: "Extra",
         food: "Olio extravergine",
-        grams: 10,
-        label: "Olio extravergine",
+        grams: 5,
+        label: "Olio extravergine · 5 g",
         image: photo("part-olive-oil-v8"),
       },
     ],

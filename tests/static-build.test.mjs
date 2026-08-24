@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.27"/);
+  assert.match(app, /VERSION = "1\.18\.28"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1432,4 +1432,12 @@ test("v1.18.27 permanently audits reduced dry pasta portions in pasta and legume
   assert.match(pkg.scripts.test, /audit-pasta-legume-portions\.mjs/);
   assert.match(audit, /item\.grams > 70/);
   assert.match(audit, /Pasta a porzione piena nelle combinazioni con legumi/);
+});
+
+test("v1.18.28 permanently limits added oil in salmon and mackerel recipes", async () => {
+  const pkg = JSON.parse(await readFile("package.json", "utf8"));
+  const audit = await readFile("scripts/audit-fatty-fish-oil.mjs", "utf8");
+  assert.match(pkg.scripts.test, /audit-fatty-fish-oil\.mjs/);
+  assert.match(audit, /grams > 5/);
+  assert.match(audit, /Olio da ridurre con salmone o sgombro/);
 });
