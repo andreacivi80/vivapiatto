@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.59";
+const VERSION = "1.18.60";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -11040,8 +11040,12 @@ export function FoodPlanner() {
       setLeftoverWarning("Conservazione non sicura o non verificabile: non utilizzare l'alimento.");
       return;
     }
+    if (leftoverState === "Crudo") {
+      setLeftoverWarning("Alimento crudo: la durata sicura dipende da alimento, temperatura e confezionamento. Questa verifica generica non può validarlo: segui etichetta o indicazione professionale e non creare la ricetta di recupero.");
+      return;
+    }
     if (ageDays > 3) {
-      setLeftoverWarning("Sono trascorsi più di 3 giorni: per prudenza non utilizzare l'alimento.");
+      setLeftoverWarning("Avanzo cotto refrigerato da più di 3 giorni: questo controllo prudenziale non lo accetta. Tempi specifici possono variare per alimento e confezionamento.");
       return;
     }
     const leftoverIngredient = { food: leftoverFood, grams: leftoverGrams };
@@ -11055,9 +11059,8 @@ export function FoodPlanner() {
         return known ? { ...known, grams: ingredient.grams } : null;
       })
       .filter((part): part is MealPart => Boolean(part));
-    const mustReheat = leftoverState === "Cotto";
     setLeftoverWarning(
-      "Compatibile con il limite prudenziale impostato. Consuma solo se odore, aspetto e conservazione sono normali.",
+      "Compatibile solo con i dati dichiarati per un avanzo cotto e refrigerato. Odore e aspetto normali non dimostrano la sicurezza; in caso di dubbio non utilizzarlo.",
     );
     setLeftoverResult({
       id: `leftover-${Date.now()}`,
@@ -11068,9 +11071,7 @@ export function FoodPlanner() {
       ingredients,
       steps: [
         `Verifica che i ${leftoverGrams} g di ${leftoverFood} siano stati conservati in frigorifero entro 2 ore dalla preparazione.`,
-        mustReheat
-          ? "Riscalda completamente l'avanzo fino a renderlo ben caldo anche al centro; non limitarti a intiepidirlo."
-          : "Lava e prepara l'ingrediente crudo su utensili puliti, separandolo dagli alimenti già pronti.",
+        "Riscalda completamente l'avanzo fino a renderlo ben caldo anche al centro; non limitarti a intiepidirlo.",
         `Prepara separatamente ${supporting.map((item) => item.food).join(", ") || "gli altri ingredienti"}, poi unisci tutto soltanto alla fine.`,
         "Consuma subito la porzione preparata e non rimettere nuovamente in frigorifero ciò che è già stato riscaldato.",
       ],

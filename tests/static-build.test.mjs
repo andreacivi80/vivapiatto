@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.59"/);
+  assert.match(app, /VERSION = "1\.18\.60"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1746,4 +1746,13 @@ test("v1.18.59 copies every currently visible recipe with weights, preparation a
   assert.match(app, /visibleRecipes[\s\S]{0,1600}ingredientWeightState\(item\.food\)/);
   assert.match(app, /Copia le \{visibleRecipes\.length\} ricette mostrate/);
   assert.match(app, /onClick=\{copyVisibleRecipes\}/);
+});
+
+test("v1.18.60 never validates raw leftovers generically or treats smell and appearance as proof", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  assert.match(app, /leftoverState === "Crudo"/);
+  assert.match(app, /durata sicura dipende da alimento, temperatura e confezionamento/);
+  assert.match(app, /Odore e aspetto normali non dimostrano la sicurezza/);
+  assert.match(app, /Avanzo cotto refrigerato da più di 3 giorni/);
+  assert.doesNotMatch(app, /Consuma solo se odore, aspetto e conservazione sono normali/);
 });
