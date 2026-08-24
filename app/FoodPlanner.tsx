@@ -80,7 +80,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.5";
+const VERSION = "1.18.6";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -9945,8 +9945,14 @@ export function FoodPlanner() {
       : Object.entries(groupFoods)
           .filter(([, members]) => recipe.ingredients.some((ingredient) => members.includes(ingredient.food)))
           .map(([group]) => group);
+  const blockedAllergenGroups = new Set([
+    ...allergyGroups,
+    ...intoleranceGroups,
+    ...conditionBlockedGroups,
+  ]);
   const isAllowed = (recipe: Recipe) =>
-    recipe.ingredients.every((i) => !blockedFoods.includes(i.food));
+    recipe.ingredients.every((i) => !blockedFoods.includes(i.food)) &&
+    recipeAllergens(recipe).every((allergen) => !blockedAllergenGroups.has(allergen));
   const matchesFoodStyle = (recipe: Recipe) => {
     const text = recipe.ingredients.map((item) => item.food).join(" ").toLowerCase();
     const meat = /pollo|tacchino|coniglio|manzo|vitello|maiale|cavallo|bresaola|prosciutto|mortadella|salame|salsiccia|porchetta|pancetta/.test(text);

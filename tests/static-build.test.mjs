@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.5"/);
+  assert.match(app, /VERSION = "1\.18\.6"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1199,4 +1199,13 @@ test("v1.18.5 states how every recipe ingredient is weighed", async () => {
   }
   assert.match(app, /peso \{ingredientWeightState\(x\.food\)\}/);
   assert.match(css, /\.ingredient-weight-state/);
+});
+
+test("v1.18.6 blocks recipes by inferred allergens as well as exact foods", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  assert.match(app, /const blockedAllergenGroups = new Set/);
+  assert.match(app, /\.\.\.allergyGroups/);
+  assert.match(app, /\.\.\.intoleranceGroups/);
+  assert.match(app, /\.\.\.conditionBlockedGroups/);
+  assert.match(app, /recipeAllergens\(recipe\)\.every\(\(allergen\) => !blockedAllergenGroups\.has\(allergen\)\)/);
 });
