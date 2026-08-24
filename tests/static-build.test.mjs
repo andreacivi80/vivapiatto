@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.63"/);
+  assert.match(app, /VERSION = "1\.18\.64"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1047,7 +1047,7 @@ test("v1.17.4 prevents a blank page and preserves a recovery backup", async () =
   assert.match(main, /getDerivedStateFromError/);
   assert.match(main, /vivapiatto-recovery-backup/);
   assert.match(main, /Ricarica app/);
-  assert.match(main, /Ripristina dati locali/);
+  assert.match(main, /Apri con copia di sicurezza/);
   assert.match(css, /\.app-recovery\s*\{[\s\S]*min-height:\s*100dvh/);
 });
 
@@ -1786,4 +1786,14 @@ test("v1.18.63 migrates incompatible saved data without deleting the valid profi
   assert.match(main, /checkRecoveryRelease/);
   assert.match(main, /_recovery_release/);
   assert.match(main, /cache: "no-store"/);
+});
+
+test("v1.18.64 automatically quarantines a crashing local state and keeps full backups", async () => {
+  const main = await readFile("main.tsx", "utf8");
+  assert.match(main, /vivapiatto-safe-recovery-attempted/);
+  assert.match(main, /vivapiatto-recovery-backup-\$\{timestamp\}/);
+  assert.match(main, /localStorage\.removeItem\("vivapiatto-v1"\)/);
+  assert.match(main, /_safe_recovery/);
+  assert.match(main, /Apri con copia di sicurezza/);
+  assert.match(main, /dati attuali vengono copiati integralmente/);
 });

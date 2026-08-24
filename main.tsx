@@ -12,6 +12,7 @@ type AppGuardState = { failed: boolean };
 class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
   state: AppGuardState = { failed: false };
   private releaseTimer?: number;
+  private stableTimer?: number;
 
   static getDerivedStateFromError(): AppGuardState {
     return { failed: true };
@@ -19,6 +20,20 @@ class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
 
   componentDidCatch(error: Error, info: ErrorInfo) {
     console.error("Tavola Mia: errore di rendering recuperabile", error, info);
+    const saved = localStorage.getItem("vivapiatto-v1");
+    const alreadyAttempted = sessionStorage.getItem("vivapiatto-safe-recovery-attempted") === packageFile.version;
+    if (saved && !alreadyAttempted) {
+      const timestamp = new Date().toISOString();
+      localStorage.setItem("vivapiatto-recovery-backup", saved);
+      localStorage.setItem(`vivapiatto-recovery-backup-${timestamp}`, saved);
+      localStorage.removeItem("vivapiatto-v1");
+      sessionStorage.setItem("vivapiatto-safe-recovery-attempted", packageFile.version);
+      window.setTimeout(() => {
+        const url = new URL(window.location.href);
+        url.searchParams.set("_safe_recovery", `${packageFile.version}-${Date.now()}`);
+        window.location.replace(url.toString());
+      }, 250);
+    }
   }
 
   private checkRecoveryRelease = async () => {
@@ -45,10 +60,14 @@ class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
 
   componentDidMount() {
     this.releaseTimer = window.setInterval(this.checkRecoveryRelease, 5000);
+    this.stableTimer = window.setTimeout(() => {
+      if (!this.state.failed) sessionStorage.removeItem("vivapiatto-safe-recovery-attempted");
+    }, 4000);
   }
 
   componentWillUnmount() {
     if (this.releaseTimer) window.clearInterval(this.releaseTimer);
+    if (this.stableTimer) window.clearTimeout(this.stableTimer);
   }
 
   private restoreApp = () => {
@@ -57,7 +76,11 @@ class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
 
   private resetSavedState = () => {
     const saved = localStorage.getItem("vivapiatto-v1");
-    if (saved) localStorage.setItem("vivapiatto-recovery-backup", saved);
+    if (saved) {
+      const timestamp = new Date().toISOString();
+      localStorage.setItem("vivapiatto-recovery-backup", saved);
+      localStorage.setItem(`vivapiatto-recovery-backup-${timestamp}`, saved);
+    }
     localStorage.removeItem("vivapiatto-v1");
     sessionStorage.removeItem("vivapiatto-release-target");
     sessionStorage.removeItem("vivapiatto-release-scroll-y");
@@ -74,9 +97,9 @@ class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
           <p>La pagina ha incontrato un errore. Prova prima a ricaricarla: i dati restano salvati.</p>
           <button type="button" onClick={this.restoreApp}>Ricarica app</button>
           <button type="button" className="secondary" onClick={this.resetSavedState}>
-            Ripristina dati locali
+            Apri con copia di sicurezza
           </button>
-          <small>Prima del ripristino viene conservata una copia di recupero sul dispositivo.</small>
+          <small>I dati attuali vengono copiati integralmente sul dispositivo prima del recupero.</small>
         </div>
       </main>
     );
