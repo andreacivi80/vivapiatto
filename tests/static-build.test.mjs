@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.44"/);
+  assert.match(app, /VERSION = "1\.18\.45"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1601,4 +1601,13 @@ test("v1.18.44 permanently audits every recipe supplied by the four matrices", a
   assert.match(audit, /ID matrice duplicati/);
   assert.match(audit, /expected\.length/);
   assert.match(packageFile, /audit-recipe-matrix\.mjs/);
+});
+
+test("v1.18.45 validates functional metadata for every selectable recipe", async () => {
+  const source = await readFile("app/FoodPlanner.tsx", "utf8");
+  assert.match(source, /const recipeMetadataIssues = allRecipes\.flatMap/);
+  assert.match(source, /tag funzionali mancanti/);
+  assert.match(source, /metodo di preparazione mancante/);
+  assert.match(source, /grammatura ingrediente non valida/);
+  assert.match(source, /fonte nutrizionale mancante/);
 });

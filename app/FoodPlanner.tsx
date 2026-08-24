@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.44";
+const VERSION = "1.18.45";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -9554,6 +9554,23 @@ const allRecipes: Recipe[] = rawRecipes.map((recipe) => {
     ? { ...enrichedRecipe, parts: inferredParts }
     : enrichedRecipe;
 });
+const recipeMetadataIssues = allRecipes.flatMap((recipe) => {
+  const issues: string[] = [];
+  if (!Number.isFinite(recipe.time) || recipe.time <= 0) issues.push("tempo non valido");
+  if (!recipe.course?.trim()) issues.push("momento del pasto mancante");
+  if (!recipe.alternatives.length) issues.push("alternative mancanti");
+  if (!recipe.tags?.length) issues.push("tag funzionali mancanti");
+  if (!recipe.methods?.length) issues.push("metodo di preparazione mancante");
+  if (!recipe.difficulty) issues.push("difficoltà mancante");
+  if (!recipe.sourceLabel?.trim() || !recipe.sourceUrl?.trim()) issues.push("fonte nutrizionale mancante");
+  if (recipe.ingredients.some((ingredient) => !Number.isFinite(ingredient.grams) || ingredient.grams <= 0)) {
+    issues.push("grammatura ingrediente non valida");
+  }
+  return issues.map((issue) => `${recipe.id}: ${issue}`);
+});
+if (recipeMetadataIssues.length) {
+  throw new Error(`Metadati ricette non validi:\n${recipeMetadataIssues.join("\n")}`);
+}
 const recipeMap = Object.fromEntries(allRecipes.map((r) => [r.id, r]));
 const defaultWeeklyMainIds = (() => {
   const used = new Set<string>();
