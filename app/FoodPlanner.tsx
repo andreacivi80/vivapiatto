@@ -33,6 +33,7 @@ type Recipe = {
   tags?: string[];
   seasonMonths?: number[];
   methods?: string[];
+  difficulty?: "Facile" | "Media" | "Impegnativa";
 };
 type Day = { label: string; mood: string; recipes: string[] };
 
@@ -79,7 +80,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.3";
+const VERSION = "1.18.4";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -9221,6 +9222,11 @@ const inferRecipeMethods = (recipe: Recipe) => {
   const methods = rules.filter(([, pattern]) => pattern.test(text)).map(([label]) => label);
   return methods.length ? methods : ["Preparazione semplice"];
 };
+const inferRecipeDifficulty = (recipe: Recipe): NonNullable<Recipe["difficulty"]> => {
+  if (recipe.time <= 15 && recipe.steps.length <= 3) return "Facile";
+  if (recipe.time <= 35) return "Media";
+  return "Impegnativa";
+};
 const inferRecipeTags = (recipe: Recipe) => {
   const text = recipe.ingredients.map((item) => item.food).join(" ").toLowerCase();
   return [
@@ -9380,6 +9386,7 @@ const allRecipes: Recipe[] = rawRecipes.map((recipe) => {
     tags: recipe.tags || inferRecipeTags(recipe),
     seasonMonths: recipe.seasonMonths || inferRecipeSeasonMonths(recipe),
     methods: recipe.methods || inferRecipeMethods(recipe),
+    difficulty: recipe.difficulty || inferRecipeDifficulty(recipe),
     sourceLabel:
       recipe.sourceLabel ||
       "Valori degli ingredienti da banca dati CREA, USDA, FRIDA o etichetta",
@@ -13906,6 +13913,7 @@ export function FoodPlanner() {
                 <small>Controlla sempre etichetta, certificazione e possibili contaminazioni. “Adattabile” non significa certificato senza allergeni.</small>
               </div>
               <div className="recipe-meta-chips">
+                <span>Difficoltà: {selected.difficulty}</span>
                 {(selected.methods || []).map((method) => <span key={method}>{method}</span>)}
                 {(selected.tags || []).slice(0, 3).map((tag) => <span key={tag}>{tag}</span>)}
               </div>

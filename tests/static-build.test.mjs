@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.3"/);
+  assert.match(app, /VERSION = "1\.18\.4"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1180,4 +1180,12 @@ test("v1.18.3 completes weekly TXT CSV Word and copy exports", async () => {
   assert.match(app, /onClick=\{exportWeeklyCsv\}>CSV/);
   assert.match(app, /onClick=\{exportWeeklyWord\}>Word/);
   assert.match(app, /onClick=\{copyWeeklyPlan\}>Copia tutto/);
+});
+
+test("v1.18.4 assigns and displays recipe difficulty", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  assert.match(app, /difficulty\?: "Facile" \| "Media" \| "Impegnativa"/);
+  assert.match(app, /const inferRecipeDifficulty/);
+  assert.match(app, /difficulty: recipe\.difficulty \|\| inferRecipeDifficulty\(recipe\)/);
+  assert.match(app, /Difficoltà: \{selected\.difficulty\}/);
 });
