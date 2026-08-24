@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.15";
+const VERSION = "1.18.16";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -1948,7 +1948,7 @@ const recipes: Recipe[] = [
     id: "snack-apple",
     name: "Mela, yogurt e noci",
     kicker: "Spuntino con masticazione e proteine",
-    image: photo("snack"),
+    image: photo("snack-apple-yogurt-walnuts-v11816"),
     time: 3,
     ingredients: [
       { food: "Mela", grams: 180 },

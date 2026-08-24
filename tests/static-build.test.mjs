@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.15"/);
+  assert.match(app, /VERSION = "1\.18\.16"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1302,4 +1302,13 @@ test("v1.18.15 applies current seasonality to automatic recipe ranking", async (
   assert.match(app, /const seasonalDelta = recipeSeasonalityScore\(b\) - recipeSeasonalityScore\(a\)/);
   assert.match(app, /if \(seasonalDelta\) return seasonalDelta/);
   assert.match(app, /stagione \$\{recipeSeasonalityScore\(r\)\}%/);
+});
+
+test("v1.18.16 gives apple yogurt and walnuts its own faithful photograph", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  assert.match(app, /snack-apple-yogurt-walnuts-v11816/);
+  assert.doesNotMatch(app, /image: photo\("snack"\)/);
+  const snackPhoto = await readFile("public/food/snack-apple-yogurt-walnuts-v11816.png");
+  const genericYogurtPhoto = await readFile("public/food/yogurt.png");
+  assert.notDeepEqual(snackPhoto, genericYogurtPhoto);
 });
