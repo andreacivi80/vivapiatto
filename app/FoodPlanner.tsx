@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.11";
+const VERSION = "1.18.12";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -1785,7 +1785,7 @@ const proteinFamilyForItems = (items: RecipeIngredient[]): WeeklyProteinFamily =
 const recipeProteinFamily = (recipe: Recipe) => proteinFamilyForItems(recipe.parts || recipe.ingredients);
 const WEEKLY_MAIN_ROTATION: WeeklyProteinFamily[] = [
   "legumi", "pesce", "carne-bianca", "uova", "legumi", "pesce", "latticini",
-  "latticini", "carne-bianca", "pesce", "legumi", "carne-rossa", "latticini", "uova",
+  "latticini", "carne-bianca", "uova", "legumi", "carne-rossa", "latticini", "uova",
 ];
 const recipes: Recipe[] = [
   {
@@ -11634,10 +11634,10 @@ export function FoodPlanner() {
   );
   const weeklyTargets = [
     { label: "Pesce", target: "2–3", min: 2, max: 3, count: weeklyCounts.Pesce },
-    { label: "Legumi e vegetali", target: "2–3", min: 2, max: 3, count: weeklyCounts["Legumi e vegetali"] },
-    { label: "Carne bianca", target: "1–3", min: 1, max: 3, count: weeklyCounts["Carne bianca"] },
-    { label: "Carne rossa", target: "1–2", min: 1, max: 2, count: weeklyCounts["Carne rossa"] },
-    { label: "Uova", target: "2–4", min: 2, max: 4, count: weeklyCounts.Uova },
+    { label: "Legumi e vegetali", target: "3", min: 3, max: 3, count: weeklyCounts["Legumi e vegetali"] },
+    { label: "Carne bianca", target: "1–2", min: 1, max: 2, count: weeklyCounts["Carne bianca"] },
+    { label: "Carne rossa", target: "0–1", min: 0, max: 1, count: weeklyCounts["Carne rossa"] },
+    { label: "Uova", target: "3", min: 3, max: 3, count: weeklyCounts.Uova },
     { label: "Formaggi", target: "2–3", min: 2, max: 3, count: weeklyCounts.Formaggi },
     { label: "Salumi", target: "0–1", min: 0, max: 1, count: weeklyCounts.Salumi },
   ].map((item) => ({
@@ -11646,10 +11646,7 @@ export function FoodPlanner() {
   }));
   const weeklyKcalDelta = weeklyAverageKcal - calories;
   const rebalanceWeeklyProteinRotation = () => {
-    const requestedFamilies = [
-      "pesce", "legumi", "carne-bianca", "uova", "latticini", "pesce", "carne-rossa",
-      "legumi", "carne-bianca", "uova", "latticini", "pesce", "legumi", "carne-bianca",
-    ];
+    const requestedFamilies = WEEKLY_MAIN_ROTATION;
     const mainSlots = days.flatMap((_, day) => [2, 4].map((slot) => ({ day, slot })));
     const used = new Set<string>();
     const usedProteinSignatures = new Set<string>();
@@ -11697,7 +11694,7 @@ export function FoodPlanner() {
       return next;
     });
     setWeekLocked(false);
-    setReplanNote("Rotazione settimanale ricostruita: 3 pesci, 3 legumi, 3 carni bianche, 1 carne rossa, 2 uova e 2 formaggi, senza ripetere la stessa famiglia consecutivamente.");
+    setReplanNote("Rotazione settimanale ricostruita: 2 pesci, 3 legumi, 2 carni bianche, massimo 1 carne rossa, 3 uova e 3 formaggi, senza ripetere la stessa famiglia consecutivamente.");
   };
   const replanNextDay = (day: number) => {
     if (day >= days.length - 1) {

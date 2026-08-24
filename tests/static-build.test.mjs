@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.11"/);
+  assert.match(app, /VERSION = "1\.18\.12"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -931,7 +931,7 @@ test("v1.16.93 rebuilds the 14 main meals into a coherent weekly protein rotatio
   assert.match(app, /rebalanceWeeklyProteinRotation/);
   assert.match(app, /requestedFamilies/);
   assert.match(app, /Riequilibra la rotazione dei 14 pasti/);
-  assert.match(app, /3 pesci, 3 legumi, 3 carni bianche/);
+  assert.match(app, /2 pesci, 3 legumi, 2 carni bianche/);
   assert.match(app, /used\.has\(recipe\.id\)/);
 });
 
@@ -1258,4 +1258,18 @@ test("v1.18.11 distinguishes an orientation example from a defined calorie targe
   assert.match(app, /targetDefined \? "Target" : "Esempio"/);
   assert.match(app, /Target indicato dall’utente/);
   assert.match(css, /\.target-confirmation/);
+});
+
+test("v1.18.12 aligns the automatic 14-meal protein rotation with the supplied matrix", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  const rotation = app.slice(app.indexOf("const WEEKLY_MAIN_ROTATION"), app.indexOf("const recipes"));
+  const count = (family) => [...rotation.matchAll(new RegExp(`"${family}"`, "g"))].length;
+  assert.equal(count("pesce"), 2);
+  assert.equal(count("legumi"), 3);
+  assert.equal(count("carne-bianca"), 2);
+  assert.equal(count("carne-rossa"), 1);
+  assert.equal(count("uova"), 3);
+  assert.equal(count("latticini"), 3);
+  assert.match(app, /const requestedFamilies = WEEKLY_MAIN_ROTATION/);
+  assert.match(app, /target: "0–1", min: 0, max: 1/);
 });
