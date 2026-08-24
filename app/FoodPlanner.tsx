@@ -71,6 +71,7 @@ type LogItem = {
   fiber?: number;
   source?: Food["source"];
   image?: string;
+  allergens?: string[];
 };
 const SLOT_LABELS = [
   "Colazione",
@@ -80,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.8";
+const VERSION = "1.18.9";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -11545,6 +11546,7 @@ export function FoodPlanner() {
           fat: foodSearchDatabase[match].fat * factor,
           fiber: foodSearchDatabase[match].fiber * factor,
           source: foodSearchDatabase[match].source,
+          allergens: inferTextAllergens(match),
         },
       ],
     }));
@@ -12858,7 +12860,16 @@ export function FoodPlanner() {
                         }))
                       }
                     >
-                      <span>{x.label}<small>{x.source === "RICETTA CALCOLATA" ? "stima da ricetta" : x.source === "ETICHETTA" ? "valore medio: verifica etichetta" : x.source}</small></span>
+                      <span>
+                        {x.label}
+                        <small>
+                          P {fmt(x.protein || 0)} · C {fmt(x.carbs || 0)} · G {fmt(x.fat || 0)} · fibre {fmt(x.fiber || 0)} g
+                        </small>
+                        <small>
+                          {x.allergens?.length ? `Allergeni: ${x.allergens.join(", ")} · ` : ""}
+                          {x.source === "RICETTA CALCOLATA" ? "stima da ricetta" : x.source === "ETICHETTA" ? "valore medio: verifica etichetta" : x.source}
+                        </small>
+                      </span>
                       <b>{x.kcal} kcal ×</b>
                     </button>
                   ))}

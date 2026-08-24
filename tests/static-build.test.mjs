@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.8"/);
+  assert.match(app, /VERSION = "1\.18\.9"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1230,4 +1230,13 @@ test("v1.18.8 persists food history only after explicit revocable consent", asyn
   assert.match(app, /setCompleted\(\{\}\)/);
   assert.match(app, /setExtras\(\{\}\)/);
   assert.match(css, /\.history-consent/);
+});
+
+test("v1.18.9 shows nutrition estimate and allergens for logged extras", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  assert.match(app, /allergens\?: string\[\]/);
+  assert.match(app, /allergens: inferTextAllergens\(match\)/);
+  assert.match(app, /P \{fmt\(x\.protein \|\| 0\)\} · C \{fmt\(x\.carbs \|\| 0\)\} · G/);
+  assert.match(app, /Allergeni: \$\{x\.allergens\.join\(", "\)\}/);
+  assert.match(app, /fibre \{fmt\(x\.fiber \|\| 0\)\} g/);
 });
