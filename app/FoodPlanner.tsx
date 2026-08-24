@@ -79,7 +79,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.17.0";
+const VERSION = "1.17.1";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -1589,6 +1589,8 @@ const HEALTHY_FILTERS = [
   ["pesce", "Con pesce"],
   ["pesce-grasso", "Con pesce grasso"],
   ["carne-bianca", "Con carne bianca"],
+  ["proteico", "Più proteine"],
+  ["fibre", "Più fibre"],
   ["vegetariana", "Vegetariana"],
   ["vegana", "Vegana"],
   ["lattosio", "Senza lattosio adattabile"],
@@ -1597,6 +1599,8 @@ const HEALTHY_FILTERS = [
   ["15-minuti", "Pronta in 15 minuti"],
   ["30-minuti", "Pronta in 30 minuti"],
   ["anticipo", "Da preparare in anticipo"],
+  ["meal-prep", "Adatta al meal prep"],
+  ["senza-cottura", "Senza cottura"],
   ["trasportabile", "Trasportabile"],
   ["stagione", "Adatta alla stagione"],
   ["vapore", "Cottura al vapore"],
@@ -9824,6 +9828,8 @@ export function FoodPlanner() {
     if (filter === "pesce") return fish;
     if (filter === "pesce-grasso") return /salmone|sgombro|sardine|trota/.test(foodsText);
     if (filter === "carne-bianca") return /pollo|tacchino|coniglio/.test(foodsText);
+    if (filter === "proteico") return calc(recipe.ingredients).protein >= 25;
+    if (filter === "fibre") return calc(recipe.ingredients).fiber >= 7;
     if (filter === "vegetariana") return !meat && !fish;
     if (filter === "vegana") return !meat && !fish && !eggs && !dairy;
     if (filter === "lattosio") return !dairy || /senza lattosio|soia|avena/.test(methodText + " " + foodsText);
@@ -9832,6 +9838,8 @@ export function FoodPlanner() {
     if (filter === "15-minuti") return recipe.time <= 15;
     if (filter === "30-minuti") return recipe.time <= 30;
     if (filter === "anticipo") return /anticipo|sera prima|frigorifero|riposo|preparabile/.test(methodText);
+    if (filter === "meal-prep") return isMealPrepFriendly(recipe);
+    if (filter === "senza-cottura") return !/cuoc|boll|forno|padella|grigli|vapore|tosta|friggi|arrost/.test(methodText);
     if (filter === "trasportabile") return isWorkFriendly(recipe);
     if (filter === "stagione") return seasonal;
     if (filter === "vapore") return /vapore/.test(methodText);

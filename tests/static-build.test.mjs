@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.17\.0"/);
+  assert.match(app, /VERSION = "1\.17\.1"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1005,4 +1005,14 @@ test("v1.17.0 makes weekly calorie and rotation status explicit", async () => {
   assert.match(app, /Nel range/);
   assert.match(app, /Da riequilibrare/);
   assert.match(css, /\.weekly-frequency \.within-target/);
+});
+
+test("v1.17.1 adds functional nutrition and preparation filters", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(app, /\["proteico", "Più proteine"\]/);
+  assert.match(app, /\["fibre", "Più fibre"\]/);
+  assert.match(app, /\["meal-prep", "Adatta al meal prep"\]/);
+  assert.match(app, /\["senza-cottura", "Senza cottura"\]/);
+  assert.match(app, /calc\(recipe\.ingredients\)\.protein >= 25/);
+  assert.match(app, /calc\(recipe\.ingredients\)\.fiber >= 7/);
 });
