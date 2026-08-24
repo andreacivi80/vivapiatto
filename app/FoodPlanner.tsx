@@ -79,7 +79,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.17.1";
+const VERSION = "1.17.2";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -9800,6 +9800,13 @@ export function FoodPlanner() {
       ...catalogWorkMains,
     ]).filter(isAllowed);
   };
+  const isMensaFriendly = (recipe: Recipe) => {
+    const text = `${recipe.name} ${recipe.ingredients.map((item) => item.food).join(" ")}`.toLowerCase();
+    return /pasta|riso|farro|orzo|pollo|tacchino|bistecca|merluzzo|uov|frittata|patate|verdure|insalata|minestrone/.test(text);
+  };
+  const isRestaurantFriendly = (recipe: Recipe) =>
+    recipe.ingredients.length >= 3 &&
+    ["Piatto unico", "Piatto completo", "Primo", "Secondo"].includes(recipeCourse(recipe));
   const compatibleWithPlace = (_r: Recipe) => true;
   const isSubstantialRecipe = (recipe: Recipe) =>
     recipe.steps.length >= 2 &&
@@ -9875,6 +9882,14 @@ export function FoodPlanner() {
         const workDelta =
           Number(isWorkFriendly(b)) - Number(isWorkFriendly(a));
         if (workDelta) return workDelta;
+      }
+      if (dayContext === "Mensa" && swapTarget && [2, 4].includes(swapTarget.slot)) {
+        const mensaDelta = Number(isMensaFriendly(b)) - Number(isMensaFriendly(a));
+        if (mensaDelta) return mensaDelta;
+      }
+      if (dayContext === "Ristorante" && swapTarget && [2, 4].includes(swapTarget.slot)) {
+        const restaurantDelta = Number(isRestaurantFriendly(b)) - Number(isRestaurantFriendly(a));
+        if (restaurantDelta) return restaurantDelta;
       }
       if (budgetLevel === "Economico") {
         const budgetDelta = recipeBudgetScore(a) - recipeBudgetScore(b);
@@ -9973,7 +9988,7 @@ export function FoodPlanner() {
         ["Piatto unico", "Piatto completo", "Primo", "Secondo"].includes(recipeCourse(r)),
     );
     const lunches =
-      dayContext === "Lavoro"
+      ["Lavoro", "Mensa"].includes(dayContext)
         ? workLunchesFrom(mains)
         : mains;
     const dinners = mains;
@@ -10671,6 +10686,14 @@ export function FoodPlanner() {
     offset: number,
   ) => {
     const ranked = [...pool].sort((a, b) => {
+      if (dayContext === "Mensa" && [2, 4].includes(slot)) {
+        const mensaDelta = Number(isMensaFriendly(b)) - Number(isMensaFriendly(a));
+        if (mensaDelta) return mensaDelta;
+      }
+      if (dayContext === "Ristorante" && [2, 4].includes(slot)) {
+        const restaurantDelta = Number(isRestaurantFriendly(b)) - Number(isRestaurantFriendly(a));
+        if (restaurantDelta) return restaurantDelta;
+      }
       if (mealPrepMode === "Sì" && slot === 2) {
         const prepDelta = Number(!isMealPrepFriendly(a)) - Number(!isMealPrepFriendly(b));
         if (prepDelta) return prepDelta;
@@ -10718,7 +10741,7 @@ export function FoodPlanner() {
         !portableRecipes.some((portable) => portable.id === r.id),
     );
     const lunches =
-      dayContext === "Lavoro"
+      ["Lavoro", "Mensa"].includes(dayContext)
         ? workLunchesFrom(mains)
         : homeMains.length
           ? homeMains
@@ -10894,7 +10917,7 @@ export function FoodPlanner() {
         !portableRecipes.some((portable) => portable.id === r.id),
     );
     const lunches =
-      dayContext === "Lavoro"
+      ["Lavoro", "Mensa"].includes(dayContext)
         ? workLunchesFrom(mains)
         : homeMains.length
           ? homeMains
@@ -11910,9 +11933,20 @@ export function FoodPlanner() {
                 >
                   <option>Lavoro</option>
                   <option>Casa</option>
+                  <option>Mensa</option>
+                  <option>Ristorante</option>
                 </select>
               </div>
             </section>
+            {(dayContext === "Mensa" || dayContext === "Ristorante") && (
+              <p className="outside-context-note">
+                {dayContext === "Mensa"
+                  ? "Prima proposte comuni da mensa: primo semplice, secondo alla piastra o lessato, verdura e frutta."
+                  : "Prima piatti completi e riconoscibili; condimenti e quantità reali restano modificabili dopo il pasto."}
+                {" "}
+                <a href="https://www.salute.gov.it/new/it/tema/nutrizione/ristorazione-collettiva/" target="_blank" rel="noreferrer">Ministero della Salute ↗</a>
+              </p>
+            )}
             <section className="checkin compact">
               <button
                 className="checkin-toggle"

@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.17\.1"/);
+  assert.match(app, /VERSION = "1\.17\.2"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1015,4 +1015,17 @@ test("v1.17.1 adds functional nutrition and preparation filters", async () => {
   assert.match(app, /\["senza-cottura", "Senza cottura"\]/);
   assert.match(app, /calc\(recipe\.ingredients\)\.protein >= 25/);
   assert.match(app, /calc\(recipe\.ingredients\)\.fiber >= 7/);
+});
+
+test("v1.17.2 applies mensa and restaurant context without inventing venues", async () => {
+  const [app, css] = await Promise.all([
+    readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+  assert.match(app, /isMensaFriendly/);
+  assert.match(app, /isRestaurantFriendly/);
+  assert.match(app, /<option>Mensa<\/option>/);
+  assert.match(app, /<option>Ristorante<\/option>/);
+  assert.match(app, /Ministero della Salute ↗/);
+  assert.match(css, /\.outside-context-note/);
 });
