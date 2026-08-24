@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.56"/);
+  assert.match(app, /VERSION = "1\.18\.57"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1720,4 +1720,14 @@ test("v1.18.56 audits the comprehensive food list only against truly selectable 
   assert.match(audit, /"Vongole cotte"/);
   assert.match(audit, /"Cavolini di Bruxelles cotti"/);
   assert.match(listing, /Totale alimenti selezionabili/);
+});
+
+test("v1.18.57 permanently audits the initial 14-meal weekly protein rotation", async () => {
+  const audit = await readFile("scripts/audit-weekly-rotation.mjs", "utf8");
+  const packageFile = await readFile("package.json", "utf8");
+  assert.match(packageFile, /audit-weekly-rotation\.mjs/);
+  assert.match(audit, /rotation\.length !== 14/);
+  assert.match(audit, /Proteine consecutive duplicate/);
+  assert.match(audit, /"carne-rossa": \[0, 1\]/);
+  assert.match(audit, /legumi: \[3, 3\]/);
 });
