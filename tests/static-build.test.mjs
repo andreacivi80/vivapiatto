@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.17\.3"/);
+  assert.match(app, /VERSION = "1\.17\.4"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1038,4 +1038,15 @@ test("v1.17.3 adapts after yesterday without punitive calorie compensation", asy
   assert.match(source, /calc\(b\.ingredients\)\.protein - calc\(a\.ingredients\)\.protein/);
   assert.match(source, /niente digiuno compensatorio/);
   assert.doesNotMatch(source, /next\.yesterday === "molto"[^\n]+plannedCalories/);
+});
+
+test("v1.17.4 prevents a blank page and preserves a recovery backup", async () => {
+  const main = await readFile("main.tsx", "utf8");
+  const css = await readFile("app/globals.css", "utf8");
+  assert.match(main, /class AppGuard extends Component/);
+  assert.match(main, /getDerivedStateFromError/);
+  assert.match(main, /vivapiatto-recovery-backup/);
+  assert.match(main, /Ricarica app/);
+  assert.match(main, /Ripristina dati locali/);
+  assert.match(css, /\.app-recovery\s*\{[\s\S]*min-height:\s*100dvh/);
 });

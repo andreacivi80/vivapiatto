@@ -79,7 +79,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.17.3";
+const VERSION = "1.17.4";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
