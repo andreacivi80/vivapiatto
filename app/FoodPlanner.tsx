@@ -75,7 +75,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.89";
+const VERSION = "1.16.90";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -9177,6 +9177,13 @@ export function FoodPlanner() {
   const [plannedDrink, setPlannedDrink] = useState("Acqua");
   const [cuisineFilter, setCuisineFilter] = useState("Tutte");
   const [healthyFilters, setHealthyFilters] = useState<HealthyFilterId[]>([]);
+  const [peopleCount, setPeopleCount] = useState(1);
+  const [ageGroup, setAgeGroup] = useState("Adulto");
+  const [foodStyle, setFoodStyle] = useState("Onnivoro");
+  const [dailyMeals, setDailyMeals] = useState(5);
+  const [maxPrepTime, setMaxPrepTime] = useState(45);
+  const [availableEquipment, setAvailableEquipment] = useState("Piano cottura e forno");
+  const [budgetLevel, setBudgetLevel] = useState("Medio");
   const [drinks, setDrinks] = useState<Record<string, LogItem[]>>({});
   const [extras, setExtras] = useState<Record<string, LogItem[]>>({});
   const [diaryDay, setDiaryDay] = useState(0);
@@ -9259,6 +9266,13 @@ export function FoodPlanner() {
     weekLocked,
     cuisineChoice,
     healthyFilters,
+    peopleCount,
+    ageGroup,
+    foodStyle,
+    dailyMeals,
+    maxPrepTime,
+    availableEquipment,
+    budgetLevel,
     dayIndex,
     diaryDay,
     tab,
@@ -9386,6 +9400,13 @@ export function FoodPlanner() {
         setWeekLocked(Boolean(s.weekLocked));
         setCuisineChoice(s.cuisineChoice || "Italiano");
         setHealthyFilters(Array.isArray(s.healthyFilters) ? s.healthyFilters : []);
+        setPeopleCount(Math.max(1, Math.min(12, Number(s.peopleCount) || 1)));
+        setAgeGroup(s.ageGroup || "Adulto");
+        setFoodStyle(s.foodStyle || "Onnivoro");
+        setDailyMeals([3, 4, 5].includes(Number(s.dailyMeals)) ? Number(s.dailyMeals) : 5);
+        setMaxPrepTime([15, 30, 45, 60].includes(Number(s.maxPrepTime)) ? Number(s.maxPrepTime) : 45);
+        setAvailableEquipment(s.availableEquipment || "Piano cottura e forno");
+        setBudgetLevel(s.budgetLevel || "Medio");
         setDayIndex(Math.max(0, Math.min(days.length - 1, Number(s.dayIndex) || 0)));
         setDiaryDay(Math.max(0, Math.min(days.length - 1, Number(s.diaryDay) || 0)));
         if (["today", "week", "library", "builder", "progress"].includes(s.tab)) setTab(s.tab);
@@ -9421,6 +9442,13 @@ export function FoodPlanner() {
         weekLocked,
         cuisineChoice,
         healthyFilters,
+        peopleCount,
+        ageGroup,
+        foodStyle,
+        dailyMeals,
+        maxPrepTime,
+        availableEquipment,
+        budgetLevel,
         dayIndex,
         diaryDay,
         tab,
@@ -9478,6 +9506,25 @@ export function FoodPlanner() {
   ];
   const isAllowed = (recipe: Recipe) =>
     recipe.ingredients.every((i) => !blockedFoods.includes(i.food));
+  const matchesFoodStyle = (recipe: Recipe) => {
+    const text = recipe.ingredients.map((item) => item.food).join(" ").toLowerCase();
+    const meat = /pollo|tacchino|coniglio|manzo|vitello|maiale|cavallo|bresaola|prosciutto|mortadella|salame|salsiccia|porchetta|pancetta/.test(text);
+    const fish = /salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|gamber|polpo|cozze|calamari|rombo|seppia/.test(text);
+    const animal = meat || fish || /uov|albume|latte|yogurt|skyr|kefir|ricotta|feta|mozzarella|crescenza|scamorza|provolone|burro/.test(text);
+    if (foodStyle === "Vegano") return !animal;
+    if (foodStyle === "Vegetariano") return !meat && !fish;
+    if (foodStyle === "Pescetariano") return !meat;
+    return true;
+  };
+  const matchesEquipment = (recipe: Recipe) => {
+    const method = recipe.steps.join(" ").toLowerCase();
+    if (availableEquipment === "Nessuna cottura")
+      return !/cuoc|forno|padella|boll|vapore|tosta|griglia/.test(method);
+    if (availableEquipment === "Solo piano cottura") return !/forno/.test(method);
+    if (availableEquipment === "Microonde")
+      return /microonde|già cott|senza cottura|assembla|mescola/.test(method);
+    return true;
+  };
   const availableBreakfasts = () =>
     [
       ...matrixBreakfasts.filter((recipe) => dayContext === "Casa" || recipe.time <= 7),
@@ -9611,6 +9658,9 @@ export function FoodPlanner() {
         (swapTarget || isSubstantialRecipe(r)) &&
         r.ingredients.every((item) => Boolean(foodSearchDatabase[item.food])) &&
         isAllowed(r) &&
+        matchesFoodStyle(r) &&
+        matchesEquipment(r) &&
+        r.time <= maxPrepTime &&
         (swapTarget || compatibleWithSlot(r)) &&
         compatibleWithPlace(r) &&
         healthyFilters.every((filter) => recipeMatchesHealthyFilter(r, filter)) &&
@@ -9647,6 +9697,13 @@ export function FoodPlanner() {
     libraryQuery,
     cuisineFilter,
     healthyFilters,
+    peopleCount,
+    ageGroup,
+    foodStyle,
+    dailyMeals,
+    maxPrepTime,
+    availableEquipment,
+    budgetLevel,
     swapTarget?.day,
     swapTarget?.slot,
     dayContext,
@@ -11109,7 +11166,7 @@ export function FoodPlanner() {
       ? actualIngredients(selectedMealKey, selected)
       : selected.ingredients.map((x) => ({
           ...x,
-          grams: round(x.grams * scale),
+          grams: round(x.grams * scale * peopleCount),
         }))
     : [];
   const selectedMacros = calc(selectedIngredients);
@@ -11210,6 +11267,63 @@ export function FoodPlanner() {
                     </button>
                   </div>
                 </div>
+                <div className="profile-preferences-grid">
+                  <label>
+                    <span>Persone</span>
+                    <input type="number" min="1" max="12" value={peopleCount} onChange={(event) => setPeopleCount(Math.max(1, Math.min(12, Number(event.target.value) || 1)))} />
+                  </label>
+                  <label>
+                    <span>Fascia d'età</span>
+                    <select value={ageGroup} onChange={(event) => setAgeGroup(event.target.value)}>
+                      <option>Adulto</option>
+                      <option>Anziano</option>
+                      <option>Minore</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>Stile alimentare</span>
+                    <select value={foodStyle} onChange={(event) => setFoodStyle(event.target.value)}>
+                      <option>Onnivoro</option>
+                      <option>Pescetariano</option>
+                      <option>Vegetariano</option>
+                      <option>Vegano</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>Pasti al giorno</span>
+                    <select value={dailyMeals} onChange={(event) => setDailyMeals(Number(event.target.value))}>
+                      <option value={3}>3</option>
+                      <option value={4}>4</option>
+                      <option value={5}>5</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>Tempo massimo</span>
+                    <select value={maxPrepTime} onChange={(event) => setMaxPrepTime(Number(event.target.value))}>
+                      {[15, 30, 45, 60].map((minutes) => <option key={minutes} value={minutes}>{minutes} min</option>)}
+                    </select>
+                  </label>
+                  <label>
+                    <span>Attrezzature</span>
+                    <select value={availableEquipment} onChange={(event) => setAvailableEquipment(event.target.value)}>
+                      <option>Piano cottura e forno</option>
+                      <option>Solo piano cottura</option>
+                      <option>Microonde</option>
+                      <option>Nessuna cottura</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>Budget</span>
+                    <select value={budgetLevel} onChange={(event) => setBudgetLevel(event.target.value)}>
+                      <option>Economico</option>
+                      <option>Medio</option>
+                      <option>Libero</option>
+                    </select>
+                  </label>
+                </div>
+                {ageGroup === "Minore" && (
+                  <p className="profile-stop">Le porzioni standard per adulti non vengono applicate ai minori: serve un professionista sanitario.</p>
+                )}
                 <b>Allergie o intolleranze</b>
                 <div className="chips">
                   {Object.keys(groupFoods).map((g) => (
@@ -12881,7 +12995,9 @@ export function FoodPlanner() {
               <span className="eyebrow">DA ZERO · {selected.time} MIN</span>
               <h2>{selected.name}</h2>
               <p className="standard-portion-note">
-                Porzioni standard non personalizzate · 1 persona
+                {ageGroup === "Minore"
+                  ? "Porzioni standard per adulti non applicabili ai minori · chiedere al professionista sanitario"
+                  : `Porzioni standard non personalizzate · ${peopleCount} ${peopleCount === 1 ? "persona" : "persone"}`}
               </p>
               <div className="recipe-macros">
                 <span>

@@ -3052,6 +3052,46 @@ button {
   line-height: 1.3;
 }
 
+.profile-preferences-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 4px 0 14px;
+}
+
+.profile-preferences-grid label {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.profile-preferences-grid span {
+  color: var(--muted);
+  font-size: 0.69rem;
+  font-weight: 850;
+}
+
+.profile-preferences-grid input,
+.profile-preferences-grid select {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  padding: 9px 7px;
+  color: var(--ink);
+}
+
+.profile-stop {
+  margin: 0 0 12px;
+  border-radius: 10px;
+  background: #fff0ed;
+  padding: 9px;
+  color: #91352c;
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
 .builder-settings {
   display: grid;
   grid-template-columns: 1fr 1fr;

@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.89"/);
+  assert.match(app, /VERSION = "1\.16\.90"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -894,4 +894,15 @@ test("v1.16.89 validates storage before creating a leftovers recipe", async () =
   assert.match(app, /non utilizzare l'alimento/);
   assert.match(app, /più di 3 giorni/);
   assert.match(app, /USDA Food Safety and Inspection Service/);
+});
+
+test("v1.16.90 applies the saved household and cooking profile", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  for (const field of ["peopleCount", "ageGroup", "foodStyle", "dailyMeals", "maxPrepTime", "availableEquipment", "budgetLevel"]) {
+    assert.match(app, new RegExp(field));
+  }
+  assert.match(app, /matchesFoodStyle/);
+  assert.match(app, /matchesEquipment/);
+  assert.match(app, /scale \* peopleCount/);
+  assert.match(app, /Porzioni standard per adulti non applicabili ai minori/);
 });
