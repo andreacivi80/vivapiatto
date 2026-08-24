@@ -75,7 +75,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.80";
+const VERSION = "1.16.81";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -7799,7 +7799,7 @@ const attachmentBaseMainsA: Recipe[] = [
     course: "Piatto unico",
     cuisine: "Mediterraneo",
     kind: "combination",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p05-couscous-chickpeas-vegetables-v11681"),
     time: 25,
     ingredients: [
       { food: "Cous cous integrale cotto", grams: 180 },
@@ -7822,7 +7822,7 @@ const attachmentBaseMainsB: Recipe[] = [
     course: "Piatto unico",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p06-brown-rice-salmon-broccoli-v11681"),
     time: 35,
     ingredients: [
       { food: "Riso integrale secco", grams: 70 },
@@ -7840,7 +7840,7 @@ const attachmentBaseMainsB: Recipe[] = [
     course: "Piatto unico",
     cuisine: "Mediterraneo",
     kind: "combination",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p07-bulgur-turkey-aubergines-v11681"),
     time: 30,
     ingredients: [
       { food: "Bulgur cotto", grams: 180 },
@@ -7859,7 +7859,7 @@ const attachmentBaseMainsB: Recipe[] = [
     course: "Piatto unico",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p08-pasta-tuna-tomato-v11681"),
     time: 20,
     ingredients: [
       { food: "Pasta di semola secca", grams: 80 },
@@ -7877,7 +7877,7 @@ const attachmentBaseMainsB: Recipe[] = [
     course: "Piatto unico",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p09-barley-cannellini-black-kale-v11681"),
     time: 35,
     ingredients: [
       { food: "Orzo perlato cotto", grams: 180 },
@@ -7898,7 +7898,7 @@ const attachmentBaseMainsB: Recipe[] = [
     course: "Piatto unico",
     cuisine: "Mediterraneo",
     kind: "combination",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p10-greek-quinoa-salad-v11681"),
     time: 20,
     ingredients: [
       { food: "Quinoa cotta", grams: 180 },
@@ -7922,7 +7922,7 @@ const attachmentBaseMainsC: Recipe[] = [
     course: "Piatto unico",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p11-polenta-mushrooms-ricotta-v11681"),
     time: 35,
     ingredients: [
       { food: "Polenta cotta", grams: 300 },
@@ -7940,7 +7940,7 @@ const attachmentBaseMainsC: Recipe[] = [
     course: "Piatto unico",
     cuisine: "Mediterraneo",
     kind: "combination",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p12-red-rice-prawns-courgettes-v11681"),
     time: 30,
     ingredients: [
       { food: "Riso rosso integrale cotto", grams: 180 },
