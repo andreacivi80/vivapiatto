@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.62";
+const VERSION = "1.18.63";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -9976,35 +9976,67 @@ export function FoodPlanner() {
       const raw = localStorage.getItem("vivapiatto-v1");
       if (raw) {
         const s = JSON.parse(raw);
-        setCalories(s.calories || 1800);
+        const safeRecord = (value: unknown): Record<string, unknown> =>
+          value && typeof value === "object" && !Array.isArray(value)
+            ? (value as Record<string, unknown>)
+            : {};
+        const safeArrayRecord = (value: unknown) =>
+          Object.fromEntries(
+            Object.entries(safeRecord(value)).filter(([, entry]) => Array.isArray(entry)),
+          );
+        const safePartRecord = (value: unknown) =>
+          Object.fromEntries(
+            Object.entries(safeArrayRecord(value)).map(([key, entries]) => [
+              key,
+              (entries as unknown[])
+                .filter(
+                  (entry): entry is MealPart =>
+                    Boolean(entry) &&
+                    typeof entry === "object" &&
+                    typeof (entry as MealPart).food === "string" &&
+                    Number.isFinite(Number((entry as MealPart).grams)),
+                )
+                .map((entry) => normalizeMealPart({ ...entry, grams: Number(entry.grams) })),
+            ]),
+          );
+        const safeStringArray = (value: unknown) =>
+          Array.isArray(value) ? value.filter((entry): entry is string => typeof entry === "string") : [];
+        const safeRecipeIds = (value: unknown) =>
+          Object.fromEntries(
+            Object.entries(safeRecord(value)).filter(
+              ([, recipeId]) => typeof recipeId === "string" && Boolean(recipeMap[recipeId]),
+            ),
+          ) as Record<string, string>;
+        const savedCalories = Number(s.calories);
+        setCalories(Number.isFinite(savedCalories) ? Math.max(1200, Math.min(3000, savedCalories)) : 1800);
         setTargetDefined(s.targetDefined === true);
         setGoal(s.goal || "Equilibrio");
         const canLoadHistory = s.historyConsent === true;
         setHistoryConsent(canLoadHistory);
-        setCompleted(canLoadHistory ? s.completed || {} : {});
-        setCompletedRecipes(canLoadHistory ? s.completedRecipes || {} : {});
-        setActualWeights(canLoadHistory ? s.actualWeights || {} : {});
-        setRemovedIngredients(s.removedIngredients || {});
-        setPartSelections(s.partSelections || {});
-        setMealView(s.mealView || {});
-        setCheck({ ...check, ...(s.check || {}) });
+        setCompleted(canLoadHistory ? safeRecord(s.completed) as Record<string, boolean> : {});
+        setCompletedRecipes(canLoadHistory ? safeRecipeIds(s.completedRecipes) : {});
+        setActualWeights(canLoadHistory ? safeArrayRecord(s.actualWeights) as Record<string, number[]> : {});
+        setRemovedIngredients(safeArrayRecord(s.removedIngredients) as Record<string, number[]>);
+        setPartSelections(safePartRecord(s.partSelections) as Record<string, MealPart[]>);
+        setMealView(safeRecord(s.mealView) as Record<string, "parts" | "recipe">);
+        setCheck({ ...check, ...safeRecord(s.check) });
         setExcludedGroups([]);
-        setAllergyGroups(Array.isArray(s.allergyGroups) ? s.allergyGroups : s.excludedGroups || []);
-        setIntoleranceGroups(Array.isArray(s.intoleranceGroups) ? s.intoleranceGroups : []);
-        setHealthConditions(Array.isArray(s.healthConditions) ? s.healthConditions : []);
-        setDislikedFoods(s.dislikedFoods || []);
-        setChoices(s.choices || {});
-        setDrinks(canLoadHistory ? s.drinks || {} : {});
-        setExtras(canLoadHistory ? s.extras || {} : {});
-        setGroceryChecked(s.groceryChecked || {});
-        setGroceryAmounts(s.groceryAmounts || {});
-        setShoppingAdditions(s.shoppingAdditions || {});
+        setAllergyGroups(safeStringArray(Array.isArray(s.allergyGroups) ? s.allergyGroups : s.excludedGroups));
+        setIntoleranceGroups(safeStringArray(s.intoleranceGroups));
+        setHealthConditions(safeStringArray(s.healthConditions));
+        setDislikedFoods(safeStringArray(s.dislikedFoods));
+        setChoices(safeRecipeIds(s.choices));
+        setDrinks(canLoadHistory ? safeArrayRecord(s.drinks) as Record<number, LogItem[]> : {});
+        setExtras(canLoadHistory ? safeArrayRecord(s.extras) as Record<number, LogItem[]> : {});
+        setGroceryChecked(safeRecord(s.groceryChecked) as Record<string, boolean>);
+        setGroceryAmounts(safeRecord(s.groceryAmounts) as Record<string, number>);
+        setShoppingAdditions(safeRecord(s.shoppingAdditions) as Record<string, number>);
         setPlannedDrink(s.plannedDrink || "Acqua");
         setDayContext(s.dayContext || "Lavoro");
         setRestaurantArea(s.restaurantArea || "");
         setWeekLocked(Boolean(s.weekLocked));
         setCuisineChoice(s.cuisineChoice || "Italiano");
-        setHealthyFilters(Array.isArray(s.healthyFilters) ? s.healthyFilters : []);
+        setHealthyFilters(safeStringArray(s.healthyFilters));
         setPeopleCount(Math.max(1, Math.min(12, Number(s.peopleCount) || 1)));
         setAgeGroup(s.ageGroup || "Adulto");
         setFoodStyle(s.foodStyle || "Onnivoro");
@@ -10017,7 +10049,18 @@ export function FoodPlanner() {
         setDayIndex(Math.max(0, Math.min(days.length - 1, Number(s.dayIndex) || 0)));
         setDiaryDay(Math.max(0, Math.min(days.length - 1, Number(s.diaryDay) || 0)));
         if (["today", "week", "library", "builder", "progress"].includes(s.tab)) setTab(s.tab);
-        if (Array.isArray(s.builder) && s.builder.length) setBuilder(s.builder);
+        if (Array.isArray(s.builder)) {
+          const safeBuilder = s.builder.filter(
+            (entry: unknown): entry is RecipeIngredient =>
+              Boolean(entry) &&
+              typeof entry === "object" &&
+              typeof (entry as RecipeIngredient).food === "string" &&
+              Boolean(foodSearchDatabase[(entry as RecipeIngredient).food]) &&
+              Number.isFinite(Number((entry as RecipeIngredient).grams)) &&
+              Number((entry as RecipeIngredient).grams) > 0,
+          );
+          if (safeBuilder.length) setBuilder(safeBuilder);
+        }
       }
     } catch {}
     setProfileHydrated(true);

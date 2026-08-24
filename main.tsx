@@ -1,6 +1,7 @@
 import React, { Component, Suspense, lazy, type ErrorInfo, type ReactNode } from "react";
 import ReactDOM from "react-dom/client";
 import "./app/globals.css";
+import packageFile from "./package.json";
 
 const FoodPlanner = lazy(() =>
   import("./app/FoodPlanner").then((module) => ({ default: module.FoodPlanner })),
@@ -10,6 +11,7 @@ type AppGuardState = { failed: boolean };
 
 class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
   state: AppGuardState = { failed: false };
+  private releaseTimer?: number;
 
   static getDerivedStateFromError(): AppGuardState {
     return { failed: true };
@@ -17,6 +19,36 @@ class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
 
   componentDidCatch(error: Error, info: ErrorInfo) {
     console.error("Tavola Mia: errore di rendering recuperabile", error, info);
+  }
+
+  private checkRecoveryRelease = async () => {
+    if (!this.state.failed) return;
+    try {
+      const response = await fetch(`./version.json?recovery=${Date.now()}`, { cache: "no-store" });
+      const release = (await response.json()) as { version?: string };
+      const current = packageFile.version.split(".").map(Number);
+      const candidate = String(release.version || "").split(".").map(Number);
+      const length = Math.max(current.length, candidate.length);
+      const newer = Array.from({ length }).some((_, index) => {
+        const before = candidate.slice(0, index).every((part, partIndex) => part === (current[partIndex] || 0));
+        return before && (candidate[index] || 0) > (current[index] || 0);
+      });
+      if (newer) {
+        const url = new URL(window.location.href);
+        url.searchParams.set("_recovery_release", `${release.version}-${Date.now()}`);
+        window.location.replace(url.toString());
+      }
+    } catch {
+      // Il recupero resta visibile e riprova senza toccare i dati locali.
+    }
+  };
+
+  componentDidMount() {
+    this.releaseTimer = window.setInterval(this.checkRecoveryRelease, 5000);
+  }
+
+  componentWillUnmount() {
+    if (this.releaseTimer) window.clearInterval(this.releaseTimer);
   }
 
   private restoreApp = () => {

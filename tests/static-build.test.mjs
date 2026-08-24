@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.18\.62"/);
+  assert.match(app, /VERSION = "1\.18\.63"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -76,7 +76,7 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /mealCalorieShares/);
   assert.match(app, /max: 100, step: 10/);
   assert.match(app, /refreshSnapshotRef/);
-  assert.match(app, /setMealView\(s\.mealView/);
+  assert.match(app, /setMealView\(safeRecord\(s\.mealView\)/);
   assert.match(css, /add-part-compact::before/);
   assert.match(app, /const rawRecipes: Recipe\[\]/);
   assert.match(app, /pantryPartByFood/);
@@ -1772,4 +1772,18 @@ test("v1.18.62 keeps every recipe ingredient inside the selectable pictured pant
   assert.match(audit, /const recipeIngredientParts = new Set/);
   assert.match(audit, /Ingredienti ricetta senza componente selezionabile e foto/);
   assert.match(audit, /ingredienti ricetta con componente e foto/);
+});
+
+test("v1.18.63 migrates incompatible saved data without deleting the valid profile", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  const main = await readFile("main.tsx", "utf8");
+  assert.match(app, /const safeRecord =/);
+  assert.match(app, /const safeArrayRecord =/);
+  assert.match(app, /const safePartRecord =/);
+  assert.match(app, /const safeRecipeIds =/);
+  assert.match(app, /setPartSelections\(safePartRecord/);
+  assert.match(app, /setCompletedRecipes\(canLoadHistory \? safeRecipeIds/);
+  assert.match(main, /checkRecoveryRelease/);
+  assert.match(main, /_recovery_release/);
+  assert.match(main, /cache: "no-store"/);
 });
