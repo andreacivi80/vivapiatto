@@ -79,7 +79,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.17.6";
+const VERSION = "1.17.7";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -1105,6 +1105,30 @@ const foods: Record<string, Food> = {
     fiber: 0,
     source: "CREA",
   },
+  "Uova alla coque": {
+    kcal: 128,
+    protein: 12.4,
+    carbs: 0,
+    fat: 8.7,
+    fiber: 0,
+    source: "CREA",
+  },
+  "Latte scremato": {
+    kcal: 34,
+    protein: 3.4,
+    carbs: 5,
+    fat: 0.1,
+    fiber: 0,
+    source: "USDA",
+  },
+  "Latte senza lattosio parzialmente scremato": {
+    kcal: 46,
+    protein: 3.3,
+    carbs: 4.9,
+    fat: 1.6,
+    fiber: 0,
+    source: "ETICHETTA",
+  },
   "Latte intero": {
     kcal: 64,
     protein: 3.3,
@@ -1249,6 +1273,14 @@ const foods: Record<string, Food> = {
     fiber: 1.8,
     source: "USDA",
   },
+  "Patate al vapore": {
+    kcal: 87,
+    protein: 1.9,
+    carbs: 20.1,
+    fat: 0.1,
+    fiber: 1.8,
+    source: "USDA",
+  },
   "Piselli cotti": {
     kcal: 84,
     protein: 5.4,
@@ -1272,6 +1304,14 @@ const foods: Record<string, Food> = {
     fat: 1.5,
     fiber: 0.8,
     source: "USDA",
+  },
+  "Bevanda di mandorla senza zucchero": {
+    kcal: 15,
+    protein: 0.6,
+    carbs: 0.3,
+    fat: 1.2,
+    fiber: 0.2,
+    source: "ETICHETTA",
   },
   "Succo d'arancia 100%": {
     kcal: 45,
@@ -5614,6 +5654,20 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     },
     {
       category: "Carboidrato",
+      food: "Patate al vapore",
+      grams: 200,
+      label: "Patate al vapore · 200 g",
+      image: photo("part-potatoes-steamed-v1177"),
+    },
+    {
+      category: "Carboidrato",
+      food: "Patata dolce cotta",
+      grams: 200,
+      label: "Patata dolce cotta · 200 g",
+      image: photo("part-sweet-potato-v8"),
+    },
+    {
+      category: "Carboidrato",
       food: "Pane integrale",
       grams: 100,
       label: "Pane",
@@ -5767,6 +5821,13 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       grams: 100,
       label: "Due uova sode",
       image: photo("part-eggs-boiled-v7"),
+    },
+    {
+      category: "Proteina",
+      food: "Uova alla coque",
+      grams: 100,
+      label: "Due uova alla coque",
+      image: photo("part-soft-boiled-egg-v1177"),
     },
     {
       category: "Proteina",
@@ -6090,6 +6151,20 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     },
     {
       category: "Latticino",
+      food: "Latte scremato",
+      grams: 200,
+      label: "Latte scremato · 200 ml",
+      image: photo("part-milk-skimmed-v1177"),
+    },
+    {
+      category: "Latticino",
+      food: "Latte senza lattosio parzialmente scremato",
+      grams: 200,
+      label: "Latte senza lattosio · 200 ml",
+      image: photo("part-milk-lactose-free-v1177"),
+    },
+    {
+      category: "Latticino",
       food: "Yogurt greco 2%",
       grams: 125,
       label: "Yogurt · 1 vasetto",
@@ -6164,6 +6239,13 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       grams: 200,
       label: "Bevanda d'avena",
       image: photo("part-oat-drink-v11649"),
+    },
+    {
+      category: "Latticino",
+      food: "Bevanda di mandorla senza zucchero",
+      grams: 200,
+      label: "Bevanda di mandorla senza zucchero · 200 ml",
+      image: photo("part-almond-drink-v1177"),
     },
     { category: "Latticino", food: "Fiocchi di latte", grams: 80, label: "Fiocchi di latte", image: photo("part-cottage-cheese-v11512") },
   ],
@@ -6542,8 +6624,11 @@ const recommendedPartOptions = (part: MealPart, key: string) => {
     : mealPartOptions[part.category];
   const breakfastMilkAlternatives = [
     "Latte parzialmente scremato",
+    "Latte scremato",
+    "Latte senza lattosio parzialmente scremato",
     "Bevanda di soia senza zucchero",
     "Bevanda d'avena senza zucchero",
+    "Bevanda di mandorla senza zucchero",
   ];
   const recipeFlours = [
     "Farina d'avena",
@@ -6570,8 +6655,11 @@ const recommendedPartOptions = (part: MealPart, key: string) => {
     if (part.category === "Latticino") {
       const breakfastDairyOrder = [
         "Latte parzialmente scremato",
+        "Latte scremato",
+        "Latte senza lattosio parzialmente scremato",
         "Bevanda di soia senza zucchero",
         "Bevanda d'avena senza zucchero",
+        "Bevanda di mandorla senza zucchero",
         "Yogurt proteico alla vaniglia",
         "Skyr bianco",
         "Yogurt greco 2%",

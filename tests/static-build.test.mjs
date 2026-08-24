@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.17\.6"/);
+  assert.match(app, /VERSION = "1\.17\.7"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1068,4 +1068,21 @@ test("v1.17.6 searches live restaurants by area without inventing venues", async
   assert.match(app, /encodeURIComponent\(`ristoranti \$\{restaurantArea\.trim\(\)\}`\)/);
   assert.match(app, /senza inventare nomi o disponibilità/);
   assert.match(css, /\.restaurant-area > div\s*\{[\s\S]*minmax\(0, 1fr\)/);
+});
+
+test("v1.17.7 adds missing everyday alternatives with faithful assets", async () => {
+  const app = await readFile("app/FoodPlanner.tsx", "utf8");
+  const required = [
+    ["Latte scremato", "part-milk-skimmed-v1177"],
+    ["Latte senza lattosio parzialmente scremato", "part-milk-lactose-free-v1177"],
+    ["Bevanda di mandorla senza zucchero", "part-almond-drink-v1177"],
+    ["Uova alla coque", "part-soft-boiled-egg-v1177"],
+    ["Patate al vapore", "part-potatoes-steamed-v1177"],
+  ];
+  for (const [food, asset] of required) {
+    assert.match(app, new RegExp(food));
+    assert.match(app, new RegExp('photo\\("' + asset + '"\\)'));
+    await access(new URL("../dist/food/" + asset + ".png", import.meta.url));
+  }
+  assert.match(app, /const breakfastMilkAlternatives = \[[\s\S]*Bevanda di mandorla senza zucchero/);
 });
