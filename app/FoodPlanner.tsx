@@ -75,7 +75,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.16.82";
+const VERSION = "1.16.83";
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -8602,7 +8602,7 @@ const attachmentMainsP17P22: Recipe[] = [
     kicker: "Piatto unico di pesce",
     course: "Piatto unico",
     cuisine: "Italiano",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p21-venere-tuna-zucchini-carrots-v11683"),
     time: 35,
     ingredients: [
       { food: "Riso Venere secco", grams: 70 },
@@ -8620,7 +8620,7 @@ const attachmentMainsP17P22: Recipe[] = [
     kicker: "Piatto unico di carne bianca",
     course: "Piatto unico",
     cuisine: "Italiano",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p22-barley-chicken-mushroom-spinach-v11683"),
     time: 30,
     ingredients: [
       { food: "Orzo perlato cotto", grams: 180 },
@@ -8642,7 +8642,7 @@ const attachmentMainsP23P27: Recipe[] = [
     kicker: "Piatto unico vegetariano",
     course: "Piatto unico",
     cuisine: "Mediterraneo",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p23-couscous-lentils-pumpkin-feta-v11683"),
     time: 30,
     ingredients: [
       { food: "Cous cous integrale cotto", grams: 180 },
@@ -8661,7 +8661,7 @@ const attachmentMainsP23P27: Recipe[] = [
     kicker: "Piatto unico di pesce",
     course: "Piatto unico",
     cuisine: "Italiano",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p24-whole-pasta-salmon-zucchini-yogurt-v11683"),
     time: 25,
     ingredients: [
       { food: "Pasta integrale secca", grams: 80 },
@@ -8679,7 +8679,7 @@ const attachmentMainsP23P27: Recipe[] = [
     kicker: "Piatto unico vegetariano",
     course: "Piatto unico",
     cuisine: "Italiano",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p25-gnocchi-tomato-ricotta-spinach-v11683"),
     time: 25,
     ingredients: [
       { food: "Gnocchi di patate", grams: 150 },
@@ -8697,7 +8697,7 @@ const attachmentMainsP23P27: Recipe[] = [
     kicker: "Pranzo occasionale trasportabile",
     course: "Piatto unico",
     cuisine: "Italiano",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p26-farro-bresaola-rucola-tomatoes-v11683"),
     time: 25,
     ingredients: [
       { food: "Farro cotto", grams: 175 },
@@ -8716,7 +8716,7 @@ const attachmentMainsP23P27: Recipe[] = [
     kicker: "Piatto unico vegetale",
     course: "Piatto unico",
     cuisine: "Asiatico",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p27-millet-chickpeas-cauliflower-curry-v11683"),
     time: 35,
     ingredients: [
       { food: "Miglio cotto", grams: 190 },
@@ -8738,7 +8738,7 @@ const attachmentMainsP28P34: Recipe[] = [
     kicker: "Piatto unico vegetale",
     course: "Piatto unico",
     cuisine: "Asiatico",
-    image: photo("moment-lunch-v1121"),
+    image: photo("recipe-p28-red-rice-tofu-edamame-vegetables-v11683"),
     time: 35,
     ingredients: [
       { food: "Riso rosso integrale cotto", grams: 180 },

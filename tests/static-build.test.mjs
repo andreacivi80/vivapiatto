@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1\.16\.82"/);
+  assert.match(app, /VERSION = "1\.16\.83"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -800,6 +800,24 @@ test("v1.16.82 gives P13-P20 faithful main-meal photos", async () => {
     ["matrix-p18-quinoa-chicken-peppers-turmeric", "recipe-p18-quinoa-chicken-peppers-turmeric-v11682"],
     ["matrix-p19-spelt-pasta-mackerel-broccoli", "recipe-p19-spelt-pasta-mackerel-broccoli-v11682"],
     ["matrix-p20-bulgur-red-beans-cabbage", "recipe-p20-bulgur-red-beans-cabbage-v11682"],
+  ];
+  for (const [id, asset] of assets) {
+    assert.match(app, new RegExp('id: "' + id + '"[\\s\\S]{0,500}image: photo\\("' + asset + '"\\)'));
+    await access(new URL("../dist/food/" + asset + ".png", import.meta.url));
+  }
+});
+
+test("v1.16.83 gives P21-P28 faithful main-meal photos", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const assets = [
+    ["matrix-p21-venere-tuna-zucchini-carrots", "recipe-p21-venere-tuna-zucchini-carrots-v11683"],
+    ["matrix-p22-barley-chicken-mushroom-spinach", "recipe-p22-barley-chicken-mushroom-spinach-v11683"],
+    ["matrix-p23-couscous-lentils-pumpkin-feta", "recipe-p23-couscous-lentils-pumpkin-feta-v11683"],
+    ["matrix-p24-whole-pasta-salmon-zucchini-yogurt", "recipe-p24-whole-pasta-salmon-zucchini-yogurt-v11683"],
+    ["matrix-p25-gnocchi-tomato-ricotta-spinach", "recipe-p25-gnocchi-tomato-ricotta-spinach-v11683"],
+    ["matrix-p26-farro-bresaola-rucola-tomatoes", "recipe-p26-farro-bresaola-rucola-tomatoes-v11683"],
+    ["matrix-p27-millet-chickpeas-cauliflower-curry", "recipe-p27-millet-chickpeas-cauliflower-curry-v11683"],
+    ["matrix-p28-red-rice-tofu-edamame-vegetables", "recipe-p28-red-rice-tofu-edamame-vegetables-v11683"],
   ];
   for (const [id, asset] of assets) {
     assert.match(app, new RegExp('id: "' + id + '"[\\s\\S]{0,500}image: photo\\("' + asset + '"\\)'));
