@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]18[.]74"/);
+  assert.match(app, /VERSION = "1[.]18[.]75"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1882,4 +1882,11 @@ test("v1.18.74 gives dinner matrix D33-D40 faithful full-dish photos", async () 
     const id = String(index).padStart(2, "0");
     assert.match(source, new RegExp(`recipe-d${id}-[^\"]+-v11874`));
   }
+});
+
+test("v1.18.75 keeps compact mobile selectors inside the viewport", async () => {
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  assert.match(css, /\.compact-config > div[\s\S]*?min-width:\s*0/);
+  assert.match(css, /\.compact-config select[\s\S]*?max-width:\s*100%/);
+  assert.match(css, /\.cuisine-picker select[\s\S]*?max-width:\s*100%/);
 });
