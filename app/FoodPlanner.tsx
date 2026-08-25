@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.70";
+const VERSION = "1.18.71";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -10049,6 +10049,7 @@ export function FoodPlanner() {
                     Boolean(entry) &&
                     typeof entry === "object" &&
                     typeof (entry as MealPart).food === "string" &&
+                    Boolean(foodSearchDatabase[(entry as MealPart).food]) &&
                     Number.isFinite(Number((entry as MealPart).grams)),
                 )
                 .map((entry) => normalizeMealPart({ ...entry, grams: Number(entry.grams) })),
