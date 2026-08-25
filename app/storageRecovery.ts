@@ -1,0 +1,58 @@
+type StorageLike = Pick<Storage, "getItem" | "setItem" | "removeItem">;
+
+export const SAVED_STATE_KEY = "vivapiatto-v1";
+export const RECOVERY_BACKUP_KEY = "vivapiatto-recovery-backup";
+
+/**
+ * Keeps one recovery copy when storage has room, but always removes the state
+ * that is preventing the application from starting. In particular, a full
+ * localStorage must never trap the user in the recovery screen.
+ */
+export const quarantineSavedState = (storage: StorageLike): boolean => {
+  let saved: string | null = null;
+  try {
+    saved = storage.getItem(SAVED_STATE_KEY);
+  } catch {
+    return false;
+  }
+
+  if (!saved) return false;
+
+  try {
+    storage.setItem(RECOVERY_BACKUP_KEY, saved);
+  } catch {
+    // The backup is best-effort: quota errors must not block recovery.
+  } finally {
+    try {
+      storage.removeItem(SAVED_STATE_KEY);
+    } catch {
+      // Storage may be unavailable; the caller can still reload safely.
+    }
+  }
+
+  return true;
+};
+
+export const removeSessionItem = (storage: StorageLike, key: string) => {
+  try {
+    storage.removeItem(key);
+  } catch {
+    // Recovery must also work when session storage is unavailable.
+  }
+};
+
+export const readSessionItem = (storage: StorageLike, key: string) => {
+  try {
+    return storage.getItem(key);
+  } catch {
+    return null;
+  }
+};
+
+export const writeSessionItem = (storage: StorageLike, key: string, value: string) => {
+  try {
+    storage.setItem(key, value);
+  } catch {
+    // The reload still works without the attempt marker.
+  }
+};

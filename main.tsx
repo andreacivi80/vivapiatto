@@ -2,6 +2,12 @@ import React, { Component, Suspense, lazy, type ErrorInfo, type ReactNode } from
 import ReactDOM from "react-dom/client";
 import "./app/globals.css";
 import packageFile from "./package.json";
+import {
+  quarantineSavedState,
+  readSessionItem,
+  removeSessionItem,
+  writeSessionItem,
+} from "./app/storageRecovery";
 
 const FoodPlanner = lazy(() =>
   import("./app/FoodPlanner").then((module) => ({ default: module.FoodPlanner })),
@@ -20,14 +26,10 @@ class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
 
   componentDidCatch(error: Error, info: ErrorInfo) {
     console.error("Tavola Mia: errore di rendering recuperabile", error, info);
-    const saved = localStorage.getItem("vivapiatto-v1");
-    const alreadyAttempted = sessionStorage.getItem("vivapiatto-safe-recovery-attempted") === packageFile.version;
-    if (saved && !alreadyAttempted) {
-      const timestamp = new Date().toISOString();
-      localStorage.setItem("vivapiatto-recovery-backup", saved);
-      localStorage.setItem(`vivapiatto-recovery-backup-${timestamp}`, saved);
-      localStorage.removeItem("vivapiatto-v1");
-      sessionStorage.setItem("vivapiatto-safe-recovery-attempted", packageFile.version);
+    const alreadyAttempted =
+      readSessionItem(sessionStorage, "vivapiatto-safe-recovery-attempted") === packageFile.version;
+    if (!alreadyAttempted && quarantineSavedState(localStorage)) {
+      writeSessionItem(sessionStorage, "vivapiatto-safe-recovery-attempted", packageFile.version);
       window.setTimeout(() => {
         const url = new URL(window.location.href);
         url.searchParams.set("_safe_recovery", `${packageFile.version}-${Date.now()}`);
@@ -61,7 +63,7 @@ class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
   componentDidMount() {
     this.releaseTimer = window.setInterval(this.checkRecoveryRelease, 5000);
     this.stableTimer = window.setTimeout(() => {
-      if (!this.state.failed) sessionStorage.removeItem("vivapiatto-safe-recovery-attempted");
+      if (!this.state.failed) removeSessionItem(sessionStorage, "vivapiatto-safe-recovery-attempted");
     }, 4000);
   }
 
@@ -75,16 +77,13 @@ class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
   };
 
   private resetSavedState = () => {
-    const saved = localStorage.getItem("vivapiatto-v1");
-    if (saved) {
-      const timestamp = new Date().toISOString();
-      localStorage.setItem("vivapiatto-recovery-backup", saved);
-      localStorage.setItem(`vivapiatto-recovery-backup-${timestamp}`, saved);
-    }
-    localStorage.removeItem("vivapiatto-v1");
-    sessionStorage.removeItem("vivapiatto-release-target");
-    sessionStorage.removeItem("vivapiatto-release-scroll-y");
-    window.location.reload();
+    quarantineSavedState(localStorage);
+    removeSessionItem(sessionStorage, "vivapiatto-safe-recovery-attempted");
+    removeSessionItem(sessionStorage, "vivapiatto-release-target");
+    removeSessionItem(sessionStorage, "vivapiatto-release-scroll-y");
+    const url = new URL(window.location.href);
+    url.searchParams.set("_clean_recovery", `${packageFile.version}-${Date.now()}`);
+    window.location.replace(url.toString());
   };
 
   render() {
@@ -99,7 +98,7 @@ class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
           <button type="button" className="secondary" onClick={this.resetSavedState}>
             Apri con copia di sicurezza
           </button>
-          <small>I dati attuali vengono copiati integralmente sul dispositivo prima del recupero.</small>
+          <small>Il piano non funzionante viene isolato e l'app riparte pulita.</small>
         </div>
       </main>
     );

@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]18[.]69"/);
+  assert.match(app, /VERSION = "1[.]18[.]70"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1042,10 +1042,11 @@ test("v1.17.3 adapts after yesterday without punitive calorie compensation", asy
 
 test("v1.17.4 prevents a blank page and preserves a recovery backup", async () => {
   const main = await readFile("main.tsx", "utf8");
+  const recovery = await readFile("app/storageRecovery.ts", "utf8");
   const css = await readFile("app/globals.css", "utf8");
   assert.match(main, /class AppGuard extends Component/);
   assert.match(main, /getDerivedStateFromError/);
-  assert.match(main, /vivapiatto-recovery-backup/);
+  assert.match(recovery, /vivapiatto-recovery-backup/);
   assert.match(main, /Ricarica app/);
   assert.match(main, /Apri con copia di sicurezza/);
   assert.match(css, /\.app-recovery\s*\{[\s\S]*min-height:\s*100dvh/);
@@ -1788,14 +1789,13 @@ test("v1.18.63 migrates incompatible saved data without deleting the valid profi
   assert.match(main, /cache: "no-store"/);
 });
 
-test("v1.18.64 automatically quarantines a crashing local state and keeps full backups", async () => {
+test("v1.18.64 recovery remains compatible with the safe quarantine flow", async () => {
   const main = await readFile("main.tsx", "utf8");
   assert.match(main, /vivapiatto-safe-recovery-attempted/);
-  assert.match(main, /vivapiatto-recovery-backup-\$\{timestamp\}/);
-  assert.match(main, /localStorage\.removeItem\("vivapiatto-v1"\)/);
+  assert.match(main, /quarantineSavedState\(localStorage\)/);
   assert.match(main, /_safe_recovery/);
   assert.match(main, /Apri con copia di sicurezza/);
-  assert.match(main, /dati attuali vengono copiati integralmente/);
+  assert.match(main, /piano non funzionante viene isolato/);
 });
 
 test("v1.18.65 creates the searchable nutrition catalog after all food aliases", async () => {
@@ -1839,4 +1839,15 @@ test("v1.18.69 gives dinner matrix D09-D16 faithful full-dish photos", async () 
     const id = String(index).padStart(2, "0");
     assert.match(source, new RegExp(`recipe-d${id}-[^"]+-v11869`));
   }
+});
+
+test("v1.18.70 recovery cannot be blocked by a full browser store", async () => {
+  const [main, recovery] = await Promise.all([
+    readFile("main.tsx", "utf8"),
+    readFile("app/storageRecovery.ts", "utf8"),
+  ]);
+  assert.match(main, /_clean_recovery/);
+  assert.match(recovery, /finally\s*\{/);
+  assert.match(recovery, /storage\.removeItem\(SAVED_STATE_KEY\)/);
+  assert.doesNotMatch(recovery, /recovery-backup-\$\{timestamp\}/);
 });
