@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]18[.]73"/);
+  assert.match(app, /VERSION = "1[.]18[.]74"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1873,5 +1873,13 @@ test("v1.18.73 gives dinner matrix D25-D32 faithful full-dish photos", async () 
   for (let index = 25; index <= 32; index += 1) {
     const id = String(index).padStart(2, "0");
     assert.match(source, new RegExp(`recipe-d${id}-[^\"]+-v11873`));
+  }
+});
+
+test("v1.18.74 gives dinner matrix D33-D40 faithful full-dish photos", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  for (let index = 33; index <= 40; index += 1) {
+    const id = String(index).padStart(2, "0");
+    assert.match(source, new RegExp(`recipe-d${id}-[^\"]+-v11874`));
   }
 });
