@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.68";
+const VERSION = "1.18.69";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -4809,7 +4809,7 @@ const attachmentDinnersA: Recipe[] = [
     course: "Piatto unico",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("part-ricotta-v7"),
+    image: photo("recipe-d09-ricotta-roasted-vegetables-v11869"),
     time: 30,
     ingredients: [
       { food: "Ricotta vaccina", grams: 100 },
@@ -4837,7 +4837,7 @@ const attachmentDinnersA: Recipe[] = [
     course: "Piatto unico",
     cuisine: "Gourmet",
     kind: "combination",
-    image: photo("part-salmon-baked-v7"),
+    image: photo("recipe-d10-salmon-asparagus-quinoa-v11869"),
     time: 25,
     ingredients: [
       { food: "Salmone cotto", grams: 150 },
@@ -4861,7 +4861,7 @@ const attachmentDinnersA: Recipe[] = [
     course: "Piatto unico",
     cuisine: "Mediterraneo",
     kind: "combination",
-    image: photo("part-mackerel-baked-v11654"),
+    image: photo("recipe-d11-mackerel-fennel-orange-v11869"),
     time: 25,
     ingredients: [
       { food: "Sgombro cotto", grams: 150 },
@@ -4887,7 +4887,7 @@ const attachmentDinnersA: Recipe[] = [
     course: "Piatto unico",
     cuisine: "Mediterraneo",
     kind: "combination",
-    image: photo("part-octopus-v11645"),
+    image: photo("recipe-d12-octopus-potato-arugula-v11869"),
     time: 35,
     ingredients: [
       { food: "Polpo cotto", grams: 150 },
@@ -4913,7 +4913,7 @@ const attachmentDinnersA: Recipe[] = [
     course: "Piatto unico",
     cuisine: "Vegetale",
     kind: "combination",
-    image: photo("part-chickpeas-v8"),
+    image: photo("recipe-d13-legume-burger-vegetables-v11869"),
     time: 35,
     ingredients: [
       { food: "Ceci cotti", grams: 150 },
@@ -4947,7 +4947,7 @@ const attachmentDinnersA: Recipe[] = [
     course: "Piatto unico",
     cuisine: "Vegetale",
     kind: "combination",
-    image: photo("part-tempeh-v11520"),
+    image: photo("recipe-d14-tempeh-sweet-potato-cabbage-v11869"),
     time: 35,
     ingredients: [
       { food: "Tempeh", grams: 100 },
@@ -4971,7 +4971,7 @@ const attachmentDinnersA: Recipe[] = [
     course: "Piatto unico",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("part-branzino-baked-v11654"),
+    image: photo("recipe-d15-seabass-barley-chard-v11869"),
     time: 30,
     ingredients: [
       { food: "Branzino cotto", grams: 150 },
@@ -4995,7 +4995,7 @@ const attachmentDinnersA: Recipe[] = [
     course: "Piatto unico",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("part-steak-beef-v114"),
+    image: photo("recipe-d16-beef-polenta-radicchio-v11869"),
     time: 30,
     ingredients: [
       { food: "Bistecca di manzo · peso a crudo", grams: 100 },
