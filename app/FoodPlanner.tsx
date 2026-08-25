@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.67";
+const VERSION = "1.18.68";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -4585,7 +4585,7 @@ const attachmentDinnersA: Recipe[] = [
     course: "Piatto unico",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("part-cod-steamed-v8"),
+    image: photo("recipe-d01-cod-potatoes-zucchini-v11868"),
     time: 40,
     ingredients: [
       { food: "Merluzzo cotto", grams: 150 },
@@ -4609,7 +4609,7 @@ const attachmentDinnersA: Recipe[] = [
     course: "Piatto unico",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("part-sea-bream-baked-v8"),
+    image: photo("recipe-d02-seabream-papillote-v11868"),
     time: 30,
     ingredients: [
       { food: "Orata cotta", grams: 150 },
@@ -4637,7 +4637,7 @@ const attachmentDinnersA: Recipe[] = [
     course: "Piatto unico",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("part-chicken-raw-v11651"),
+    image: photo("recipe-d03-chicken-caponata-v11868"),
     time: 30,
     ingredients: [
       { food: "Petto di pollo · peso a crudo", grams: 100 },
@@ -4669,7 +4669,7 @@ const attachmentDinnersA: Recipe[] = [
     course: "Piatto unico",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("part-turkey-grilled-v11514"),
+    image: photo("recipe-d04-turkey-broccoli-basmati-v11868"),
     time: 25,
     ingredients: [
       { food: "Petto di tacchino cotto alla piastra", grams: 100 },
@@ -4693,7 +4693,7 @@ const attachmentDinnersA: Recipe[] = [
     course: "Piatto unico",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("part-lentils-v1141"),
+    image: photo("recipe-d05-lentil-soup-rye-v11868"),
     time: 35,
     ingredients: [
       { food: "Lenticchie cotte", grams: 150 },
@@ -4725,7 +4725,7 @@ const attachmentDinnersA: Recipe[] = [
     course: "Piatto unico",
     cuisine: "Mediterraneo",
     kind: "combination",
-    image: photo("part-chickpeas-v8"),
+    image: photo("recipe-d06-chickpeas-cauliflower-couscous-v11868"),
     time: 30,
     ingredients: [
       { food: "Ceci cotti", grams: 150 },
@@ -4751,7 +4751,7 @@ const attachmentDinnersA: Recipe[] = [
     course: "Piatto unico",
     cuisine: "Asiatico",
     kind: "combination",
-    image: photo("part-tofu-v11515"),
+    image: photo("recipe-d07-tofu-vegetables-brown-rice-v11868"),
     time: 30,
     ingredients: [
       { food: "Tofu alla piastra", grams: 100 },
@@ -4781,7 +4781,7 @@ const attachmentDinnersA: Recipe[] = [
     course: "Piatto unico",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("part-eggs-scrambled-v1156"),
+    image: photo("recipe-d08-zucchini-frittata-salad-v11868"),
     time: 30,
     ingredients: [
       { food: "Uova strapazzate o in frittata", grams: 100 },
