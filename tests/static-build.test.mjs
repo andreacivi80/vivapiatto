@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]18[.]71"/);
+  assert.match(app, /VERSION = "1[.]18[.]72"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1858,4 +1858,12 @@ test("v1.18.71 discards obsolete saved food parts before nutrition rendering", a
     source,
     /typeof \(entry as MealPart\)\.food === "string" &&\s+Boolean\(foodSearchDatabase\[\(entry as MealPart\)\.food\]\)/,
   );
+});
+
+test("v1.18.72 gives dinner matrix D17-D24 faithful full-dish photos", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  for (let index = 17; index <= 24; index += 1) {
+    const id = String(index).padStart(2, "0");
+    assert.match(source, new RegExp(`recipe-d${id}-[^"]+-v11872`));
+  }
 });

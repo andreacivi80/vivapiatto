@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.71";
+const VERSION = "1.18.72";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -5021,7 +5021,7 @@ const attachmentDinnersB: Recipe[] = [
   {
     id: "matrix-d17-trota-al-forno-con-zucca-e-patate",
     name: "Trota al forno con zucca e patate", kicker: "Cena completa · matrice D17", course: "Piatto unico", cuisine: "Italiano", kind: "combination",
-    image: photo("part-trout-v11645"), time: 40,
+    image: photo("recipe-d17-trout-pumpkin-potatoes-v11872"), time: 40,
     ingredients: [{ food: "Trota cotta", grams: 150 }, { food: "Patate lesse", grams: 150 }, { food: "Zucca", grams: 200 }, { food: "Olio extravergine", grams: 10 }],
     parts: [{ category: "Proteina", food: "Trota cotta", grams: 150, label: "Trota al forno · 150 g", image: photo("part-trout-v11645") }, { category: "Carboidrato", food: "Patate lesse", grams: 150, label: "Patate al forno · 150 g", image: photo("part-potatoes-boiled-v7") }, { category: "Contorno", food: "Zucca", grams: 200, label: "Zucca al forno · 200 g", image: photo("part-pumpkin-v8") }, { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") }],
     steps: ["Taglia patate e zucca a pezzi regolari e cuocile a 200 °C per 20 minuti.","Aggiungi la trota con rosmarino, limone e aglio e prosegui 15-20 minuti, fino a completa cottura.","Usa complessivamente 10 g di olio misurato."],
@@ -5030,7 +5030,7 @@ const attachmentDinnersB: Recipe[] = [
   {
     id: "matrix-d18-tacchino-con-carciofi-e-pane-integrale",
     name: "Tacchino con carciofi e pane integrale", kicker: "Cena completa · matrice D18", course: "Piatto unico", cuisine: "Italiano", kind: "combination",
-    image: photo("part-turkey-grilled-v11514"), time: 30,
+    image: photo("recipe-d18-turkey-artichokes-bread-v11872"), time: 30,
     ingredients: [{ food: "Petto di tacchino cotto alla piastra", grams: 100 }, { food: "Carciofi cotti bolliti", grams: 250 }, { food: "Pane integrale", grams: 50 }, { food: "Olio extravergine", grams: 10 }],
     parts: [{ category: "Proteina", food: "Petto di tacchino cotto alla piastra", grams: 100, label: "Tacchino alla griglia · 100 g", image: photo("part-turkey-grilled-v11514") }, { category: "Contorno", food: "Carciofi cotti bolliti", grams: 250, label: "Carciofi in umido · 250 g", image: photo("part-artichokes-v11519") }, { category: "Carboidrato", food: "Pane integrale", grams: 50, label: "Pane integrale · 50 g", image: photo("part-bread-v7") }, { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") }],
     steps: ["Pulisci i carciofi, affettali e cuocili coperti con poca acqua, aglio e prezzemolo per 18-22 minuti.","Griglia il tacchino fino a completa cottura e condiscilo con limone e pepe.","Servi con pane e 10 g di olio complessivi."],
@@ -5039,7 +5039,7 @@ const attachmentDinnersB: Recipe[] = [
   {
     id: "matrix-d19-seppie-con-piselli-e-polenta",
     name: "Seppie con piselli e polenta", kicker: "Cena completa · matrice D19", course: "Piatto unico", cuisine: "Italiano", kind: "combination",
-    image: photo("part-cuttlefish-v11520"), time: 40,
+    image: photo("recipe-d19-cuttlefish-peas-polenta-v11872"), time: 40,
     ingredients: [{ food: "Seppia · peso a crudo", grams: 150 }, { food: "Piselli cotti", grams: 120 }, { food: "Passata di pomodoro", grams: 100 }, { food: "Cipolle crude", grams: 50 }, { food: "Polenta cotta", grams: 300 }, { food: "Olio extravergine", grams: 10 }],
     parts: [{ category: "Proteina", food: "Seppia · peso a crudo", grams: 150, label: "Seppie in umido · 150 g a crudo", image: photo("part-cuttlefish-v11520") }, { category: "Proteina", food: "Piselli cotti", grams: 120, label: "Piselli cotti · 120 g", image: photo("part-peas-v8") }, { category: "Contorno", food: "Passata di pomodoro", grams: 100, label: "Pomodoro · 100 g", image: photo("part-passata-v11652") }, { category: "Contorno", food: "Cipolle crude", grams: 50, label: "Cipolla · 50 g", image: photo("part-onions-v11519") }, { category: "Carboidrato", food: "Polenta cotta", grams: 300, label: "Polenta cotta · da circa 60 g secca", image: photo("part-polenta-v11515") }, { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") }],
     steps: ["Affetta la cipolla e cuocila dolcemente con poca acqua; aggiungi seppie e passata e cuoci finché tenere.","Unisci i piselli negli ultimi 8-10 minuti.","Prepara la polenta secondo confezione e servi con 10 g di olio complessivi."],
@@ -5048,7 +5048,7 @@ const attachmentDinnersB: Recipe[] = [
   {
     id: "matrix-d20-omelette-con-funghi-spinaci-e-ricotta",
     name: "Omelette con funghi, spinaci e ricotta", kicker: "Cena completa · matrice D20", course: "Piatto unico", cuisine: "Italiano", kind: "combination",
-    image: photo("part-eggs-scrambled-v1156"), time: 20,
+    image: photo("recipe-d20-omelette-mushrooms-spinach-ricotta-v11872"), time: 20,
     ingredients: [{ food: "Uova strapazzate o in frittata", grams: 100 }, { food: "Funghi", grams: 125 }, { food: "Spinaci", grams: 125 }, { food: "Ricotta vaccina", grams: 50 }, { food: "Pane di segale", grams: 40 }, { food: "Olio extravergine", grams: 10 }],
     parts: [{ category: "Proteina", food: "Uova strapazzate o in frittata", grams: 100, label: "Omelette · 2 uova", image: photo("part-eggs-scrambled-v1156") }, { category: "Contorno", food: "Funghi", grams: 125, label: "Funghi cotti · 125 g", image: photo("part-mushrooms-raw-v11663") }, { category: "Contorno", food: "Spinaci", grams: 125, label: "Spinaci cotti · 125 g", image: photo("part-spinach-v7") }, { category: "Latticino", food: "Ricotta vaccina", grams: 50, label: "Ricotta · 50 g", image: photo("part-ricotta-v7") }, { category: "Carboidrato", food: "Pane di segale", grams: 40, label: "Pane di segale · 40 g", image: photo("part-bread-rye-v1156") }, { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO complessivo · 10 g", image: photo("part-olive-oil-v8") }],
     steps: ["Cuoci funghi e spinaci in padella antiaderente finché perdono l'acqua in eccesso.","Aggiungi due uova sbattute, completa con ricotta e cuoci con coperchio fino al centro ben rappreso.","Servi con pane e usa complessivamente 10 g di olio."],
@@ -5057,7 +5057,7 @@ const attachmentDinnersB: Recipe[] = [
   {
     id: "matrix-d21-branzino-con-finocchi-pomodori-e-riso-integrale",
     name: "Branzino con finocchi, pomodori e riso integrale", kicker: "Cena completa · matrice D21", course: "Piatto unico", cuisine: "Mediterraneo", kind: "combination",
-    image: photo("part-branzino-baked-v11654"), time: 35,
+    image: photo("recipe-d21-seabass-fennel-tomatoes-brown-rice-v11872"), time: 35,
     ingredients: [{ food: "Branzino cotto", grams: 150 }, { food: "Riso integrale secco", grams: 60 }, { food: "Finocchi crudi", grams: 125 }, { food: "Pomodorini", grams: 125 }, { food: "Olio extravergine", grams: 10 }],
     parts: [{ category: "Proteina", food: "Branzino cotto", grams: 150, label: "Branzino al forno · 150 g", image: photo("part-branzino-baked-v11654") }, { category: "Carboidrato", food: "Riso integrale secco", grams: 60, label: "Riso integrale · 60 g a crudo", image: photo("part-brown-rice-v11519") }, { category: "Contorno", food: "Finocchi crudi", grams: 125, label: "Finocchi · 125 g", image: photo("part-fennel-v113") }, { category: "Contorno", food: "Pomodorini", grams: 125, label: "Pomodori · 125 g", image: photo("part-tomatoes-v8") }, { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") }],
     steps: ["Cuoci il riso integrale secondo confezione.","Affetta i finocchi e cuocili al forno con il branzino, limone e timo fino a completa cottura del pesce.","Aggiungi i pomodori freschi e 10 g di olio misurato."],
@@ -5066,7 +5066,7 @@ const attachmentDinnersB: Recipe[] = [
   {
     id: "matrix-d22-zuppa-di-ceci-bietole-e-patate",
     name: "Zuppa di ceci, bietole e patate", kicker: "Cena completa · matrice D22", course: "Piatto unico", cuisine: "Italiano", kind: "combination",
-    image: photo("part-chickpeas-v8"), time: 35,
+    image: photo("recipe-d22-chickpea-chard-potato-soup-v11872"), time: 35,
     ingredients: [{ food: "Ceci cotti", grams: 150 }, { food: "Patate lesse", grams: 150 }, { food: "Bietole cotte", grams: 100 }, { food: "Carote crude", grams: 50 }, { food: "Sedano crudo", grams: 50 }, { food: "Cipolle crude", grams: 50 }, { food: "Olio extravergine", grams: 10 }],
     parts: [{ category: "Proteina", food: "Ceci cotti", grams: 150, label: "Ceci cotti e sgocciolati · 150 g", image: photo("part-chickpeas-v8") }, { category: "Carboidrato", food: "Patate lesse", grams: 150, label: "Patate · 150 g", image: photo("part-potatoes-boiled-v7") }, { category: "Contorno", food: "Bietole cotte", grams: 100, label: "Bietole · 100 g", image: photo("part-chard-v11515") }, { category: "Contorno", food: "Carote crude", grams: 50, label: "Carote · 50 g", image: photo("part-carrots-raw-v11512") }, { category: "Contorno", food: "Sedano crudo", grams: 50, label: "Sedano · 50 g", image: photo("part-celery-v1154") }, { category: "Contorno", food: "Cipolle crude", grams: 50, label: "Cipolla · 50 g", image: photo("part-onions-v11519") }, { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") }],
     steps: ["Taglia patate, carote, sedano e cipolla e cuocili in acqua finché sono teneri.","Aggiungi ceci e bietole e prosegui 10 minuti; frulla soltanto una piccola parte per addensare.","Completa nel piatto con rosmarino, pepe e olio pesato."],
@@ -5075,7 +5075,7 @@ const attachmentDinnersB: Recipe[] = [
   {
     id: "matrix-d23-polpette-di-lenticchie-con-melanzane-e-salsa-all",
     name: "Polpette di lenticchie con melanzane e salsa allo yogurt", kicker: "Cena completa · matrice D23", course: "Piatto unico", cuisine: "Vegetale", kind: "combination",
-    image: photo("part-lentils-v1141"), time: 40,
+    image: photo("recipe-d23-lentil-patties-eggplant-yogurt-v11872"), time: 40,
     ingredients: [{ food: "Lenticchie cotte", grams: 150 }, { food: "Fiocchi d'avena", grams: 20 }, { food: "Carote crude", grams: 40 }, { food: "Cipolle crude", grams: 40 }, { food: "Melanzane", grams: 150 }, { food: "Pomodorini", grams: 100 }, { food: "Yogurt bianco", grams: 60 }, { food: "Olio extravergine", grams: 10 }],
     parts: [{ category: "Proteina", food: "Lenticchie cotte", grams: 150, label: "Polpette di lenticchie · da 150 g cotti", image: photo("part-lentils-v1141") }, { category: "Carboidrato", food: "Fiocchi d'avena", grams: 20, label: "Avena nell'impasto · 20 g", image: photo("part-oats-v113") }, { category: "Contorno", food: "Carote crude", grams: 40, label: "Carota · 40 g", image: photo("part-carrots-raw-v11512") }, { category: "Contorno", food: "Cipolle crude", grams: 40, label: "Cipolla · 40 g", image: photo("part-onions-v11519") }, { category: "Contorno", food: "Melanzane", grams: 150, label: "Melanzane · 150 g", image: photo("part-eggplant-v8") }, { category: "Contorno", food: "Pomodorini", grams: 100, label: "Pomodori · 100 g", image: photo("part-tomatoes-v8") }, { category: "Latticino", food: "Yogurt bianco", grams: 60, label: "Salsa di yogurt · 60 g", image: photo("part-yogurt-white-v11651") }, { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO complessivo · 10 g", image: photo("part-olive-oil-v8") }],
     steps: ["Schiaccia le lenticchie e uniscile ad avena, carota e cipolla tritate con paprika e prezzemolo.","Forma le polpette e cuocile a 190 °C per 20-25 minuti; arrostisci melanzane e pomodori.","Mescola yogurt e limone e servi usando 10 g di olio complessivi."],
@@ -5084,7 +5084,7 @@ const attachmentDinnersB: Recipe[] = [
   {
     id: "matrix-d24-salmone-con-cavolo-rosso-e-patata-dolce",
     name: "Salmone con cavolo rosso e patata dolce", kicker: "Cena completa · matrice D24", course: "Piatto unico", cuisine: "Mediterraneo", kind: "combination",
-    image: photo("part-salmon-baked-v7"), time: 35,
+    image: photo("recipe-d24-salmon-red-cabbage-sweet-potato-v11872"), time: 35,
     ingredients: [{ food: "Salmone cotto", grams: 150 }, { food: "Patata dolce cotta", grams: 200 }, { food: "Cavolo rosso crudo", grams: 250 }, { food: "Olio extravergine", grams: 5 }],
     parts: [{ category: "Proteina", food: "Salmone cotto", grams: 150, label: "Salmone al forno o piastra · 150 g", image: photo("part-salmon-baked-v7") }, { category: "Carboidrato", food: "Patata dolce cotta", grams: 200, label: "Patata dolce · 200 g", image: photo("part-sweet-potato-v8") }, { category: "Contorno", food: "Cavolo rosso crudo", grams: 250, label: "Cavolo rosso cotto · 250 g", image: photo("part-red-cabbage-v11515") }, { category: "Extra", food: "Olio extravergine", grams: 5, label: "Olio EVO · 5 g", image: photo("part-olive-oil-v8") }],
     steps: ["Taglia patata dolce e cavolo e cuocili al forno a 200 °C finché teneri.","Cuoci il salmone alla piastra o al forno fino a completa cottura.","Condisci con aceto di mele, pepe, erba cipollina e 5 g di olio."],
