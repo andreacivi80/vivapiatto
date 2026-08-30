@@ -95,7 +95,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.87";
+const VERSION = "1.18.88";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -10085,6 +10085,41 @@ export function FoodPlanner() {
           Object.fromEntries(
             Object.entries(safeRecord(value)).filter(([, entry]) => Array.isArray(entry)),
           );
+        const safeNumberArrayRecord = (value: unknown) =>
+          Object.fromEntries(
+            Object.entries(safeArrayRecord(value)).map(([key, entries]) => [
+              key,
+              (entries as unknown[])
+                .map(Number)
+                .filter((entry) => Number.isFinite(entry) && entry >= 0),
+            ]),
+          );
+        const safeLogRecord = (value: unknown) =>
+          Object.fromEntries(
+            Object.entries(safeArrayRecord(value)).map(([key, entries]) => [
+              key,
+              (entries as unknown[])
+                .filter(
+                  (entry): entry is Record<string, unknown> =>
+                    Boolean(entry) &&
+                    typeof entry === "object" &&
+                    typeof (entry as Record<string, unknown>).label === "string" &&
+                    Number.isFinite(Number((entry as Record<string, unknown>).kcal)),
+                )
+                .map((entry) => ({
+                  label: String(entry.label),
+                  kcal: Number(entry.kcal),
+                  amount: typeof entry.amount === "string" ? entry.amount : undefined,
+                  protein: Number.isFinite(Number(entry.protein)) ? Number(entry.protein) : 0,
+                  carbs: Number.isFinite(Number(entry.carbs)) ? Number(entry.carbs) : 0,
+                  fat: Number.isFinite(Number(entry.fat)) ? Number(entry.fat) : 0,
+                  fiber: Number.isFinite(Number(entry.fiber)) ? Number(entry.fiber) : 0,
+                  source: typeof entry.source === "string" ? entry.source as Food["source"] : undefined,
+                  image: typeof entry.image === "string" ? entry.image : undefined,
+                  allergens: safeStringArray(entry.allergens),
+                })),
+            ]),
+          );
         const safePartRecord = (value: unknown) =>
           Object.fromEntries(
             Object.entries(safeArrayRecord(value)).map(([key, entries]) => [
@@ -10117,8 +10152,8 @@ export function FoodPlanner() {
         setHistoryConsent(canLoadHistory);
         setCompleted(canLoadHistory ? safeRecord(s.completed) as Record<string, boolean> : {});
         setCompletedRecipes(canLoadHistory ? safeRecipeIds(s.completedRecipes) : {});
-        setActualWeights(canLoadHistory ? safeArrayRecord(s.actualWeights) as Record<string, number[]> : {});
-        setRemovedIngredients(safeArrayRecord(s.removedIngredients) as Record<string, number[]>);
+        setActualWeights(canLoadHistory ? safeNumberArrayRecord(s.actualWeights) as Record<string, number[]> : {});
+        setRemovedIngredients(safeNumberArrayRecord(s.removedIngredients) as Record<string, number[]>);
         setPartSelections(safePartRecord(s.partSelections) as Record<string, MealPart[]>);
         setMealView(safeRecord(s.mealView) as Record<string, "parts" | "recipe">);
         setCheck({ ...check, ...safeRecord(s.check) });
@@ -10128,8 +10163,8 @@ export function FoodPlanner() {
         setHealthConditions(safeStringArray(s.healthConditions));
         setDislikedFoods(safeStringArray(s.dislikedFoods));
         setChoices(safeRecipeIds(s.choices));
-        setDrinks(canLoadHistory ? safeArrayRecord(s.drinks) as Record<number, LogItem[]> : {});
-        setExtras(canLoadHistory ? safeArrayRecord(s.extras) as Record<number, LogItem[]> : {});
+        setDrinks(canLoadHistory ? safeLogRecord(s.drinks) as Record<number, LogItem[]> : {});
+        setExtras(canLoadHistory ? safeLogRecord(s.extras) as Record<number, LogItem[]> : {});
         setGroceryChecked(safeRecord(s.groceryChecked) as Record<string, boolean>);
         setGroceryAmounts(safeRecord(s.groceryAmounts) as Record<string, number>);
         setShoppingAdditions(safeRecord(s.shoppingAdditions) as Record<string, number>);

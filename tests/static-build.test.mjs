@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]18[.]87"/);
+  assert.match(app, /VERSION = "1[.]18[.]88"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1846,10 +1846,24 @@ test("v1.18.70 recovery cannot be blocked by a full browser store", async () => 
     readFile("main.tsx", "utf8"),
     readFile("app/storageRecovery.ts", "utf8"),
   ]);
-  assert.match(main, /_clean_recovery/);
+  assert.match(main, /recoveryKey: state\.recoveryKey \+ 1/);
   assert.match(recovery, /finally\s*\{/);
   assert.match(recovery, /storage\.removeItem\(SAVED_STATE_KEY\)/);
   assert.doesNotMatch(recovery, /recovery-backup-\$\{timestamp\}/);
+});
+
+test("v1.18.88 restarts in place and sanitizes every persisted array entry", async () => {
+  const [main, source] = await Promise.all([
+    readFile("main.tsx", "utf8"),
+    readFile("app/FoodPlanner.tsx", "utf8"),
+  ]);
+  assert.match(main, /failed: false,\s+recoveryKey: state\.recoveryKey \+ 1/);
+  assert.match(main, /React\.Fragment key=\{this\.state\.recoveryKey\}/);
+  assert.match(source, /const safeNumberArrayRecord =/);
+  assert.match(source, /const safeLogRecord =/);
+  assert.match(source, /setDrinks\(canLoadHistory \? safeLogRecord/);
+  assert.match(source, /setExtras\(canLoadHistory \? safeLogRecord/);
+  assert.match(source, /setRemovedIngredients\(safeNumberArrayRecord/);
 });
 
 test("v1.18.71 discards obsolete saved food parts before nutrition rendering", async () => {

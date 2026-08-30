@@ -13,15 +13,15 @@ const FoodPlanner = lazy(() =>
   import("./app/FoodPlanner").then((module) => ({ default: module.FoodPlanner })),
 );
 
-type AppGuardState = { failed: boolean };
+type AppGuardState = { failed: boolean; recoveryKey: number };
 
 class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
-  state: AppGuardState = { failed: false };
+  state: AppGuardState = { failed: false, recoveryKey: 0 };
   private releaseTimer?: number;
   private stableTimer?: number;
 
   static getDerivedStateFromError(): AppGuardState {
-    return { failed: true };
+    return { failed: true, recoveryKey: 0 };
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
@@ -81,13 +81,16 @@ class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
     removeSessionItem(sessionStorage, "vivapiatto-safe-recovery-attempted");
     removeSessionItem(sessionStorage, "vivapiatto-release-target");
     removeSessionItem(sessionStorage, "vivapiatto-release-scroll-y");
-    const url = new URL(window.location.href);
-    url.searchParams.set("_clean_recovery", `${packageFile.version}-${Date.now()}`);
-    window.location.replace(url.toString());
+    this.setState((state) => ({
+      failed: false,
+      recoveryKey: state.recoveryKey + 1,
+    }));
   };
 
   render() {
-    if (!this.state.failed) return this.props.children;
+    if (!this.state.failed) {
+      return <React.Fragment key={this.state.recoveryKey}>{this.props.children}</React.Fragment>;
+    }
     return (
       <main className="app-recovery" role="alert">
         <div className="app-recovery-card">
