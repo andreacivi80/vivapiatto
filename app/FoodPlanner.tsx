@@ -90,7 +90,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.79";
+const VERSION = "1.18.80";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -7132,6 +7132,15 @@ const portableSnackDairy = mealPartOptions.Latticino.filter(
       "Fiocchi di latte",
     ].includes(part.food),
 );
+const practicalSnackFruits = mealPartOptions.Frutta.filter(
+  (part) => part.food !== "Lime",
+);
+const practicalSnackNuts = mealPartOptions.Extra.filter((part) =>
+  ["Noci", "Mandorle", "Pistacchi", "Noci pecan", "Nocciole", "Arachidi", "Anacardi non salati"].includes(part.food),
+);
+const practicalSnackCarbs = rotationBreakfastCarbs.filter((part) =>
+  ["Fette biscottate integrali", "Biscotti secchi", "Cracker integrali", "Pane integrale", "Pane di segale", "Gallette di riso integrale"].includes(part.food),
+);
 const catalogBreakfasts: Recipe[] = Array.from({ length: 36 }, (_, index) => {
   const parts = [
     rotationBreakfastCarbs[index % rotationBreakfastCarbs.length],
@@ -7175,13 +7184,13 @@ const asPracticalSnackPortion = (part: MealPart): MealPart => {
 };
 
 const catalogSnacks: Recipe[] = Array.from({ length: 30 }, (_, index) => {
-  const fruit = mealPartOptions.Frutta[index % mealPartOptions.Frutta.length];
+  const fruit = practicalSnackFruits[index % practicalSnackFruits.length];
   const companionBase =
     index % 3 === 0
       ? portableSnackDairy[index % portableSnackDairy.length]
       : index % 3 === 1
-        ? rotationBreakfastExtras[index % rotationBreakfastExtras.length]
-        : rotationBreakfastCarbs[index % rotationBreakfastCarbs.length];
+        ? practicalSnackNuts[index % practicalSnackNuts.length]
+        : practicalSnackCarbs[index % practicalSnackCarbs.length];
   const companion = asPracticalSnackPortion(companionBase);
   const parts = [{ ...fruit }, { ...companion }];
   return {
@@ -9724,7 +9733,7 @@ const days: Day[] = [
       "breakfast-rusks-butter",
       "matrix-s11-banana-peanut",
       defaultWeeklyMainIds[6],
-      "quick-wafer",
+      "catalog-snack-8",
       defaultWeeklyMainIds[7],
     ],
   },

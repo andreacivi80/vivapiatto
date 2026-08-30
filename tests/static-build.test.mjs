@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]18[.]79"/);
+  assert.match(app, /VERSION = "1[.]18[.]80"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1916,4 +1916,16 @@ test("v1.18.79 keeps one editable gram value instead of stale grams inside label
   assert.match(source, /<span>\{partDisplayName\(part\)\}<\/span>/);
   assert.match(source, /<b>\{part[.]grams\} g<\/b>/);
   assert.doesNotMatch(source, /<span>\{part[.]label \|\| part[.]food\}<\/span>/);
+});
+
+test("v1.18.80 keeps automatic snacks practical and occasional wafers out of the default week", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(source, /const practicalSnackFruits/);
+  assert.match(source, /part[.]food !== "Lime"/);
+  assert.match(source, /const practicalSnackNuts/);
+  assert.match(source, /const practicalSnackCarbs/);
+  const daysBlock = source.match(/const days: Day\[\] = \[([\s\S]+?)\n\];/)?.[1] || "";
+  assert.ok(daysBlock);
+  assert.doesNotMatch(daysBlock, /quick-wafer/);
+  assert.match(daysBlock, /catalog-snack-8/);
 });
