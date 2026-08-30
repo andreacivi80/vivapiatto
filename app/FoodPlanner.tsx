@@ -95,7 +95,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.19.7";
+const VERSION = "1.19.8";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -11930,11 +11930,13 @@ export function FoodPlanner() {
       Number(categories.has("Contorno"))
     );
   };
+  const recordedFavoriteRecipeIds = new Set(Object.values(completedRecipes));
   const closestForSlot = (
     pool: Recipe[],
     slot: number,
     target: number,
     offset: number,
+    preference: "variety" | "repeat" = weekPreference,
   ) => {
     const rankingScore = (recipe: Recipe) => {
       const mainMeal = [2, 4].includes(slot);
@@ -11952,13 +11954,18 @@ export function FoodPlanner() {
       const budgetPenalty =
         budgetLevel === "Economico" ? recipeBudgetScore(recipe) * 30 : 0;
       const seasonalBonus = recipeSeasonalityScore(recipe) * 0.35;
+      const familiarBonus =
+        preference === "repeat" && recordedFavoriteRecipeIds.has(recipe.id)
+          ? 320
+          : 0;
       return (
         balancePenalty +
         contextPenalty +
         prepPenalty +
         budgetPenalty +
         Math.abs(profileRecipeKcal(recipe, slot) - target) -
-        seasonalBonus
+        seasonalBonus -
+        familiarBonus
       );
     };
     const ranked = [...pool].sort((a, b) => rankingScore(a) - rankingScore(b));
@@ -11975,7 +11982,7 @@ export function FoodPlanner() {
   };
   const isSmoothieRecipe = (recipe: Recipe) =>
     /frullato|smoothie/i.test(`${recipe.name} ${recipe.kicker}`);
-  const applyCuisine = () => {
+  const applyCuisine = (preference: "variety" | "repeat" = weekPreference) => {
     if (ageGroup === "Minore") {
       setReplanNote("Pianificazione automatica per minori disattivata: le ricette restano consultabili.");
       return;
@@ -12032,7 +12039,10 @@ export function FoodPlanner() {
         target: number,
         offset: number,
       ) => {
-        const unused = pool.filter((recipe) => !usedRecipes.has(recipe.id));
+        const unused =
+          preference === "repeat"
+            ? pool
+            : pool.filter((recipe) => !usedRecipes.has(recipe.id));
         const byFamily = unused.filter(
           (recipe) => recipeProteinFamily(recipe) === family,
         );
@@ -12042,14 +12052,14 @@ export function FoodPlanner() {
             fitsSlot(recipe, slot) &&
             recipeCuisine(recipe) === cuisineChoice &&
             recipeProteinFamily(recipe) === family &&
-            !usedRecipes.has(recipe.id),
+            (preference === "repeat" || !usedRecipes.has(recipe.id)),
         );
         const anyCuisineFamily = allRecipes.filter(
           (recipe) =>
             isProfileEligible(recipe) &&
             fitsSlot(recipe, slot) &&
             recipeProteinFamily(recipe) === family &&
-            !usedRecipes.has(recipe.id),
+            (preference === "repeat" || !usedRecipes.has(recipe.id)),
         );
         const candidates = byFamily.length
           ? byFamily
@@ -12060,17 +12070,23 @@ export function FoodPlanner() {
               : unused.length
                 ? unused
                 : pool;
-        const unusedSpecies = candidates.filter(
-          (recipe) => !usedProteinSignatures.has(recipeProteinSignature(recipe)),
-        );
+        const unusedSpecies =
+          preference === "repeat"
+            ? candidates
+            : candidates.filter(
+                (recipe) => !usedProteinSignatures.has(recipeProteinSignature(recipe)),
+              );
         const chosen = closestForSlot(
           unusedSpecies.length ? unusedSpecies : candidates,
           slot,
           target,
           offset,
+          preference,
         );
-        usedRecipes.add(chosen.id);
-        usedProteinSignatures.add(recipeProteinSignature(chosen));
+        if (preference === "variety") {
+          usedRecipes.add(chosen.id);
+          usedProteinSignatures.add(recipeProteinSignature(chosen));
+        }
         return chosen;
       };
       profileDays.forEach((day) => {
@@ -12085,6 +12101,7 @@ export function FoodPlanner() {
           0,
           profileTarget * shares[0],
           offset,
+          preference,
         );
         if (hasWholeEgg(breakfast.ingredients)) plannedWholeEggBreakfasts += 1;
         const morningSnackPool = isSmoothieRecipe(breakfast)
@@ -12095,6 +12112,7 @@ export function FoodPlanner() {
           1,
           profileTarget * shares[1],
           offset,
+          preference,
         );
         const smoothieAlreadyPlanned =
           isSmoothieRecipe(breakfast) || isSmoothieRecipe(morningSnack);
@@ -12107,7 +12125,13 @@ export function FoodPlanner() {
         const afternoonPool = differentFruitSnacks.length
           ? differentFruitSnacks
           : snacks.filter((recipe) => recipe.id !== morningSnack.id);
-        const afternoonSnack = closestForSlot(afternoonPool, 3, profileTarget * shares[3], offset + 1);
+        const afternoonSnack = closestForSlot(
+          afternoonPool,
+          3,
+          profileTarget * shares[3],
+          offset + 1,
+          preference,
+        );
         const lunch = chooseMain(
           lunches,
           WEEKLY_MAIN_ROTATION[day * 2],
@@ -12131,7 +12155,9 @@ export function FoodPlanner() {
       return next;
     });
     setReplanNote(
-      `Menu completo ${cuisineChoice.toLowerCase()} creato: 5 momenti e spesa aggiornata.`,
+      preference === "repeat"
+        ? `Menu ${cuisineChoice.toLowerCase()} ricalcolato dando priorità ai piatti già registrati.`
+        : `Menu completo ${cuisineChoice.toLowerCase()} creato con più varietà e spesa aggiornata.`,
     );
   };
   const planFromCheck = (
@@ -12506,6 +12532,7 @@ export function FoodPlanner() {
     breakfastStyle,
     mealPrepMode,
     ageGroup,
+    weekPreference,
     profileHydrated,
   ]);
   const addDrink = (day: number, item: LogItem) =>
@@ -14074,6 +14101,26 @@ export function FoodPlanner() {
                 </button>
               </div>
             </section>
+            <div className="week-preference" aria-label="Preferenza della settimana">
+              <button
+                type="button"
+                className={weekPreference === "variety" ? "active" : ""}
+                disabled={weekLocked}
+                aria-pressed={weekPreference === "variety"}
+                onClick={() => setWeekPreference("variety")}
+              >
+                Più varietà
+              </button>
+              <button
+                type="button"
+                className={weekPreference === "repeat" ? "active" : ""}
+                disabled={weekLocked}
+                aria-pressed={weekPreference === "repeat"}
+                onClick={() => setWeekPreference("repeat")}
+              >
+                Ripeti ciò che mi piace
+              </button>
+            </div>
             <div className="week-kcal-summary">
               <header>
                 <b>Calorie pianificate</b>

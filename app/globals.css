@@ -1638,6 +1638,34 @@ button {
 .week-lock.locked button {
   background: var(--ink);
 }
+.week-preference {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin: 0 0 8px;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+.week-preference button {
+  min-width: 0;
+  min-height: 34px;
+  padding: 6px 5px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 900;
+}
+.week-preference button.active {
+  background: var(--ink);
+  color: #fff;
+}
+.week-preference button:disabled {
+  opacity: 0.55;
+}
 .today-strip:after {
   content: "";
   position: absolute;

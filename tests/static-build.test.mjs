@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]19[.]7"/);
+  assert.match(app, /VERSION = "1[.]19[.]8"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1965,6 +1965,21 @@ test("v1.19.7 recovery uses an independent no-cache page before React starts", a
   assert.match(recoveryPage, /sessionStorage\.removeItem\("vivapiatto-safe-recovery-attempted"\)/);
   assert.match(recoveryPage, /_safe_start/);
   assert.match(recoveryPage, /_fresh/);
+});
+
+test("v1.19.8 makes weekly variety or repetition a persistent planning choice", async () => {
+  const [source, css] = await Promise.all([
+    readFile("app/FoodPlanner.tsx", "utf8"),
+    readFile("app/globals.css", "utf8"),
+  ]);
+  assert.match(source, /useState<"variety" \| "repeat">\("variety"\)/);
+  assert.match(source, /setWeekPreference\(safeChoice\(s\.weekPreference/);
+  assert.match(source, /recordedFavoriteRecipeIds\.has\(recipe\.id\)/);
+  assert.match(source, /preference === "repeat"/);
+  assert.match(source, /Più varietà/);
+  assert.match(source, /Ripeti ciò che mi piace/);
+  assert.match(source, /\["Lavoro", "Casa", "Mensa", "Ristorante"\]/);
+  assert.match(css, /\.week-preference\s*\{/);
 });
 
 test("v1.18.96 connects the complete requested pantry to real recipes", async () => {
