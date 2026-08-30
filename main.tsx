@@ -1,17 +1,14 @@
-import React, { Component, Suspense, lazy, type ErrorInfo, type ReactNode } from "react";
+import React, { Component, type ErrorInfo, type ReactNode } from "react";
 import ReactDOM from "react-dom/client";
 import "./app/globals.css";
 import packageFile from "./package.json";
+import { FoodPlanner } from "./app/FoodPlanner";
 import {
   quarantineSavedState,
   readSessionItem,
   removeSessionItem,
   writeSessionItem,
 } from "./app/storageRecovery";
-
-const FoodPlanner = lazy(() =>
-  import("./app/FoodPlanner").then((module) => ({ default: module.FoodPlanner })),
-);
 
 type AppGuardState = { failed: boolean; recoveryKey: number };
 
@@ -28,10 +25,12 @@ class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
     console.error("Tavola Mia: errore di rendering recuperabile", error, info);
     const alreadyAttempted =
       readSessionItem(sessionStorage, "vivapiatto-safe-recovery-attempted") === packageFile.version;
-    if (!alreadyAttempted && quarantineSavedState(localStorage)) {
+    if (!alreadyAttempted) {
+      quarantineSavedState(localStorage);
       writeSessionItem(sessionStorage, "vivapiatto-safe-recovery-attempted", packageFile.version);
       window.setTimeout(() => {
         const url = new URL(window.location.href);
+        url.searchParams.set("_safe_start", "1");
         url.searchParams.set("_safe_recovery", `${packageFile.version}-${Date.now()}`);
         window.location.replace(url.toString());
       }, 250);
@@ -73,7 +72,9 @@ class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
   }
 
   private restoreApp = () => {
-    window.location.reload();
+    const url = new URL(window.location.href);
+    url.searchParams.set("_reload", `${packageFile.version}-${Date.now()}`);
+    window.location.replace(url.toString());
   };
 
   private resetSavedState = () => {
@@ -81,10 +82,10 @@ class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
     removeSessionItem(sessionStorage, "vivapiatto-safe-recovery-attempted");
     removeSessionItem(sessionStorage, "vivapiatto-release-target");
     removeSessionItem(sessionStorage, "vivapiatto-release-scroll-y");
-    this.setState((state) => ({
-      failed: false,
-      recoveryKey: state.recoveryKey + 1,
-    }));
+    const url = new URL(window.location.href);
+    url.searchParams.set("_safe_start", "1");
+    url.searchParams.set("_safe_recovery", `${packageFile.version}-${Date.now()}`);
+    window.location.replace(url.toString());
   };
 
   render() {
@@ -111,9 +112,7 @@ class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <AppGuard>
-      <Suspense fallback={<main className="app-loading" aria-live="polite">Tavola Mia</main>}>
-        <FoodPlanner />
-      </Suspense>
+      <FoodPlanner />
     </AppGuard>
   </React.StrictMode>,
 );

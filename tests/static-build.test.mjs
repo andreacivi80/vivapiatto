@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]18[.]90"/);
+  assert.match(app, /VERSION = "1[.]18[.]91"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1052,13 +1052,13 @@ test("v1.17.4 prevents a blank page and preserves a recovery backup", async () =
   assert.match(css, /\.app-recovery\s*\{[\s\S]*min-height:\s*100dvh/);
 });
 
-test("v1.17.5 shows a mobile loading state while the large planner loads", async () => {
+test("v1.17.5 recovery shell stays available without a fragile lazy chunk", async () => {
   const main = await readFile("main.tsx", "utf8");
   const css = await readFile("app/globals.css", "utf8");
-  assert.match(main, /const FoodPlanner = lazy/);
-  assert.match(main, /<Suspense fallback=/);
-  assert.match(main, /className="app-loading"/);
-  assert.match(css, /\.app-loading\s*\{[\s\S]*min-height:\s*100dvh/);
+  assert.match(main, /import \{ FoodPlanner \} from "\.\/app\/FoodPlanner"/);
+  assert.doesNotMatch(main, /lazy\(\(\) =>/);
+  assert.match(main, /_safe_start/);
+  assert.match(css, /\.app-recovery\s*\{[\s\S]*min-height:\s*100dvh/);
 });
 
 test("v1.17.6 searches live restaurants by area without inventing venues", async () => {
@@ -1846,18 +1846,20 @@ test("v1.18.70 recovery cannot be blocked by a full browser store", async () => 
     readFile("main.tsx", "utf8"),
     readFile("app/storageRecovery.ts", "utf8"),
   ]);
-  assert.match(main, /recoveryKey: state\.recoveryKey \+ 1/);
+  assert.match(main, /url\.searchParams\.set\("_safe_start", "1"\)/);
+  assert.match(main, /window\.location\.replace\(url\.toString\(\)\)/);
   assert.match(recovery, /finally\s*\{/);
   assert.match(recovery, /storage\.removeItem\(SAVED_STATE_KEY\)/);
   assert.doesNotMatch(recovery, /recovery-backup-\$\{timestamp\}/);
 });
 
-test("v1.18.88 restarts in place and sanitizes every persisted array entry", async () => {
+test("v1.18.88 restarts safely and sanitizes every persisted array entry", async () => {
   const [main, source] = await Promise.all([
     readFile("main.tsx", "utf8"),
     readFile("app/FoodPlanner.tsx", "utf8"),
   ]);
-  assert.match(main, /failed: false,\s+recoveryKey: state\.recoveryKey \+ 1/);
+  assert.match(main, /_safe_start/);
+  assert.match(main, /_safe_recovery/);
   assert.match(main, /React\.Fragment key=\{this\.state\.recoveryKey\}/);
   assert.match(source, /const safeNumberArrayRecord =/);
   assert.match(source, /const safeLogRecord =/);

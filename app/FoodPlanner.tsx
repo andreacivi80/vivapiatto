@@ -95,7 +95,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.90";
+const VERSION = "1.18.91";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -10076,6 +10076,19 @@ export function FoodPlanner() {
 
   useEffect(() => {
     try {
+      const currentUrl = new URL(window.location.href);
+      const safeStart = currentUrl.searchParams.get("_safe_start") === "1";
+      if (safeStart) {
+        currentUrl.searchParams.delete("_safe_start");
+        currentUrl.searchParams.delete("_safe_recovery");
+        window.history.replaceState(
+          window.history.state,
+          "",
+          `${currentUrl.pathname}${currentUrl.search}${currentUrl.hash}`,
+        );
+        setProfileHydrated(true);
+        return;
+      }
       const raw = localStorage.getItem("vivapiatto-v1");
       if (raw) {
         const s = JSON.parse(raw);
