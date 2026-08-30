@@ -4,6 +4,8 @@ import "./app/globals.css";
 import packageFile from "./package.json";
 import { FoodPlanner } from "./app/FoodPlanner";
 import {
+  browserLocalStorage,
+  browserSessionStorage,
   quarantineSavedState,
   readSessionItem,
   removeSessionItem,
@@ -26,10 +28,11 @@ class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
     console.error("Tavola Mia: errore di rendering recuperabile", error, info);
     if (!this.inPlaceRecoveryAttempted) {
       this.inPlaceRecoveryAttempted = true;
-      quarantineSavedState(localStorage);
-      removeSessionItem(sessionStorage, "vivapiatto-safe-recovery-attempted");
-      removeSessionItem(sessionStorage, "vivapiatto-release-target");
-      removeSessionItem(sessionStorage, "vivapiatto-release-scroll-y");
+      quarantineSavedState(browserLocalStorage());
+      const session = browserSessionStorage();
+      removeSessionItem(session, "vivapiatto-safe-recovery-attempted");
+      removeSessionItem(session, "vivapiatto-release-target");
+      removeSessionItem(session, "vivapiatto-release-scroll-y");
       window.setTimeout(() => {
         this.setState((state) => ({
           failed: false,
@@ -39,10 +42,10 @@ class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
       return;
     }
     const alreadyAttempted =
-      readSessionItem(sessionStorage, "vivapiatto-safe-recovery-attempted") === packageFile.version;
+      readSessionItem(browserSessionStorage(), "vivapiatto-safe-recovery-attempted") === packageFile.version;
     if (!alreadyAttempted) {
-      quarantineSavedState(localStorage);
-      writeSessionItem(sessionStorage, "vivapiatto-safe-recovery-attempted", packageFile.version);
+      quarantineSavedState(browserLocalStorage());
+      writeSessionItem(browserSessionStorage(), "vivapiatto-safe-recovery-attempted", packageFile.version);
       window.setTimeout(() => {
         const url = new URL(window.location.href);
         url.searchParams.set("_safe_start", "1");
@@ -77,7 +80,7 @@ class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
   componentDidMount() {
     this.releaseTimer = window.setInterval(this.checkRecoveryRelease, 5000);
     this.stableTimer = window.setTimeout(() => {
-      if (!this.state.failed) removeSessionItem(sessionStorage, "vivapiatto-safe-recovery-attempted");
+      if (!this.state.failed) removeSessionItem(browserSessionStorage(), "vivapiatto-safe-recovery-attempted");
     }, 4000);
   }
 
@@ -87,10 +90,11 @@ class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
   }
 
   private restoreApp = () => {
-    quarantineSavedState(localStorage);
-    removeSessionItem(sessionStorage, "vivapiatto-safe-recovery-attempted");
-    removeSessionItem(sessionStorage, "vivapiatto-release-target");
-    removeSessionItem(sessionStorage, "vivapiatto-release-scroll-y");
+    quarantineSavedState(browserLocalStorage());
+    const session = browserSessionStorage();
+    removeSessionItem(session, "vivapiatto-safe-recovery-attempted");
+    removeSessionItem(session, "vivapiatto-release-target");
+    removeSessionItem(session, "vivapiatto-release-scroll-y");
     const url = new URL(window.location.href);
     url.searchParams.set("_safe_start", "1");
     url.searchParams.set("_safe_recovery", `${packageFile.version}-${Date.now()}`);
@@ -98,10 +102,11 @@ class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
   };
 
   private resetSavedState = () => {
-    quarantineSavedState(localStorage);
-    removeSessionItem(sessionStorage, "vivapiatto-safe-recovery-attempted");
-    removeSessionItem(sessionStorage, "vivapiatto-release-target");
-    removeSessionItem(sessionStorage, "vivapiatto-release-scroll-y");
+    quarantineSavedState(browserLocalStorage());
+    const session = browserSessionStorage();
+    removeSessionItem(session, "vivapiatto-safe-recovery-attempted");
+    removeSessionItem(session, "vivapiatto-release-target");
+    removeSessionItem(session, "vivapiatto-release-scroll-y");
     const url = new URL(window.location.href);
     url.searchParams.set("_safe_start", "1");
     url.searchParams.set("_safe_recovery", `${packageFile.version}-${Date.now()}`);

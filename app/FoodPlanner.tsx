@@ -95,7 +95,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.19.0";
+const VERSION = "1.19.1";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -10450,6 +10450,16 @@ export function FoodPlanner() {
           value && typeof value === "object" && !Array.isArray(value)
             ? (value as Record<string, unknown>)
             : {};
+        const safeText = (value: unknown, fallback: string) =>
+          typeof value === "string" ? value : fallback;
+        const safeChoice = <T extends string>(
+          value: unknown,
+          allowed: readonly T[],
+          fallback: T,
+        ): T =>
+          typeof value === "string" && allowed.includes(value as T)
+            ? (value as T)
+            : fallback;
         const safeArrayRecord = (value: unknown) =>
           Object.fromEntries(
             Object.entries(safeRecord(value)).filter(([, entry]) => Array.isArray(entry)),
@@ -10542,7 +10552,7 @@ export function FoodPlanner() {
         const savedCalories = Number(s.calories);
         setCalories(Number.isFinite(savedCalories) ? Math.max(1200, Math.min(3000, savedCalories)) : 1800);
         setTargetDefined(s.targetDefined === true);
-        setGoal(s.goal || "Equilibrio");
+        setGoal(safeText(s.goal, "Equilibrio"));
         const canLoadHistory = s.historyConsent === true;
         setHistoryConsent(canLoadHistory);
         setCompleted(canLoadHistory ? safeBooleanRecord(s.completed) as Record<string, boolean> : {});
@@ -10551,7 +10561,14 @@ export function FoodPlanner() {
         setRemovedIngredients(safeNumberArrayRecord(s.removedIngredients) as Record<string, number[]>);
         setPartSelections(safePartRecord(s.partSelections) as Record<string, MealPart[]>);
         setMealView(safeMealViewRecord(s.mealView) as Record<string, "parts" | "dish">);
-        setCheck({ ...check, ...safeRecord(s.check) });
+        const savedCheck = safeRecord(s.check);
+        setCheck({
+          yesterday: safeChoice(savedCheck.yesterday, ["meno", "regolare", "molto"] as const, "regolare"),
+          todayActivity: safeChoice(savedCheck.todayActivity, ["no", "leggera", "intensa"] as const, "no"),
+          tomorrowActivity: safeChoice(savedCheck.tomorrowActivity, ["no", "leggera", "intensa"] as const, "no"),
+          feeling: safeChoice(savedCheck.feeling, ["bene", "gonfio", "fame", "stanco"] as const, "bene"),
+          sleep: safeChoice(savedCheck.sleep, ["scarso", "leggero", "bene"] as const, "bene"),
+        });
         setExcludedGroups([]);
         setAllergyGroups(safeStringArray(Array.isArray(s.allergyGroups) ? s.allergyGroups : s.excludedGroups));
         setIntoleranceGroups(safeStringArray(s.intoleranceGroups));
@@ -10563,21 +10580,21 @@ export function FoodPlanner() {
         setGroceryChecked(safeBooleanRecord(s.groceryChecked) as Record<string, boolean>);
         setGroceryAmounts(safeFiniteNumberRecord(s.groceryAmounts) as Record<string, number>);
         setShoppingAdditions(safeFiniteNumberRecord(s.shoppingAdditions) as Record<string, number>);
-        setPlannedDrink(s.plannedDrink || "Acqua");
-        setDayContext(s.dayContext || "Lavoro");
-        setRestaurantArea(s.restaurantArea || "");
+        setPlannedDrink(safeText(s.plannedDrink, "Acqua"));
+        setDayContext(safeChoice(s.dayContext, ["Lavoro", "Casa"] as const, "Lavoro"));
+        setRestaurantArea(safeText(s.restaurantArea, ""));
         setWeekLocked(Boolean(s.weekLocked));
-        setCuisineChoice(s.cuisineChoice || "Italiano");
+        setCuisineChoice(safeText(s.cuisineChoice, "Italiano"));
         setHealthyFilters(safeStringArray(s.healthyFilters));
         setPeopleCount(Math.max(1, Math.min(12, Number(s.peopleCount) || 1)));
-        setAgeGroup(s.ageGroup || "Adulto");
-        setFoodStyle(s.foodStyle || "Onnivoro");
+        setAgeGroup(safeText(s.ageGroup, "Adulto"));
+        setFoodStyle(safeText(s.foodStyle, "Onnivoro"));
         setDailyMeals([3, 4, 5].includes(Number(s.dailyMeals)) ? Number(s.dailyMeals) : 5);
         setMaxPrepTime([5, 15, 30, 45, 60].includes(Number(s.maxPrepTime)) ? Number(s.maxPrepTime) : 45);
-        setAvailableEquipment(s.availableEquipment || "Piano cottura e forno");
-        setBudgetLevel(s.budgetLevel || "Medio");
-        setBreakfastStyle(s.breakfastStyle || "Indifferente");
-        setMealPrepMode(s.mealPrepMode || "No");
+        setAvailableEquipment(safeText(s.availableEquipment, "Piano cottura e forno"));
+        setBudgetLevel(safeText(s.budgetLevel, "Medio"));
+        setBreakfastStyle(safeText(s.breakfastStyle, "Indifferente"));
+        setMealPrepMode(safeText(s.mealPrepMode, "No"));
         setDayIndex(Math.max(0, Math.min(days.length - 1, Number(s.dayIndex) || 0)));
         setDiaryDay(Math.max(0, Math.min(days.length - 1, Number(s.diaryDay) || 0)));
         if (["today", "week", "library", "builder", "progress"].includes(s.tab)) setTab(s.tab);

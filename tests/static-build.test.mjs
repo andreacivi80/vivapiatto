@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]19[.]0"/);
+  assert.match(app, /VERSION = "1[.]19[.]1"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -307,7 +307,7 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /stima da ricetta/);
   assert.match(app, /proteinFamilyForItems/);
   assert.match(app, /Legumi e vegetali/);
-  assert.match(app, /setCuisineChoice\(s\.cuisineChoice/);
+  assert.match(app, /setCuisineChoice\(safeText\(s\.cuisineChoice/);
   assert.match(app, /tab === "builder"/);
   await access(new URL("../dist/food/recipe-d41-sole-potatoes-fennel-v11519.png", import.meta.url));
   await access(new URL("../dist/food/recipe-d42-chicken-brown-rice-v11519.png", import.meta.url));
@@ -1792,7 +1792,7 @@ test("v1.18.63 migrates incompatible saved data without deleting the valid profi
 test("v1.18.64 recovery remains compatible with the safe quarantine flow", async () => {
   const main = await readFile("main.tsx", "utf8");
   assert.match(main, /vivapiatto-safe-recovery-attempted/);
-  assert.match(main, /quarantineSavedState\(localStorage\)/);
+  assert.match(main, /quarantineSavedState\(browserLocalStorage\(\)\)/);
   assert.match(main, /_safe_recovery/);
   assert.match(main, /Apri con copia di sicurezza/);
   assert.match(main, /piano non funzionante viene isolato/);
@@ -2138,4 +2138,19 @@ test("v1.18.87 keeps one clean food name and full macro labels in print and alte
   assert.match(source, /\{partDisplayName\(ingredient\)\}/);
   assert.match(source, /<span>Proteine<\/span>\s*<span>Carboidrati<\/span>\s*<span>Grassi<\/span>/);
   assert.match(css, /44px 52px 36px/);
+});
+
+test("v1.19.1 sanitizes legacy profile fields before rendering and recovery survives blocked storage", async () => {
+  const [planner, main, recovery] = await Promise.all([
+    readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../main.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/storageRecovery.ts", import.meta.url), "utf8"),
+  ]);
+  assert.match(planner, /const safeText = \(value: unknown, fallback: string\)/);
+  assert.match(planner, /const savedCheck = safeRecord\(s[.]check\)/);
+  assert.match(planner, /todayActivity: safeChoice/);
+  assert.doesNotMatch(planner, /setCheck\(\{ [.]\.\.check, [.]\.\.safeRecord\(s[.]check\) \}\)/);
+  assert.match(main, /quarantineSavedState\(browserLocalStorage\(\)\)/);
+  assert.match(recovery, /export const browserLocalStorage/);
+  assert.match(recovery, /export const browserSessionStorage/);
 });

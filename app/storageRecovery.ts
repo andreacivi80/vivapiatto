@@ -8,7 +8,8 @@ export const RECOVERY_BACKUP_KEY = "vivapiatto-recovery-backup";
  * that is preventing the application from starting. In particular, a full
  * localStorage must never trap the user in the recovery screen.
  */
-export const quarantineSavedState = (storage: StorageLike): boolean => {
+export const quarantineSavedState = (storage: StorageLike | null | undefined): boolean => {
+  if (!storage) return false;
   let saved: string | null = null;
   try {
     saved = storage.getItem(SAVED_STATE_KEY);
@@ -33,7 +34,24 @@ export const quarantineSavedState = (storage: StorageLike): boolean => {
   return true;
 };
 
-export const removeSessionItem = (storage: StorageLike, key: string) => {
+export const browserLocalStorage = (): StorageLike | null => {
+  try {
+    return window.localStorage;
+  } catch {
+    return null;
+  }
+};
+
+export const browserSessionStorage = (): StorageLike | null => {
+  try {
+    return window.sessionStorage;
+  } catch {
+    return null;
+  }
+};
+
+export const removeSessionItem = (storage: StorageLike | null | undefined, key: string) => {
+  if (!storage) return;
   try {
     storage.removeItem(key);
   } catch {
@@ -41,7 +59,8 @@ export const removeSessionItem = (storage: StorageLike, key: string) => {
   }
 };
 
-export const readSessionItem = (storage: StorageLike, key: string) => {
+export const readSessionItem = (storage: StorageLike | null | undefined, key: string) => {
+  if (!storage) return null;
   try {
     return storage.getItem(key);
   } catch {
@@ -49,7 +68,8 @@ export const readSessionItem = (storage: StorageLike, key: string) => {
   }
 };
 
-export const writeSessionItem = (storage: StorageLike, key: string, value: string) => {
+export const writeSessionItem = (storage: StorageLike | null | undefined, key: string, value: string) => {
+  if (!storage) return false;
   try {
     storage.setItem(key, value);
     return true;
