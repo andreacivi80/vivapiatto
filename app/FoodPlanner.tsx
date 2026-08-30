@@ -95,7 +95,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.91";
+const VERSION = "1.18.92";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -12466,7 +12466,7 @@ export function FoodPlanner() {
         plannedIngredients(key, recipeMap[id])
           .filter((_, index) => !removed.includes(index))
           .forEach((x) => {
-            totals[x.food] = (totals[x.food] || 0) + x.grams;
+            totals[x.food] = (totals[x.food] || 0) + x.grams * peopleCount;
           });
       }),
     );
@@ -12489,20 +12489,25 @@ export function FoodPlanner() {
     partSelections,
     removedIngredients,
     shoppingAdditions,
+    peopleCount,
   ]);
   const copyRecipe = async (recipe: Recipe) => {
-    const macros = calc(recipe.ingredients);
+    const ingredientsForPeople = recipe.ingredients.map((item) => ({
+      ...item,
+      grams: round(item.grams * peopleCount),
+    }));
+    const macros = calc(ingredientsForPeople);
     const safeAlternatives = recipe.alternatives.filter(isAlternativeAllowed);
     const text = [
       recipe.name,
-      "Porzioni standard non personalizzate · 1 persona",
+      `Quantità di preparazione · ${peopleCount} ${peopleCount === 1 ? "persona" : "persone"}`,
       "Valori nutrizionali stimati: alimenti, marche e cottura possono variare; verifica etichetta e peso effettivo.",
       `${round(macros.kcal)} kcal · ${round(macros.protein)} g proteine · ${round(macros.carbs)} g carboidrati · ${round(macros.fat)} g grassi`,
       `Composizione: ${recipeBalanceSummary(recipe)}`,
       internationalInspirationNote(recipe),
       "",
       "Ingredienti",
-      ...recipe.ingredients.map(
+      ...ingredientsForPeople.map(
         (item) =>
           `• ${partDisplayName(item)}: ${item.grams} g · peso ${ingredientWeightState(item.food)}`,
       ),
@@ -12521,13 +12526,17 @@ export function FoodPlanner() {
   const copyVisibleRecipes = async () => {
     const text = visibleRecipes
       .map((recipe, recipeIndex) => {
-        const macros = calc(recipe.ingredients);
+        const ingredientsForPeople = recipe.ingredients.map((item) => ({
+          ...item,
+          grams: round(item.grams * peopleCount),
+        }));
+        const macros = calc(ingredientsForPeople);
         return [
           String(recipeIndex + 1) + ". " + recipe.name,
-          "Porzioni standard non personalizzate · " + recipe.time + " min",
+          `Quantità di preparazione · ${peopleCount} ${peopleCount === 1 ? "persona" : "persone"} · ${recipe.time} min`,
           round(macros.kcal) + " kcal · " + round(macros.protein) + " g proteine · " + round(macros.carbs) + " g carboidrati · " + round(macros.fat) + " g grassi",
           "Ingredienti",
-          ...recipe.ingredients.map(
+          ...ingredientsForPeople.map(
             (item) => "• " + partDisplayName(item) + ": " + item.grams + " g · peso " + ingredientWeightState(item.food),
           ),
           "Preparazione",
@@ -12542,7 +12551,7 @@ export function FoodPlanner() {
     setShoppingAdditions((current) => {
       const next = { ...current };
       recipe.ingredients.forEach((item) => {
-        next[item.food] = round((next[item.food] || 0) + item.grams);
+        next[item.food] = round((next[item.food] || 0) + item.grams * peopleCount);
       });
       return next;
     });
