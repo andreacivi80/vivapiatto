@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]18[.]77"/);
+  assert.match(app, /VERSION = "1[.]18[.]78"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1900,4 +1900,11 @@ test("v1.18.76 permanently audits recipe ingredients against visible components"
   assert.doesNotMatch(source, /matrix-d45[\s\S]{0,1200}food: "Edamame cotti"/);
   assert.match(audit, /Ingredienti e componenti non allineati/);
   assert.match(manifest, /audit-recipe-parts[.]mjs/);
+});
+
+test("v1.18.78 uses each faithful full-dish recipe photo instead of an ingredient collage", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(source, /const hasDedicatedDishPhoto = \/\\\/food\\\/recipe-\/[.]test\(recipe[.]image\)/);
+  assert.match(source, /if \(hasDedicatedDishPhoto \|\| componentPhotos[.]length < 2\)/);
+  assert.match(source, /className="recipe-visual-single" src=\{recipe[.]image\}/);
 });

@@ -42,7 +42,8 @@ const RecipeVisual = ({ recipe }: { recipe: Recipe }) => {
   const componentPhotos = (recipe.parts || [])
     .filter((part) => part.grams > 0)
     .slice(0, 4);
-  if (componentPhotos.length < 2) {
+  const hasDedicatedDishPhoto = /\/food\/recipe-/.test(recipe.image);
+  if (hasDedicatedDishPhoto || componentPhotos.length < 2) {
     return <img className="recipe-visual-single" src={recipe.image} alt={recipe.name} />;
   }
   return (
@@ -82,7 +83,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.77";
+const VERSION = "1.18.78";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
