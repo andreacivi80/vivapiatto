@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]19[.]9"/);
+  assert.match(app, /VERSION = "1[.]19[.]10"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -403,7 +403,7 @@ test("v1.16.17 keeps swap navigation visible and exposes occasional choices", as
   assert.match(app, /aria-label="Torna indietro senza cambiare piatto"/);
   assert.match(app, /<summary>Sgarri<\/summary>/);
   assert.match(app, /r\.id\.startsWith\("occasional-"\)/);
-  assert.match(css, /\.swap-back-bar\s*\{[\s\S]*position:\s*sticky/);
+  assert.match(css, /\.swap-back-bar\s*\{[\s\S]*position:\s*fixed/);
   await access(new URL("../dist/food/part-pasta-whole-v11618.png", import.meta.url));
   await access(new URL("../dist/food/part-pasta-semolina-v11618.png", import.meta.url));
   assert.match(app, /photo\("part-pasta-whole-v11618"\)/);
@@ -1516,9 +1516,9 @@ test("v1.18.37 keeps the swap return control visible without covering mobile rec
   const css = await readFile("app/globals.css", "utf8");
 
   assert.match(source, /swapTarget\s*&&\s*\([\s\S]*?className="swap-back-bar"/);
-  assert.match(css, /\.swap-back-bar\s*\{[\s\S]*?position:\s*sticky;[\s\S]*?top:\s*56px;/);
+  assert.match(css, /\.swap-back-bar\s*\{[\s\S]*?position:\s*fixed;[\s\S]*?top:\s*72px;/);
   assert.match(css, /\.library-section\.swapping \.library-tools\s*\{\s*top:\s*100px;/);
-  assert.doesNotMatch(css, /\.swap-back-bar\s*\{[\s\S]*?position:\s*fixed;/);
+  assert.match(css, /\.swap-back-bar\s*\{[\s\S]*?background:\s*transparent;/);
   assert.match(css, /\.week-part-strip img\s*\{[\s\S]*?object-fit:\s*contain/);
   assert.match(css, /\.app-shell\s*\{[\s\S]*?overflow-x:\s*hidden;/);
 });
@@ -1997,6 +1997,14 @@ test("v1.19.9 exposes quick dish families and the real remaining swap budget", a
   assert.match(source, /puoi scegliere liberamente e riequilibrare dopo/);
   assert.match(css, /\.quick-recipe-tabs\s*\{/);
   assert.match(css, /\.swap-calorie-budget\s*\{/);
+});
+
+test("v1.19.10 keeps the compact swap return control inside the mobile viewport", async () => {
+  const css = await readFile("app/globals.css", "utf8");
+  assert.match(css, /\.swap-back-bar\s*\{[\s\S]*?position:\s*fixed/);
+  assert.match(css, /\.swap-back-bar\s*\{[\s\S]*?left:\s*50%/);
+  assert.match(css, /\.swap-back-bar\s*\{[\s\S]*?width:\s*min\(492px, calc\(100% - 28px\)\)/);
+  assert.match(css, /\.swap-back-bar\s*\{[\s\S]*?background:\s*transparent/);
 });
 
 test("v1.18.96 connects the complete requested pantry to real recipes", async () => {

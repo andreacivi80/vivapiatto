@@ -2913,18 +2913,20 @@ button {
 
 
 .swap-back-bar {
-  position: sticky;
-  top: 56px;
-  z-index: 18;
+  position: fixed;
+  left: 50%;
+  top: 72px;
+  z-index: 30;
   display: flex;
-  width: 100%;
-  min-height: 44px;
-  margin: -4px 0 4px;
-  padding: 3px 2px;
+  width: min(492px, calc(100% - 28px));
+  min-height: 38px;
+  margin: 0;
+  padding: 0 2px;
+  transform: translateX(-50%);
   align-items: center;
   justify-content: flex-end;
   pointer-events: none;
-  background: linear-gradient(180deg, rgba(247, 243, 233, 0.98) 72%, rgba(247, 243, 233, 0));
+  background: transparent;
 }
 .swap-back {
   position: static;
@@ -2956,7 +2958,7 @@ button {
 }
 
 @media (min-width: 700px) {
-  .swap-back-bar { top: 66px; }
+  .swap-back-bar { top: 76px; }
   .library-section.swapping .library-tools { top: 110px; }
 }
 
