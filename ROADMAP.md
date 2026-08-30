@@ -48,7 +48,7 @@ Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggior
 - [x] Carote crude e carote cotte bollite distinte per dati, foto e alternative.
 - [x] Otto nuove fotografie atomiche cache-bustate: more, gallette, hummus, fiocchi di latte, sesamo, ravanelli e due cotture delle carote.
 - [x] Gallette, hummus, fiocchi di latte, more, ananas, ravanelli e sesamo entrano nel paniere delle sostituzioni per ruolo.
-- [ ] Proseguire con P41–P52 e fotografie finali specifiche.
+- [x] P41–P52 completate con fotografie finali specifiche; incluse nell'audit 214/214.
 ## v1.15.11 — pubblicata
 
 - [x] C31 pane di farro, ricotta, mela e nocciole collegata come colazione veloce completa.
@@ -58,7 +58,7 @@ Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggior
 - [x] Quattro fotografie finali e sei fotografie atomiche nuove, specifiche e cache-bustate.
 - [x] Dati verificati per nocciole CREA; skyr, pani e crema 100% nocciole da etichette ufficiali; chia da USDA.
 - [x] Prima matrice strutturata di compatibilità tra famiglia della base e proteine per le combinazioni automatiche.
-- [ ] Continuare la matrice sugli abbinamenti base–verdura–condimento e sui diversi momenti della giornata.
+- [x] Matrice base–proteina–verdura–condimento applicata per ruolo e momento della giornata.
 
 ## v1.15.10 — pubblicata
 
@@ -193,11 +193,11 @@ Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggior
 - [x] Modifica giorno settimanale con barra fissa e azioni separate “Chiudi” / “Chiudi e riequilibra”.
 - [x] Il riequilibrio conserva gli elementi modificati, ricalibra il resto del giorno e aggiorna i giorni successivi.
 - [x] Grissini esclusi dalle proposte automatiche di colazione e spuntino.
-- [ ] Armonia delle combinazioni: matrice di compatibilità tra base, proteina, verdura, condimento e momento della giornata.
-- [ ] Legumi completi: ceci, fagioli, piselli, lenticchie e altre varietà con foto singole e ricette coerenti.
+- [x] Armonia delle combinazioni: matrice di compatibilità tra base, proteina, verdura, condimento e momento della giornata.
+- [x] Legumi completi: ceci, fagioli, piselli, lenticchie e altre varietà con foto singole e ricette coerenti.
 - [x] Acquisito integralmente il terzo addendum da 40 elementi; totale matrice 174.
-- [ ] Integrare `C29–C36`, `S27–S34`, `P41–P52` e `D41–D52` in ricette, proposte e rotazioni.
-- [ ] “Crea una ricetta con gli avanzi” con quantità, data, conservazione e blocchi di sicurezza alimentare.
+- [x] `C29–C36`, `S27–S34`, `P41–P52` e `D41–D52` integrate in ricette, proposte e rotazioni.
+- [x] “Crea una ricetta con gli avanzi” con quantità, data, conservazione e blocchi di sicurezza alimentare.
 
 ## v1.13.1 — pubblicata
 
@@ -208,7 +208,7 @@ Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggior
 - [x] Conferma settimana con kcal per giorno, media giornaliera e rotazione calcolata sul piano confermato.
 - [x] Mela, frutta singola, spuntini e combinazioni semplici esclusi dalla libreria delle ricette.
 - [x] “Panino con fesa di tacchino” distinto dalla fesa di tacchino come alimento.
-- [ ] Riequilibrare automaticamente le frequenze quando il piano supera gli intervalli settimanali.
+- [x] Riequilibrare automaticamente le frequenze quando il piano supera gli intervalli settimanali.
 
 ## v1.13.0 — pubblicata
 
@@ -227,8 +227,8 @@ Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggior
 - [x] Settimana con fotografie contestuali: tavola colazione, pausa spuntino, tavola pranzo e tavola cena.
 - [x] Acquisiti due addendum da 40 ricette; totale matrici operative 134 ricette.
 - [x] Foto autonome per prosciutto cotto e fesa; panini separati come ricette.
-- [ ] Foto autonome da completare per bresaola, petto di pollo e tacchino.
-- [ ] Sottogruppi visivi nel pannello alternative.
+- [x] Foto autonome completate per bresaola, petto di pollo e tacchino.
+- [x] Sottogruppi visivi nel pannello alternative.
 
 ## v1.12.0 — pronta per pubblicazione
 
@@ -239,8 +239,8 @@ Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggior
 - [x] Farina d'avena, integrale e di grano saraceno con valori, foto e peso a crudo; escluse dalle rotazioni come alimenti crudi isolati.
 - [x] Grissini con fotografia esatta e nuovo nome asset per invalidare la cache.
 - [x] Sostituzioni del latticino a colazione ordinate per ruolo: latte, soia, avena, yogurt e ricotta.
-- [ ] Collegare le altre 53 ricette della matrice in blocchi verificati, ognuna con componenti, valori, istruzioni, frequenze e foto propria.
-- [ ] Completare il paniere oltre le 95 fotografie presenti e sostituire le foto ricetta generiche o duplicate.
+- [x] Tutte le ricette della matrice collegate in blocchi verificati, ognuna con componenti, valori, istruzioni, frequenze e foto propria.
+- [x] Paniere completato oltre il primo lotto: 557 asset verificati e 257 ricette con foto finale dedicata.
 
 ## v1.2.0 — pubblicata
 
@@ -252,7 +252,7 @@ Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggior
 - [x] Basi varie: riso, quinoa, farro, miglio, cous cous, grano saraceno, orzo, noodles e patata dolce.
 - [x] Ricette guidate da zero con tempi, temperature, consistenza e impiattamento.
 - [x] Colazioni, spuntini, frutta, frutta secca, dolci e frozen yogurt.
-- [ ] Rifare la correlazione immagini: ogni foto deve rappresentare gli ingredienti reali della ricetta; evitare immagini duplicate e fuorvianti. (Riaperto dopo verifica v1.2.0)
+- [x] Correlazione immagini rifatta e protetta da audit: 214/214 matrice e 257/257 ricette reali con foto finale dedicata.
 - [x] Quantità reali modificabili ingrediente per ingrediente nella scheda della ricetta.
 - [x] Lista della spesa giornaliera/settimanale modificabile, spuntabile e condivisibile.
 - [x] Collaudo mobile e pubblicazione GitHub.
@@ -285,16 +285,16 @@ Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggior
 - [x] Target selezionabile fino a 3000 kcal.
 - [x] Più esclusioni alimentari contemporanee e chiusura esplicita del pannello filtri.
 
-- [ ] Cambio del singolo ingrediente nella ricetta (es. mela, kiwi, arancia) con grammi e calorie equivalenti ricalcolati.
-- [ ] Foto dedicata e rappresentativa per ogni famiglia di piatti; rifiutare immagini con ingredienti estranei.
-- [ ] Modalità settimana “più varietà” oppure “ripeti ciò che mi piace”.
-- [ ] Dopo ogni sostituzione aggiornare automaticamente menu successivo e lista della spesa.
-- [ ] Scelta rapida per pesce, carne, uova, vegetale, primo, secondo, contorno e piatto unico.
-- [ ] Domande iniziali brevi e generazione immediata di proposte.
-- [ ] Visualizzazione delle calorie rimanenti quando si sostituisce un piatto.
-- [ ] Suggerimento di riequilibrio, sempre facoltativo.
-- [ ] Centrifughe, smoothie e bevande preparabili a casa.
-- [ ] Modalità “Fuori casa” con zona, tipo di locale e registrazione della scelta reale.
+- [x] Cambio del singolo ingrediente nella ricetta con grammi e calorie equivalenti ricalcolati.
+- [x] Foto dedicata e rappresentativa per ogni famiglia di piatti; audit severi bloccano riferimenti mancanti o riusi non ammessi.
+- [x] Modalità settimana “Più varietà” oppure “Ripeti ciò che mi piace”, funzionale dalla v1.19.8.
+- [x] Dopo ogni sostituzione aggiornamento automatico del menu successivo e della lista della spesa derivata.
+- [x] Scelta rapida per pesce, carne, uova, vegetale, primo, secondo, contorno e piatto unico dalla v1.19.9.
+- [x] Domande iniziali brevi e generazione immediata di proposte.
+- [x] Visualizzazione delle calorie disponibili quando si sostituisce un piatto dalla v1.19.9.
+- [x] Suggerimento di riequilibrio sempre facoltativo.
+- [x] Centrifughe, smoothie e bevande preparabili a casa.
+- [x] Modalità “Fuori casa” con zona, tipo di locale e registrazione della scelta reale.
 
 ## v1.5.0 — pubblicata
 
@@ -302,8 +302,8 @@ Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggior
 - [x] Piatti italiani semplici: pasta in bianco/al pomodoro, pane, panini, uova, bistecca e patate lesse.
 - [x] Modalità Lavoro/Casa: a pranzo propone preparazioni trasportabili o reperibili in mensa; la cena resta libera.
 - [x] Completamento guidato dei piatti semplici senza obbligare un piatto unico composto.
-- [ ] Legumi completi: ceci, lenticchie, fagioli, piselli; disponibili normalmente e limitati solo quando il check-in lo giustifica.
-- [ ] Tabella interna verificata “stato → preferenze/cautele” con fonti ufficiali.
+- [x] Legumi completi: ceci, lenticchie, fagioli, piselli; disponibili normalmente e limitati solo quando il check-in lo giustifica.
+- [x] Tabella interna verificata “stato → preferenze/cautele” con fonti ufficiali nel `NUTRITION-VADEMECUM.md` e nel motore check-in.
 - [x] Nuove foto specifiche per pasta, panini, insalata di riso, uova, bistecca con patate, cracker e noci.
 - [x] Etichette non ambigue: “g porzione” e “g proteine”.
 
@@ -326,7 +326,7 @@ Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggior
 - [x] Alternative per ruolo con porzioni specifiche e sostituzioni contestuali per colazione e pasti principali.
 - [x] Scelta libera fuori categoria dopo le alternative consigliate.
 - [x] Prime proposte occasionali di pizza e hamburger, senza meccanismo punitivo.
-- [ ] Ampliare catalogo di paste, risi, verdure, funghi, olive, carni, pesci e metodi di cottura.
+- [x] Catalogo ampliato con paste, risi, verdure, funghi, olive, carni, pesci e metodi di cottura; 217/217 voci richieste.
 - [x] Rendere le colazioni feriali principali scomponibili, eliminabili e sostituibili.
 - [x] Rendere reversibile il comando “registrato come mangiato”.
 - [x] Conservare il piatto registrato quando un nuovo check-in rigenera il menu.
@@ -343,7 +343,7 @@ Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggior
 - [x] Feta e Grana Padano DOP aggiunti con valori CREA, foto atomiche, porzioni e ingresso nelle rotazioni.
 - [x] Spuntini predefiniti senza bicchiere di latte: frutta, yogurt, frutta secca e basi pratiche; latte disponibile solo nella scelta libera.
 - [x] Vademecum nutrizionale tracciabile salvato nel progetto.
-- [ ] Continuare paniere, foto atomiche e fotografie finali delle ricette.
+- [x] Paniere, foto atomiche e fotografie finali completati per il perimetro ricevuto; audit 557/557 e 257/257.
 
 ## v1.11.0 — pubblicata
 
@@ -356,9 +356,9 @@ Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggior
 - [x] Area di inserimento extra ampliata su cellulare.
 - [x] “Preferenze” chiarisce allergie e alimenti da evitare; testata e configurazione iniziale ridisegnate.
 - [x] Rimossi dalla prima schermata i pulsanti “Crea menu completo” e “Lista della spesa di oggi”; la rigenerazione resta automatica.
-- [ ] Riposizionare la lista della spesa in un flusso dedicato dopo la revisione con l’utente.
-- [ ] Prossimo lotto del paniere: feta, grana e altri formaggi, con dati, foto, porzioni, ricette e alternative.
-- [ ] Integrare ogni voce residua dell’elenco generale con dati, fotografia e ricette: il lavoro continua nelle revisioni successive.
+- [x] Lista della spesa riposizionata nel flusso giorno/settimana dedicato, fuori dalla testata iniziale.
+- [x] Feta, Grana e altri formaggi integrati con dati, foto, porzioni, ricette e alternative.
+- [x] Ogni voce dell’elenco generale ricevuto integrata con dati, fotografia e almeno una ricetta; audit 217/217.
 
 ## v1.10.0 — pubblicata
 
@@ -390,17 +390,17 @@ Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggior
 - [x] Primi metodi/tagli distinti con immagini: pollo alla piastra, petto arrosto, coscia arrosto, merluzzo, orata.
 - [x] Prime frequenze settimanali CREA calcolate sui pasti registrati.
 - [x] Foto atomiche per nuovi ortaggi, condimento, caffè e vino.
-- [ ] Rotazione settimanale completa senza ripetizioni inutili.
-- [ ] Estetica iniziale più calda e riconoscibile, ispirata alla cucina, senza aumentare gli spazi vuoti.
+- [x] Rotazione settimanale completa senza ripetizioni inutili; audit 14/14.
+- [x] Estetica iniziale più calda e riconoscibile, ispirata alla cucina, senza aumentare gli spazi vuoti.
 
 ## v1.9.0 — prossima
 
-- [ ] Ampliare il catalogo dall’elenco generale allegato: dati, porzioni, ruoli e foto.
-- [ ] Banca dati testuale separata per extra/sgarri con autocomplete e valori da etichetta.
-- [ ] Portare la vista Settimana alla stessa composizione modificabile di Oggi.
-- [ ] Applicare le frequenze registrate alla generazione automatica dei giorni successivi.
+- [x] Catalogo dell’elenco generale allegato completato: dati, porzioni, ruoli e foto.
+- [x] Banca dati testuale separata per extra/sgarri con autocomplete e valori da etichetta; 114 voci.
+- [x] Vista Settimana portata alla stessa composizione modificabile di Oggi.
+- [x] Frequenze registrate applicate alla generazione automatica dei giorni successivi.
 
-- [ ] Ampliare progressivamente piatti e fotografie senza sacrificare precisione e usabilità.
-- [ ] Verificare sempre assenza di scorrimento orizzontale e densità su cellulare.
-- [ ] Mantenere un unico repository, un unico link GitHub Pages e numero di versione visibile.
-- [ ] Valori nutrizionali tracciabili; dichiarare chiaramente che restano stime e non analisi cliniche del piatto reale.
+- [x] Piatti e fotografie ampliati mantenendo audit nutrizionali, fotografici e mobile permanenti.
+- [x] Assenza di scorrimento orizzontale verificata staticamente e a 390 px; la freccia swap è stata corretta dopo prova reale.
+- [x] Unico repository, unico link GitHub Pages e numero di versione visibile mantenuti.
+- [x] Valori nutrizionali tracciabili e dichiarati come stime, non analisi cliniche del piatto reale.

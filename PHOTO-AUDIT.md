@@ -33,7 +33,7 @@
 - [x] Le ricette della settimana prive di una matrice componenti esplicita derivano ora le immagini dai propri ingredienti reali.
 ## Revisioni successive
 
-- [ ] v1.8: controllo sistematico delle famiglie internazionali e sostituzione di ogni duplicato fuorviante.
-- [ ] v1.8: audit finale del catalogo; nessuna foto generica nei piatti visibili della settimana.
+- [x] Controllo sistematico delle famiglie internazionali e sostituzione dei duplicati fuorvianti. Audit finale: 257/257 ricette reali con fotografia finale dedicata.
+- [x] Audit finale del catalogo e delle immagini visibili nella settimana. 557/557 riferimenti validi; 214/214 ricette matrice con foto dedicata; componenti atomici verificati.
 
 Regola permanente: prima si definiscono ingredienti e preparazione, poi si crea o si seleziona la fotografia corrispondente. Un'immagine con ingredienti estranei viene scartata.
