@@ -16,6 +16,7 @@ class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
   state: AppGuardState = { failed: false, recoveryKey: 0 };
   private releaseTimer?: number;
   private stableTimer?: number;
+  private inPlaceRecoveryAttempted = false;
 
   static getDerivedStateFromError(): AppGuardState {
     return { failed: true, recoveryKey: 0 };
@@ -23,6 +24,20 @@ class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
 
   componentDidCatch(error: Error, info: ErrorInfo) {
     console.error("Tavola Mia: errore di rendering recuperabile", error, info);
+    if (!this.inPlaceRecoveryAttempted) {
+      this.inPlaceRecoveryAttempted = true;
+      quarantineSavedState(localStorage);
+      removeSessionItem(sessionStorage, "vivapiatto-safe-recovery-attempted");
+      removeSessionItem(sessionStorage, "vivapiatto-release-target");
+      removeSessionItem(sessionStorage, "vivapiatto-release-scroll-y");
+      window.setTimeout(() => {
+        this.setState((state) => ({
+          failed: false,
+          recoveryKey: state.recoveryKey + 1,
+        }));
+      }, 0);
+      return;
+    }
     const alreadyAttempted =
       readSessionItem(sessionStorage, "vivapiatto-safe-recovery-attempted") === packageFile.version;
     if (!alreadyAttempted) {
@@ -72,8 +87,13 @@ class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
   }
 
   private restoreApp = () => {
+    quarantineSavedState(localStorage);
+    removeSessionItem(sessionStorage, "vivapiatto-safe-recovery-attempted");
+    removeSessionItem(sessionStorage, "vivapiatto-release-target");
+    removeSessionItem(sessionStorage, "vivapiatto-release-scroll-y");
     const url = new URL(window.location.href);
-    url.searchParams.set("_reload", `${packageFile.version}-${Date.now()}`);
+    url.searchParams.set("_safe_start", "1");
+    url.searchParams.set("_safe_recovery", `${packageFile.version}-${Date.now()}`);
     window.location.replace(url.toString());
   };
 

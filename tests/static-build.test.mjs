@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]18[.]93"/);
+  assert.match(app, /VERSION = "1[.]18[.]95"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -861,7 +861,7 @@ test("v1.16.85 completes faithful photos for the main-meal matrix", async () => 
 test("v1.16.86 preserves the exact scroll position across automatic releases", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /writeStorageItem\(sessionStorage, "vivapiatto-release-scroll-y", String\(window\.scrollY\)\)/);
-  assert.match(app, /sessionStorage\.getItem\("vivapiatto-release-scroll-y"\)/);
+  assert.match(app, /readSessionItem\(sessionStorage, "vivapiatto-release-scroll-y"\)/);
   assert.match(app, /window\.scrollTo\(\{ top: savedScrollY, left: 0, behavior: "auto" \}\)/);
   assert.match(app, /writeStorageItem\(localStorage, "vivapiatto-v1", refreshSnapshotRef\.current\)/);
 });
@@ -1910,6 +1910,31 @@ test("v1.18.93 composes a dish through explicit food roles", async () => {
   assert.match(source, /mealPartOptions\[builderCategory\]/);
   assert.match(source, /Aggiungi alimento della categoria/);
   assert.match(css, /\.builder-category-add\s*\{/);
+});
+
+test("v1.18.94 uses practical cooked weights and common package sizes", async () => {
+  const source = await readFile("app/FoodPlanner.tsx", "utf8");
+  assert.match(source, /nearestPack\(\[125, 150, 170, 200, 250\]\)/);
+  assert.match(source, /nearestPack\(\[150, 200, 250, 300\]\)/);
+  assert.match(source, /\/cott\|bollit\/i\.test\(option\.food\)/);
+  assert.match(source, /return \{ min: 120, max: 250, step: 10 \}/);
+  assert.match(source, /g proteine/);
+  assert.match(source, /> carboidrati/);
+  assert.doesNotMatch(source, /g prot\./);
+  assert.doesNotMatch(source, /> carbo\s*</);
+});
+
+test("v1.18.95 recovers in place and never depends on direct session storage access", async () => {
+  const [main, planner] = await Promise.all([
+    readFile("main.tsx", "utf8"),
+    readFile("app/FoodPlanner.tsx", "utf8"),
+  ]);
+  assert.match(main, /inPlaceRecoveryAttempted/);
+  assert.match(main, /this\.setState\(\(state\) => \(\{/);
+  assert.match(main, /private restoreApp[\s\S]*?_safe_start/);
+  assert.match(planner, /readSessionItem\(sessionStorage, "vivapiatto-release-target"\)/);
+  assert.doesNotMatch(planner, /sessionStorage\.getItem/);
+  assert.doesNotMatch(planner, /sessionStorage\.removeItem/);
 });
 
 test("v1.18.71 discards obsolete saved food parts before nutrition rendering", async () => {

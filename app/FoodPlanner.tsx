@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { portionOptions, STANDARD_SOURCES } from "./nutritionEngine";
-import { writeStorageItem } from "./storageRecovery";
+import { readSessionItem, removeSessionItem, writeStorageItem } from "./storageRecovery";
 
 type Macro = { kcal: number; protein: number; carbs: number; fat: number };
 type Food = Macro & {
@@ -95,7 +95,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.93";
+const VERSION = "1.18.95";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -7089,12 +7089,28 @@ const equivalentPart = (option: MealPart, current: MealPart, role: MealPart["cat
   const targetKcal = calc([current]).kcal;
   const kcalPerGram = foods[option.food]?.kcal / 100;
   if (!kcalPerGram || targetKcal <= 0) return option;
+  const rawEquivalentGrams = targetKcal / kcalPerGram;
+  const nearestPack = (packs: number[]) =>
+    packs.reduce((nearest, pack) =>
+      Math.abs(pack - rawEquivalentGrams) < Math.abs(nearest - rawEquivalentGrams)
+        ? pack
+        : nearest,
+    );
+  if (/yogurt|skyr|kefir|budino proteico/i.test(option.food))
+    return { ...option, grams: nearestPack([125, 150, 170, 200, 250]) };
+  if (/latte|bevanda di soia|bevanda d.avena|bevanda di mandorla/i.test(option.food))
+    return { ...option, grams: nearestPack([150, 200, 250, 300]) };
   const practicalRange = (() => {
-    if (option.food.includes("Pasta") || option.food.includes("Riso"))
+    if (
+      /pasta|riso|farro|quinoa|orzo|bulgur|cous cous|miglio/i.test(option.food) &&
+      /cott|bollit/i.test(option.food)
+    )
+      return { min: 120, max: 250, step: 10 };
+    if (/pasta|riso|farro|quinoa|orzo|bulgur|cous cous|miglio/i.test(option.food))
       return { min: 60, max: 100, step: 10 };
     if (option.food === "Gnocchi di patate")
       return { min: 120, max: 200, step: 10 };
-    if (option.food === "Patate lesse")
+    if (/patat/i.test(option.food))
       return { min: 150, max: 300, step: 25 };
     if (option.food.startsWith("Pane"))
       return { min: 50, max: 120, step: 10 };
@@ -7110,14 +7126,14 @@ const equivalentPart = (option: MealPart, current: MealPart, role: MealPart["cat
     if (role === "Proteina") return { min: 80, max: 200, step: 10 };
     if (role === "Contorno") return { min: 100, max: 400, step: 25 };
     if (role === "Frutta") return { min: 100, max: 300, step: 25 };
-    if (role === "Latticino") return { min: 50, max: 250, step: 10 };
+    if (role === "Latticino") return { min: 50, max: 150, step: 25 };
     return { min: 5, max: 30, step: 5 };
   })();
   const grams = Math.max(
     practicalRange.min,
     Math.min(
       practicalRange.max,
-      Math.round(targetKcal / kcalPerGram / practicalRange.step) * practicalRange.step,
+      Math.round(rawEquivalentGrams / practicalRange.step) * practicalRange.step,
     ),
   );
   return { ...option, grams };
@@ -10062,12 +10078,12 @@ export function FoodPlanner() {
       const cleanUrl = `${currentUrl.pathname}${currentUrl.search}${currentUrl.hash}`;
       window.history.replaceState(window.history.state, "", cleanUrl);
     }
-    if (sessionStorage.getItem("vivapiatto-release-target") === VERSION) {
+    if (readSessionItem(sessionStorage, "vivapiatto-release-target") === VERSION) {
       const savedScrollY = Number(
-        sessionStorage.getItem("vivapiatto-release-scroll-y") || 0,
+        readSessionItem(sessionStorage, "vivapiatto-release-scroll-y") || 0,
       );
-      sessionStorage.removeItem("vivapiatto-release-target");
-      sessionStorage.removeItem("vivapiatto-release-scroll-y");
+      removeSessionItem(sessionStorage, "vivapiatto-release-target");
+      removeSessionItem(sessionStorage, "vivapiatto-release-scroll-y");
       window.requestAnimationFrame(() => {
         window.requestAnimationFrame(() => {
           window.scrollTo({ top: savedScrollY, left: 0, behavior: "auto" });
@@ -13403,7 +13419,7 @@ export function FoodPlanner() {
                                   </label>
                                   <small className="part-nutrients">
                                     {round(calc([part]).kcal)} kcal ·{" "}
-                                    {round(calc([part]).protein)} g prot.
+                                    {round(calc([part]).protein)} g proteine
                                   </small>
                                 </div>
                               ))}
@@ -14834,7 +14850,7 @@ export function FoodPlanner() {
                   <b>{round(selectedMacros.protein)}g</b> proteine
                 </span>
                 <span>
-                  <b>{round(selectedMacros.carbs)}g</b> carbo
+                  <b>{round(selectedMacros.carbs)}g</b> carboidrati
                 </span>
                 <span>
                   <b>{round(selectedMacros.fat)}g</b> grassi
