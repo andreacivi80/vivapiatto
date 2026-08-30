@@ -95,7 +95,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.98";
+const VERSION = "1.18.99";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -9609,7 +9609,7 @@ const pantryIntegrationRecipes: Recipe[] = [
     kicker: "Colazione preparata la sera",
     course: "Colazione",
     cuisine: "Italiano",
-    image: pantryPreviewImage("Nettarina fresca"),
+    image: photo("recipe-pantry-overnight-oats-v11899"),
     time: 8,
     ingredients: [{ food: "Bevanda d'avena senza zucchero", grams: 200 }, { food: "Fiocchi d'avena", grams: 40 }, { food: "Nettarina fresca", grams: 150 }, { food: "Mandorle", grams: 15 }],
     steps: ["La sera mescola avena e bevanda d’avena in un vasetto.", "Copri e conserva in frigorifero.", "Al mattino aggiungi nettarina a pezzi e mandorle."],
@@ -9621,7 +9621,7 @@ const pantryIntegrationRecipes: Recipe[] = [
     kicker: "Colazione feriale pronta in pochi minuti",
     course: "Colazione",
     cuisine: "Italiano",
-    image: pantryPreviewImage("Latte scremato"),
+    image: photo("recipe-pantry-milk-coffee-ricotta-v11899"),
     time: 4,
     ingredients: [{ food: "Latte scremato", grams: 200 }, { food: "Caffè senza zucchero", grams: 30 }, { food: "Pane integrale", grams: 50 }, { food: "Ricotta vaccina", grams: 60 }, { food: "Confettura di frutta", grams: 20 }],
     steps: ["Scalda il latte senza portarlo a ebollizione e aggiungi il caffè.", "Spalma ricotta e confettura sul pane pesato."],
@@ -9633,7 +9633,7 @@ const pantryIntegrationRecipes: Recipe[] = [
     kicker: "Colazione fresca o spuntino estivo",
     course: "Colazione",
     cuisine: "Italiano",
-    image: pantryPreviewImage("Anguria"),
+    image: photo("recipe-pantry-watermelon-yogurt-v11899"),
     time: 5,
     ingredients: [{ food: "Yogurt greco 0%", grams: 170 }, { food: "Anguria", grams: 250 }, { food: "Pistacchi", grams: 15 }, { food: "Fiocchi d'avena", grams: 25 }],
     steps: ["Taglia l’anguria, elimina i semi e pesane la parte edibile.", "Versa lo yogurt in una coppa e completa con anguria, avena e pistacchi."],
@@ -9645,7 +9645,7 @@ const pantryIntegrationRecipes: Recipe[] = [
     kicker: "Colazione salata da casa o pasto rapido",
     course: "Colazione",
     cuisine: "Italiano",
-    image: pantryPreviewImage("Uova alla coque"),
+    image: photo("recipe-pantry-soft-eggs-v11899"),
     time: 10,
     ingredients: [{ food: "Uova alla coque", grams: 100 }, { food: "Pane di segale", grams: 60 }, { food: "Pomodorini", grams: 150 }, { food: "Olio extravergine", grams: 5 }],
     steps: ["Immergi le uova in acqua bollente e cuocile 4-5 minuti.", "Raffreddale brevemente, apri la calotta e servi con pane e pomodorini conditi con l’olio misurato."],
@@ -9657,7 +9657,7 @@ const pantryIntegrationRecipes: Recipe[] = [
     kicker: "Colazione semplice senza lattosio",
     course: "Colazione",
     cuisine: "Italiano",
-    image: pantryPreviewImage("Pompelmo rosa fresco"),
+    image: photo("recipe-pantry-lactose-free-breakfast-v11899"),
     time: 4,
     ingredients: [{ food: "Latte senza lattosio parzialmente scremato", grams: 200 }, { food: "Fette biscottate integrali", grams: 30 }, { food: "Crema 100% mandorle", grams: 15 }, { food: "Pompelmo rosa fresco", grams: 180 }],
     steps: ["Versa il latte e pesa le fette biscottate.", "Spalma la crema di mandorle e servi il pompelmo pulito a parte."],

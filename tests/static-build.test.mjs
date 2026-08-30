@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]18[.]98"/);
+  assert.match(app, /VERSION = "1[.]18[.]99"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1970,6 +1970,21 @@ test("v1.18.98 proposes breakfasts and snacks from the complete recipe catalog",
     2,
   );
   assert.match(source, /let snacks = availableSnacks\(\)/);
+});
+
+test("v1.18.99 gives the first pantry-integration recipes faithful final photos", async () => {
+  const source = await readFile("app/FoodPlanner.tsx", "utf8");
+  const assets = [
+    "recipe-pantry-overnight-oats-v11899",
+    "recipe-pantry-milk-coffee-ricotta-v11899",
+    "recipe-pantry-watermelon-yogurt-v11899",
+    "recipe-pantry-soft-eggs-v11899",
+    "recipe-pantry-lactose-free-breakfast-v11899",
+  ];
+  for (const asset of assets) {
+    assert.match(source, new RegExp(`image: photo\\("${asset}"\\)`));
+    await access(new URL(`../public/food/${asset}.png`, import.meta.url));
+  }
 });
 
 test("v1.18.71 discards obsolete saved food parts before nutrition rendering", async () => {
