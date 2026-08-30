@@ -95,7 +95,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.97";
+const VERSION = "1.18.98";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -10783,11 +10783,18 @@ export function FoodPlanner() {
     return Number(breakfastStyle === "Salata" ? !savoury : savoury);
   };
   const availableBreakfasts = (selectedContext = dayContext) =>
-    [
-      ...matrixBreakfasts.filter((recipe) => selectedContext === "Casa" || recipe.time <= 7),
-      ...simpleBreakfasts,
-      ...catalogBreakfasts,
-    ].filter(isProfileEligible).sort((a, b) => breakfastStyleScore(a) - breakfastStyleScore(b));
+    allRecipes
+      .filter(
+        (recipe) =>
+          recipe.course === "Colazione" &&
+          (selectedContext === "Casa" || recipe.time <= 7),
+      )
+      .filter(isProfileEligible)
+      .sort((a, b) => breakfastStyleScore(a) - breakfastStyleScore(b));
+  const availableSnacks = () =>
+    allRecipes
+      .filter((recipe) => recipe.course === "Spuntino")
+      .filter(isProfileEligible);
   const recipeCuisine = (r: Recipe) =>
     r.cuisine ||
     (r.id.includes("toast") || r.id.includes("sweet")
@@ -11147,7 +11154,7 @@ export function FoodPlanner() {
     }
     if (weekLocked && !forceConfirmedWeek) return;
     const breakfasts = availableBreakfasts();
-    const snacks = [...quickSnacks, ...matrixSnacks, ...attachmentMissingSnacks, ...catalogSnacks].filter(isAllowed);
+    const snacks = availableSnacks();
     const mains = allRecipes.filter(
       (r) =>
         isAllowed(r) &&
@@ -11930,7 +11937,7 @@ export function FoodPlanner() {
       (r) => isProfileEligible(r) && recipeCuisine(r) === cuisineChoice,
     );
     const breakfasts = availableBreakfasts();
-    const snacks = [...quickSnacks, ...matrixSnacks, ...attachmentMissingSnacks, ...catalogSnacks].filter(isProfileEligible);
+    const snacks = availableSnacks();
     const mains = styled.filter((r) =>
       ["Piatto unico", "Piatto completo", "Primo", "Secondo"].includes(recipeCourse(r)),
     );
@@ -12089,7 +12096,7 @@ export function FoodPlanner() {
           ? 3
           : 2);
     const breakfasts = availableBreakfasts(selectedContext);
-    let snacks = [...quickSnacks, ...matrixSnacks, ...attachmentMissingSnacks, ...catalogSnacks].filter(isProfileEligible);
+    let snacks = availableSnacks();
     let mains = allRecipes.filter(
       (r) =>
         isProfileEligible(r) &&

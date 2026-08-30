@@ -5,7 +5,7 @@ Questa checklist resta nel repository e viene aggiornata a ogni revisione. Una v
 ## Fondamenta alimentari
 
 - [ ] Completare tutti gli alimenti degli allegati con kcal, proteine, carboidrati, grassi, fibra, fonte e stato crudo/cotto.
-- [x] Collegare ogni alimento ordinario alle ricette selezionabili; separare chiaramente gli sgarri e gli extra. Verifica automatica: 217/217 alimenti richiesti usati da ricette reali (`audit-pantry-recipe-usage.mjs`).
+- [x] Collegare ogni alimento ordinario alle ricette e ai bacini di proposta quotidiani; separare chiaramente gli sgarri e gli extra. Verifica automatica: 217/217 alimenti richiesti usati da ricette reali (`audit-pantry-recipe-usage.mjs`); colazioni, spuntini e pasti principali derivano tutti da `allRecipes`.
 - [ ] Completare equivalenze per categoria con grammi realmente proporzionati, mai quantità identiche arbitrarie.
 - [ ] Verificare porzioni pratiche e pesabili e distinguere peso a crudo, cotto e sgocciolato.
 - [ ] Completare rotazioni settimanali secondo riferimenti istituzionali senza trasformarle in prescrizioni cliniche.
