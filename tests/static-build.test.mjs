@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]18[.]83"/);
+  assert.match(app, /VERSION = "1[.]18[.]84"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1957,4 +1957,11 @@ test("v1.18.83 defers every heavy food photograph on mobile", async () => {
     assert.match(tag, /loading="lazy"/);
     assert.match(tag, /decoding="async"/);
   });
+});
+
+test("v1.18.84 keeps portions and jars out of compact meal summaries", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(source, /\(\?:porzione\|vasetto\)/);
+  assert.match(source, /partDisplayName\(part\)/);
+  assert.match(source, /<b>\{part[.]grams\} g<\/b>/);
 });

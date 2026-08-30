@@ -20,7 +20,10 @@ const partDisplayName = (part: Pick<RecipeIngredient, "food" | "label">) => {
   // The editable grams field below the card is the single source of truth.
   // Older recipe labels sometimes embedded their original grams, which became
   // contradictory as soon as the user changed or rebalanced the portion.
-  return label.replace(/\s*·\s*(?:da circa\s+)?\d+(?:[.,]\d+)?\s*g\b.*$/i, "").trim();
+  return label
+    .replace(/\s*·\s*(?:da circa\s+)?\d+(?:[.,]\d+)?\s*g\b.*$/i, "")
+    .replace(/\s*·\s*(?:1\s+)?(?:porzione|vasetto)\b.*$/i, "")
+    .trim();
 };
 type Recipe = {
   id: string;
@@ -92,7 +95,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.83";
+const VERSION = "1.18.84";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
