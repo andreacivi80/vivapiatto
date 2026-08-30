@@ -95,7 +95,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.19.6";
+const VERSION = "1.19.7";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -10267,6 +10267,7 @@ export function FoodPlanner() {
   const [printPreviewOpen, setPrintPreviewOpen] = useState(false);
   const [shoppingScope, setShoppingScope] = useState<"day" | "week">("day");
   const [weekLocked, setWeekLocked] = useState(false);
+  const [weekPreference, setWeekPreference] = useState<"variety" | "repeat">("variety");
   const [weekEditingDay, setWeekEditingDay] = useState<number | null>(null);
   const [profileHydrated, setProfileHydrated] = useState(false);
   const skipFirstProfileApplyRef = useRef(true);
@@ -10338,6 +10339,7 @@ export function FoodPlanner() {
     dayContext,
     restaurantArea,
     weekLocked,
+    weekPreference,
     cuisineChoice,
     healthyFilters,
     peopleCount,
@@ -10623,9 +10625,10 @@ export function FoodPlanner() {
         setGroceryAmounts(safeFiniteNumberRecord(s.groceryAmounts) as Record<string, number>);
         setShoppingAdditions(safeFiniteNumberRecord(s.shoppingAdditions) as Record<string, number>);
         setPlannedDrink(safeText(s.plannedDrink, "Acqua"));
-        setDayContext(safeChoice(s.dayContext, ["Lavoro", "Casa"] as const, "Lavoro"));
+        setDayContext(safeChoice(s.dayContext, ["Lavoro", "Casa", "Mensa", "Ristorante"] as const, "Lavoro"));
         setRestaurantArea(safeText(s.restaurantArea, ""));
         setWeekLocked(Boolean(s.weekLocked));
+        setWeekPreference(safeChoice(s.weekPreference, ["variety", "repeat"] as const, "variety"));
         setCuisineChoice(safeText(s.cuisineChoice, "Italiano"));
         setHealthyFilters(safeStringArray(s.healthyFilters));
         setPeopleCount(Math.max(1, Math.min(12, Number(s.peopleCount) || 1)));
@@ -10692,6 +10695,7 @@ export function FoodPlanner() {
         dayContext,
         restaurantArea,
         weekLocked,
+        weekPreference,
         cuisineChoice,
         healthyFilters,
         peopleCount,
@@ -10736,6 +10740,7 @@ export function FoodPlanner() {
     dayContext,
     restaurantArea,
     weekLocked,
+    weekPreference,
     cuisineChoice,
     healthyFilters,
     peopleCount,

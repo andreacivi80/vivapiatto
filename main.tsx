@@ -14,6 +14,9 @@ import {
 
 type AppGuardState = { failed: boolean; recoveryKey: number };
 
+const recoveryHref = () =>
+  `${import.meta.env.BASE_URL}recover.html?from=${encodeURIComponent(packageFile.version)}&time=${Date.now()}`;
+
 const startUrl = new URL(window.location.href);
 if (startUrl.searchParams.get("_safe_start") === "1") {
   // Recovery must happen before React mounts. Waiting for a component effect
@@ -92,31 +95,10 @@ class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
     if (this.stableTimer) window.clearTimeout(this.stableTimer);
   }
 
-  private restoreApp = () => {
-    quarantineSavedState(browserLocalStorage());
-    const session = browserSessionStorage();
-    removeSessionItem(session, "vivapiatto-safe-recovery-attempted");
-    removeSessionItem(session, "vivapiatto-release-target");
-    removeSessionItem(session, "vivapiatto-release-scroll-y");
-    this.openCleanCopy();
-  };
-
-  private resetSavedState = () => {
-    quarantineSavedState(browserLocalStorage());
-    const session = browserSessionStorage();
-    removeSessionItem(session, "vivapiatto-safe-recovery-attempted");
-    removeSessionItem(session, "vivapiatto-release-target");
-    removeSessionItem(session, "vivapiatto-release-scroll-y");
-    this.openCleanCopy();
-  };
-
   private openCleanCopy = () => {
-    const url = new URL(window.location.href);
-    url.searchParams.set("_safe_start", "1");
-    url.searchParams.set("_safe_recovery", `${packageFile.version}-${Date.now()}`);
-    // The unique query also bypasses a stale GitHub Pages document cache.
-    url.searchParams.set("_fresh", String(Date.now()));
-    window.location.replace(url.toString());
+    // Use a dependency-free page. It can repair storage even when the React
+    // bundle itself cannot complete a render in this browser.
+    window.location.replace(recoveryHref());
   };
 
   render() {
@@ -129,10 +111,10 @@ class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
           <span className="app-recovery-mark">T</span>
           <h1>Riapriamo Tavola Mia</h1>
           <p>Un vecchio salvataggio non è compatibile. Ne conserviamo una copia e riapriamo l’app pulita.</p>
-          <button type="button" onClick={this.restoreApp}>Riparti ora</button>
-          <button type="button" className="secondary" onClick={this.resetSavedState}>
+          <a className="app-recovery-action" href={recoveryHref()}>Riparti ora</a>
+          <a className="app-recovery-action secondary" href={recoveryHref()}>
             Apri con copia di sicurezza
-          </button>
+          </a>
           <small>Il piano non funzionante viene isolato e l'app riparte pulita.</small>
         </div>
       </main>

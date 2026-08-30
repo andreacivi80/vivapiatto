@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]19[.]6"/);
+  assert.match(app, /VERSION = "1[.]19[.]7"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1842,12 +1842,14 @@ test("v1.18.69 gives dinner matrix D09-D16 faithful full-dish photos", async () 
 });
 
 test("v1.18.70 recovery cannot be blocked by a full browser store", async () => {
-  const [main, recovery] = await Promise.all([
+  const [main, recovery, recoveryPage] = await Promise.all([
     readFile("main.tsx", "utf8"),
     readFile("app/storageRecovery.ts", "utf8"),
+    readFile("public/recover.html", "utf8"),
   ]);
-  assert.match(main, /url\.searchParams\.set\("_safe_start", "1"\)/);
-  assert.match(main, /window\.location\.replace\(url\.toString\(\)\)/);
+  assert.match(main, /window\.location\.replace\(recoveryHref\(\)\)/);
+  assert.match(recoveryPage, /root\.searchParams\.set\("_safe_start", "1"\)/);
+  assert.match(recoveryPage, /window\.location\.replace\(root\.toString\(\)\)/);
   assert.match(recovery, /finally\s*\{/);
   assert.match(recovery, /storage\.removeItem\(SAVED_STATE_KEY\)/);
   assert.doesNotMatch(recovery, /recovery-backup-\$\{timestamp\}/);
@@ -1932,23 +1934,37 @@ test("v1.18.95 recovers before remount and never depends on direct session stora
   assert.match(main, /inPlaceRecoveryAttempted/);
   assert.match(main, /startUrl\.searchParams\.get\("_safe_start"\) === "1"/);
   assert.match(main, /quarantineSavedState\(browserLocalStorage\(\)\)/);
-  assert.match(main, /private openCleanCopy[\s\S]*?_safe_start/);
+  assert.match(main, /private openCleanCopy[\s\S]*?recoveryHref\(\)/);
   assert.match(planner, /readSessionItem\(sessionStorage, "vivapiatto-release-target"\)/);
   assert.doesNotMatch(planner, /sessionStorage\.getItem/);
   assert.doesNotMatch(planner, /sessionStorage\.removeItem/);
 });
 
 test("v1.19.5 strictly sanitizes legacy meal parts and bypasses stale recovery documents", async () => {
-  const [main, planner, recovery] = await Promise.all([
+  const [main, planner, recovery, recoveryPage] = await Promise.all([
     readFile("main.tsx", "utf8"),
     readFile("app/FoodPlanner.tsx", "utf8"),
     readFile("app/storageRecovery.ts", "utf8"),
+    readFile("public/recover.html", "utf8"),
   ]);
-  assert.match(main, /url\.searchParams\.set\("_fresh", String\(Date\.now\(\)\)\)/);
+  assert.match(recoveryPage, /root\.searchParams\.set\("_fresh", String\(Date\.now\(\)\)\)/);
   assert.match(planner, /label: typeof entry\.label === "string" \? entry\.label : undefined/);
   assert.match(planner, /const category = catalog\?\.category \|\| optionCategory/);
   assert.match(planner, /if \(!category \|\| !image\) return \[\]/);
   assert.match(recovery, /if \(!storage\.getItem\(RECOVERY_BACKUP_KEY\)\)/);
+});
+
+test("v1.19.7 recovery uses an independent no-cache page before React starts", async () => {
+  const [main, recoveryPage] = await Promise.all([
+    readFile("main.tsx", "utf8"),
+    readFile("public/recover.html", "utf8"),
+  ]);
+  assert.match(main, /recover\.html\?from=/);
+  assert.match(main, /className="app-recovery-action"/);
+  assert.match(recoveryPage, /localStorage\.removeItem\(stateKey\)/);
+  assert.match(recoveryPage, /sessionStorage\.removeItem\("vivapiatto-safe-recovery-attempted"\)/);
+  assert.match(recoveryPage, /_safe_start/);
+  assert.match(recoveryPage, /_fresh/);
 });
 
 test("v1.18.96 connects the complete requested pantry to real recipes", async () => {

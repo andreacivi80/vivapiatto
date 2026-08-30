@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
+    <meta name="theme-color" content="#18332c" />
+    <title>Ripristino Tavola Mia</title>
+    <style>
+      * { box-sizing: border-box; }
+      body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px; background: #f4efe4; color: #18332c; font-family: Arial, sans-serif; }
+      main { width: min(100%, 390px); padding: 28px 22px; border-radius: 22px; background: #fff; box-shadow: 0 18px 50px rgba(24, 51, 44, .16); text-align: center; }
+      b { display: block; margin-bottom: 8px; font-size: 22px; }
+      p { margin: 0; color: #567067; line-height: 1.45; }
+    </style>
+  </head>
+  <body>
+    <main role="status" aria-live="polite">
+      <b>Riapertura in corso…</b>
+      <p>Conservo una copia del piano e avvio Tavola Mia pulita.</p>
+    </main>
+    <script>
+      (function () {
+        var stateKey = "vivapiatto-v1";
+        var backupKey = "vivapiatto-recovery-backup";
+        try {
+          var saved = localStorage.getItem(stateKey);
+          if (saved && !localStorage.getItem(backupKey)) localStorage.setItem(backupKey, saved);
+          localStorage.removeItem(stateKey);
+        } catch (_) {}
+        try {
+          sessionStorage.removeItem("vivapiatto-safe-recovery-attempted");
+          sessionStorage.removeItem("vivapiatto-release-target");
+          sessionStorage.removeItem("vivapiatto-release-scroll-y");
+        } catch (_) {}
+        var root = new URL("./", window.location.href);
+        root.searchParams.set("_safe_start", "1");
+        root.searchParams.set("_fresh", String(Date.now()));
+        window.location.replace(root.toString());
+      }());
+    </script>
+  </body>
+</html>
