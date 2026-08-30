@@ -3800,7 +3800,7 @@ button {
 .print-food-head,
 .print-food-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 30px 36px 27px 27px 27px;
+  grid-template-columns: minmax(95px, 1fr) 30px 36px 44px 52px 36px;
   gap: 3px;
   align-items: center;
 }
@@ -3880,6 +3880,6 @@ button {
   }
   .print-food-head,
   .print-food-row {
-    grid-template-columns: minmax(0, 1fr) 27px 33px 24px 24px 24px;
+    grid-template-columns: minmax(82px, 1fr) 27px 33px 39px 47px 34px;
   }
 }

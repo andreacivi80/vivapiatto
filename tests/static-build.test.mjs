@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]18[.]86"/);
+  assert.match(app, /VERSION = "1[.]18[.]87"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1978,4 +1978,14 @@ test("v1.18.86 separates weekly calorie deviation from fibre on mobile", async (
   const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(source, /\{kcal - targetForDay\(index\)\} kcal<\/i>\s*<i>\{weeklyPlannedFiber\[index\]\} g fibre<\/i>/);
   assert.doesNotMatch(source, /targetForDay\(index\)\} · \{weeklyPlannedFiber/);
+});
+
+test("v1.18.87 keeps one clean food name and full macro labels in print and alternatives", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  assert.match(source, /food: partDisplayName\(ingredient\)/);
+  assert.match(source, /alt=\{partDisplayName\(option\)\}/);
+  assert.match(source, /\{partDisplayName\(ingredient\)\}/);
+  assert.match(source, /<span>Proteine<\/span>\s*<span>Carboidrati<\/span>\s*<span>Grassi<\/span>/);
+  assert.match(css, /44px 52px 36px/);
 });

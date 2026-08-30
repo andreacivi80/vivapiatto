@@ -95,7 +95,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.86";
+const VERSION = "1.18.87";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -12484,7 +12484,7 @@ export function FoodPlanner() {
             meal: SLOT_LABELS[slot],
             status: snapshot.isRecorded ? "registrato" : "pianificato",
             recipe: snapshot.recipe.name,
-            food: ingredient.label || ingredient.food,
+            food: partDisplayName(ingredient),
             weightState: ingredientWeightState(ingredient.food),
             grams: ingredient.grams,
             kcal: round(nutrients.kcal),
@@ -14472,8 +14472,8 @@ export function FoodPlanner() {
                         key={option.food}
                         onClick={() => chooseMealPart(adjusted, true)}
                       >
-                        <img src={option.image} alt={option.label || option.food} loading="lazy" decoding="async" />
-                        <span>{option.label || option.food}</span>
+                        <img src={option.image} alt={partDisplayName(option)} loading="lazy" decoding="async" />
+                        <span>{partDisplayName(option)}</span>
                         <b>
                           {adjusted.grams} g · {round(calc([adjusted]).kcal)} kcal
                         </b>
@@ -14590,11 +14590,11 @@ export function FoodPlanner() {
                         >
                           <img
                             src={option.image}
-                            alt={option.label || option.food}
+                            alt={partDisplayName(option)}
                             loading="lazy"
                             decoding="async"
                           />
-                          <span>{option.label || option.food}</span>
+                          <span>{partDisplayName(option)}</span>
                           <b>
                             {adjusted.grams} g · {round(calc([adjusted]).kcal)} kcal
                           </b>
@@ -14865,9 +14865,9 @@ export function FoodPlanner() {
                             <span>Alimento</span>
                             <span>g</span>
                             <span>kcal</span>
-                            <span>P</span>
-                            <span>C</span>
-                            <span>G</span>
+                            <span>Proteine</span>
+                            <span>Carboidrati</span>
+                            <span>Grassi</span>
                           </div>
                           {ingredients.map((ingredient, ingredientIndex) => {
                             const nutrient = calc([ingredient]);
@@ -14877,7 +14877,7 @@ export function FoodPlanner() {
                                 key={`${ingredient.food}-${ingredientIndex}`}
                               >
                                 <span>
-                                  {ingredient.label || ingredient.food}
+                                  {partDisplayName(ingredient)}
                                   <small>peso {ingredientWeightState(ingredient.food)}</small>
                                 </span>
                                 <b>{ingredient.grams}</b>
