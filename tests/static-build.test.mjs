@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]18[.]92"/);
+  assert.match(app, /VERSION = "1[.]18[.]93"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1897,6 +1897,19 @@ test("v1.18.92 scales preparation copy and shopping quantities by people", async
   assert.match(source, /item\.grams \* peopleCount/);
   assert.match(source, /Quantità di preparazione · \$\{peopleCount\}/);
   assert.match(source, /shoppingAdditions,\s+peopleCount,/);
+});
+
+test("v1.18.93 composes a dish through explicit food roles", async () => {
+  const [source, css] = await Promise.all([
+    readFile("app/FoodPlanner.tsx", "utf8"),
+    readFile("app/globals.css", "utf8"),
+  ]);
+  for (const label of ["Base / carboidrato", "Proteina", "Verdura / contorno", "Condimento / extra"]) {
+    assert.match(source, new RegExp(label.replace("/", "\\/")));
+  }
+  assert.match(source, /mealPartOptions\[builderCategory\]/);
+  assert.match(source, /Aggiungi alimento della categoria/);
+  assert.match(css, /\.builder-category-add\s*\{/);
 });
 
 test("v1.18.71 discards obsolete saved food parts before nutrition rendering", async () => {

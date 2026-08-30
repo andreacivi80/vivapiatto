@@ -95,7 +95,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.92";
+const VERSION = "1.18.93";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -9867,6 +9867,8 @@ export function FoodPlanner() {
   const [cuisineFilter, setCuisineFilter] = useState("Tutte");
   const [healthyFilters, setHealthyFilters] = useState<HealthyFilterId[]>([]);
   const [peopleCount, setPeopleCount] = useState(1);
+  const [builderCategory, setBuilderCategory] = useState<MealPart["category"]>("Carboidrato");
+  const [builderCategoryFood, setBuilderCategoryFood] = useState("Riso parboiled cotto");
   const [ageGroup, setAgeGroup] = useState("Adulto");
   const [foodStyle, setFoodStyle] = useState("Onnivoro");
   const [dailyMeals, setDailyMeals] = useState(5);
@@ -14114,6 +14116,44 @@ export function FoodPlanner() {
                     : "Piatto energetico"}
                 </b>
               </div>
+            </div>
+            <div className="builder-category-add">
+              <label>
+                <span>Categoria</span>
+                <select
+                  value={builderCategory}
+                  onChange={(event) => {
+                    const category = event.target.value as MealPart["category"];
+                    setBuilderCategory(category);
+                    setBuilderCategoryFood(mealPartOptions[category][0]?.food || "");
+                  }}
+                >
+                  <option value="Carboidrato">Base / carboidrato</option>
+                  <option value="Proteina">Proteina</option>
+                  <option value="Contorno">Verdura / contorno</option>
+                  <option value="Latticino">Latticino</option>
+                  <option value="Frutta">Frutta</option>
+                  <option value="Extra">Condimento / extra</option>
+                </select>
+              </label>
+              <label>
+                <span>Alimento</span>
+                <select value={builderCategoryFood} onChange={(event) => setBuilderCategoryFood(event.target.value)}>
+                  {mealPartOptions[builderCategory].map((option) => (
+                    <option key={option.food} value={option.food}>{partDisplayName(option)}</option>
+                  ))}
+                </select>
+              </label>
+              <button
+                type="button"
+                aria-label="Aggiungi alimento della categoria"
+                onClick={() => {
+                  const option = mealPartOptions[builderCategory].find((item) => item.food === builderCategoryFood);
+                  if (option) setBuilder((current) => [...current, { food: option.food, grams: option.grams }]);
+                }}
+              >
+                ＋
+              </button>
             </div>
             <div className="ingredient-list">
               {builder.map((item, i) => (

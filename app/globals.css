@@ -952,6 +952,44 @@ button {
   display: block;
   margin-top: 3px;
 }
+.builder-category-add {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.35fr) 42px;
+  gap: 7px;
+  align-items: end;
+  margin: 10px 0;
+}
+.builder-category-add label {
+  min-width: 0;
+}
+.builder-category-add label span {
+  display: block;
+  margin: 0 0 4px 2px;
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.builder-category-add select,
+.builder-category-add button {
+  width: 100%;
+  height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper);
+}
+.builder-category-add select {
+  min-width: 0;
+  padding: 0 8px;
+}
+.builder-category-add button {
+  display: grid;
+  place-items: center;
+  color: white;
+  background: var(--ink);
+  font-size: 1.25rem;
+  font-weight: 900;
+}
 .ingredient-list {
   display: grid;
   gap: 7px;
