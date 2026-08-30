@@ -1967,6 +1967,17 @@ test("v1.19.7 recovery uses an independent no-cache page before React starts", a
   assert.match(recoveryPage, /_fresh/);
 });
 
+test("v1.19.11 breaks recovery redirect loops by remounting cleanly in place", async () => {
+  const [main, planner] = await Promise.all([
+    readFile("main.tsx", "utf8"),
+    readFile("app/FoodPlanner.tsx", "utf8"),
+  ]);
+  assert.match(main, /cleanUrl\.searchParams\.set\("_safe_start", "1"\)/);
+  assert.match(main, /window\.history\.replaceState\(window\.history\.state, "", cleanUrl\.toString\(\)\)/);
+  assert.match(main, /failed:\s*false,[\s\S]*?recoveryKey:\s*recoveryKey \+ 1/);
+  assert.match(planner, /if \(safeStart\)[\s\S]*?setProfileHydrated\(true\)/);
+});
+
 test("v1.19.8 makes weekly variety or repetition a persistent planning choice", async () => {
   const [source, css] = await Promise.all([
     readFile("app/FoodPlanner.tsx", "utf8"),

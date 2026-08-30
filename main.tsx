@@ -44,7 +44,19 @@ class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
       removeSessionItem(session, "vivapiatto-release-target");
       removeSessionItem(session, "vivapiatto-release-scroll-y");
       writeSessionItem(session, "vivapiatto-safe-recovery-attempted", packageFile.version);
-      window.setTimeout(() => this.openCleanCopy(), 0);
+      // Recover in this document first. This avoids a redirect loop when a
+      // browser keeps an older document or refuses the standalone redirect.
+      // FoodPlanner sees _safe_start before reading any persisted state.
+      const cleanUrl = new URL(window.location.href);
+      cleanUrl.searchParams.set("_safe_start", "1");
+      cleanUrl.searchParams.set("_safe_recovery", `${packageFile.version}-${Date.now()}`);
+      window.history.replaceState(window.history.state, "", cleanUrl.toString());
+      window.setTimeout(() => {
+        this.setState(({ recoveryKey }) => ({
+          failed: false,
+          recoveryKey: recoveryKey + 1,
+        }));
+      }, 0);
       return;
     }
     const alreadyAttempted =
