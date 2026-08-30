@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]18[.]80"/);
+  assert.match(app, /VERSION = "1[.]18[.]81"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1928,4 +1928,13 @@ test("v1.18.80 keeps automatic snacks practical and occasional wafers out of the
   assert.ok(daysBlock);
   assert.doesNotMatch(daysBlock, /quick-wafer/);
   assert.match(daysBlock, /catalog-snack-8/);
+});
+
+test("v1.18.81 requires a faithful full-dish photo for every matrix recipe", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const pkg = await readFile(new URL("../package.json", import.meta.url), "utf8");
+  assert.match(pkg, /audit-full-dish-photos[.]mjs --strict/);
+  for (let index = 49; index <= 64; index += 1) {
+    assert.match(app, new RegExp(`"matrix-d${index}[^\n]+"recipe-d${index}-`));
+  }
 });

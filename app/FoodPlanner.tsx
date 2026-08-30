@@ -90,7 +90,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.80";
+const VERSION = "1.18.81";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -5175,6 +5175,30 @@ const attachmentDinnersE: Recipe[] = [
   { id: "matrix-d63-sgombro-con-barbabietole-rucola-finocchi-e-pane", name: "Sgombro con barbabietole, rucola, finocchi e pane", kicker: "Cena completa · matrice D63", course: "Piatto unico", cuisine: "Mediterraneo", kind: "combination", image: photo("part-mackerel-baked-v11654"), time: 25, ingredients: [{ food: "Sgombro cotto", grams: 150 }, { food: "Barbabietole cotte", grams: 150 }, { food: "Rucola", grams: 40 }, { food: "Finocchi crudi", grams: 60 }, { food: "Pane integrale", grams: 50 }, { food: "Olio extravergine", grams: 5 }], parts: [{ category: "Proteina", food: "Sgombro cotto", grams: 150, label: "Sgombro al forno · 150 g", image: photo("part-mackerel-baked-v11654") }, { category: "Contorno", food: "Barbabietole cotte", grams: 150, label: "Barbabietole · 150 g", image: photo("part-beetroot-v11513") }, { category: "Contorno", food: "Rucola", grams: 40, label: "Rucola · 40 g", image: photo("part-rucola-v7") }, { category: "Contorno", food: "Finocchi crudi", grams: 60, label: "Finocchi · 60 g", image: photo("part-fennel-v113") }, { category: "Carboidrato", food: "Pane integrale", grams: 50, label: "Pane integrale · 50 g", image: photo("part-bread-v7") }, { category: "Extra", food: "Olio extravergine", grams: 5, label: "Olio EVO · 5 g", image: photo("part-olive-oil-v8") }], steps: ["Cuoci lo sgombro al forno o alla piastra fino a completa cottura.","Unisci barbabietole, rucola e finocchi affettati.","Servi con pane, limone, pepe e 5 g di olio."], alternatives: ["Ogni componente può essere sostituito separatamente", "Porzioni orientative per un adulto sano", "Pesi e stato di cottura sono indicati in ogni componente"] },
   { id: "matrix-d64-tempeh-con-melanzane-pomodori-e-miglio", name: "Tempeh con melanzane, pomodori e miglio", kicker: "Cena completa · matrice D64", course: "Piatto unico", cuisine: "Vegetale", kind: "combination", image: photo("part-tempeh-v11520"), time: 35, ingredients: [{ food: "Tempeh", grams: 100 }, { food: "Miglio cotto", grams: 170 }, { food: "Melanzane", grams: 140 }, { food: "Pomodorini", grams: 100 }, { food: "Cipolle crude", grams: 60 }, { food: "Olio extravergine", grams: 10 }], parts: [{ category: "Proteina", food: "Tempeh", grams: 100, label: "Tempeh grigliato · 100 g", image: photo("part-tempeh-v11520") }, { category: "Carboidrato", food: "Miglio cotto", grams: 170, label: "Miglio cotto · da circa 60 g secco", image: photo("part-millet-v11515") }, { category: "Contorno", food: "Melanzane", grams: 140, label: "Melanzane · 140 g", image: photo("part-eggplant-v8") }, { category: "Contorno", food: "Pomodorini", grams: 100, label: "Pomodori · 100 g", image: photo("part-tomatoes-v8") }, { category: "Contorno", food: "Cipolle crude", grams: 60, label: "Cipolla · 60 g", image: photo("part-onions-v11519") }, { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") }], steps: ["Cuoci il miglio secondo confezione.","Griglia il tempeh e cuoci melanzane, pomodori e cipolla al forno o in padella antiaderente.","Unisci con paprika, basilico, origano e 10 g di olio."], alternatives: ["Ogni componente può essere sostituito separatamente", "Porzioni orientative per un adulto sano", "Pesi e stato di cottura sono indicati in ogni componente"] }
 ];
+
+const matrixDinnerPhotoById: Record<string, string> = {
+  "matrix-d49-burger-di-fagioli-rossi-con-cavolo-e-patate": "recipe-d49-red-bean-burger-cabbage-potatoes-v11881",
+  "matrix-d50-tacchino-con-funghi-spinaci-e-polenta": "recipe-d50-turkey-mushrooms-spinach-polenta-v11881",
+  "matrix-d51-sardine-con-cavolo-rosso-finocchi-e-pane-di-sega": "recipe-d51-sardines-red-cabbage-fennel-rye-v11881",
+  "matrix-d52-tofu-con-melanzane-pomodori-e-cous-cous": "recipe-d52-tofu-eggplant-tomatoes-couscous-v11881",
+  "matrix-d53-platessa-al-forno-con-zucca-zucchine-e-riso-rosso": "recipe-d53-plaice-pumpkin-zucchini-red-rice-v11881",
+  "matrix-d54-tacchino-con-cavolo-cappuccio-e-patata-dolce": "recipe-d54-turkey-cabbage-sweet-potato-v11881",
+  "matrix-d55-zuppa-di-fagioli-neri-zucca-e-spinaci": "recipe-d55-black-bean-pumpkin-spinach-soup-v11881",
+  "matrix-d56-uova-in-camicia-con-asparagi-pomodori-e-quinoa": "recipe-d56-poached-eggs-asparagus-tomatoes-quinoa-v11881",
+  "matrix-d57-tofu-al-forno-con-broccoli-e-patate": "recipe-d57-tofu-broccoli-potatoes-v11881",
+  "matrix-d58-trota-con-finocchi-arancia-e-orzo": "recipe-d58-trout-fennel-orange-barley-v11881",
+  "matrix-d59-ricotta-con-carciofi-pomodori-e-pane-di-farro": "recipe-d59-ricotta-artichokes-tomatoes-spelt-bread-v11881",
+  "matrix-d60-polpo-con-cannellini-pomodori-sedano-e-rucola": "recipe-d60-octopus-cannellini-tomatoes-celery-arugula-v11881",
+  "matrix-d61-polpette-di-ceci-con-cavolfiore-e-riso-basmati": "recipe-d61-chickpea-patties-cauliflower-basmati-v11881",
+  "matrix-d62-coniglio-con-bietole-e-polenta": "recipe-d62-rabbit-chard-polenta-v11881",
+  "matrix-d63-sgombro-con-barbabietole-rucola-finocchi-e-pane": "recipe-d63-mackerel-beet-arugula-fennel-bread-v11881",
+  "matrix-d64-tempeh-con-melanzane-pomodori-e-miglio": "recipe-d64-tempeh-eggplant-tomatoes-millet-v11881",
+};
+
+[...attachmentDinnersD, ...attachmentDinnersE].forEach((recipe) => {
+  const dedicatedPhoto = matrixDinnerPhotoById[recipe.id];
+  if (dedicatedPhoto) recipe.image = photo(dedicatedPhoto);
+});
 
 
 const attachmentBreakfastsC37C44: Recipe[] = [
