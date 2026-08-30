@@ -95,7 +95,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.99";
+const VERSION = "1.19.0";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -9669,7 +9669,7 @@ const pantryIntegrationRecipes: Recipe[] = [
     kicker: "Colazione da casa completa in cinque minuti",
     course: "Colazione",
     cuisine: "Creativo",
-    image: pantryPreviewImage("Bevanda di mandorla senza zucchero"),
+    image: photo("recipe-pantry-almond-mango-smoothie-v1190"),
     time: 5,
     ingredients: [{ food: "Bevanda di mandorla senza zucchero", grams: 200 }, { food: "Mango", grams: 150 }, { food: "Yogurt greco 2%", grams: 125 }, { food: "Fiocchi d'avena", grams: 30 }],
     steps: ["Taglia e pesa il mango.", "Frulla tutti gli ingredienti per 30-40 secondi fino a ottenere una consistenza uniforme."],
@@ -9681,7 +9681,7 @@ const pantryIntegrationRecipes: Recipe[] = [
     kicker: "Piatto freddo trasportabile al lavoro",
     course: "Piatto unico",
     cuisine: "Mediterraneo",
-    image: pantryPreviewImage("Lupini ammollati"),
+    image: photo("recipe-pantry-lupin-salad-v1190"),
     time: 12,
     ingredients: [{ food: "Lupini ammollati", grams: 120 }, { food: "Primo sale", grams: 70 }, { food: "Lattuga fresca", grams: 100 }, { food: "Pomodorini", grams: 150 }, { food: "Olive", grams: 25 }, { food: "Cipollotti freschi", grams: 30 }, { food: "Pane integrale", grams: 60 }, { food: "Aceto di vino", grams: 10 }, { food: "Olio extravergine", grams: 5 }],
     steps: ["Risciacqua i lupini e taglia pomodorini, lattuga e cipollotto.", "Aggiungi primo sale a cubetti e olive.", "Condisci con aceto e olio misurato; conserva al fresco e aggiungi il pane al momento."],
@@ -9693,7 +9693,7 @@ const pantryIntegrationRecipes: Recipe[] = [
     kicker: "Piatto caldo italiano completo",
     course: "Piatto unico",
     cuisine: "Italiano",
-    image: pantryPreviewImage("Minestrone cotto"),
+    image: photo("recipe-pantry-minestrone-parmesan-v1190"),
     time: 20,
     ingredients: [{ food: "Minestrone cotto", grams: 350 }, { food: "Fagioli cannellini cotti", grams: 120 }, { food: "Parmigiano Reggiano DOP", grams: 20 }, { food: "Pane integrale", grams: 60 }, { food: "Olio extravergine", grams: 5 }, { food: "Sale iodato", grams: 1 }],
     steps: ["Scalda il minestrone fino al bollore leggero.", "Aggiungi i cannellini risciacquati e cuoci altri 5 minuti.", "Servi con Parmigiano, olio misurato e pane."],
@@ -9705,7 +9705,7 @@ const pantryIntegrationRecipes: Recipe[] = [
     kicker: "Piatto vegetale colorato da casa o lavoro",
     course: "Piatto unico",
     cuisine: "Mediterraneo",
-    image: pantryPreviewImage("Hummus di barbabietola"),
+    image: photo("recipe-pantry-beet-hummus-bowl-v1190"),
     time: 18,
     ingredients: [{ food: "Riso parboiled cotto", grams: 180 }, { food: "Hummus di barbabietola", grams: 90 }, { food: "Carote crude", grams: 100 }, { food: "Cetrioli", grams: 100 }, { food: "Songino fresco", grams: 60 }, { food: "Semi di sesamo", grams: 10 }],
     steps: ["Cuoci il riso secondo confezione e lascialo intiepidire.", "Taglia carote e cetrioli e disponili con il songino.", "Aggiungi hummus e sesamo senza mescolare fino al momento di mangiare."],
@@ -9717,7 +9717,7 @@ const pantryIntegrationRecipes: Recipe[] = [
     kicker: "Cena italiana completa e lineare",
     course: "Piatto unico",
     cuisine: "Italiano",
-    image: pantryPreviewImage("Petto di pollo arrosto"),
+    image: photo("recipe-pantry-roast-chicken-breast-v1190"),
     time: 35,
     ingredients: [{ food: "Petto di pollo arrosto", grams: 140 }, { food: "Patate cotte arrosto", grams: 220 }, { food: "Catalogna fresca", grams: 180 }, { food: "Rosmarino fresco", grams: 3 }, { food: "Paprika dolce", grams: 2 }, { food: "Olio extravergine", grams: 5 }],
     steps: ["Scalda il forno a 190 °C.", "Condisci pollo e patate con rosmarino, paprika e metà olio; scalda o termina la cottura per 15-20 minuti.", "Cuoci la catalogna in padella con poca acqua e completa con l’olio rimasto."],

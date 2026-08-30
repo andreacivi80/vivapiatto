@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]18[.]99"/);
+  assert.match(app, /VERSION = "1[.]19[.]0"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1980,6 +1980,21 @@ test("v1.18.99 gives the first pantry-integration recipes faithful final photos"
     "recipe-pantry-watermelon-yogurt-v11899",
     "recipe-pantry-soft-eggs-v11899",
     "recipe-pantry-lactose-free-breakfast-v11899",
+  ];
+  for (const asset of assets) {
+    assert.match(source, new RegExp(`image: photo\\("${asset}"\\)`));
+    await access(new URL(`../public/food/${asset}.png`, import.meta.url));
+  }
+});
+
+test("v1.19.0 gives the second pantry-integration block faithful final photos", async () => {
+  const source = await readFile("app/FoodPlanner.tsx", "utf8");
+  const assets = [
+    "recipe-pantry-almond-mango-smoothie-v1190",
+    "recipe-pantry-lupin-salad-v1190",
+    "recipe-pantry-minestrone-parmesan-v1190",
+    "recipe-pantry-beet-hummus-bowl-v1190",
+    "recipe-pantry-roast-chicken-breast-v1190",
   ];
   for (const asset of assets) {
     assert.match(source, new RegExp(`image: photo\\("${asset}"\\)`));
