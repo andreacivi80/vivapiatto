@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]18[.]85"/);
+  assert.match(app, /VERSION = "1[.]18[.]86"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1972,4 +1972,10 @@ test("v1.18.85 spells out macros in visible extras and weekly text export", asyn
   assert.match(source, /carboidrati \$\{row[.]carbs\} g/);
   assert.match(source, /grassi \$\{row[.]fat\} g/);
   assert.doesNotMatch(source, /P \{fmt\(x[.]protein/);
+});
+
+test("v1.18.86 separates weekly calorie deviation from fibre on mobile", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(source, /\{kcal - targetForDay\(index\)\} kcal<\/i>\s*<i>\{weeklyPlannedFiber\[index\]\} g fibre<\/i>/);
+  assert.doesNotMatch(source, /targetForDay\(index\)\} · \{weeklyPlannedFiber/);
 });

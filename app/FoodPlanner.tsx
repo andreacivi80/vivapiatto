@@ -95,7 +95,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.85";
+const VERSION = "1.18.86";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -13557,7 +13557,8 @@ export function FoodPlanner() {
                   >
                     <small>G{index + 1}</small>
                     <b>{kcal} <em>kcal</em></b>
-                    <i>{kcal - targetForDay(index) > 0 ? "+" : ""}{kcal - targetForDay(index)} · {weeklyPlannedFiber[index]} g fibre</i>
+                    <i>{kcal - targetForDay(index) > 0 ? "+" : ""}{kcal - targetForDay(index)} kcal</i>
+                    <i>{weeklyPlannedFiber[index]} g fibre</i>
                   </span>
                 ))}
               </div>
