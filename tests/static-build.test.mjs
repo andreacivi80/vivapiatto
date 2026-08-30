@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]19[.]5"/);
+  assert.match(app, /VERSION = "1[.]19[.]6"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1972,6 +1972,9 @@ test("v1.18.97 keeps simple snack combinations out of the recipe library", async
   assert.match(source, /const hasRealTechnique/);
   assert.match(source, /const isNamedPreparedDish/);
   assert.match(source, /recipe\.ingredients\.length >= 4/);
+  assert.match(source, /recipe\.id\.startsWith\("catalog-breakfast-"\)/);
+  assert.match(source, /recipe\.id\.startsWith\("catalog-main-"\)/);
+  assert.match(source, /recipe\.id\.startsWith\("dinner-three-"\)/);
   assert.match(source, /\(swapTarget \|\| isSubstantialRecipe\(r\)\)/);
 });
 
@@ -2219,4 +2222,24 @@ test("v1.19.4 completes faithful final photos for every pantry-integration recip
     source.indexOf("const rawRecipes"),
   );
   assert.doesNotMatch(pantryBlock, /image: pantryPreviewImage/);
+});
+
+test("v1.19.6 audits a faithful final photo for every real recipe", async () => {
+  const [source, packageSource] = await Promise.all([
+    readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../package.json", import.meta.url), "utf8"),
+  ]);
+  const photos = [
+    "recipe-bulgogi-rice-v1196",
+    "recipe-lentil-pumpkin-bulgur-v1196",
+    "recipe-salmon-quinoa-asparagus-v1196",
+    "recipe-quinoa-feta-beet-v1196",
+    "recipe-tofu-eggplant-bulgur-v1196",
+    "recipe-farro-lentils-feta-v1196",
+  ];
+  for (const name of photos) {
+    assert.match(source, new RegExp(`photo\\(\"${name}\"\\)`));
+    await access(new URL(`../public/food/${name}.png`, import.meta.url));
+  }
+  assert.match(packageSource, /audit-all-recipe-photos[.]mjs --strict/);
 });

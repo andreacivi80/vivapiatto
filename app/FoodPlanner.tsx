@@ -95,7 +95,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.19.5";
+const VERSION = "1.19.6";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -1987,7 +1987,7 @@ const recipes: Recipe[] = [
     id: "farro",
     name: "Farro, lenticchie e feta croccante",
     kicker: "Insalata particolare, ricca di fibre",
-    image: photo("farro"),
+    image: photo("recipe-farro-lentils-feta-v1196"),
     time: 18,
     ingredients: [
       { food: "Farro cotto", grams: 150 },
@@ -7566,7 +7566,7 @@ const verifiedWorldRecipeExpansion: Recipe[] = [
     kicker: "Ricetta coreana verificata · VisitKorea",
     course: "Piatto unico",
     cuisine: "Asiatico",
-    image: photo("part-steak-beef-v114"),
+    image: photo("recipe-bulgogi-rice-v1196"),
     time: 30,
     ingredients: [
       { food: "Riso basmati cotto", grams: 150 },
@@ -7659,7 +7659,7 @@ const verifiedWorldRecipeExpansion: Recipe[] = [
     kicker: "Composizione equilibrata · modello Harvard",
     course: "Piatto unico",
     cuisine: "Gourmet",
-    image: photo("part-bulgur-v11515"),
+    image: photo("recipe-lentil-pumpkin-bulgur-v1196"),
     time: 35,
     ingredients: [
       { food: "Bulgur cotto", grams: 160 },
@@ -7689,7 +7689,7 @@ const verifiedWorldRecipeExpansion: Recipe[] = [
     kicker: "Composizione equilibrata · modello Harvard",
     course: "Piatto unico",
     cuisine: "Gourmet",
-    image: photo("part-salmon-baked-v7"),
+    image: photo("recipe-salmon-quinoa-asparagus-v1196"),
     time: 30,
     ingredients: [
       { food: "Quinoa cotta", grams: 160 },
@@ -7718,7 +7718,7 @@ const verifiedWorldRecipeExpansion: Recipe[] = [
     kicker: "Composizione equilibrata · modello Harvard",
     course: "Piatto unico",
     cuisine: "Gourmet",
-    image: photo("part-quinoa-v7"),
+    image: photo("recipe-quinoa-feta-beet-v1196"),
     time: 15,
     ingredients: [
       { food: "Quinoa cotta", grams: 170 },
@@ -7748,7 +7748,7 @@ const verifiedWorldRecipeExpansion: Recipe[] = [
     kicker: "Composizione vegetale equilibrata · modello Harvard",
     course: "Piatto unico",
     cuisine: "Gourmet",
-    image: photo("part-tofu-v11515"),
+    image: photo("recipe-tofu-eggplant-bulgur-v1196"),
     time: 30,
     ingredients: [
       { food: "Bulgur cotto", grams: 160 },
@@ -9998,6 +9998,12 @@ const inferRecipeCourse = (recipe: Recipe) => {
   return "Piatto unico";
 };
 const isSubstantialRecipe = (recipe: Recipe) => {
+  // Editable pantry combinations are proposals, not prepared recipes.
+  if (
+    recipe.id.startsWith("catalog-breakfast-") ||
+    recipe.id.startsWith("catalog-main-") ||
+    recipe.id.startsWith("dinner-three-")
+  ) return false;
   if (recipe.steps.length < 2 || recipe.ingredients.length < 2) return false;
   const preparation = recipe.steps.join(" ").toLowerCase();
   const hasRealTechnique =
