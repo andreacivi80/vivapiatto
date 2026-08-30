@@ -95,7 +95,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.19.8";
+const VERSION = "1.19.9";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -10238,6 +10238,7 @@ export function FoodPlanner() {
   const [restaurantArea, setRestaurantArea] = useState("");
   const [plannedDrink, setPlannedDrink] = useState("Acqua");
   const [cuisineFilter, setCuisineFilter] = useState("Tutte");
+  const [quickRecipeFilter, setQuickRecipeFilter] = useState("Tutti");
   const [healthyFilters, setHealthyFilters] = useState<HealthyFilterId[]>([]);
   const [peopleCount, setPeopleCount] = useState(1);
   const [builderCategory, setBuilderCategory] = useState<MealPart["category"]>("Carboidrato");
@@ -11056,6 +11057,18 @@ export function FoodPlanner() {
     if (filter === "senza-frittura") return !/friggi|frittura|fritto/.test(methodText);
     return !/sale|dado|salamoia/.test(methodText);
   };
+  const recipeMatchesQuickFilter = (recipe: Recipe) => {
+    if (quickRecipeFilter === "Tutti") return true;
+    const foodsText = recipe.ingredients.map((item) => item.food).join(" ").toLowerCase();
+    if (quickRecipeFilter === "Pesce")
+      return /salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|gamber|polpo|cozze|calamari|rombo|seppia/.test(foodsText);
+    if (quickRecipeFilter === "Carne")
+      return /pollo|tacchino|coniglio|manzo|vitello|maiale|cavallo|bresaola|prosciutto|lonza|hamburger/.test(foodsText);
+    if (quickRecipeFilter === "Uova") return /\buov|albume/.test(foodsText);
+    if (quickRecipeFilter === "Vegetale")
+      return !/pollo|tacchino|coniglio|manzo|vitello|maiale|cavallo|bresaola|prosciutto|salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|gamber|polpo|cozze|calamari/.test(foodsText);
+    return recipeCourse(recipe) === quickRecipeFilter;
+  };
   const filteredRecipes = allRecipes
     .filter(
       (r) =>
@@ -11068,6 +11081,7 @@ export function FoodPlanner() {
         r.time <= maxPrepTime &&
         (swapTarget || compatibleWithSlot(r)) &&
         compatibleWithPlace(r) &&
+        recipeMatchesQuickFilter(r) &&
         healthyFilters.every((filter) => recipeMatchesHealthyFilter(r, filter)) &&
         (cuisineFilter === "Tutte" ||
           (cuisineFilter === "Sgarri"
@@ -11141,6 +11155,7 @@ export function FoodPlanner() {
   }, [
     libraryQuery,
     cuisineFilter,
+    quickRecipeFilter,
     healthyFilters,
     peopleCount,
     ageGroup,
@@ -12569,6 +12584,23 @@ export function FoodPlanner() {
     setExtraGrams("50");
   };
   const dayScale = (_day: number) => 1;
+  const swapCalorieSummary = () => {
+    if (!swapTarget) return null;
+    const dayIds = getDayIds(swapTarget.day);
+    const otherMealsKcal = dayIds.reduce((sum, id, slot) => {
+      if (slot === swapTarget.slot || !isActiveMealSlot(slot)) return sum;
+      const recipe = recipeMap[id];
+      return recipe
+        ? sum + calc(plannedIngredients(`${swapTarget.day}-${slot}`, recipe)).kcal
+        : sum;
+    }, 0);
+    const currentRecipe = recipeMap[dayIds[swapTarget.slot]];
+    const currentKcal = currentRecipe
+      ? calc(plannedIngredients(`${swapTarget.day}-${swapTarget.slot}`, currentRecipe)).kcal
+      : 0;
+    const availableKcal = targetForDay(swapTarget.day) - otherMealsKcal - plannedDrinkMacros.kcal;
+    return { availableKcal: round(availableKcal), currentKcal: round(currentKcal) };
+  };
   const loggedMealKcal = (day: number) =>
     getDayIds(day).reduce((sum, id, slot) => {
       if (!isActiveMealSlot(slot)) return sum;
@@ -14330,6 +14362,13 @@ export function FoodPlanner() {
             <h1 className="page-title">
               {swapTarget ? "Scegli il sostituto" : "Scegli cosa cucinare"}
             </h1>
+            {swapTarget && swapCalorieSummary() && (
+              <div className="swap-calorie-budget" role="status">
+                <span>Budget disponibile per questo pasto</span>
+                <b>{swapCalorieSummary()!.availableKcal} kcal</b>
+                <small>Piatto attuale {swapCalorieSummary()!.currentKcal} kcal · puoi scegliere liberamente e riequilibrare dopo.</small>
+              </div>
+            )}
             <div className="cuisine-tabs">
               {[
                 "Tutte",
@@ -14346,6 +14385,19 @@ export function FoodPlanner() {
                   onClick={() => setCuisineFilter(x)}
                 >
                   {x}
+                </button>
+              ))}
+            </div>
+            <div className="quick-recipe-tabs" aria-label="Scelta rapida del tipo di piatto">
+              {["Tutti", "Pesce", "Carne", "Uova", "Vegetale", "Primo", "Secondo", "Contorno", "Piatto unico"].map((filter) => (
+                <button
+                  type="button"
+                  key={filter}
+                  className={quickRecipeFilter === filter ? "active" : ""}
+                  aria-pressed={quickRecipeFilter === filter}
+                  onClick={() => setQuickRecipeFilter(filter)}
+                >
+                  {filter}
                 </button>
               ))}
             </div>

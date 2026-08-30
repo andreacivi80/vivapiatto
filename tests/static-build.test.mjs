@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]19[.]8"/);
+  assert.match(app, /VERSION = "1[.]19[.]9"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1980,6 +1980,23 @@ test("v1.19.8 makes weekly variety or repetition a persistent planning choice", 
   assert.match(source, /Ripeti ciò che mi piace/);
   assert.match(source, /\["Lavoro", "Casa", "Mensa", "Ristorante"\]/);
   assert.match(css, /\.week-preference\s*\{/);
+});
+
+test("v1.19.9 exposes quick dish families and the real remaining swap budget", async () => {
+  const [source, css] = await Promise.all([
+    readFile("app/FoodPlanner.tsx", "utf8"),
+    readFile("app/globals.css", "utf8"),
+  ]);
+  assert.match(source, /const \[quickRecipeFilter, setQuickRecipeFilter\]/);
+  for (const label of ["Pesce", "Carne", "Uova", "Vegetale", "Primo", "Secondo", "Contorno", "Piatto unico"]) {
+    assert.match(source, new RegExp(`"${label}"`));
+  }
+  assert.match(source, /const swapCalorieSummary =/);
+  assert.match(source, /targetForDay\(swapTarget\.day\) - otherMealsKcal - plannedDrinkMacros\.kcal/);
+  assert.match(source, /Budget disponibile per questo pasto/);
+  assert.match(source, /puoi scegliere liberamente e riequilibrare dopo/);
+  assert.match(css, /\.quick-recipe-tabs\s*\{/);
+  assert.match(css, /\.swap-calorie-budget\s*\{/);
 });
 
 test("v1.18.96 connects the complete requested pantry to real recipes", async () => {
