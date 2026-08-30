@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]18[.]88"/);
+  assert.match(app, /VERSION = "1[.]18[.]89"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -76,7 +76,7 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /mealCalorieShares/);
   assert.match(app, /max: 100, step: 10/);
   assert.match(app, /refreshSnapshotRef/);
-  assert.match(app, /setMealView\(safeRecord\(s\.mealView\)/);
+  assert.match(app, /setMealView\(safeMealViewRecord\(s\.mealView\)/);
   assert.match(css, /add-part-compact::before/);
   assert.match(app, /const rawRecipes: Recipe\[\]/);
   assert.match(app, /pantryPartByFood/);
@@ -1864,6 +1864,18 @@ test("v1.18.88 restarts in place and sanitizes every persisted array entry", asy
   assert.match(source, /setDrinks\(canLoadHistory \? safeLogRecord/);
   assert.match(source, /setExtras\(canLoadHistory \? safeLogRecord/);
   assert.match(source, /setRemovedIngredients\(safeNumberArrayRecord/);
+});
+
+test("v1.18.89 validates persisted flags, weights and shopping values", async () => {
+  const source = await readFile("app/FoodPlanner.tsx", "utf8");
+  assert.match(source, /const safeWeightRecord =/);
+  assert.match(source, /weights\.every\(\(entry\) => Number\.isFinite\(entry\) && entry >= 0\)/);
+  assert.match(source, /const safeBooleanRecord =/);
+  assert.match(source, /const safeFiniteNumberRecord =/);
+  assert.match(source, /const safeMealViewRecord =/);
+  assert.match(source, /setGroceryChecked\(safeBooleanRecord/);
+  assert.match(source, /setGroceryAmounts\(safeFiniteNumberRecord/);
+  assert.match(source, /setShoppingAdditions\(safeFiniteNumberRecord/);
 });
 
 test("v1.18.71 discards obsolete saved food parts before nutrition rendering", async () => {

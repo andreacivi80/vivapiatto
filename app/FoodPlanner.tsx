@@ -95,7 +95,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.88";
+const VERSION = "1.18.89";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -10094,6 +10094,32 @@ export function FoodPlanner() {
                 .filter((entry) => Number.isFinite(entry) && entry >= 0),
             ]),
           );
+        const safeWeightRecord = (value: unknown) =>
+          Object.fromEntries(
+            Object.entries(safeArrayRecord(value)).flatMap(([key, entries]) => {
+              const weights = (entries as unknown[]).map(Number);
+              return weights.every((entry) => Number.isFinite(entry) && entry >= 0)
+                ? [[key, weights]]
+                : [];
+            }),
+          );
+        const safeBooleanRecord = (value: unknown) =>
+          Object.fromEntries(
+            Object.entries(safeRecord(value)).filter(([, entry]) => typeof entry === "boolean"),
+          );
+        const safeFiniteNumberRecord = (value: unknown) =>
+          Object.fromEntries(
+            Object.entries(safeRecord(value)).flatMap(([key, entry]) => {
+              const numeric = Number(entry);
+              return Number.isFinite(numeric) && numeric >= 0 ? [[key, numeric]] : [];
+            }),
+          );
+        const safeMealViewRecord = (value: unknown) =>
+          Object.fromEntries(
+            Object.entries(safeRecord(value)).filter(
+              ([, entry]) => entry === "parts" || entry === "dish",
+            ),
+          );
         const safeLogRecord = (value: unknown) =>
           Object.fromEntries(
             Object.entries(safeArrayRecord(value)).map(([key, entries]) => [
@@ -10150,12 +10176,12 @@ export function FoodPlanner() {
         setGoal(s.goal || "Equilibrio");
         const canLoadHistory = s.historyConsent === true;
         setHistoryConsent(canLoadHistory);
-        setCompleted(canLoadHistory ? safeRecord(s.completed) as Record<string, boolean> : {});
+        setCompleted(canLoadHistory ? safeBooleanRecord(s.completed) as Record<string, boolean> : {});
         setCompletedRecipes(canLoadHistory ? safeRecipeIds(s.completedRecipes) : {});
-        setActualWeights(canLoadHistory ? safeNumberArrayRecord(s.actualWeights) as Record<string, number[]> : {});
+        setActualWeights(canLoadHistory ? safeWeightRecord(s.actualWeights) as Record<string, number[]> : {});
         setRemovedIngredients(safeNumberArrayRecord(s.removedIngredients) as Record<string, number[]>);
         setPartSelections(safePartRecord(s.partSelections) as Record<string, MealPart[]>);
-        setMealView(safeRecord(s.mealView) as Record<string, "parts" | "recipe">);
+        setMealView(safeMealViewRecord(s.mealView) as Record<string, "parts" | "dish">);
         setCheck({ ...check, ...safeRecord(s.check) });
         setExcludedGroups([]);
         setAllergyGroups(safeStringArray(Array.isArray(s.allergyGroups) ? s.allergyGroups : s.excludedGroups));
@@ -10165,9 +10191,9 @@ export function FoodPlanner() {
         setChoices(safeRecipeIds(s.choices));
         setDrinks(canLoadHistory ? safeLogRecord(s.drinks) as Record<number, LogItem[]> : {});
         setExtras(canLoadHistory ? safeLogRecord(s.extras) as Record<number, LogItem[]> : {});
-        setGroceryChecked(safeRecord(s.groceryChecked) as Record<string, boolean>);
-        setGroceryAmounts(safeRecord(s.groceryAmounts) as Record<string, number>);
-        setShoppingAdditions(safeRecord(s.shoppingAdditions) as Record<string, number>);
+        setGroceryChecked(safeBooleanRecord(s.groceryChecked) as Record<string, boolean>);
+        setGroceryAmounts(safeFiniteNumberRecord(s.groceryAmounts) as Record<string, number>);
+        setShoppingAdditions(safeFiniteNumberRecord(s.shoppingAdditions) as Record<string, number>);
         setPlannedDrink(s.plannedDrink || "Acqua");
         setDayContext(s.dayContext || "Lavoro");
         setRestaurantArea(s.restaurantArea || "");
