@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { portionOptions, STANDARD_SOURCES } from "./nutritionEngine";
+import { writeStorageItem } from "./storageRecovery";
 
 type Macro = { kcal: number; protein: number; carbs: number; fat: number };
 type Food = Macro & {
@@ -81,7 +82,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.76";
+const VERSION = "1.18.77";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -9954,9 +9955,9 @@ export function FoodPlanner() {
         !updateBlockedRef.current &&
         Date.now() >= userInteractionUntilRef.current
       ) {
-        localStorage.setItem("vivapiatto-v1", refreshSnapshotRef.current);
-        sessionStorage.setItem("vivapiatto-release-target", pendingVersion);
-        sessionStorage.setItem("vivapiatto-release-scroll-y", String(window.scrollY));
+        writeStorageItem(localStorage, "vivapiatto-v1", refreshSnapshotRef.current);
+        writeStorageItem(sessionStorage, "vivapiatto-release-target", pendingVersion);
+        writeStorageItem(sessionStorage, "vivapiatto-release-scroll-y", String(window.scrollY));
         const refreshUrl = new URL(window.location.href);
         refreshUrl.searchParams.set("_release", `${pendingVersion}-${Date.now()}`);
         window.location.replace(refreshUrl.toString());
@@ -10122,7 +10123,8 @@ export function FoodPlanner() {
   }, []);
   useEffect(() => {
     if (!profileHydrated) return;
-    localStorage.setItem(
+    writeStorageItem(
+      localStorage,
       "vivapiatto-v1",
       JSON.stringify({
         calories,

@@ -52,7 +52,22 @@ export const readSessionItem = (storage: StorageLike, key: string) => {
 export const writeSessionItem = (storage: StorageLike, key: string, value: string) => {
   try {
     storage.setItem(key, value);
+    return true;
   } catch {
-    // The reload still works without the attempt marker.
+    // Storage can be full, disabled or temporarily unavailable.
+    return false;
+  }
+};
+
+/**
+ * Browser persistence must never be able to make the application unusable.
+ * A full or unavailable store is treated as a failed best-effort save.
+ */
+export const writeStorageItem = (storage: StorageLike, key: string, value: string): boolean => {
+  try {
+    storage.setItem(key, value);
+    return true;
+  } catch {
+    return false;
   }
 };

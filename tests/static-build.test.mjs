@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]18[.]76"/);
+  assert.match(app, /VERSION = "1[.]18[.]77"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -860,10 +860,10 @@ test("v1.16.85 completes faithful photos for the main-meal matrix", async () => 
 
 test("v1.16.86 preserves the exact scroll position across automatic releases", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
-  assert.match(app, /sessionStorage\.setItem\("vivapiatto-release-scroll-y", String\(window\.scrollY\)\)/);
+  assert.match(app, /writeStorageItem\(sessionStorage, "vivapiatto-release-scroll-y", String\(window\.scrollY\)\)/);
   assert.match(app, /sessionStorage\.getItem\("vivapiatto-release-scroll-y"\)/);
   assert.match(app, /window\.scrollTo\(\{ top: savedScrollY, left: 0, behavior: "auto" \}\)/);
-  assert.match(app, /localStorage\.setItem\("vivapiatto-v1", refreshSnapshotRef\.current\)/);
+  assert.match(app, /writeStorageItem\(localStorage, "vivapiatto-v1", refreshSnapshotRef\.current\)/);
 });
 
 test("v1.16.87 exposes recipe pagination, copy and direct shopping actions", async () => {
