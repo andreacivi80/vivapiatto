@@ -15,6 +15,13 @@ type MealPart = RecipeIngredient & {
     "Carboidrato" | "Proteina" | "Contorno" | "Latticino" | "Frutta" | "Extra";
   image: string;
 };
+const partDisplayName = (part: Pick<RecipeIngredient, "food" | "label">) => {
+  const label = (part.label || part.food).trim();
+  // The editable grams field below the card is the single source of truth.
+  // Older recipe labels sometimes embedded their original grams, which became
+  // contradictory as soon as the user changed or rebalanced the portion.
+  return label.replace(/\s*·\s*(?:da circa\s+)?\d+(?:[.,]\d+)?\s*g\b.*$/i, "").trim();
+};
 type Recipe = {
   id: string;
   name: string;
@@ -56,7 +63,7 @@ const RecipeVisual = ({ recipe }: { recipe: Recipe }) => {
         <img
           key={`${part.food}-${index}`}
           src={part.image}
-          alt={part.label || part.food}
+          alt={partDisplayName(part)}
         />
       ))}
     </div>
@@ -83,7 +90,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.78";
+const VERSION = "1.18.79";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -7134,7 +7141,7 @@ const catalogBreakfasts: Recipe[] = Array.from({ length: 36 }, (_, index) => {
   ].map((part) => ({ ...part }));
   return {
     id: `catalog-breakfast-${index + 1}`,
-    name: parts.map((part) => part.label || part.food).join(" · "),
+    name: parts.map(partDisplayName).join(" · "),
     kicker: "Colazione del paniere quotidiano",
     course: "Colazione",
     cuisine: "Italiano",
@@ -7179,7 +7186,7 @@ const catalogSnacks: Recipe[] = Array.from({ length: 30 }, (_, index) => {
   const parts = [{ ...fruit }, { ...companion }];
   return {
     id: `catalog-snack-${index + 1}`,
-    name: parts.map((part) => part.label || part.food).join(" · "),
+    name: parts.map(partDisplayName).join(" · "),
     kicker: "Spuntino pratico del paniere",
     course: "Spuntino",
     cuisine: "Italiano",
@@ -7239,7 +7246,7 @@ const catalogMains: Recipe[] = Array.from({ length: 84 }, (_, index) => {
   ].map((part) => ({ ...part }));
   return {
     id: `catalog-main-${index + 1}`,
-    name: parts.slice(0, 3).map((part) => part.label || part.food).join(" · "),
+    name: parts.slice(0, 3).map(partDisplayName).join(" · "),
     kicker: "Pasto completo costruito dal paniere",
     course: "Piatto unico",
     cuisine: "Italiano",
@@ -10607,7 +10614,7 @@ export function FoodPlanner() {
         ).values(),
       )
         .filter((part) =>
-          (part.label || part.food)
+          partDisplayName(part)
             .toLowerCase()
             .includes(libraryQuery.toLowerCase()),
         )
@@ -10630,7 +10637,7 @@ export function FoodPlanner() {
     setMealView((current) => ({ ...current, [key]: "parts" }));
     setActualWeights((current) => { const next = { ...current }; delete next[key]; return next; });
     setRemovedIngredients((current) => { const next = { ...current }; delete next[key]; return next; });
-    setReplanNote(`Pasto sostituito liberamente con ${part.label || part.food}. Puoi aggiungere altri elementi con il pulsante più.`);
+    setReplanNote(`Pasto sostituito liberamente con ${partDisplayName(part)}. Puoi aggiungere altri elementi con il pulsante più.`);
     replanFollowingDays(changedDay);
     setSwapTarget(null);
     setLibraryQuery("");
@@ -11084,10 +11091,10 @@ export function FoodPlanner() {
         return known ? { ...known, grams: ingredient.grams } : null;
       })
       .filter((part): part is MealPart => Boolean(part));
-    const names = usable.map((item) => item.label || item.food);
+    const names = usable.map(partDisplayName);
     const hasRaw = usable.some((item) => /crudo|insalata|rucola|pomodor|cetriol/i.test(item.food));
     const steps = [
-      `Pesa prima tutti gli ingredienti: ${usable.map((item) => `${item.grams} g di ${item.label || item.food}`).join(", ")}.`,
+      `Pesa prima tutti gli ingredienti: ${usable.map((item) => `${item.grams} g di ${partDisplayName(item)}`).join(", ")}.`,
       hasRaw
         ? "Lava e asciuga accuratamente gli ingredienti da consumare crudi; tagliali solo dopo il lavaggio."
         : "Prepara gli ingredienti sul piano di lavoro e separa quelli già cotti da quelli ancora da cuocere.",
@@ -11847,9 +11854,9 @@ export function FoodPlanner() {
     }
     setReplanNote(
       partPicker.adding
-        ? `Aggiunto: ${nextPart.label || nextPart.food} ${nextPart.grams} g. Totali aggiornati.`
+        ? `Aggiunto: ${partDisplayName(nextPart)} ${nextPart.grams} g. Totali aggiornati.`
         : nextSlot === null
-        ? `Parte cambiata: ${nextPart.label || nextPart.food} ${nextPart.grams} g.`
+        ? `Parte cambiata: ${partDisplayName(nextPart)} ${nextPart.grams} g.`
         : `Parte cambiata e ${SLOT_LABELS[nextSlot].toLowerCase()} ricalibrato.`,
     );
     replanFollowingDays(day);
@@ -12353,7 +12360,7 @@ export function FoodPlanner() {
       "Ingredienti",
       ...recipe.ingredients.map(
         (item) =>
-          `• ${item.label || item.food}: ${item.grams} g · peso ${ingredientWeightState(item.food)}`,
+          `• ${partDisplayName(item)}: ${item.grams} g · peso ${ingredientWeightState(item.food)}`,
       ),
       "",
       "Preparazione",
@@ -12377,7 +12384,7 @@ export function FoodPlanner() {
           round(macros.kcal) + " kcal · " + round(macros.protein) + " g proteine · " + round(macros.carbs) + " g carboidrati · " + round(macros.fat) + " g grassi",
           "Ingredienti",
           ...recipe.ingredients.map(
-            (item) => "• " + (item.label || item.food) + ": " + item.grams + " g · peso " + ingredientWeightState(item.food),
+            (item) => "• " + partDisplayName(item) + ": " + item.grams + " g · peso " + ingredientWeightState(item.food),
           ),
           "Preparazione",
           ...recipe.steps.map((step, stepIndex) => String(stepIndex + 1) + ". " + step),
@@ -13108,7 +13115,7 @@ export function FoodPlanner() {
                             ? `${SLOT_LABELS[i]} · ${
                                 activeParts
                                   .filter((part) => part.grams > 0)
-                                  .map((part) => part.label || part.food)
+                                  .map(partDisplayName)
                                   .join(", ") || "nessun elemento"
                               }`
                             : r.name}
@@ -13184,12 +13191,12 @@ export function FoodPlanner() {
                                 >
                                   <img
                                     src={part.image}
-                                    alt={part.label || part.food}
+                                    alt={partDisplayName(part)}
                                   />
                                   <button
                                     type="button"
                                     className="part-remove"
-                                    aria-label={`Rimuovi ${part.label || part.food}`}
+                                    aria-label={`Rimuovi ${partDisplayName(part)}`}
                                     title="Rimuovi elemento"
                                     onClick={(event) => {
                                       event.stopPropagation();
@@ -13212,12 +13219,12 @@ export function FoodPlanner() {
                                       });
                                     }}
                                   >
-                                    {part.label || part.food}
+                                    {partDisplayName(part)}
                                     <i>Alternative</i>
                                   </button>
                                   <label className="part-grams">
                                     <input
-                                      aria-label={`Grammi ${part.label || part.food}`}
+                                      aria-label={`Grammi ${partDisplayName(part)}`}
                                       type="number"
                                       min="0"
                                       max="1000"
@@ -13248,7 +13255,7 @@ export function FoodPlanner() {
                                 )
                                 .map((x, extraIndex) => (
                                   <span key={`${x.food}-${extraIndex}`}>
-                                    {x.label || x.food} {x.grams} g
+                                    {partDisplayName(x)} {x.grams} g
                                   </span>
                                 ))}
                             </div>
@@ -13289,7 +13296,7 @@ export function FoodPlanner() {
                                     }}
                                   >
                                     <i>{removed ? "+" : "−"}</i>
-                                    {x.label || x.food} {x.grams} g
+                                    {partDisplayName(x)} {x.grams} g
                                   </button>
                                 );
                               },
@@ -13595,7 +13602,7 @@ export function FoodPlanner() {
                             <b>
                               {weekParts.length
                                 ? weekParts
-                                    .map((part) => part.label || part.food)
+                                    .map(partDisplayName)
                                     .join(" · ")
                                 : r.name}
                             </b>
@@ -13632,9 +13639,9 @@ export function FoodPlanner() {
                               >
                                 <img
                                   src={part.image}
-                                  alt={part.label || part.food}
+                                  alt={partDisplayName(part)}
                                 />
-                                <span>{part.label || part.food}</span>
+                                <span>{partDisplayName(part)}</span>
                                 <b>{part.grams} g</b>
                               </button>
                             ))}
@@ -13856,8 +13863,8 @@ export function FoodPlanner() {
                 <div className="swap-food-grid">
                   {swapFoodOptions.map((part) => (
                     <button key={part.food} onClick={() => chooseSingleFoodFromLibrary(part)}>
-                      <img src={part.image} alt={part.label || part.food} />
-                      <span>{part.label || part.food}</span>
+                      <img src={part.image} alt={partDisplayName(part)} />
+                      <span>{partDisplayName(part)}</span>
                       <b>{part.grams} g · {round(calc([part]).kcal)} kcal</b>
                     </button>
                   ))}
@@ -14320,7 +14327,7 @@ export function FoodPlanner() {
                 <h2>
                   {partPicker.adding
                     ? "Scegli un altro elemento"
-                    : partPicker.part.label || partPicker.part.food}
+                    : partDisplayName(partPicker.part)}
                 </h2>
               </div>
               <button
@@ -14661,7 +14668,7 @@ export function FoodPlanner() {
                 {selectedIngredients.map((x, i) => (
                   <li key={i}>
                     <span>
-                      {x.label || x.food}
+                      {partDisplayName(x)}
                       <small className="ingredient-weight-state">peso {ingredientWeightState(x.food)}</small>
                     </span>
                     {selectedMealKey ? (

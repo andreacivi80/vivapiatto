@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]18[.]78"/);
+  assert.match(app, /VERSION = "1[.]18[.]79"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1907,4 +1907,13 @@ test("v1.18.78 uses each faithful full-dish recipe photo instead of an ingredien
   assert.match(source, /const hasDedicatedDishPhoto = \/\\\/food\\\/recipe-\/[.]test\(recipe[.]image\)/);
   assert.match(source, /if \(hasDedicatedDishPhoto \|\| componentPhotos[.]length < 2\)/);
   assert.match(source, /className="recipe-visual-single" src=\{recipe[.]image\}/);
+});
+
+test("v1.18.79 keeps one editable gram value instead of stale grams inside labels", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(source, /const partDisplayName/);
+  assert.match(source, /replace\(\/\\s\*·\\s\*\(\?:da circa/);
+  assert.match(source, /<span>\{partDisplayName\(part\)\}<\/span>/);
+  assert.match(source, /<b>\{part[.]grams\} g<\/b>/);
+  assert.doesNotMatch(source, /<span>\{part[.]label \|\| part[.]food\}<\/span>/);
 });
