@@ -95,7 +95,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.89";
+const VERSION = "1.18.90";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -9926,6 +9926,8 @@ export function FoodPlanner() {
   const [leftoverState, setLeftoverState] = useState<"Cotto" | "Crudo">("Cotto");
   const [leftoverDate, setLeftoverDate] = useState("");
   const [leftoverStorage, setLeftoverStorage] = useState("Frigorifero entro 2 ore");
+  const [leftoverTemperature, setLeftoverTemperature] = useState("4 °C o meno");
+  const [leftoverContainer, setLeftoverContainer] = useState("Contenitore chiuso o coperto");
   const [leftoverResult, setLeftoverResult] = useState<Recipe | null>(null);
   const [leftoverWarning, setLeftoverWarning] = useState("");
   const updateBlockedRef = useRef(false);
@@ -10673,6 +10675,20 @@ export function FoodPlanner() {
       }
       return 0;
     });
+  const replacementReason = (recipe: Recipe) => {
+    if (!swapTarget) return cleanKicker(recipe.kicker);
+    const activeRecipe = recipeMap[getDayIds(swapTarget.day)[swapTarget.slot]];
+    const activeNutrition = calc(plannedIngredients(`${swapTarget.day}-${swapTarget.slot}`, activeRecipe));
+    const candidateNutrition = calc(recipe.ingredients);
+    const reasons: string[] = [];
+    if (Math.abs(candidateNutrition.kcal - activeNutrition.kcal) <= 100) reasons.push("energia simile");
+    if (Math.abs(candidateNutrition.protein - activeNutrition.protein) <= 8) reasons.push("proteine simili");
+    if (recipeCuisine(recipe) === cuisineChoice) reasons.push(`stile ${cuisineChoice.toLowerCase()}`);
+    if (dayContext === "Lavoro" && isWorkFriendly(recipe)) reasons.push("pratica al lavoro");
+    if (dayContext === "Mensa" && isMensaFriendly(recipe)) reasons.push("comune in mensa");
+    if (dayContext === "Ristorante" && isRestaurantFriendly(recipe)) reasons.push("piatto completo da ristorante");
+    return `Compatibile: ${reasons.slice(0, 2).join(" · ") || "stesso momento del pasto e filtri rispettati"}`;
+  };
   const compatibleRecipeOffset = filteredRecipes.length
     ? (compatibleRecipePage * 10) % filteredRecipes.length
     : 0;
@@ -11247,6 +11263,14 @@ export function FoodPlanner() {
       setLeftoverWarning("Conservazione non sicura o non verificabile: non utilizzare l'alimento.");
       return;
     }
+    if (leftoverTemperature !== "4 °C o meno") {
+      setLeftoverWarning("Temperatura del frigorifero non verificata o superiore a 4 °C: questo controllo non può accettare l'avanzo.");
+      return;
+    }
+    if (leftoverContainer !== "Contenitore chiuso o coperto") {
+      setLeftoverWarning("Confezionamento o copertura non verificati: non utilizzare l'avanzo tramite questa funzione.");
+      return;
+    }
     if (leftoverState === "Crudo") {
       setLeftoverWarning("Alimento crudo: la durata sicura dipende da alimento, temperatura e confezionamento. Questa verifica generica non può validarlo: segui etichetta o indicazione professionale e non creare la ricetta di recupero.");
       return;
@@ -11277,7 +11301,7 @@ export function FoodPlanner() {
       time: Math.max(10, builderTime),
       ingredients,
       steps: [
-        `Verifica che i ${leftoverGrams} g di ${leftoverFood} siano stati conservati in frigorifero entro 2 ore dalla preparazione.`,
+        `Verifica che i ${leftoverGrams} g di ${leftoverFood} siano stati conservati entro 2 ore, a 4 °C o meno, in un contenitore chiuso o coperto.`,
         "Riscalda completamente l'avanzo fino a renderlo ben caldo anche al centro; non limitarti a intiepidirlo.",
         `Prepara separatamente ${supporting.map((item) => item.food).join(", ") || "gli altri ingredienti"}, poi unisci tutto soltanto alla fine.`,
         "Consuma subito la porzione preparata e non rimettere nuovamente in frigorifero ciò che è già stato riscaldato.",
@@ -13915,7 +13939,7 @@ export function FoodPlanner() {
                         {r.time} min
                       </span>
                       <h3>{r.name}</h3>
-                      <p>{cleanKicker(r.kicker)}</p>
+                      <p>{replacementReason(r)}</p>
                       <small className="recipe-card-quality">
                         Varietà {recipeVarietyScore(r)}/5
                         {recipeSeasonalityScore(r) > 0 ? ` · stagione ${recipeSeasonalityScore(r)}%` : ""}
@@ -14186,6 +14210,22 @@ export function FoodPlanner() {
                   <select value={leftoverStorage} onChange={(event) => setLeftoverStorage(event.target.value)}>
                     <option>Frigorifero entro 2 ore</option>
                     <option>Lasciato a temperatura ambiente</option>
+                    <option>Non ricordo</option>
+                  </select>
+                </label>
+                <label>
+                  <span>Temperatura frigo</span>
+                  <select value={leftoverTemperature} onChange={(event) => setLeftoverTemperature(event.target.value)}>
+                    <option>4 °C o meno</option>
+                    <option>Più di 4 °C</option>
+                    <option>Non lo so</option>
+                  </select>
+                </label>
+                <label>
+                  <span>Contenitore</span>
+                  <select value={leftoverContainer} onChange={(event) => setLeftoverContainer(event.target.value)}>
+                    <option>Contenitore chiuso o coperto</option>
+                    <option>Scoperto</option>
                     <option>Non ricordo</option>
                   </select>
                 </label>

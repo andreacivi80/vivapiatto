@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]18[.]89"/);
+  assert.match(app, /VERSION = "1[.]18[.]90"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1876,6 +1876,17 @@ test("v1.18.89 validates persisted flags, weights and shopping values", async ()
   assert.match(source, /setGroceryChecked\(safeBooleanRecord/);
   assert.match(source, /setGroceryAmounts\(safeFiniteNumberRecord/);
   assert.match(source, /setShoppingAdditions\(safeFiniteNumberRecord/);
+});
+
+test("v1.18.90 explains replacements and verifies leftover storage details", async () => {
+  const source = await readFile("app/FoodPlanner.tsx", "utf8");
+  assert.match(source, /const replacementReason =/);
+  assert.match(source, /Compatibile: \$\{reasons\.slice\(0, 2\)/);
+  assert.match(source, /Temperatura frigo/);
+  assert.match(source, /4 °C o meno/);
+  assert.match(source, /Contenitore chiuso o coperto/);
+  assert.match(source, /setLeftoverWarning\("Temperatura del frigorifero non verificata/);
+  assert.match(source, /setLeftoverWarning\("Confezionamento o copertura non verificati/);
 });
 
 test("v1.18.71 discards obsolete saved food parts before nutrition rendering", async () => {
