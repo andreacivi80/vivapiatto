@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]19[.]10"/);
+  assert.match(app, /const VERSION = packageFile\.version/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1976,6 +1976,9 @@ test("v1.19.11 breaks recovery redirect loops by remounting cleanly in place", a
   assert.match(main, /window\.history\.replaceState\(window\.history\.state, "", cleanUrl\.toString\(\)\)/);
   assert.match(main, /failed:\s*false,[\s\S]*?recoveryKey:\s*recoveryKey \+ 1/);
   assert.match(planner, /if \(safeStart\)[\s\S]*?setProfileHydrated\(true\)/);
+  assert.match(planner, /import packageFile from "\.\.\/package\.json"/);
+  assert.match(planner, /const VERSION = packageFile\.version/);
+  assert.doesNotMatch(planner, /const VERSION = "\d+\.\d+\.\d+"/);
 });
 
 test("v1.19.8 makes weekly variety or repetition a persistent planning choice", async () => {

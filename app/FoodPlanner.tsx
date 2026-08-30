@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import packageFile from "../package.json";
 import { portionOptions, STANDARD_SOURCES } from "./nutritionEngine";
 import { readSessionItem, removeSessionItem, writeStorageItem } from "./storageRecovery";
 
@@ -95,7 +96,9 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.19.10";
+// One source of truth: the visible version and the automatic release checker
+// must never drift apart, otherwise the client refreshes itself forever.
+const VERSION = packageFile.version;
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
