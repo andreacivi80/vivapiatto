@@ -20,7 +20,11 @@ export const quarantineSavedState = (storage: StorageLike | null | undefined): b
   if (!saved) return false;
 
   try {
-    storage.setItem(RECOVERY_BACKUP_KEY, saved);
+    // Keep the first failing snapshot: a second failed boot must not overwrite
+    // the only recoverable copy with another partially rewritten state.
+    if (!storage.getItem(RECOVERY_BACKUP_KEY)) {
+      storage.setItem(RECOVERY_BACKUP_KEY, saved);
+    }
   } catch {
     // The backup is best-effort: quota errors must not block recovery.
   } finally {

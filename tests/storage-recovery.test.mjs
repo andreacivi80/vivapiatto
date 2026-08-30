@@ -35,6 +35,15 @@ test("recovery preserves one backup and clears the blocking state", () => {
   assert.equal(storage.getItem(RECOVERY_BACKUP_KEY), "saved-plan");
 });
 
+test("a second recovery never overwrites the first recoverable copy", () => {
+  const storage = fakeStorage({ value: "first-plan" });
+  quarantineSavedState(storage);
+  storage.setItem(SAVED_STATE_KEY, "second-broken-plan");
+  quarantineSavedState(storage);
+  assert.equal(storage.getItem(RECOVERY_BACKUP_KEY), "first-plan");
+  assert.equal(storage.getItem(SAVED_STATE_KEY), null);
+});
+
 test("quota errors can never trap the app in the recovery screen", () => {
   const storage = fakeStorage({ failBackup: true });
   assert.doesNotThrow(() => quarantineSavedState(storage));

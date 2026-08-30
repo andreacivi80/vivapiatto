@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]19[.]4"/);
+  assert.match(app, /VERSION = "1[.]19[.]5"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1047,7 +1047,7 @@ test("v1.17.4 prevents a blank page and preserves a recovery backup", async () =
   assert.match(main, /class AppGuard extends Component/);
   assert.match(main, /getDerivedStateFromError/);
   assert.match(recovery, /vivapiatto-recovery-backup/);
-  assert.match(main, /Ricarica app/);
+  assert.match(main, /Riparti ora/);
   assert.match(main, /Apri con copia di sicurezza/);
   assert.match(css, /\.app-recovery\s*\{[\s\S]*min-height:\s*100dvh/);
 });
@@ -1924,17 +1924,31 @@ test("v1.18.94 uses practical cooked weights and common package sizes", async ()
   assert.doesNotMatch(source, /> carbo\s*</);
 });
 
-test("v1.18.95 recovers in place and never depends on direct session storage access", async () => {
+test("v1.18.95 recovers before remount and never depends on direct session storage access", async () => {
   const [main, planner] = await Promise.all([
     readFile("main.tsx", "utf8"),
     readFile("app/FoodPlanner.tsx", "utf8"),
   ]);
   assert.match(main, /inPlaceRecoveryAttempted/);
-  assert.match(main, /this\.setState\(\(state\) => \(\{/);
-  assert.match(main, /private restoreApp[\s\S]*?_safe_start/);
+  assert.match(main, /startUrl\.searchParams\.get\("_safe_start"\) === "1"/);
+  assert.match(main, /quarantineSavedState\(browserLocalStorage\(\)\)/);
+  assert.match(main, /private openCleanCopy[\s\S]*?_safe_start/);
   assert.match(planner, /readSessionItem\(sessionStorage, "vivapiatto-release-target"\)/);
   assert.doesNotMatch(planner, /sessionStorage\.getItem/);
   assert.doesNotMatch(planner, /sessionStorage\.removeItem/);
+});
+
+test("v1.19.5 strictly sanitizes legacy meal parts and bypasses stale recovery documents", async () => {
+  const [main, planner, recovery] = await Promise.all([
+    readFile("main.tsx", "utf8"),
+    readFile("app/FoodPlanner.tsx", "utf8"),
+    readFile("app/storageRecovery.ts", "utf8"),
+  ]);
+  assert.match(main, /url\.searchParams\.set\("_fresh", String\(Date\.now\(\)\)\)/);
+  assert.match(planner, /label: typeof entry\.label === "string" \? entry\.label : undefined/);
+  assert.match(planner, /const category = catalog\?\.category \|\| optionCategory/);
+  assert.match(planner, /if \(!category \|\| !image\) return \[\]/);
+  assert.match(recovery, /if \(!storage\.getItem\(RECOVERY_BACKUP_KEY\)\)/);
 });
 
 test("v1.18.96 connects the complete requested pantry to real recipes", async () => {

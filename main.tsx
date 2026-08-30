@@ -14,6 +14,13 @@ import {
 
 type AppGuardState = { failed: boolean; recoveryKey: number };
 
+const startUrl = new URL(window.location.href);
+if (startUrl.searchParams.get("_safe_start") === "1") {
+  // Recovery must happen before React mounts. Waiting for a component effect
+  // is too late when a legacy persisted value can crash the first render.
+  quarantineSavedState(browserLocalStorage());
+}
+
 class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
   state: AppGuardState = { failed: false, recoveryKey: 0 };
   private releaseTimer?: number;
@@ -33,12 +40,8 @@ class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
       removeSessionItem(session, "vivapiatto-safe-recovery-attempted");
       removeSessionItem(session, "vivapiatto-release-target");
       removeSessionItem(session, "vivapiatto-release-scroll-y");
-      window.setTimeout(() => {
-        this.setState((state) => ({
-          failed: false,
-          recoveryKey: state.recoveryKey + 1,
-        }));
-      }, 0);
+      writeSessionItem(session, "vivapiatto-safe-recovery-attempted", packageFile.version);
+      window.setTimeout(() => this.openCleanCopy(), 0);
       return;
     }
     const alreadyAttempted =
@@ -95,10 +98,7 @@ class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
     removeSessionItem(session, "vivapiatto-safe-recovery-attempted");
     removeSessionItem(session, "vivapiatto-release-target");
     removeSessionItem(session, "vivapiatto-release-scroll-y");
-    const url = new URL(window.location.href);
-    url.searchParams.set("_safe_start", "1");
-    url.searchParams.set("_safe_recovery", `${packageFile.version}-${Date.now()}`);
-    window.location.replace(url.toString());
+    this.openCleanCopy();
   };
 
   private resetSavedState = () => {
@@ -107,9 +107,15 @@ class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
     removeSessionItem(session, "vivapiatto-safe-recovery-attempted");
     removeSessionItem(session, "vivapiatto-release-target");
     removeSessionItem(session, "vivapiatto-release-scroll-y");
+    this.openCleanCopy();
+  };
+
+  private openCleanCopy = () => {
     const url = new URL(window.location.href);
     url.searchParams.set("_safe_start", "1");
     url.searchParams.set("_safe_recovery", `${packageFile.version}-${Date.now()}`);
+    // The unique query also bypasses a stale GitHub Pages document cache.
+    url.searchParams.set("_fresh", String(Date.now()));
     window.location.replace(url.toString());
   };
 
@@ -122,8 +128,8 @@ class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
         <div className="app-recovery-card">
           <span className="app-recovery-mark">T</span>
           <h1>Riapriamo Tavola Mia</h1>
-          <p>La pagina ha incontrato un errore. Prova prima a ricaricarla: i dati restano salvati.</p>
-          <button type="button" onClick={this.restoreApp}>Ricarica app</button>
+          <p>Un vecchio salvataggio non è compatibile. Ne conserviamo una copia e riapriamo l’app pulita.</p>
+          <button type="button" onClick={this.restoreApp}>Riparti ora</button>
           <button type="button" className="secondary" onClick={this.resetSavedState}>
             Apri con copia di sicurezza
           </button>

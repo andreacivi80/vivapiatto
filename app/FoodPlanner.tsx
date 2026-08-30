@@ -95,7 +95,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.19.4";
+const VERSION = "1.19.5";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -9997,6 +9997,19 @@ const inferRecipeCourse = (recipe: Recipe) => {
   }
   return "Piatto unico";
 };
+const isSubstantialRecipe = (recipe: Recipe) => {
+  if (recipe.steps.length < 2 || recipe.ingredients.length < 2) return false;
+  const preparation = recipe.steps.join(" ").toLowerCase();
+  const hasRealTechnique =
+    /cuoc|boll|forno|inforna|padella|grigli|piastra|vapore|frull|impasta|tosta|marina|congela|raffredda|riposa|frigorifero/.test(
+      preparation,
+    );
+  const isNamedPreparedDish =
+    /panino|toast|insalata|bowl|coppa|jar|porridge|pancake|frullato|smoothie|gelato|hummus|vellutata|minestrone|zuppa|frittata|omelette/.test(
+      recipe.name.toLowerCase(),
+    );
+  return hasRealTechnique || isNamedPreparedDish || recipe.ingredients.length >= 4;
+};
 const allRecipes: Recipe[] = rawRecipes.map((recipe) => {
   const enrichedRecipe: Recipe = {
     ...recipe,
@@ -10028,6 +10041,16 @@ const allRecipes: Recipe[] = rawRecipes.map((recipe) => {
     ? { ...enrichedRecipe, parts: inferredParts }
     : enrichedRecipe;
 });
+export const recipePhotoCoverage = allRecipes
+  .filter(isSubstantialRecipe)
+  .map((recipe) => ({
+    id: recipe.id,
+    name: recipe.name,
+    image: recipe.image,
+    dedicated:
+      /\/food\/recipe-/.test(recipe.image) ||
+      !(recipe.parts || []).some((part) => part.image === recipe.image),
+  }));
 const recipeMetadataIssues = allRecipes.flatMap((recipe) => {
   const issues: string[] = [];
   if (!Number.isFinite(recipe.time) || recipe.time <= 0) issues.push("tempo non valido");
@@ -10530,7 +10553,28 @@ export function FoodPlanner() {
                     Boolean(foodSearchDatabase[(entry as MealPart).food]) &&
                     Number.isFinite(Number((entry as MealPart).grams)),
                 )
-                .map((entry) => normalizeMealPart({ ...entry, grams: Number(entry.grams) })),
+                .flatMap((entry) => {
+                  const food = String(entry.food);
+                  const catalog = ingredientPartCatalog[food];
+                  const optionCategory = (
+                    Object.keys(mealPartOptions) as MealPart["category"][]
+                  ).find((category) =>
+                    mealPartOptions[category].some((option) => option.food === food),
+                  );
+                  const option = optionCategory
+                    ? mealPartOptions[optionCategory].find((candidate) => candidate.food === food)
+                    : undefined;
+                  const category = catalog?.category || optionCategory;
+                  const image = catalog?.image || option?.image;
+                  if (!category || !image) return [];
+                  return [{
+                    food,
+                    grams: Number(entry.grams),
+                    label: typeof entry.label === "string" ? entry.label : undefined,
+                    category,
+                    image,
+                  } satisfies MealPart];
+                }),
             ]),
           );
         const safeStringArray = (value: unknown) =>
@@ -10599,7 +10643,11 @@ export function FoodPlanner() {
               Boolean(foodSearchDatabase[(entry as RecipeIngredient).food]) &&
               Number.isFinite(Number((entry as RecipeIngredient).grams)) &&
               Number((entry as RecipeIngredient).grams) > 0,
-          );
+          ).map((entry: RecipeIngredient) => ({
+            food: entry.food,
+            grams: Number(entry.grams),
+            label: typeof entry.label === "string" ? entry.label : undefined,
+          }));
           if (safeBuilder.length) setBuilder(safeBuilder);
         }
       }
@@ -10955,19 +11003,6 @@ export function FoodPlanner() {
     recipe.ingredients.length >= 3 &&
     ["Piatto unico", "Piatto completo", "Primo", "Secondo"].includes(recipeCourse(recipe));
   const compatibleWithPlace = (_r: Recipe) => true;
-  const isSubstantialRecipe = (recipe: Recipe) => {
-    if (recipe.steps.length < 2 || recipe.ingredients.length < 2) return false;
-    const preparation = recipe.steps.join(" ").toLowerCase();
-    const hasRealTechnique =
-      /cuoc|boll|forno|inforna|padella|grigli|piastra|vapore|frull|impasta|tosta|marina|congela|raffredda|riposa|frigorifero/.test(
-        preparation,
-      );
-    const isNamedPreparedDish =
-      /panino|toast|insalata|bowl|coppa|jar|porridge|pancake|frullato|smoothie|gelato|hummus|vellutata|minestrone|zuppa|frittata|omelette/.test(
-        recipe.name.toLowerCase(),
-      );
-    return hasRealTechnique || isNamedPreparedDish || recipe.ingredients.length >= 4;
-  };
   const recipeMatchesHealthyFilter = (recipe: Recipe, filter: HealthyFilterId) => {
     const foodsText = recipe.ingredients.map((item) => item.food).join(" ").toLowerCase();
     const methodText = [...recipe.steps, ...recipe.alternatives].join(" ").toLowerCase();
