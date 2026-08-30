@@ -1,6 +1,6 @@
 # Matrice ricette — stato operativo
 
-Specifiche ricevute: matrice iniziale di 627 righe, primo addendum di 1.109 righe, secondo addendum di 800 righe e terzo addendum di 826 righe.
+Specifiche ricevute: matrice iniziale e quattro addendum. Il quarto addendum porta il perimetro verificato a 214 ricette.
 
 ## Perimetro acquisito
 
@@ -11,7 +11,7 @@ Specifiche ricevute: matrice iniziale di 627 righe, primo addendum di 1.109 righ
 - Addendum: colazioni `C13–C20` (8), spuntini `S11–S18` (8), pranzi `P17–P28` (12), cene `D17–D28` (12).
 - Secondo addendum: colazioni `C21–C28` (8), spuntini `S19–S26` (8), pranzi `P29–P40` (12), cene `D29–D40` (12).
 - Terzo addendum: colazioni `C29–C36` (8), spuntini `S27–S34` (8), pranzi `P41–P52` (12), cene `D41–D52` (12).
-- Totale elementi definiti nelle quattro matrici: 174.
+- Totale elementi verificati: 214 — `C01–C44`, `S01–S42`, `P01–P64`, `D01–D64`.
 - Il terzo addendum aggiunge anche “Crea una ricetta con gli avanzi”, con data, conservazione, stato crudo/cotto e regole di sicurezza vincolanti.
 
 Ogni ricetta entra nel motore reale soltanto dopo ingredienti pesati, indicazione crudo/cotto/sgocciolato, valori nutrizionali, allergeni, componenti sostituibili, preparazione, tempo, metodo di cottura, fotografia specifica e frequenze settimanali.
@@ -47,12 +47,11 @@ Ogni ricetta entra nel motore reale soltanto dopo ingredienti pesati, indicazion
 - La generazione automatica usa ora una prima matrice esplicita di compatibilità tra famiglia della base e proteina, invece di un abbinamento libero.
 - Arachidi, crema 100% arachidi, semi di lino, finocchi, pesche e asparagi hanno dati strutturati, porzioni e fotografie autonome.
 - Farine d'avena, integrale e di grano saraceno strutturate con fotografie specifiche.
-- Restano 143 elementi delle quattro matrici da collegare integralmente; non sono completati finché non superano controllo dati, foto, rotazione e mobile.
+- Tutte le 214 ricette delle matrici superano i controlli automatici su unicità, ingredienti, grammature, componenti, istruzioni e fotografia dedicata. Il catalogo pubblico comprende inoltre le ricette di espansione.
 
-## Sequenza prossimi blocchi
+## Verifiche permanenti
 
-1. `C01–C04`, `C06–C36`: colazioni veloci e da casa/weekend.
-2. `S01–S34`: spuntini realistici, distinti e trasportabili.
-3. `P01–P52`: pranzi lavoro/casa con componenti sostituibili.
-4. `D01–D52`: cene complete, metodi di cottura e frequenze.
-5. Controllo col paniere originario: ogni alimento non occasionale deve comparire in almeno una ricetta e in una rotazione settimanale.
+1. `audit-recipe-matrix.mjs`: 214/214 ricette presenti e complete.
+2. `audit-recipe-parts.mjs`: ingredienti e componenti sostituibili allineati.
+3. `audit-full-dish-photos.mjs --strict`: fotografia finale dedicata per tutte le matrici.
+4. `audit-pantry-recipe-usage.mjs`: ogni alimento del paniere richiesto compare in almeno una ricetta reale.

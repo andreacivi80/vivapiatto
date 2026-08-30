@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]18[.]95"/);
+  assert.match(app, /VERSION = "1[.]18[.]96"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1935,6 +1935,21 @@ test("v1.18.95 recovers in place and never depends on direct session storage acc
   assert.match(planner, /readSessionItem\(sessionStorage, "vivapiatto-release-target"\)/);
   assert.doesNotMatch(planner, /sessionStorage\.getItem/);
   assert.doesNotMatch(planner, /sessionStorage\.removeItem/);
+});
+
+test("v1.18.96 connects the complete requested pantry to real recipes", async () => {
+  const [source, packageSource, audit] = await Promise.all([
+    readFile("app/FoodPlanner.tsx", "utf8"),
+    readFile("package.json", "utf8"),
+    readFile("scripts/audit-pantry-recipe-usage.mjs", "utf8"),
+  ]);
+  assert.match(source, /const pantryIntegrationRecipes: Recipe\[\] = \[/);
+  assert.match(source, /\.\.\.pantryIntegrationRecipes/);
+  assert.match(source, /pantry-overnight-oats-nectarine/);
+  assert.match(source, /pantry-steamed-chicken-curry/);
+  assert.match(source, /pantry-vegetable-veloute/);
+  assert.match(packageSource, /audit-pantry-recipe-usage\.mjs/);
+  assert.match(audit, /if \(missing\.length\) process\.exitCode = 1/);
 });
 
 test("v1.18.71 discards obsolete saved food parts before nutrition rendering", async () => {

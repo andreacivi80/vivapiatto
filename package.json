@@ -1,6 +1,6 @@
 {
   "name": "vivapiatto",
-  "version": "1.18.95",
+  "version": "1.18.96",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,7 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "pretest": "node scripts/audit-food-database.mjs",
-    "test": "node scripts/audit-nutrition-coverage.mjs && node scripts/audit-copy-safety.mjs && node scripts/audit-pasta-legume-portions.mjs && node scripts/audit-fatty-fish-oil.mjs && node scripts/audit-photo-assets.mjs && node scripts/audit-full-dish-photos.mjs --strict && node scripts/audit-recipe-matrix.mjs && node scripts/audit-recipe-parts.mjs && node scripts/audit-requested-pantry.mjs && node scripts/audit-occasional-foods.mjs && node scripts/audit-alternative-catalog.mjs && node scripts/audit-weekly-rotation.mjs && node scripts/ssr-smoke.mjs && npm run build && node --test tests/static-build.test.mjs tests/storage-recovery.test.mjs"
+    "test": "node scripts/audit-nutrition-coverage.mjs && node scripts/audit-copy-safety.mjs && node scripts/audit-pasta-legume-portions.mjs && node scripts/audit-fatty-fish-oil.mjs && node scripts/audit-photo-assets.mjs && node scripts/audit-full-dish-photos.mjs --strict && node scripts/audit-recipe-matrix.mjs && node scripts/audit-recipe-parts.mjs && node scripts/audit-requested-pantry.mjs && node scripts/audit-pantry-recipe-usage.mjs && node scripts/audit-occasional-foods.mjs && node scripts/audit-alternative-catalog.mjs && node scripts/audit-weekly-rotation.mjs && node scripts/ssr-smoke.mjs && npm run build && node --test tests/static-build.test.mjs tests/storage-recovery.test.mjs"
   },
   "dependencies": {
     "react": "19.2.6",
