@@ -95,7 +95,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.84";
+const VERSION = "1.18.85";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -12522,7 +12522,7 @@ export function FoodPlanner() {
                   `${meal} · ${mealRows[0].recipe} · ${mealRows[0].status}`,
                   ...mealRows.map(
                     (row) =>
-                      `- ${row.food}: ${row.grams} g · peso ${row.weightState} · ${row.kcal} kcal · P ${row.protein} g · C ${row.carbs} g · G ${row.fat} g`,
+                      `- ${row.food}: ${row.grams} g · peso ${row.weightState} · ${row.kcal} kcal · proteine ${row.protein} g · carboidrati ${row.carbs} g · grassi ${row.fat} g`,
                   ),
                 ]
               : [];
@@ -13493,7 +13493,7 @@ export function FoodPlanner() {
                       <span>
                         {x.label}
                         <small>
-                          P {fmt(x.protein || 0)} · C {fmt(x.carbs || 0)} · G {fmt(x.fat || 0)} · fibre {fmt(x.fiber || 0)} g
+                          proteine {fmt(x.protein || 0)} g · carboidrati {fmt(x.carbs || 0)} g · grassi {fmt(x.fat || 0)} g · fibre {fmt(x.fiber || 0)} g
                         </small>
                         <small>
                           {x.allergens?.length ? `Allergeni: ${x.allergens.join(", ")} · ` : ""}

@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]18[.]84"/);
+  assert.match(app, /VERSION = "1[.]18[.]85"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1237,7 +1237,7 @@ test("v1.18.9 shows nutrition estimate and allergens for logged extras", async (
   const app = await readFile("app/FoodPlanner.tsx", "utf8");
   assert.match(app, /allergens\?: string\[\]/);
   assert.match(app, /allergens: inferTextAllergens\(match\)/);
-  assert.match(app, /P \{fmt\(x\.protein \|\| 0\)\} · C \{fmt\(x\.carbs \|\| 0\)\} · G/);
+  assert.match(app, /proteine \{fmt\(x\.protein \|\| 0\)\} g · carboidrati \{fmt\(x\.carbs \|\| 0\)\} g · grassi/);
   assert.match(app, /Allergeni: \$\{x\.allergens\.join\(", "\)\}/);
   assert.match(app, /fibre \{fmt\(x\.fiber \|\| 0\)\} g/);
 });
@@ -1964,4 +1964,12 @@ test("v1.18.84 keeps portions and jars out of compact meal summaries", async () 
   assert.match(source, /\(\?:porzione\|vasetto\)/);
   assert.match(source, /partDisplayName\(part\)/);
   assert.match(source, /<b>\{part[.]grams\} g<\/b>/);
+});
+
+test("v1.18.85 spells out macros in visible extras and weekly text export", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(source, /proteine \{fmt\(x[.]protein \|\| 0\)\} g/);
+  assert.match(source, /carboidrati \$\{row[.]carbs\} g/);
+  assert.match(source, /grassi \$\{row[.]fat\} g/);
+  assert.doesNotMatch(source, /P \{fmt\(x[.]protein/);
 });
