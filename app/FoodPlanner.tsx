@@ -95,7 +95,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.19.2";
+const VERSION = "1.19.3";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -9789,7 +9789,7 @@ const pantryIntegrationRecipes: Recipe[] = [
     kicker: "Cena di pesce da casa",
     course: "Piatto unico",
     cuisine: "Mediterraneo",
-    image: pantryPreviewImage("Pesce spada cotto"),
+    image: photo("recipe-pantry-swordfish-potatoes-v1193"),
     time: 30,
     ingredients: [{ food: "Pesce spada cotto", grams: 150 }, { food: "Patate cotte arrosto", grams: 220 }, { food: "Cavolini di Bruxelles cotti", grams: 180 }, { food: "Succo di limone", grams: 15 }, { food: "Prezzemolo fresco", grams: 5 }, { food: "Olio extravergine", grams: 5 }],
     steps: ["Scalda patate e cavolini in forno a 190 °C.", "Cuoci il pesce spada su piastra calda finché è opaco al centro.", "Completa con limone, prezzemolo e olio misurato."],
@@ -9801,7 +9801,7 @@ const pantryIntegrationRecipes: Recipe[] = [
     kicker: "Piatto di pesce semplice e morbido",
     course: "Piatto unico",
     cuisine: "Italiano",
-    image: pantryPreviewImage("Palombo · peso a crudo"),
+    image: photo("recipe-pantry-palombo-potatoes-v1193"),
     time: 28,
     ingredients: [{ food: "Palombo · peso a crudo", grams: 170 }, { food: "Patate al vapore", grams: 220 }, { food: "Passata di pomodoro", grams: 150 }, { food: "Aglio crudo", grams: 3 }, { food: "Prezzemolo fresco", grams: 5 }, { food: "Olio extravergine", grams: 10 }],
     steps: ["Cuoci le patate a vapore finché la forchetta entra facilmente.", "Scalda passata e aglio, aggiungi il palombo e cuoci coperto 10-12 minuti.", "Elimina l’aglio se desiderato e completa con prezzemolo e olio misurato."],
@@ -9813,7 +9813,7 @@ const pantryIntegrationRecipes: Recipe[] = [
     kicker: "Primo completo di ispirazione meridionale",
     course: "Piatto unico",
     cuisine: "Italiano",
-    image: pantryPreviewImage("Alici fresche · peso a crudo"),
+    image: photo("recipe-pantry-anchovy-pasta-v1193"),
     time: 30,
     ingredients: [{ food: "Pasta di semola secca", grams: 70 }, { food: "Alici fresche · peso a crudo", grams: 130 }, { food: "Cime di rapa cotte", grams: 180 }, { food: "Aglio crudo", grams: 3 }, { food: "Peperoncino rosso fresco", grams: 2 }, { food: "Olio extravergine", grams: 5 }],
     steps: ["Pulisci le alici eliminando testa, interiora e lisca; sciacquale e asciugale.", "Cuoci la pasta e conserva poca acqua di cottura.", "Salta aglio, peperoncino, cime di rapa e alici fino a completa cottura; unisci la pasta e l’olio misurato."],
@@ -9825,7 +9825,7 @@ const pantryIntegrationRecipes: Recipe[] = [
     kicker: "Piatto da casa per il weekend",
     course: "Piatto unico",
     cuisine: "Italiano",
-    image: pantryPreviewImage("Crescenza"),
+    image: photo("recipe-pantry-cheese-rice-bake-v1193"),
     time: 40,
     ingredients: [{ food: "Riso integrale secco", grams: 70 }, { food: "Crescenza", grams: 60 }, { food: "Scamorza", grams: 40 }, { food: "Zucchine", grams: 150 }, { food: "Melanzane", grams: 150 }, { food: "Passata di pomodoro", grams: 120 }],
     steps: ["Cuoci il riso lasciandolo al dente e griglia zucchine e melanzane.", "Mescola riso, passata, verdure e crescenza.", "Trasferisci in teglia, aggiungi scamorza e cuoci a 190 °C per 15 minuti."],
@@ -9837,7 +9837,7 @@ const pantryIntegrationRecipes: Recipe[] = [
     kicker: "Pranzo sostanzioso ma trasportabile",
     course: "Piatto unico",
     cuisine: "Italiano",
-    image: pantryPreviewImage("Provolone Dolce Auricchio"),
+    image: photo("recipe-pantry-provolone-turkey-v1193"),
     time: 10,
     ingredients: [{ food: "Pane semintegrale tipo 1", grams: 100 }, { food: "Petto di tacchino al forno", grams: 100 }, { food: "Provolone Dolce Auricchio", grams: 35 }, { food: "Peperoni cotti senza olio", grams: 120 }, { food: "Rucola", grams: 30 }],
     steps: ["Farcisci il pane con tacchino, provolone e peperoni ben asciutti.", "Scalda il panino su piastra finché il formaggio si ammorbidisce.", "Aggiungi la rucola dopo la cottura."],

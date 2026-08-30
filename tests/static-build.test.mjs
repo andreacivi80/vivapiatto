@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]19[.]2"/);
+  assert.match(app, /VERSION = "1[.]19[.]3"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -2163,6 +2163,21 @@ test("v1.19.2 gives the third pantry-integration block faithful final photos", a
     "recipe-pantry-stracchino-toast-v1192",
     "recipe-pantry-raw-ham-sandwich-v1192",
     "recipe-pantry-raw-turnip-salad-v1192",
+  ];
+  for (const name of photos) {
+    assert.match(source, new RegExp(`photo\\(\"${name}\"\\)`));
+    await access(new URL(`../public/food/${name}.png`, import.meta.url));
+  }
+});
+
+test("v1.19.3 gives the fourth pantry-integration block faithful final photos", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const photos = [
+    "recipe-pantry-swordfish-potatoes-v1193",
+    "recipe-pantry-palombo-potatoes-v1193",
+    "recipe-pantry-anchovy-pasta-v1193",
+    "recipe-pantry-cheese-rice-bake-v1193",
+    "recipe-pantry-provolone-turkey-v1193",
   ];
   for (const name of photos) {
     assert.match(source, new RegExp(`photo\\(\"${name}\"\\)`));
