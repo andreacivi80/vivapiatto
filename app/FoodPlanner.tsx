@@ -90,7 +90,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.81";
+const VERSION = "1.18.82";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -10347,9 +10347,9 @@ export function FoodPlanner() {
     const savoury = /uov|prosciutto|bresaola|tacchino|pomodor|avocado|salmone|tonno|formaggio/.test(text);
     return Number(breakfastStyle === "Salata" ? !savoury : savoury);
   };
-  const availableBreakfasts = () =>
+  const availableBreakfasts = (selectedContext = dayContext) =>
     [
-      ...matrixBreakfasts.filter((recipe) => dayContext === "Casa" || recipe.time <= 7),
+      ...matrixBreakfasts.filter((recipe) => selectedContext === "Casa" || recipe.time <= 7),
       ...simpleBreakfasts,
       ...catalogBreakfasts,
     ].filter(isProfileEligible).sort((a, b) => breakfastStyleScore(a) - breakfastStyleScore(b));
@@ -10476,17 +10476,17 @@ export function FoodPlanner() {
       (recipe, index, list) =>
         list.findIndex((candidate) => candidate.id === recipe.id) === index,
     );
-  const workLunchesFrom = (recipes: Recipe[]) => {
+  const workLunchesFrom = (recipes: Recipe[], selectedCuisine = cuisineChoice) => {
     const sameCuisine = uniqueRecipes([
       ...recipes.filter(
         (recipe) =>
-          recipeCuisine(recipe) === cuisineChoice && isWorkFriendly(recipe),
+          recipeCuisine(recipe) === selectedCuisine && isWorkFriendly(recipe),
       ),
       ...portableRecipes.filter(
-        (recipe) => recipeCuisine(recipe) === cuisineChoice,
+        (recipe) => recipeCuisine(recipe) === selectedCuisine,
       ),
       ...catalogWorkMains.filter(
-        (recipe) => recipeCuisine(recipe) === cuisineChoice,
+        (recipe) => recipeCuisine(recipe) === selectedCuisine,
       ),
     ]).filter(isAllowed);
     if (sameCuisine.length) return sameCuisine;
@@ -11606,7 +11606,11 @@ export function FoodPlanner() {
       `Menu completo ${cuisineChoice.toLowerCase()} creato: 5 momenti e spesa aggiornata.`,
     );
   };
-  const planFromCheck = (next: typeof check) => {
+  const planFromCheck = (
+    next: typeof check,
+    selectedContext = dayContext,
+    selectedCuisine = cuisineChoice,
+  ) => {
     if (ageGroup === "Minore") {
       setReplanNote("Check-in salvato senza ricalcolare porzioni da adulto per un minore.");
       return;
@@ -11618,12 +11622,12 @@ export function FoodPlanner() {
         : goal === "Mantenimento massa"
           ? 3
           : 2);
-    const breakfasts = availableBreakfasts();
+    const breakfasts = availableBreakfasts(selectedContext);
     let snacks = [...quickSnacks, ...matrixSnacks, ...attachmentMissingSnacks, ...catalogSnacks].filter(isProfileEligible);
     let mains = allRecipes.filter(
       (r) =>
         isProfileEligible(r) &&
-        recipeCuisine(r) === cuisineChoice &&
+        recipeCuisine(r) === selectedCuisine &&
         ["Piatto unico", "Piatto completo", "Primo", "Secondo"].includes(recipeCourse(r)),
     );
     if (next.feeling === "gonfio") {
@@ -11702,12 +11706,16 @@ export function FoodPlanner() {
         r.time >= 20 &&
         !portableRecipes.some((portable) => portable.id === r.id),
     );
+    const mensaMains = mains.filter(isMensaFriendly);
+    const restaurantMains = mains.filter(isRestaurantFriendly);
     const lunches =
-      ["Lavoro", "Mensa"].includes(dayContext)
-        ? workLunchesFrom(mains)
-        : homeMains.length
-          ? homeMains
-          : mains;
+      selectedContext === "Lavoro"
+        ? workLunchesFrom(mains, selectedCuisine)
+        : selectedContext === "Mensa"
+          ? mensaMains.length ? mensaMains : mains
+          : selectedContext === "Ristorante"
+            ? restaurantMains.length ? restaurantMains : mains
+            : homeMains.length ? homeMains : mains;
     const dinners = (homeMains.length ? homeMains : mains).filter(
       (recipe) => recipe.id !== "sweet-ricotta",
     );
@@ -12859,7 +12867,9 @@ export function FoodPlanner() {
                 <select
                   value={cuisineChoice}
                   onChange={(e) => {
-                    setCuisineChoice(e.target.value);
+                    const selectedCuisine = e.target.value;
+                    setCuisineChoice(selectedCuisine);
+                    planFromCheck(check, dayContext, selectedCuisine);
                     e.currentTarget.blur();
                   }}
                 >
@@ -12879,7 +12889,9 @@ export function FoodPlanner() {
                 <select
                   value={dayContext}
                   onChange={(e) => {
-                    setDayContext(e.target.value);
+                    const selectedContext = e.target.value;
+                    setDayContext(selectedContext);
+                    planFromCheck(check, selectedContext, cuisineChoice);
                     e.currentTarget.blur();
                   }}
                 >

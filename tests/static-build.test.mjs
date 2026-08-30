@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]18[.]81"/);
+  assert.match(app, /VERSION = "1[.]18[.]82"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1937,4 +1937,14 @@ test("v1.18.81 requires a faithful full-dish photo for every matrix recipe", asy
   for (let index = 49; index <= 64; index += 1) {
     assert.match(app, new RegExp(`"matrix-d${index}[^\n]+"recipe-d${index}-`));
   }
+});
+
+test("v1.18.82 immediately replans cuisine and place with distinct practical pools", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(source, /planFromCheck\(check, dayContext, selectedCuisine\)/);
+  assert.match(source, /planFromCheck\(check, selectedContext, cuisineChoice\)/);
+  assert.match(source, /selectedContext === "Lavoro"/);
+  assert.match(source, /selectedContext === "Mensa"/);
+  assert.match(source, /selectedContext === "Ristorante"/);
+  assert.match(source, /workLunchesFrom\(mains, selectedCuisine\)/);
 });
