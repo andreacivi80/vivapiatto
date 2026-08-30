@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]19[.]1"/);
+  assert.match(app, /VERSION = "1[.]19[.]2"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -2153,4 +2153,19 @@ test("v1.19.1 sanitizes legacy profile fields before rendering and recovery surv
   assert.match(main, /quarantineSavedState\(browserLocalStorage\(\)\)/);
   assert.match(recovery, /export const browserLocalStorage/);
   assert.match(recovery, /export const browserSessionStorage/);
+});
+
+test("v1.19.2 gives the third pantry-integration block faithful final photos", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const photos = [
+    "recipe-pantry-roast-chicken-thigh-v1192",
+    "recipe-pantry-seitan-turnips-v1192",
+    "recipe-pantry-stracchino-toast-v1192",
+    "recipe-pantry-raw-ham-sandwich-v1192",
+    "recipe-pantry-raw-turnip-salad-v1192",
+  ];
+  for (const name of photos) {
+    assert.match(source, new RegExp(`photo\\(\"${name}\"\\)`));
+    await access(new URL(`../public/food/${name}.png`, import.meta.url));
+  }
 });

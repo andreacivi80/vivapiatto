@@ -95,7 +95,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.19.1";
+const VERSION = "1.19.2";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -9729,7 +9729,7 @@ const pantryIntegrationRecipes: Recipe[] = [
     kicker: "Cena da casa più saporita",
     course: "Piatto unico",
     cuisine: "Italiano",
-    image: pantryPreviewImage("Coscia di pollo arrosto"),
+    image: photo("recipe-pantry-roast-chicken-thigh-v1192"),
     time: 30,
     ingredients: [{ food: "Coscia di pollo arrosto", grams: 150 }, { food: "Polenta cotta", grams: 180 }, { food: "Verza fresca", grams: 200 }, { food: "Salvia fresca", grams: 3 }, { food: "Pepe nero", grams: 1 }, { food: "Olio extravergine", grams: 5 }],
     steps: ["Scalda la coscia arrosto in forno a 180 °C fino a completa temperatura al cuore.", "Taglia la verza e stufala con poca acqua, salvia e pepe.", "Scalda la polenta a fette e servi con l’olio misurato sulla verza."],
@@ -9741,7 +9741,7 @@ const pantryIntegrationRecipes: Recipe[] = [
     kicker: "Piatto vegetale completo",
     course: "Piatto unico",
     cuisine: "Vegetale",
-    image: pantryPreviewImage("Seitan alla piastra"),
+    image: photo("recipe-pantry-seitan-turnips-v1192"),
     time: 20,
     ingredients: [{ food: "Seitan alla piastra", grams: 140 }, { food: "Farro cotto", grams: 175 }, { food: "Rape cotte bollite", grams: 200 }, { food: "Succo di limone", grams: 15 }, { food: "Timo fresco", grams: 2 }, { food: "Olio extravergine", grams: 10 }],
     steps: ["Scalda il farro già cotto.", "Griglia il seitan 3-4 minuti per lato.", "Condisci le rape bollite con limone, timo e olio misurato e servi tutto caldo."],
@@ -9753,7 +9753,7 @@ const pantryIntegrationRecipes: Recipe[] = [
     kicker: "Pranzo rapido da casa",
     course: "Piatto unico",
     cuisine: "Italiano",
-    image: pantryPreviewImage("Stracchino"),
+    image: photo("recipe-pantry-stracchino-toast-v1192"),
     time: 15,
     ingredients: [{ food: "Pane integrale", grams: 90 }, { food: "Stracchino", grams: 80 }, { food: "Zucchine", grams: 150 }, { food: "Peperoni cotti senza olio", grams: 100 }, { food: "Rucola", grams: 40 }],
     steps: ["Griglia le zucchine a fette e asciuga bene i peperoni.", "Tosta il pane, spalma lo stracchino e aggiungi verdure e rucola.", "Chiudi il toast e scaldalo un minuto per lato."],
@@ -9765,7 +9765,7 @@ const pantryIntegrationRecipes: Recipe[] = [
     kicker: "Pranzo trasportabile senza cottura",
     course: "Piatto unico",
     cuisine: "Italiano",
-    image: pantryPreviewImage("Prosciutto crudo sgrassato"),
+    image: photo("recipe-pantry-raw-ham-sandwich-v1192"),
     time: 6,
     ingredients: [{ food: "Pane bianco tipo 0", grams: 100 }, { food: "Prosciutto crudo sgrassato", grams: 70 }, { food: "Mozzarella light", grams: 80 }, { food: "Pomodorini", grams: 120 }, { food: "Rucola", grams: 30 }],
     steps: ["Apri il pane e distribuisci prosciutto e mozzarella scolata.", "Aggiungi pomodorini affettati e rucola.", "Avvolgi e conserva refrigerato fino al pranzo."],
@@ -9777,7 +9777,7 @@ const pantryIntegrationRecipes: Recipe[] = [
     kicker: "Piatto fresco croccante",
     course: "Piatto unico",
     cuisine: "Creativo",
-    image: pantryPreviewImage("Rape crude"),
+    image: photo("recipe-pantry-raw-turnip-salad-v1192"),
     time: 12,
     ingredients: [{ food: "Rape crude", grams: 150 }, { food: "Mela", grams: 150 }, { food: "Formaggio fresco magro", grams: 100 }, { food: "Noci", grams: 20 }, { food: "Pane di segale", grams: 60 }, { food: "Aceto di mele", grams: 10 }],
     steps: ["Lava e affetta molto sottilmente le rape crude.", "Taglia la mela e uniscila subito all’aceto di mele.", "Aggiungi formaggio fresco e noci; servi con il pane."],
