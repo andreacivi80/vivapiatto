@@ -13,7 +13,7 @@ Questa checklist resta nel repository e viene aggiornata a ogni revisione. Una v
 ## Ricette e fotografie
 
 - [x] Collegare integralmente le quattro matrici di ricette al motore dei pasti. Verifica automatica: 214/214 (C44, S42, P64, D64).
-- [ ] Eliminare dalla libreria ogni combinazione che non sia una ricetta vera.
+- [x] Eliminare dalla libreria ogni combinazione che non sia una ricetta vera. Spuntini elementari restano nel piano ma il ricettario richiede tecnica, piatto preparato riconoscibile oppure almeno quattro ingredienti.
 - [ ] Creare fotografia specifica per ogni alimento e preparazione, senza riuso semanticamente errato.
 - [ ] Creare fotografia finale specifica per ogni ricetta completa, con gli ingredienti realmente presenti.
 - [ ] Controllare automaticamente riferimenti mancanti, associazioni foto/alimento e cache busting a ogni versione.

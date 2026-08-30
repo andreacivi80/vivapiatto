@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]18[.]96"/);
+  assert.match(app, /VERSION = "1[.]18[.]97"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1950,6 +1950,15 @@ test("v1.18.96 connects the complete requested pantry to real recipes", async ()
   assert.match(source, /pantry-vegetable-veloute/);
   assert.match(packageSource, /audit-pantry-recipe-usage\.mjs/);
   assert.match(audit, /if \(missing\.length\) process\.exitCode = 1/);
+});
+
+test("v1.18.97 keeps simple snack combinations out of the recipe library", async () => {
+  const source = await readFile("app/FoodPlanner.tsx", "utf8");
+  assert.match(source, /const isSubstantialRecipe = \(recipe: Recipe\) => \{/);
+  assert.match(source, /const hasRealTechnique/);
+  assert.match(source, /const isNamedPreparedDish/);
+  assert.match(source, /recipe\.ingredients\.length >= 4/);
+  assert.match(source, /\(swapTarget \|\| isSubstantialRecipe\(r\)\)/);
 });
 
 test("v1.18.71 discards obsolete saved food parts before nutrition rendering", async () => {

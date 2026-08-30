@@ -95,7 +95,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.96";
+const VERSION = "1.18.97";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -10939,10 +10939,19 @@ export function FoodPlanner() {
     recipe.ingredients.length >= 3 &&
     ["Piatto unico", "Piatto completo", "Primo", "Secondo"].includes(recipeCourse(recipe));
   const compatibleWithPlace = (_r: Recipe) => true;
-  const isSubstantialRecipe = (recipe: Recipe) =>
-    recipe.steps.length >= 2 &&
-    recipe.ingredients.length >= 2 &&
-    (recipe.time >= 5 || recipe.ingredients.length >= 3);
+  const isSubstantialRecipe = (recipe: Recipe) => {
+    if (recipe.steps.length < 2 || recipe.ingredients.length < 2) return false;
+    const preparation = recipe.steps.join(" ").toLowerCase();
+    const hasRealTechnique =
+      /cuoc|boll|forno|inforna|padella|grigli|piastra|vapore|frull|impasta|tosta|marina|congela|raffredda|riposa|frigorifero/.test(
+        preparation,
+      );
+    const isNamedPreparedDish =
+      /panino|toast|insalata|bowl|coppa|jar|porridge|pancake|frullato|smoothie|gelato|hummus|vellutata|minestrone|zuppa|frittata|omelette/.test(
+        recipe.name.toLowerCase(),
+      );
+    return hasRealTechnique || isNamedPreparedDish || recipe.ingredients.length >= 4;
+  };
   const recipeMatchesHealthyFilter = (recipe: Recipe, filter: HealthyFilterId) => {
     const foodsText = recipe.ingredients.map((item) => item.food).join(" ").toLowerCase();
     const methodText = [...recipe.steps, ...recipe.alternatives].join(" ").toLowerCase();
