@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]18[.]75"/);
+  assert.match(app, /VERSION = "1[.]18[.]76"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1889,4 +1889,15 @@ test("v1.18.75 keeps compact mobile selectors inside the viewport", async () => 
   assert.match(css, /\.compact-config > div[\s\S]*?min-width:\s*0/);
   assert.match(css, /\.compact-config select[\s\S]*?max-width:\s*100%/);
   assert.match(css, /\.cuisine-picker select[\s\S]*?max-width:\s*100%/);
+});
+
+test("v1.18.76 permanently audits recipe ingredients against visible components", async () => {
+  const [source, audit, manifest] = await Promise.all([
+    readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../scripts/audit-recipe-parts.mjs", import.meta.url), "utf8"),
+    readFile(new URL("../package.json", import.meta.url), "utf8"),
+  ]);
+  assert.doesNotMatch(source, /matrix-d45[\s\S]{0,1200}food: "Edamame cotti"/);
+  assert.match(audit, /Ingredienti e componenti non allineati/);
+  assert.match(manifest, /audit-recipe-parts[.]mjs/);
 });

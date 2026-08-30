@@ -81,7 +81,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.75";
+const VERSION = "1.18.76";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -4351,7 +4351,6 @@ const balancedDinnerRecipes: Recipe[] = [
     ingredients: [{ food: "Tempeh", grams: 120 }, { food: "Patata dolce cotta", grams: 220 }, { food: "Broccoli bolliti", grams: 200 }, { food: "Olio extravergine", grams: 10 }],
     parts: [
       { category: "Proteina", food: "Tempeh", grams: 120, label: "Tempeh alla piastra · 120 g", image: photo("part-tempeh-v11520") },
-    { category: "Proteina", food: "Edamame cotti", grams: 120, label: "Edamame cotti · 120 g", image: photo("part-edamame-v11634") },
       { category: "Carboidrato", food: "Patata dolce cotta", grams: 220, label: "Patata dolce cotta · 220 g", image: photo("part-sweet-potato-v8") },
       { category: "Contorno", food: "Broccoli bolliti", grams: 200, label: "Broccoli · 200 g", image: photo("part-broccoli-v1154") },
       { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") },
