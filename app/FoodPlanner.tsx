@@ -95,7 +95,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.19.3";
+const VERSION = "1.19.4";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -9594,14 +9594,6 @@ const everydayLegumeRecipes: Recipe[] = [
   },
 ];
 
-const pantryPreviewImage = (food: string) => {
-  const part =
-    (Object.values(mealPartOptions).flat() as MealPart[]).find((item) => item.food === food) ||
-    ingredientPartCatalog[food];
-  if (!part?.image) throw new Error(`Foto ingrediente non disponibile per ${food}`);
-  return part.image;
-};
-
 const pantryIntegrationRecipes: Recipe[] = [
   {
     id: "pantry-overnight-oats-nectarine",
@@ -9849,7 +9841,7 @@ const pantryIntegrationRecipes: Recipe[] = [
     kicker: "Primo di pesce da casa",
     course: "Piatto unico",
     cuisine: "Italiano",
-    image: pantryPreviewImage("Vongole cotte"),
+    image: photo("recipe-pantry-clam-pasta-v1194"),
     time: 35,
     ingredients: [{ food: "Pasta di semola secca", grams: 80 }, { food: "Vongole cotte", grams: 160 }, { food: "Pomodorini", grams: 150 }, { food: "Aglio crudo", grams: 3 }, { food: "Prezzemolo fresco", grams: 5 }, { food: "Olio extravergine", grams: 5 }],
     steps: ["Se usi vongole fresche, falle spurgare e scarta quelle rotte o che non si aprono in cottura.", "Cuoci la pasta al dente.", "Salta pomodorini, aglio e vongole, unisci la pasta e completa con prezzemolo e olio misurato."],
@@ -9861,7 +9853,7 @@ const pantryIntegrationRecipes: Recipe[] = [
     kicker: "Piatto semplice da lavoro",
     course: "Piatto unico",
     cuisine: "Italiano",
-    image: pantryPreviewImage("Petto di pollo alla griglia"),
+    image: photo("recipe-pantry-grilled-chicken-bowl-v1194"),
     time: 22,
     ingredients: [{ food: "Riso basmati cotto", grams: 180 }, { food: "Petto di pollo alla griglia", grams: 140 }, { food: "Carote crude", grams: 100 }, { food: "Cetrioli", grams: 100 }, { food: "Olio extravergine", grams: 10 }],
     steps: ["Cuoci il pollo sulla griglia calda fino a completa cottura interna.", "Taglia carote e cetrioli e uniscili al riso cotto.", "Affetta il pollo e completa con l’olio misurato."],
@@ -9873,7 +9865,7 @@ const pantryIntegrationRecipes: Recipe[] = [
     kicker: "Cena calda e semplice",
     course: "Piatto unico",
     cuisine: "Italiano",
-    image: pantryPreviewImage("Petto di pollo lesso"),
+    image: photo("recipe-pantry-boiled-chicken-soup-v1194"),
     time: 25,
     ingredients: [{ food: "Petto di pollo lesso", grams: 140 }, { food: "Passato di verdure", grams: 350 }, { food: "Pane integrale", grams: 70 }, { food: "Grana Padano DOP", grams: 15 }, { food: "Olio extravergine", grams: 5 }],
     steps: ["Lessa il pollo in acqua sobbollente fino a completa cottura e affettalo.", "Scalda il passato di verdure.", "Servi pollo e passato con pane, Grana e olio misurato."],
@@ -9885,7 +9877,7 @@ const pantryIntegrationRecipes: Recipe[] = [
     kicker: "Piatto speziato ma pratico",
     course: "Piatto unico",
     cuisine: "Ispirazione indiana",
-    image: pantryPreviewImage("Petto di pollo al vapore"),
+    image: photo("recipe-pantry-steamed-chicken-curry-v1194"),
     time: 28,
     ingredients: [{ food: "Petto di pollo al vapore", grams: 140 }, { food: "Quinoa cotta", grams: 180 }, { food: "Cavolfiore", grams: 180 }, { food: "Carote cotte bollite", grams: 100 }, { food: "Curry in polvere", grams: 3 }, { food: "Curcuma in polvere", grams: 2 }, { food: "Zenzero fresco", grams: 5 }, { food: "Olio extravergine", grams: 5 }],
     steps: ["Cuoci il pollo al vapore fino a completa cottura interna.", "Scalda cavolfiore e carote con curry, curcuma, zenzero e poca acqua.", "Servi con quinoa e olio misurato."],
@@ -9897,7 +9889,7 @@ const pantryIntegrationRecipes: Recipe[] = [
     kicker: "Piatto freddo completo",
     course: "Piatto unico",
     cuisine: "Italiano",
-    image: pantryPreviewImage("Roast beef magro"),
+    image: photo("recipe-pantry-roastbeef-salad-v1194"),
     time: 15,
     ingredients: [{ food: "Roast beef magro", grams: 130 }, { food: "Patate lesse", grams: 220 }, { food: "Fagiolini", grams: 180 }, { food: "Succo di limone", grams: 15 }, { food: "Basilico fresco", grams: 5 }, { food: "Olio extravergine", grams: 10 }],
     steps: ["Affetta il roast beef sottile.", "Taglia le patate lesse e uniscile ai fagiolini.", "Frulla limone, basilico e olio misurato e distribuisci la salsa sul piatto."],
@@ -9909,7 +9901,7 @@ const pantryIntegrationRecipes: Recipe[] = [
     kicker: "Piatto freddo da preparare al momento",
     course: "Piatto unico",
     cuisine: "Italiano",
-    image: pantryPreviewImage("Carpaccio di manzo · peso a crudo"),
+    image: photo("recipe-pantry-carpaccio-mozzarella-v1194"),
     time: 8,
     ingredients: [{ food: "Carpaccio di manzo · peso a crudo", grams: 120 }, { food: "Mozzarella vaccina", grams: 100 }, { food: "Rucola", grams: 60 }, { food: "Pomodorini", grams: 120 }, { food: "Pane integrale", grams: 70 }, { food: "Aceto balsamico", grams: 10 }, { food: "Olio extravergine", grams: 5 }],
     steps: ["Usa carne destinata al consumo a crudo e mantienila refrigerata fino al servizio.", "Disponi carpaccio, mozzarella scolata, rucola e pomodorini.", "Condisci con balsamico e olio misurato e servi subito con pane."],
@@ -9921,7 +9913,7 @@ const pantryIntegrationRecipes: Recipe[] = [
     kicker: "Cena vegetale cremosa senza panna",
     course: "Piatto unico",
     cuisine: "Vegetale",
-    image: pantryPreviewImage("Vellutata di verdure senza panna"),
+    image: photo("recipe-pantry-vegetable-veloute-v1194"),
     time: 20,
     ingredients: [{ food: "Vellutata di verdure senza panna", grams: 350 }, { food: "Ceci cotti", grams: 130 }, { food: "Pane integrale", grams: 70 }, { food: "Origano secco", grams: 2 }, { food: "Pepe nero", grams: 1 }, { food: "Olio extravergine", grams: 10 }],
     steps: ["Scalda la vellutata mescolando.", "Asciuga i ceci e tostali in padella con origano e pepe.", "Tosta il pane a cubetti e servi ceci e crostini sulla vellutata con olio misurato."],
