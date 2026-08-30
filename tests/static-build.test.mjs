@@ -58,7 +58,7 @@ test("sorgente mobile con versione e fonti", async () => {
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(app, /VERSION = "1[.]18[.]82"/);
+  assert.match(app, /VERSION = "1[.]18[.]83"/);
   assert.match(app, /breakfastMilkAlternatives/);
   assert.match(app, /recipeFlours/);
   assert.match(app, /sharesFruit/);
@@ -1947,4 +1947,14 @@ test("v1.18.82 immediately replans cuisine and place with distinct practical poo
   assert.match(source, /selectedContext === "Mensa"/);
   assert.match(source, /selectedContext === "Ristorante"/);
   assert.match(source, /workLunchesFrom\(mains, selectedCuisine\)/);
+});
+
+test("v1.18.83 defers every heavy food photograph on mobile", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const imageTags = [...source.matchAll(/<img\b[\s\S]*?\/>/g)].map((match) => match[0]);
+  assert.ok(imageTags.length >= 10);
+  imageTags.forEach((tag) => {
+    assert.match(tag, /loading="lazy"/);
+    assert.match(tag, /decoding="async"/);
+  });
 });

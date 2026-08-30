@@ -51,7 +51,7 @@ const RecipeVisual = ({ recipe }: { recipe: Recipe }) => {
     .slice(0, 4);
   const hasDedicatedDishPhoto = /\/food\/recipe-/.test(recipe.image);
   if (hasDedicatedDishPhoto || componentPhotos.length < 2) {
-    return <img className="recipe-visual-single" src={recipe.image} alt={recipe.name} />;
+    return <img className="recipe-visual-single" src={recipe.image} alt={recipe.name} loading="lazy" decoding="async" />;
   }
   return (
     <div
@@ -64,6 +64,8 @@ const RecipeVisual = ({ recipe }: { recipe: Recipe }) => {
           key={`${part.food}-${index}`}
           src={part.image}
           alt={partDisplayName(part)}
+          loading="lazy"
+          decoding="async"
         />
       ))}
     </div>
@@ -90,7 +92,7 @@ const SLOT_LABELS = [
   "Cena",
 ];
 
-const VERSION = "1.18.82";
+const VERSION = "1.18.83";
 const isNewerRelease = (candidate: string, current: string) => {
   const candidateParts = candidate.split(".").map(Number);
   const currentParts = current.split(".").map(Number);
@@ -13237,6 +13239,8 @@ export function FoodPlanner() {
                                   <img
                                     src={part.image}
                                     alt={partDisplayName(part)}
+                                    loading="lazy"
+                                    decoding="async"
                                   />
                                   <button
                                     type="button"
@@ -13641,6 +13645,8 @@ export function FoodPlanner() {
                             className="week-slot-visual"
                             src={photo(WEEK_SLOT_IMAGES[slot])}
                             alt=""
+                            loading="lazy"
+                            decoding="async"
                           />
                           <span>
                             <small>{SLOT_LABELS[slot]}</small>
@@ -13685,6 +13691,8 @@ export function FoodPlanner() {
                                 <img
                                   src={part.image}
                                   alt={partDisplayName(part)}
+                                  loading="lazy"
+                                  decoding="async"
                                 />
                                 <span>{partDisplayName(part)}</span>
                                 <b>{part.grams} g</b>
@@ -13908,7 +13916,7 @@ export function FoodPlanner() {
                 <div className="swap-food-grid">
                   {swapFoodOptions.map((part) => (
                     <button key={part.food} onClick={() => chooseSingleFoodFromLibrary(part)}>
-                      <img src={part.image} alt={partDisplayName(part)} />
+                      <img src={part.image} alt={partDisplayName(part)} loading="lazy" decoding="async" />
                       <span>{partDisplayName(part)}</span>
                       <b>{part.grams} g · {round(calc([part]).kcal)} kcal</b>
                     </button>
@@ -14250,7 +14258,7 @@ export function FoodPlanner() {
                 <div className="quick-log">
                   {drinkOptions.map((d) => (
                     <button key={d.label} onClick={() => addDrink(diaryDay, d)}>
-                      <img src={d.image} alt="" aria-hidden="true" />
+                      <img src={d.image} alt="" aria-hidden="true" loading="lazy" decoding="async" />
                       <span>＋ {d.label}</span>
                     </button>
                   ))}
@@ -14266,7 +14274,7 @@ export function FoodPlanner() {
                         }))
                       }
                     >
-                      {x.image && <img src={x.image} alt="" aria-hidden="true" />}
+                      {x.image && <img src={x.image} alt="" aria-hidden="true" loading="lazy" decoding="async" />}
                       <span>
                         {x.label} · {x.amount}
                       </span>
@@ -14460,7 +14468,7 @@ export function FoodPlanner() {
                         key={option.food}
                         onClick={() => chooseMealPart(adjusted, true)}
                       >
-                        <img src={option.image} alt={option.label || option.food} />
+                        <img src={option.image} alt={option.label || option.food} loading="lazy" decoding="async" />
                         <span>{option.label || option.food}</span>
                         <b>
                           {adjusted.grams} g · {round(calc([adjusted]).kcal)} kcal
@@ -14579,6 +14587,8 @@ export function FoodPlanner() {
                           <img
                             src={option.image}
                             alt={option.label || option.food}
+                            loading="lazy"
+                            decoding="async"
                           />
                           <span>{option.label || option.food}</span>
                           <b>
