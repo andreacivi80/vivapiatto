@@ -3090,6 +3090,9 @@ button {
   color: var(--muted);
   font-size: 7px;
 }
+.swap-food-more {
+  margin-top: 9px;
+}
 
 
 /* v1.16.31: le fotografie degli alimenti e dei componenti restano interamente visibili. */

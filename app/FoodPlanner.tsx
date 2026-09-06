@@ -10235,6 +10235,7 @@ export function FoodPlanner() {
   const [swapReturnTab, setSwapReturnTab] = useState<Tab>("today");
   const [libraryQuery, setLibraryQuery] = useState("");
   const [visibleRecipeCount, setVisibleRecipeCount] = useState(10);
+  const [visibleFoodCount, setVisibleFoodCount] = useState(24);
   const [compatibleRecipePage, setCompatibleRecipePage] = useState(0);
   const [cuisineChoice, setCuisineChoice] = useState("Italiano");
   const [dayContext, setDayContext] = useState("Lavoro");
@@ -11200,6 +11201,10 @@ export function FoodPlanner() {
           return preferred.indexOf(left.category) - preferred.indexOf(right.category);
         })
     : [];
+  const visibleSwapFoodOptions = swapFoodOptions.slice(0, visibleFoodCount);
+  useEffect(() => {
+    setVisibleFoodCount(24);
+  }, [libraryQuery, swapTarget?.day, swapTarget?.slot]);
   const chooseSingleFoodFromLibrary = (part: MealPart) => {
     if (!swapTarget) return;
     const key = `${swapTarget.day}-${swapTarget.slot}`;
@@ -14548,11 +14553,13 @@ export function FoodPlanner() {
               <div className="swap-food-catalog">
                 <div className="swap-food-heading">
                   <span>CATALOGO COMPLETO</span>
-                  <b>{swapFoodOptions.length} alimenti</b>
+                  <b>
+                    {Math.min(visibleFoodCount, swapFoodOptions.length)}/{swapFoodOptions.length} alimenti
+                  </b>
                 </div>
                 <p>Scegli anche un singolo alimento; dopo puoi aggiungere liberamente gli altri componenti.</p>
                 <div className="swap-food-grid">
-                  {swapFoodOptions.map((part) => (
+                  {visibleSwapFoodOptions.map((part) => (
                     <button key={part.food} onClick={() => chooseSingleFoodFromLibrary(part)}>
                       <img src={part.image} alt={partDisplayName(part)} loading="lazy" decoding="async" />
                       <span>{partDisplayName(part)}</span>
@@ -14560,6 +14567,15 @@ export function FoodPlanner() {
                     </button>
                   ))}
                 </div>
+                {visibleFoodCount < swapFoodOptions.length && (
+                  <button
+                    type="button"
+                    className="library-more swap-food-more"
+                    onClick={() => setVisibleFoodCount((count) => count + 24)}
+                  >
+                    Mostra altri alimenti
+                  </button>
+                )}
               </div>
             )}
           </section>

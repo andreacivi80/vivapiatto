@@ -886,6 +886,15 @@ test("v1.16.88 creates a real recipe from the ingredients on hand", async () => 
   assert.match(app, /Preparazione completa|Vedi preparazione completa/);
 });
 
+test("v1.19.14 loads the complete food catalog progressively on mobile", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(app, /const \[visibleFoodCount, setVisibleFoodCount\] = useState\(24\)/);
+  assert.match(app, /swapFoodOptions\.slice\(0, visibleFoodCount\)/);
+  assert.match(app, /setVisibleFoodCount\(24\)/);
+  assert.match(app, /Mostra altri alimenti/);
+  assert.match(app, /visibleFoodCount < swapFoodOptions\.length/);
+});
+
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /Crea una ricetta con gli avanzi/);
