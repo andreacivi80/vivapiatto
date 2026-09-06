@@ -2017,11 +2017,21 @@ button {
   grid-column: 1 / -1;
   font-size: 10px;
 }
-.supplied-recipe-coverage span {
+.supplied-recipe-coverage button {
   min-width: 0;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: #fff;
+  color: inherit;
+  padding: 6px 2px;
   font-size: 8px;
   font-weight: 850;
   text-align: center;
+}
+.supplied-recipe-coverage button.active {
+  border-color: #185a43;
+  background: #185a43;
+  color: #fff;
 }
 .start-here {
   background: var(--ink);

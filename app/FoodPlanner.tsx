@@ -10243,6 +10243,7 @@ export function FoodPlanner() {
   const [plannedDrink, setPlannedDrink] = useState("Acqua");
   const [cuisineFilter, setCuisineFilter] = useState("Tutte");
   const [quickRecipeFilter, setQuickRecipeFilter] = useState("Tutti");
+  const [suppliedRecipeGroup, setSuppliedRecipeGroup] = useState<"all" | "c" | "s" | "p" | "d">("all");
   const [healthyFilters, setHealthyFilters] = useState<HealthyFilterId[]>([]);
   const [peopleCount, setPeopleCount] = useState(1);
   const [builderCategory, setBuilderCategory] = useState<MealPart["category"]>("Carboidrato");
@@ -11063,7 +11064,13 @@ export function FoodPlanner() {
   };
   const recipeMatchesQuickFilter = (recipe: Recipe) => {
     if (quickRecipeFilter === "Tutti") return true;
-    if (quickRecipeFilter === "Le tue 214") return /^matrix-[cspd]\d+/i.test(recipe.id);
+    if (quickRecipeFilter === "Le tue 214") {
+      const suppliedMatch = /^matrix-([cspd])\d+/i.exec(recipe.id);
+      return Boolean(
+        suppliedMatch &&
+        (suppliedRecipeGroup === "all" || suppliedMatch[1].toLowerCase() === suppliedRecipeGroup),
+      );
+    }
     const foodsText = recipe.ingredients.map((item) => item.food).join(" ").toLowerCase();
     if (quickRecipeFilter === "Pesce")
       return /salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|gamber|polpo|cozze|calamari|rombo|seppia/.test(foodsText);
@@ -14404,7 +14411,10 @@ export function FoodPlanner() {
                   key={filter}
                   className={quickRecipeFilter === filter ? "active" : ""}
                   aria-pressed={quickRecipeFilter === filter}
-                  onClick={() => setQuickRecipeFilter(filter)}
+                  onClick={() => {
+                    setQuickRecipeFilter(filter);
+                    if (filter === "Le tue 214") setSuppliedRecipeGroup("all");
+                  }}
                 >
                   {filter}
                 </button>
@@ -14461,10 +14471,22 @@ export function FoodPlanner() {
             {quickRecipeFilter === "Le tue 214" && (
               <div className="supplied-recipe-coverage" role="status" aria-label="Copertura delle ricette richieste">
                 <b>214/214 presenti</b>
-                <span>44 colazioni</span>
-                <span>42 spuntini</span>
-                <span>64 pranzi</span>
-                <span>64 cene</span>
+                {([
+                  ["c", "44 colazioni"],
+                  ["s", "42 spuntini"],
+                  ["p", "64 pranzi"],
+                  ["d", "64 cene"],
+                ] as const).map(([group, label]) => (
+                  <button
+                    type="button"
+                    key={group}
+                    className={suppliedRecipeGroup === group ? "active" : ""}
+                    aria-pressed={suppliedRecipeGroup === group}
+                    onClick={() => setSuppliedRecipeGroup((current) => current === group ? "all" : group)}
+                  >
+                    {label}
+                  </button>
+                ))}
               </div>
             )}
             {!libraryQuery && filteredRecipes.length > 0 && (

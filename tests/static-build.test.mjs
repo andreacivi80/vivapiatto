@@ -899,7 +899,7 @@ test("v1.19.15 exposes every supplied recipe family in the library", async () =>
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /RICETTARIO COMPLETO/);
   assert.match(app, /quickRecipeFilter === "Le tue 214"/);
-  assert.match(app, /\^matrix-\[cspd\]\\d\+/i);
+  assert.match(app, /\^matrix-\(\[cspd\]\)\\d\+/i);
   for (const filter of ["Colazione", "Spuntino", "Dolce", "Gelato"]) {
     assert.match(app, new RegExp(`"${filter}"`));
   }
@@ -913,6 +913,14 @@ test("v1.19.16 shows the live supplied-recipe coverage without technical matrix 
   assert.match(app, /64 pranzi/);
   assert.match(app, /64 cene/);
   assert.match(app, /className="supplied-recipe-coverage"/);
+});
+
+test("v1.19.17 opens each supplied recipe family directly", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(app, /const \[suppliedRecipeGroup, setSuppliedRecipeGroup\]/);
+  assert.match(app, /\^matrix-\(\[cspd\]\)\\d\+/i);
+  assert.match(app, /setSuppliedRecipeGroup\(\(current\) => current === group \? "all" : group\)/);
+  assert.match(app, /aria-pressed=\{suppliedRecipeGroup === group\}/);
 });
 
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {

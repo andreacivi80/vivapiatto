@@ -2,6 +2,11 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
+## v1.19.17 — in verifica
+
+- [x] Il riepilogo delle 214 ricette permette di aprire direttamente colazioni, spuntini, pranzi o cene.
+- [x] Il secondo tocco sul gruppo attivo ritorna all'intera raccolta senza perdere la ricerca.
+
 ## v1.19.16 — in verifica
 
 - [x] Il filtro “Le tue 214” espone un riepilogo visibile della matrice completa: 44 colazioni, 42 spuntini, 64 pranzi e 64 cene.
