@@ -1,6 +1,6 @@
 # Tavola Mia — audit finale del perimetro ricevuto
 
-Data verifica: 30 agosto 2026. Revisione di chiusura documentale: `1.19.13`.
+Data verifica: 6 settembre 2026. Ultimo checkpoint documentale: `1.19.16`.
 
 ## Specifiche acquisite
 
@@ -18,7 +18,7 @@ Data verifica: 30 agosto 2026. Revisione di chiusura documentale: `1.19.13`.
 - Extra/sgarri: 114 voci univoche con chilocalorie, proteine, carboidrati, grassi, fibre e fonte.
 - Alternative: 268 alimenti senza duplicati né card vuote nella stessa categoria.
 - Rotazione: 14/14 pasti principali nei range definiti, senza famiglie proteiche consecutive.
-- Suite pubblicabile: 157/157 test superati, SSR superato e build GitHub Pages riuscita.
+- Suite pubblicabile: 160/160 test superati, SSR superato e build GitHub Pages riuscita.
 
 ## Stress test pubblico mobile
 

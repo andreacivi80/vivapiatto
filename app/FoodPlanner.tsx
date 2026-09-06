@@ -14458,6 +14458,15 @@ export function FoodPlanner() {
                 {filteredRecipes.length}/{allRecipes.length}
               </b>
             </div>
+            {quickRecipeFilter === "Le tue 214" && (
+              <div className="supplied-recipe-coverage" role="status" aria-label="Copertura delle ricette richieste">
+                <b>214/214 presenti</b>
+                <span>44 colazioni</span>
+                <span>42 spuntini</span>
+                <span>64 pranzi</span>
+                <span>64 cene</span>
+              </div>
+            )}
             {!libraryQuery && filteredRecipes.length > 0 && (
               <div className="start-here">
                 <span>INIZIA DA QUI</span>

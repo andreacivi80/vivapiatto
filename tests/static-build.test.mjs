@@ -905,6 +905,16 @@ test("v1.19.15 exposes every supplied recipe family in the library", async () =>
   }
 });
 
+test("v1.19.16 shows the live supplied-recipe coverage without technical matrix labels", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(app, /214\/214 presenti/);
+  assert.match(app, /44 colazioni/);
+  assert.match(app, /42 spuntini/);
+  assert.match(app, /64 pranzi/);
+  assert.match(app, /64 cene/);
+  assert.match(app, /className="supplied-recipe-coverage"/);
+});
+
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /Crea una ricetta con gli avanzi/);

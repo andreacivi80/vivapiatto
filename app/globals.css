@@ -2002,6 +2002,27 @@ button {
   padding: 8px;
   border-radius: 10px;
 }
+.supplied-recipe-coverage {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px;
+  margin: -2px 0 9px;
+  padding: 7px;
+  border: 1px solid #b9d3c6;
+  border-radius: 12px;
+  background: #edf7f2;
+  color: #185a43;
+}
+.supplied-recipe-coverage b {
+  grid-column: 1 / -1;
+  font-size: 10px;
+}
+.supplied-recipe-coverage span {
+  min-width: 0;
+  font-size: 8px;
+  font-weight: 850;
+  text-align: center;
+}
 .start-here {
   background: var(--ink);
   color: #fff;

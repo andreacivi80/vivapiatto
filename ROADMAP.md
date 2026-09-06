@@ -2,6 +2,20 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
+## v1.19.16 — in verifica
+
+- [x] Il filtro “Le tue 214” espone un riepilogo visibile della matrice completa: 44 colazioni, 42 spuntini, 64 pranzi e 64 cene.
+- [x] La copertura resta leggibile sul telefono senza caricare contemporaneamente tutte le fotografie.
+
+## v1.19.15 — pubblicata
+
+- [x] Tutte le 214 ricette fornite sono raggiungibili direttamente dal ricettario con un filtro dedicato.
+- [x] Colazioni, spuntini, dolci e gelati hanno filtri rapidi espliciti oltre a pranzi e cene.
+
+## v1.19.14 — pubblicata
+
+- [x] Il catalogo dei 268 alimenti nel cambio piatto viene caricato 24 elementi alla volta, mantenendo ricerca e scelta completa.
+
 ## v1.15.19 — in verifica
 
 - [x] D41–D44 dell’addendum trasformate in ricette complete, non semplici elementi: sogliola, pollo con riso integrale, zuppa di cicerchie e frittata ai carciofi.
