@@ -11063,6 +11063,7 @@ export function FoodPlanner() {
   };
   const recipeMatchesQuickFilter = (recipe: Recipe) => {
     if (quickRecipeFilter === "Tutti") return true;
+    if (quickRecipeFilter === "Le tue 214") return /^matrix-[cspd]\d+/i.test(recipe.id);
     const foodsText = recipe.ingredients.map((item) => item.food).join(" ").toLowerCase();
     if (quickRecipeFilter === "Pesce")
       return /salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|gamber|polpo|cozze|calamari|rombo|seppia/.test(foodsText);
@@ -14366,7 +14367,7 @@ export function FoodPlanner() {
                 </button>
               </div>
             )}
-            <span className="eyebrow">300+ RICETTE GUIDATE</span>
+            <span className="eyebrow">RICETTARIO COMPLETO</span>
             <h1 className="page-title">
               {swapTarget ? "Scegli il sostituto" : "Scegli cosa cucinare"}
             </h1>
@@ -14397,7 +14398,7 @@ export function FoodPlanner() {
               ))}
             </div>
             <div className="quick-recipe-tabs" aria-label="Scelta rapida del tipo di piatto">
-              {["Tutti", "Pesce", "Carne", "Uova", "Vegetale", "Primo", "Secondo", "Contorno", "Piatto unico"].map((filter) => (
+              {["Tutti", "Le tue 214", "Colazione", "Spuntino", "Pesce", "Carne", "Uova", "Vegetale", "Primo", "Secondo", "Contorno", "Piatto unico", "Dolce", "Gelato"].map((filter) => (
                 <button
                   type="button"
                   key={filter}

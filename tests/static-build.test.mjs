@@ -376,7 +376,7 @@ test("sorgente mobile con versione e fonti", async () => {
   await access(new URL("../dist/food/recipe-c31-spelt-ricotta-apple-v11511.png", import.meta.url));
   await access(new URL("../dist/food/part-hazelnut-paste-v11511.png", import.meta.url));
   assert.match(app, /length:\s*284/);
-  assert.match(app, /300\+ RICETTE GUIDATE/);
+  assert.match(app, /RICETTARIO COMPLETO/);
   assert.match(app, /CREA/);
   assert.match(app, /USDA/);
   assert.match(css, /overflow-x:\s*hidden/);
@@ -893,6 +893,16 @@ test("v1.19.14 loads the complete food catalog progressively on mobile", async (
   assert.match(app, /setVisibleFoodCount\(24\)/);
   assert.match(app, /Mostra altri alimenti/);
   assert.match(app, /visibleFoodCount < swapFoodOptions\.length/);
+});
+
+test("v1.19.15 exposes every supplied recipe family in the library", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(app, /RICETTARIO COMPLETO/);
+  assert.match(app, /quickRecipeFilter === "Le tue 214"/);
+  assert.match(app, /\^matrix-\[cspd\]\\d\+/i);
+  for (const filter of ["Colazione", "Spuntino", "Dolce", "Gelato"]) {
+    assert.match(app, new RegExp(`"${filter}"`));
+  }
 });
 
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {
