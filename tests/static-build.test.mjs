@@ -923,6 +923,13 @@ test("v1.19.17 opens each supplied recipe family directly", async () => {
   assert.match(app, /aria-pressed=\{suppliedRecipeGroup === group\}/);
 });
 
+test("v1.19.18 pins the patched build toolchain", async () => {
+  const packageFile = JSON.parse(
+    await readFile(new URL("../package.json", import.meta.url), "utf8"),
+  );
+  assert.equal(packageFile.devDependencies.vite, "8.2.2");
+});
+
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /Crea una ricetta con gli avanzi/);

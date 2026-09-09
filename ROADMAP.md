@@ -2,6 +2,11 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
+## v1.19.18 — in verifica
+
+- [x] Vite aggiornato e fissato alla versione corretta 8.2.2.
+- [x] Audit delle dipendenze senza vulnerabilità note.
+
 ## v1.19.17 — in verifica
 
 - [x] Il riepilogo delle 214 ricette permette di aprire direttamente colazioni, spuntini, pranzi o cene.
