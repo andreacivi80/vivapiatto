@@ -318,7 +318,7 @@ test("sorgente mobile con versione e fonti", async () => {
   await access(new URL("../dist/food/recipe-d47-ricotta-pumpkin-v11520.png", import.meta.url));
   await access(new URL("../dist/food/recipe-d48-cuttlefish-chard-v11520.png", import.meta.url));
   await access(new URL("../dist/food/recipe-asian-oyakodon-v11520.png", import.meta.url));
-  await access(new URL("../dist/food/recipe-asian-bibimbap-v11520.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-asian-bibimbap-v11946.png", import.meta.url));
   await access(new URL("../dist/food/part-sunflower-seeds-v11640.png", import.meta.url));
   await access(new URL("../dist/food/part-trout-v11645.png", import.meta.url));
   await access(new URL("../dist/food/part-octopus-v11645.png", import.meta.url));
@@ -1245,6 +1245,19 @@ test("v1.19.45 verifies an automatic live release preserves the active plan", as
   assert.match(audit, /menuPreserved/);
   assert.match(audit, /scrollPreserved/);
   assert.match(audit, /windowsHide: true/);
+});
+
+test("v1.19.46 gives the verified bibimbap a faithful complete-dish photograph", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const recipeStart = source.indexOf('id: "asian-bibimbap-authentic"');
+  const recipeEnd = source.indexOf('id: "asian-negima-nabe-authentic"');
+  const recipe = source.slice(recipeStart, recipeEnd);
+  assert.ok(recipeStart > 0 && recipeEnd > recipeStart);
+  assert.match(recipe, /recipe-asian-bibimbap-v11946/);
+  assert.match(recipe, /food: "Zucchine"/);
+  assert.match(recipe, /food: "Semi di sesamo"/);
+  assert.match(recipe, /VisitKorea/);
+  await access(new URL("../public/food/recipe-asian-bibimbap-v11946.png", import.meta.url));
 });
 
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {

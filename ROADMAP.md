@@ -2,7 +2,13 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.45 — in verifica
+## v1.19.46 — in verifica
+
+- [x] Bibimbap verificato da fonte ufficiale VisitKorea con fotografia finale nuova e fedele alla ricetta.
+- [x] Zucchine e sesamo presenti sia nel testo nutrizionale sia nell'immagine, con componenti sostituibili separatamente.
+- [x] Immagine dedicata cache-bustata, piatto intero visibile e nessun riuso generico.
+
+## v1.19.45 — verificata
 
 - [x] Misurazione della posizione iniziale eseguita dopo il completamento reale dello scroll mobile.
 - [x] Confronto finale bloccante fra posizione iniziale e posizione ripristinata.
