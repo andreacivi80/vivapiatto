@@ -365,6 +365,73 @@ try {
   })()`);
   await wait(500);
   extraLog.removed = await evaluate(`![...document.querySelectorAll('#sgarri-extra .log-list button')].some((button) => button.innerText.includes('Gelato al pistacchio'))`);
+  const openedSnackAlternatives = await evaluate(`(() => {
+    const card = document.querySelectorAll('.meal-card')[1];
+    const button = card?.querySelector('.part-change');
+    if (!button) return false;
+    button.click();
+    return true;
+  })()`);
+  if (!openedSnackAlternatives) throw new Error("Alternative spuntino mattutino non trovate");
+  await wait(500);
+  const openedGelatoComposer = await evaluate(`(() => {
+    const group = document.querySelector('.cheat-picker-group');
+    if (!group) return false;
+    group.open = true;
+    const button = [...group.querySelectorAll('.complete-meal-select')].find((item) => item.innerText.includes('Gelato artigianale personalizzabile'));
+    if (!button) return false;
+    button.click();
+    return true;
+  })()`);
+  if (!openedGelatoComposer) throw new Error("Compositore gelato non trovato");
+  await wait(400);
+  const gelatoComposer = await evaluate(`(() => {
+    const builder = document.querySelector('.gelato-builder');
+    if (!builder) return { found: false };
+    const three = [...builder.querySelectorAll('.gelato-scoops button')].find((button) => button.innerText.includes('3 palline'));
+    three?.click();
+    return {
+      found: true,
+      hasTwoScoops: builder.innerText.includes('2 palline'),
+      hasThreeScoops: Boolean(three),
+      horizontalOverflow: builder.scrollWidth > builder.clientWidth + 1,
+    };
+  })()`);
+  await wait(300);
+  Object.assign(gelatoComposer, await evaluate(`(() => {
+    const builder = document.querySelector('.gelato-builder');
+    const selects = [...builder.querySelectorAll('select')];
+    const choose = builder.querySelector('.gelato-choose');
+    return {
+      flavorSelectors: selects.length,
+      flavorOptions: selects.length ? selects[0].options.length : 0,
+      hasCalculatedCalories: Boolean(choose && /\\d+ kcal/.test(choose.innerText)),
+    };
+  })()`));
+  await evaluate(`document.querySelector('.gelato-builder .gelato-choose')?.click()`);
+  await wait(700);
+  await evaluate(`document.querySelectorAll('.meal-card')[1]?.scrollIntoView({ block: 'center' })`);
+  await evaluate(`Promise.all([...document.querySelectorAll('.meal-card')[1].querySelectorAll('.meal-part img')].map((image) => {
+    image.loading = 'eager';
+    return image.complete ? Promise.resolve() : new Promise((resolve) => {
+      image.addEventListener('load', resolve, { once: true });
+      image.addEventListener('error', resolve, { once: true });
+      setTimeout(resolve, 8000);
+    });
+  }))`);
+  Object.assign(gelatoComposer, await evaluate(`(() => {
+    const card = document.querySelectorAll('.meal-card')[1];
+    const parts = [...card.querySelectorAll('.meal-part')];
+    const images = [...card.querySelectorAll('.meal-part img')];
+    const loadedImages = images.filter((image) => image.complete && image.naturalWidth > 0);
+    return {
+      applied: parts.length === 3 && parts.every((part) => part.innerText.includes('Pallina')),
+      imageCount: images.length,
+      loadedImageCount: loadedImages.length,
+      photosLoaded: images.length === 3 && loadedImages.length === 3,
+      pickerClosed: !document.querySelector('.part-picker-sheet'),
+    };
+  })()`));
   const exceptions = page.events.filter((event) =>
     event.method === "Runtime.exceptionThrown" ||
     (event.method === "Log.entryAdded" && event.params?.entry?.level === "error")
@@ -387,6 +454,7 @@ try {
     shopping,
     weekEditor,
     extraLog,
+    gelatoComposer,
     javascriptErrors: exceptions.length,
   };
   console.log(JSON.stringify(report));
@@ -410,6 +478,9 @@ try {
     !weekEditor.found || !weekEditor.visible || !weekEditor.hasClose || !weekEditor.hasRebalance ||
     weekEditor.horizontalOverflow || !weekEditor.returnedToWeek ||
     !extraLog.found || !extraLog.added || !extraLog.hasCalories || !extraLog.hasMacros || !extraLog.removed ||
+    !gelatoComposer.found || !gelatoComposer.hasTwoScoops || !gelatoComposer.hasThreeScoops ||
+    gelatoComposer.horizontalOverflow || gelatoComposer.flavorSelectors !== 3 || gelatoComposer.flavorOptions < 10 ||
+    !gelatoComposer.hasCalculatedCalories || !gelatoComposer.applied || !gelatoComposer.photosLoaded || !gelatoComposer.pickerClosed ||
     exceptions.length
   ) process.exitCode = 1;
   page.close();

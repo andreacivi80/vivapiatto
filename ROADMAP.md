@@ -2,6 +2,12 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
+## v1.19.30 — in verifica
+
+- [x] Compositore gelato aperto realmente dallo sgarro dello spuntino mattutino.
+- [x] Scelta fra due e tre palline, almeno dieci gusti e calorie calcolate verificate.
+- [x] Tre componenti con fotografie proprie applicati al pasto e pannello richiuso correttamente.
+
 ## v1.19.29 — in verifica
 
 - [x] Inserimento pubblico reale di uno sgarro tramite nome e grammi.

@@ -1069,6 +1069,19 @@ test("v1.19.29 logs and removes a real occasional food in the public diary", asy
   assert.match(audit, /extraLog[.]removed/);
 });
 
+test("v1.19.30 composes a photographed three-scoop gelato in the public snack", async () => {
+  const audit = await readFile(
+    new URL("../scripts/audit-public-mobile.mjs", import.meta.url),
+    "utf8",
+  );
+  assert.match(audit, /Gelato artigianale personalizzabile/);
+  assert.match(audit, /3 palline/);
+  assert.match(audit, /gelatoComposer[.]flavorSelectors !== 3/);
+  assert.match(audit, /gelatoComposer[.]hasCalculatedCalories/);
+  assert.match(audit, /gelatoComposer[.]photosLoaded/);
+  assert.match(audit, /gelatoComposer[.]pickerClosed/);
+});
+
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /Crea una ricetta con gli avanzi/);
