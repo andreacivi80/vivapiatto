@@ -715,6 +715,25 @@ try {
       horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
     };
   })()`));
+  await evaluate(`document.querySelectorAll('.meal-card')[2]?.querySelector('.meal-part .part-change')?.click()`);
+  await wait(450);
+  Object.assign(readyDishFlow, await evaluate(`(() => {
+    const choices = [...document.querySelectorAll('.part-picker-sheet .complete-meal-select')];
+    const choice = choices[1] || choices[0];
+    const name = choice?.querySelector('span')?.innerText.trim() || '';
+    choice?.click();
+    return { secondReadyDishFound: Boolean(choice), secondDishName: name };
+  })()`));
+  await wait(700);
+  Object.assign(readyDishFlow, await evaluate(`(() => {
+    const card = document.querySelectorAll('.meal-card')[2];
+    const buttons = [...(card?.querySelectorAll('.dish-view-actions button') || [])];
+    return {
+      secondReadyDishApplied: card?.querySelector('h3')?.innerText.trim() === ${JSON.stringify(readyDishFlow.secondDishName)},
+      secondDishStillReplaceable: buttons.some((button) => button.innerText.includes('Cambia piatto pronto')),
+      secondDishStillSplittable: buttons.some((button) => button.innerText.includes('Dividi in componenti')),
+    };
+  })()`));
   const checkinAdaptation = await evaluate(`(() => {
     const toggle = document.querySelector('.checkin-toggle');
     const beforeMenu = [...document.querySelectorAll('.meal-card h3')].map((heading) => heading.innerText.trim());
@@ -904,7 +923,9 @@ try {
     !readyDishFlow.detailPhotoLoaded || !readyDishFlow.splitApplied || !readyDishFlow.splitPhotosLoaded ||
     !readyDishFlow.recombineBeforeEdit || !readyDishFlow.recomposed || readyDishFlow.componentAlternatives < 2 ||
     !readyDishFlow.componentReplacementFound || !readyDishFlow.componentChanged ||
-    !readyDishFlow.recombineAfterEditHidden || readyDishFlow.horizontalOverflow ||
+    !readyDishFlow.recombineAfterEditHidden || !readyDishFlow.secondReadyDishFound ||
+    !readyDishFlow.secondReadyDishApplied || !readyDishFlow.secondDishStillReplaceable ||
+    !readyDishFlow.secondDishStillSplittable || readyDishFlow.horizontalOverflow ||
     !checkinAdaptation.found || !checkinAdaptation.bloatingActive || !checkinAdaptation.bloatingNote ||
     !checkinAdaptation.bloatingMenuChanged || !checkinAdaptation.bloatingDinnerAvoidsTriggers ||
     !checkinAdaptation.tiredActive || !checkinAdaptation.tiredNote || !checkinAdaptation.tiredMenuChanged ||

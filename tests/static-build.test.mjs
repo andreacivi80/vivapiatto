@@ -1186,6 +1186,17 @@ test("v1.19.37 stress-tests complete dish replacement, split and safe recomposit
   assert.match(audit, /readyDishFlow[.]recombineAfterEditHidden/);
 });
 
+test("v1.19.38 replaces an already selected complete dish again", async () => {
+  const audit = await readFile(
+    new URL("../scripts/audit-public-mobile.mjs", import.meta.url),
+    "utf8",
+  );
+  assert.match(audit, /readyDishFlow[.]secondReadyDishFound/);
+  assert.match(audit, /readyDishFlow[.]secondReadyDishApplied/);
+  assert.match(audit, /readyDishFlow[.]secondDishStillReplaceable/);
+  assert.match(audit, /readyDishFlow[.]secondDishStillSplittable/);
+});
+
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /Crea una ricetta con gli avanzi/);

@@ -2,7 +2,12 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.37 — in verifica
+## v1.19.38 — in verifica
+
+- [x] Un piatto completo già scelto può essere sostituito nuovamente con un altro piatto completo.
+- [x] Dopo la seconda sostituzione restano disponibili sia “Cambia piatto pronto” sia “Dividi in componenti”.
+
+## v1.19.37 — verificata
 
 - [x] Piatto completo sostituito realmente dal pannello alternative e fotografia verificata.
 - [x] Scheda ricetta aperta con ingredienti, preparazione e fotografia caricata.
