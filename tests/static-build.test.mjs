@@ -974,6 +974,17 @@ test("v1.19.21 keeps the public mobile stress audit silent and reusable", async 
   assert.match(audit, /javascriptErrors/);
 });
 
+test("v1.19.22 keeps the public mobile audit executable", async () => {
+  const audit = await readFile(
+    new URL("../scripts/audit-public-mobile.mjs", import.meta.url),
+    "utf8",
+  );
+  assert.equal(
+    (audit.match(/from "node:child_process"/g) || []).length,
+    1,
+  );
+});
+
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /Crea una ricetta con gli avanzi/);
