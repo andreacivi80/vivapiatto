@@ -116,13 +116,18 @@ try {
   })()`);
   if (!openedLibrary) throw new Error("Navigazione Ricette non disponibile");
   await wait(2_000);
-  const initialView = await evaluate(`(() => {
+  const initialViewReady = await evaluate(`(() => {
+    document.documentElement.style.scrollBehavior = 'auto';
     window.scrollTo(0, Math.min(900, Math.max(0, document.documentElement.scrollHeight - window.innerHeight)));
-    return new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve({
-      scrollY: Math.round(window.scrollY),
+    return {
       libraryVisible: document.body.innerText.includes('Le tue 214'),
-    }))));
+    };
   })()`);
+  await wait(1_000);
+  const initialView = {
+    ...initialViewReady,
+    scrollY: await evaluate('Math.round(window.scrollY)'),
+  };
   const initial = { ...initialMeal, ...initialView };
   if (!initial.libraryVisible || initial.scrollY <= 0) throw new Error(`Vista lunga di prova non disponibile: ${JSON.stringify(initial)}`);
   await wait(7_000);

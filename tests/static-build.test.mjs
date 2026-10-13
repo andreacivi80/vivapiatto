@@ -1231,7 +1231,7 @@ test("v1.19.41 verifies a weekly component edit is identical in Today", async ()
   assert.match(audit, /weekValues[.]includes/);
 });
 
-test("v1.19.43 verifies an automatic live release preserves the active plan", async () => {
+test("v1.19.45 verifies an automatic live release preserves the active plan", async () => {
   const [audit, packageFile] = await Promise.all([
     readFile(new URL("../scripts/audit-live-release-update.mjs", import.meta.url), "utf8"),
     readFile(new URL("../package.json", import.meta.url), "utf8").then(JSON.parse),

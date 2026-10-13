@@ -2,7 +2,12 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.44 — in verifica
+## v1.19.45 — in verifica
+
+- [x] Misurazione della posizione iniziale eseguita dopo il completamento reale dello scroll mobile.
+- [x] Confronto finale bloccante fra posizione iniziale e posizione ripristinata.
+
+## v1.19.44 — verificata funzionalmente
 
 - [x] Navigazione mobile del collaudo individuata dal testo accessibile completo, comprese le icone dei pulsanti.
 - [x] Verifica automatica reale del passaggio 1.19.43 → 1.19.44 con stato utente conservato.
