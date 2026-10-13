@@ -232,6 +232,77 @@ try {
   gramsEdit.afterReload = await evaluate(`Number(document.querySelector('.meal-part input[type="number"]')?.value)`);
   gramsEdit.persisted = gramsEdit.afterEdit === gramsEdit.expected && gramsEdit.afterReload === gramsEdit.expected;
   const afterReload = await snapshot();
+  await clickTab("Settimana");
+  const openedShopping = await evaluate(`(() => {
+    const button = [...document.querySelectorAll('button')].find((item) => item.innerText.includes('Lista della spesa settimanale'));
+    if (!button) return false;
+    button.click();
+    return true;
+  })()`);
+  if (!openedShopping) throw new Error("Lista della spesa settimanale non trovata");
+  await wait(500);
+  const shopping = await evaluate(`(() => {
+    const sheet = document.querySelector('.shopping-sheet');
+    if (!sheet) return { found: false };
+    const checkboxes = [...sheet.querySelectorAll('.shopping-list input[type="checkbox"]')];
+    const selectAll = [...sheet.querySelectorAll('button')].find((button) => button.innerText.includes('Seleziona tutto'));
+    const deselectAll = [...sheet.querySelectorAll('button')].find((button) => button.innerText.includes('Deseleziona tutto'));
+    selectAll?.click();
+    return {
+      found: true,
+      itemCount: checkboxes.length,
+      hasSelectAll: Boolean(selectAll),
+      hasDeselectAll: Boolean(deselectAll),
+      horizontalOverflow: sheet.scrollWidth > sheet.clientWidth + 1,
+    };
+  })()`);
+  await wait(400);
+  shopping.allSelected = await evaluate(`(() => {
+    const boxes = [...document.querySelectorAll('.shopping-list input[type="checkbox"]')];
+    return boxes.length > 0 && boxes.every((box) => box.checked);
+  })()`);
+  await evaluate(`(() => {
+    const sheet = document.querySelector('.shopping-sheet');
+    [...sheet.querySelectorAll('button')].find((button) => button.innerText.includes('Deseleziona tutto'))?.click();
+  })()`);
+  await wait(400);
+  shopping.allDeselected = await evaluate(`(() => {
+    const boxes = [...document.querySelectorAll('.shopping-list input[type="checkbox"]')];
+    return boxes.length > 0 && boxes.every((box) => !box.checked);
+  })()`);
+  await evaluate(`document.querySelector('.shopping-sheet header button')?.click()`);
+  await wait(400);
+  shopping.closed = await evaluate(`!document.querySelector('.shopping-sheet')`);
+  const openedWeekDay = await evaluate(`(() => {
+    const button = document.querySelector('.week-day header button');
+    if (!button) return false;
+    button.click();
+    return true;
+  })()`);
+  if (!openedWeekDay) throw new Error("Modifica giorno settimanale non trovata");
+  await wait(700);
+  await evaluate(`window.scrollTo(0, Math.max(0, document.body.scrollHeight - window.innerHeight))`);
+  await wait(300);
+  const weekEditor = await evaluate(`(() => {
+    const banner = document.querySelector('.week-edit-banner');
+    if (!banner) return { found: false };
+    const rect = banner.getBoundingClientRect();
+    const actions = [...banner.querySelectorAll('button')].map((button) => button.innerText.trim());
+    return {
+      found: true,
+      visible: rect.top >= 0 && rect.top < window.innerHeight,
+      scrollY: Math.round(window.scrollY),
+      hasClose: actions.includes('Chiudi'),
+      hasRebalance: actions.includes('Chiudi e riequilibra'),
+      horizontalOverflow: banner.scrollWidth > banner.clientWidth + 1,
+    };
+  })()`);
+  await evaluate(`(() => {
+    const banner = document.querySelector('.week-edit-banner');
+    [...banner.querySelectorAll('button')].find((button) => button.innerText.trim() === 'Chiudi')?.click();
+  })()`);
+  await wait(700);
+  weekEditor.returnedToWeek = await evaluate(`document.body.innerText.includes('Calorie pianificate') && !document.querySelector('.week-edit-banner')`);
   const exceptions = page.events.filter((event) =>
     event.method === "Runtime.exceptionThrown" ||
     (event.method === "Log.entryAdded" && event.params?.entry?.level === "error")
@@ -250,6 +321,8 @@ try {
     pickerClosed,
     gramsEdit,
     afterReload,
+    shopping,
+    weekEditor,
     javascriptErrors: exceptions.length,
   };
   console.log(JSON.stringify(report));
@@ -266,6 +339,10 @@ try {
     !milkAlternatives.hasOat || !milkAlternatives.hasSkimmed ||
     !milkAlternatives.closeVisible || milkAlternatives.horizontalOverflow || !pickerClosed ||
     !gramsEdit.persisted || afterReload.recovery || afterReload.horizontalOverflow || afterReload.brokenViewportImages.length || afterReload.pendingViewportImages.length ||
+    !shopping.found || shopping.itemCount === 0 || !shopping.hasSelectAll || !shopping.hasDeselectAll ||
+    shopping.horizontalOverflow || !shopping.allSelected || !shopping.allDeselected || !shopping.closed ||
+    !weekEditor.found || !weekEditor.visible || !weekEditor.hasClose || !weekEditor.hasRebalance ||
+    weekEditor.horizontalOverflow || !weekEditor.returnedToWeek ||
     exceptions.length
   ) process.exitCode = 1;
   page.close();

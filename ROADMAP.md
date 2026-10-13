@@ -2,6 +2,13 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
+## v1.19.27 — in verifica
+
+- [x] Stress pubblico della lista della spesa settimanale con elementi reali, nessun overflow e chiusura corretta.
+- [x] Seleziona tutto e Deseleziona tutto verificati tramite lo stato effettivo di ogni checkbox.
+- [x] Modifica di un giorno della settimana aperta realmente e barra Chiudi / Chiudi e riequilibra verificata a fondo pagina.
+- [x] Chiusura semplice verificata senza lasciare la barra settimanale nella vista sbagliata.
+
 ## v1.19.26 — in verifica
 
 - [x] Il collaudo forza eager soltanto sulle fotografie già visibili, lasciando invariato il lazy loading dell'app reale.

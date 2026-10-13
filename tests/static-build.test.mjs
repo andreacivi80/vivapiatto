@@ -1030,6 +1030,19 @@ test("v1.19.26 makes public image and gram interactions deterministic", async ()
   assert.match(audit, /process[.]env[.]VIVAPIATTO_AUDIT_VERSION/);
 });
 
+test("v1.19.27 stress-tests shopping and the sticky weekly editor", async () => {
+  const audit = await readFile(
+    new URL("../scripts/audit-public-mobile.mjs", import.meta.url),
+    "utf8",
+  );
+  assert.match(audit, /Lista della spesa settimanale/);
+  assert.match(audit, /shopping[.]allSelected/);
+  assert.match(audit, /shopping[.]allDeselected/);
+  assert.match(audit, /week-edit-banner/);
+  assert.match(audit, /hasRebalance/);
+  assert.match(audit, /weekEditor[.]returnedToWeek/);
+});
+
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /Crea una ricetta con gli avanzi/);
