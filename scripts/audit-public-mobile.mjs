@@ -415,6 +415,36 @@ try {
   })()`);
   if (!openedWeekDay) throw new Error("Modifica giorno settimanale non trovata");
   await wait(700);
+  const todayWeekSync = await evaluate(`(() => {
+    const card = document.querySelector('.meal-card');
+    const part = card?.querySelector('.meal-part .part-change');
+    if (!part) return { found: false };
+    const before = part.innerText.replace('Alternative', '').trim();
+    part.click();
+    return { found: true, before };
+  })()`);
+  await wait(500);
+  Object.assign(todayWeekSync, await evaluate(`(() => {
+    const picker = document.querySelector('.part-picker-sheet');
+    const choices = [...(picker?.querySelectorAll('.part-choice-grid button') || [])];
+    const choice = choices.find((button) => !button.classList.contains('selected'));
+    const chosen = choice?.querySelector('span')?.innerText.trim() || choice?.querySelector('img')?.alt || '';
+    choice?.click();
+    return {
+      pickerFound: Boolean(picker),
+      alternatives: choices.length,
+      replacementFound: Boolean(choice),
+      chosen,
+    };
+  })()`));
+  await wait(700);
+  Object.assign(todayWeekSync, await evaluate(`(() => {
+    const current = document.querySelector('.meal-card .meal-part .part-change')?.innerText.replace('Alternative', '').trim() || '';
+    return {
+      changedInEditor: Boolean(current && current === ${JSON.stringify(todayWeekSync.chosen)} && current !== ${JSON.stringify(todayWeekSync.before)}),
+      editorValue: current,
+    };
+  })()`));
   await evaluate(`window.scrollTo(0, Math.max(0, document.body.scrollHeight - window.innerHeight))`);
   await wait(300);
   const weekEditor = await evaluate(`(() => {
@@ -437,7 +467,23 @@ try {
   })()`);
   await wait(700);
   weekEditor.returnedToWeek = await evaluate(`document.body.innerText.includes('Calorie pianificate') && !document.querySelector('.week-edit-banner')`);
+  Object.assign(todayWeekSync, await evaluate(`(() => {
+    const firstDay = document.querySelector('.week-day');
+    const weekValues = [...(firstDay?.querySelectorAll('.week-part-strip span') || [])].map((item) => item.innerText.trim());
+    return {
+      weekValuePersisted: weekValues.includes(${JSON.stringify(todayWeekSync.chosen)}),
+      weekValues,
+    };
+  })()`));
   await clickTab("Oggi");
+  Object.assign(todayWeekSync, await evaluate(`(() => {
+    const todayValue = document.querySelector('.meal-card .meal-part .part-change')?.innerText.replace('Alternative', '').trim() || '';
+    return {
+      todayValue,
+      todayMatchesWeek: todayValue === ${JSON.stringify(todayWeekSync.chosen)},
+      horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+    };
+  })()`));
   const extraLog = await evaluate(`(() => {
     const details = document.querySelector('#sgarri-extra');
     if (!details) return { found: false };
@@ -895,6 +941,7 @@ try {
     afterReload,
     shopping,
     weekEditor,
+    todayWeekSync,
     extraLog,
     gelatoComposer,
     historyConsent,
@@ -935,6 +982,9 @@ try {
     shopping.horizontalOverflow || !shopping.allSelected || !shopping.allDeselected || !shopping.closed ||
     !weekEditor.found || !weekEditor.visible || !weekEditor.hasClose || !weekEditor.hasRebalance ||
     weekEditor.horizontalOverflow || !weekEditor.returnedToWeek ||
+    !todayWeekSync.found || !todayWeekSync.pickerFound || todayWeekSync.alternatives < 2 ||
+    !todayWeekSync.replacementFound || !todayWeekSync.changedInEditor || !todayWeekSync.weekValuePersisted ||
+    !todayWeekSync.todayMatchesWeek || todayWeekSync.horizontalOverflow ||
     !extraLog.found || !extraLog.added || !extraLog.hasCalories || !extraLog.hasMacros || !extraLog.removed ||
     !gelatoComposer.found || !gelatoComposer.hasTwoScoops || !gelatoComposer.hasThreeScoops ||
     gelatoComposer.horizontalOverflow || gelatoComposer.flavorSelectors !== 3 || gelatoComposer.flavorOptions < 10 ||

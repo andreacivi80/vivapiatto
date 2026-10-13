@@ -2,7 +2,12 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.40 — in verifica
+## v1.19.41 — in verifica
+
+- [x] Componente del Giorno 1 modificato realmente dall'editor settimanale.
+- [x] La scelta persiste nella scheda Settimana e coincide esattamente nella vista Oggi.
+
+## v1.19.40 — verificata
 
 - [x] Totale calorico visibile letto direttamente dalla barra del giorno per 1400 e 2600 kcal.
 - [x] Il piano alto deve superare quello basso di almeno 300 kcal e cambiare realmente composizione.

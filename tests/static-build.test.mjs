@@ -1220,6 +1220,17 @@ test("v1.19.40 verifies the visible high-calorie plan is materially larger", asy
   assert.match(audit, /split\('piano '\)\[1\][?][.]split\(' · '\)\[0\]/);
 });
 
+test("v1.19.41 verifies a weekly component edit is identical in Today", async () => {
+  const audit = await readFile(
+    new URL("../scripts/audit-public-mobile.mjs", import.meta.url),
+    "utf8",
+  );
+  assert.match(audit, /todayWeekSync[.]changedInEditor/);
+  assert.match(audit, /todayWeekSync[.]weekValuePersisted/);
+  assert.match(audit, /todayWeekSync[.]todayMatchesWeek/);
+  assert.match(audit, /weekValues[.]includes/);
+});
+
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /Crea una ricetta con gli avanzi/);
