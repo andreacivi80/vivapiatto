@@ -144,6 +144,28 @@ try {
   };
 
   const today = await snapshot();
+  const scrollStability = await evaluate(`(() => ({
+    beforeMenu: [...document.querySelectorAll('.meal-card h3')].map((heading) => heading.innerText.trim()),
+    beforeGrams: [...document.querySelectorAll('.meal-card .part-grams input')].map((input) => input.value),
+  }))()`);
+  for (let pass = 0; pass < 3; pass += 1) {
+    await evaluate(`window.scrollTo(0, Math.max(0, document.body.scrollHeight - window.innerHeight))`);
+    await wait(250);
+    await evaluate(`window.scrollTo(0, 0)`);
+    await wait(250);
+  }
+  Object.assign(scrollStability, await evaluate(`(() => {
+    const afterMenu = [...document.querySelectorAll('.meal-card h3')].map((heading) => heading.innerText.trim());
+    const afterGrams = [...document.querySelectorAll('.meal-card .part-grams input')].map((input) => input.value);
+    return {
+      afterMenu,
+      afterGrams,
+      menuUnchanged: JSON.stringify(afterMenu) === JSON.stringify(${JSON.stringify(scrollStability.beforeMenu)}),
+      gramsUnchanged: JSON.stringify(afterGrams) === JSON.stringify(${JSON.stringify(scrollStability.beforeGrams)}),
+      returnedTop: window.scrollY === 0,
+      horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+    };
+  })()`));
   await clickTab("Settimana");
   const week = await snapshot();
   const weeklyConfirmation = await evaluate(`(() => {
@@ -848,6 +870,7 @@ try {
   );
   const report = {
     today,
+    scrollStability,
     week,
     weeklyConfirmation,
     weeklyPrintPreview,
@@ -879,6 +902,7 @@ try {
   console.log(JSON.stringify(report));
   if (
     !today.version || today.recovery || today.horizontalOverflow || today.brokenViewportImages.length || today.pendingViewportImages.length ||
+    !scrollStability.menuUnchanged || !scrollStability.gramsUnchanged || !scrollStability.returnedTop || scrollStability.horizontalOverflow ||
     week.recovery || week.horizontalOverflow || week.brokenViewportImages.length || week.pendingViewportImages.length ||
     !weeklyConfirmation.found || !weeklyConfirmation.locked || !weeklyConfirmation.hasAverage || weeklyConfirmation.calorieDays !== 7 ||
     !weeklyConfirmation.rotationConfirmed || weeklyConfirmation.rotationRows < 7 || !weeklyConfirmation.rotationInRange ||

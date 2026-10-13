@@ -2,7 +2,12 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.38 — in verifica
+## v1.19.39 — in verifica
+
+- [x] Tre cicli completi di scroll mobile verificano che menu e grammature non cambino.
+- [x] Ritorno in cima e assenza di scorrimento orizzontale controllati dopo ogni stress.
+
+## v1.19.38 — verificata
 
 - [x] Un piatto completo già scelto può essere sostituito nuovamente con un altro piatto completo.
 - [x] Dopo la seconda sostituzione restano disponibili sia “Cambia piatto pronto” sia “Dividi in componenti”.

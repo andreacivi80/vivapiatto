@@ -1197,6 +1197,17 @@ test("v1.19.38 replaces an already selected complete dish again", async () => {
   assert.match(audit, /readyDishFlow[.]secondDishStillSplittable/);
 });
 
+test("v1.19.39 proves repeated mobile scrolling never changes meals or grams", async () => {
+  const audit = await readFile(
+    new URL("../scripts/audit-public-mobile.mjs", import.meta.url),
+    "utf8",
+  );
+  assert.match(audit, /scrollStability[.]menuUnchanged/);
+  assert.match(audit, /scrollStability[.]gramsUnchanged/);
+  assert.match(audit, /scrollStability[.]returnedTop/);
+  assert.match(audit, /for \(let pass = 0; pass < 3; pass \+= 1\)/);
+});
+
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /Crea una ricetta con gli avanzi/);
