@@ -1018,6 +1018,18 @@ test("v1.19.25 waits for lazy photographs and distinguishes pending from broken"
   assert.match(audit, /image[.]complete && image[.]naturalWidth === 0/);
 });
 
+test("v1.19.26 makes public image and gram interactions deterministic", async () => {
+  const audit = await readFile(
+    new URL("../scripts/audit-public-mobile.mjs", import.meta.url),
+    "utf8",
+  );
+  assert.match(audit, /image[.]loading = 'eager'/);
+  assert.match(audit, /input[.]_valueTracker[?][.]setValue/);
+  assert.match(audit, /new InputEvent\('input'/);
+  assert.match(audit, /input[.]blur\(\)/);
+  assert.match(audit, /process[.]env[.]VIVAPIATTO_AUDIT_VERSION/);
+});
+
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /Crea una ricetta con gli avanzi/);

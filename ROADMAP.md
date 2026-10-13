@@ -2,6 +2,12 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
+## v1.19.26 — in verifica
+
+- [x] Il collaudo forza eager soltanto sulle fotografie già visibili, lasciando invariato il lazy loading dell'app reale.
+- [x] La modifica grammi usa un vero InputEvent e il value tracker React prima di verificare la persistenza.
+- [x] Focus e blur riproducono il gesto completo dell'utilizzatore senza ricorrere a scorciatoie nello stato interno.
+
 ## v1.19.25 — in verifica
 
 - [x] Le immagini lazy vengono attese prima della verifica pubblica, senza falsi errori durante il cambio scheda.

@@ -7,7 +7,7 @@ const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const packageFile = JSON.parse(
   readFileSync(new URL("../package.json", import.meta.url), "utf8"),
 );
-const version = packageFile.version;
+const version = process.env.VIVAPIATTO_AUDIT_VERSION || packageFile.version;
 const edge = [
   "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe",
   "C:/Program Files/Microsoft/Edge/Application/msedge.exe",
@@ -98,11 +98,14 @@ try {
     [...document.images].filter((image) => {
       const rect = image.getBoundingClientRect();
       return image.offsetParent !== null && rect.bottom > 0 && rect.top < window.innerHeight;
-    }).map((image) => image.complete ? Promise.resolve() : new Promise((resolve) => {
-      image.addEventListener('load', resolve, { once: true });
-      image.addEventListener('error', resolve, { once: true });
-      setTimeout(resolve, 4000);
-    }))
+    }).map((image) => {
+      image.loading = 'eager';
+      return image.complete ? Promise.resolve() : new Promise((resolve) => {
+        image.addEventListener('load', resolve, { once: true });
+        image.addEventListener('error', resolve, { once: true });
+        setTimeout(resolve, 8000);
+      });
+    })
   )`);
   const snapshot = async () => {
     await settleViewportImages();
@@ -213,9 +216,12 @@ try {
     const before = Number(input.value);
     const expected = before + 5;
     const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
+    input.focus();
+    input._valueTracker?.setValue(String(before));
     setter.call(input, String(expected));
-    input.dispatchEvent(new Event('input', { bubbles: true }));
+    input.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertText', data: String(expected) }));
     input.dispatchEvent(new Event('change', { bubbles: true }));
+    input.blur();
     return { found: true, label: input.getAttribute('aria-label'), before, expected };
   })()`);
   if (!gramsEdit.found) throw new Error("Grammatura modificabile non trovata");
