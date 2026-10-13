@@ -2,6 +2,12 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
+## v1.19.24 — in verifica
+
+- [x] Lo stress test pubblico controlla anche che ogni fotografia presente nel viewport mobile sia realmente caricata e non sia un riquadro rotto.
+- [x] Il controllo immagini copre Oggi, Settimana, Ricette, fondo del ricettario, cambio piatto, ritorno e ricaricamento persistente.
+- [x] Il rapporto distingue numero di immagini visibili e risorse non caricate per rendere diagnosticabile ogni regressione pubblica.
+
 ## v1.19.21 — in verifica
 
 - [x] Stress test pubblico mobile riutilizzabile aggiunto al repository e avviabile senza finestre.

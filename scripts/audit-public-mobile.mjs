@@ -101,6 +101,15 @@ try {
     textLength: document.body.innerText.length,
     scrollY: window.scrollY,
     visibleButtonCount: [...document.querySelectorAll('button')].filter((button) => button.offsetParent !== null).length,
+    viewportImages: [...document.images].filter((image) => {
+      const rect = image.getBoundingClientRect();
+      return image.offsetParent !== null && rect.bottom > 0 && rect.top < window.innerHeight;
+    }).length,
+    brokenViewportImages: [...document.images].filter((image) => {
+      const rect = image.getBoundingClientRect();
+      return image.offsetParent !== null && rect.bottom > 0 && rect.top < window.innerHeight &&
+        (!image.complete || image.naturalWidth === 0);
+    }).map((image) => image.alt || image.currentSrc || image.src),
   }))()`);
   const clickTab = async (label) => {
     const clicked = await evaluate(`(() => {
@@ -222,17 +231,18 @@ try {
   };
   console.log(JSON.stringify(report));
   if (
-    !today.version || today.recovery || today.horizontalOverflow ||
-    week.recovery || week.horizontalOverflow ||
-    recipes.recovery || recipes.horizontalOverflow || !recipeCoverage ||
-    backToday.recovery || backToday.horizontalOverflow ||
-    swap.recovery || swap.horizontalOverflow || !swapBottom.found || !swapBottom.visible ||
+    !today.version || today.recovery || today.horizontalOverflow || today.brokenViewportImages.length ||
+    week.recovery || week.horizontalOverflow || week.brokenViewportImages.length ||
+    recipes.recovery || recipes.horizontalOverflow || recipes.brokenViewportImages.length || !recipeCoverage ||
+    recipeScroll.brokenViewportImages.length ||
+    backToday.recovery || backToday.horizontalOverflow || backToday.brokenViewportImages.length ||
+    swap.recovery || swap.horizontalOverflow || swap.brokenViewportImages.length || !swapBottom.found || !swapBottom.visible ||
     !swapBottom.hasOccasionalChoices || !swapBottom.hasCompleteChoices ||
-    afterSwapReturn.recovery || afterSwapReturn.horizontalOverflow ||
+    afterSwapReturn.recovery || afterSwapReturn.horizontalOverflow || afterSwapReturn.brokenViewportImages.length ||
     !milkAlternatives.found || !milkAlternatives.hasNone || !milkAlternatives.hasSoy ||
     !milkAlternatives.hasOat || !milkAlternatives.hasSkimmed ||
     !milkAlternatives.closeVisible || milkAlternatives.horizontalOverflow || !pickerClosed ||
-    !gramsEdit.persisted || afterReload.recovery || afterReload.horizontalOverflow ||
+    !gramsEdit.persisted || afterReload.recovery || afterReload.horizontalOverflow || afterReload.brokenViewportImages.length ||
     exceptions.length
   ) process.exitCode = 1;
   page.close();

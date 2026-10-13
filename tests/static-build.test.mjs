@@ -994,6 +994,18 @@ test("v1.19.23 tolerates delayed Edge profile cleanup after a successful audit",
   assert.match(audit, /A cleanup race must not turn a successful application audit into a failure/);
 });
 
+test("v1.19.24 rejects broken photographs in every audited mobile viewport", async () => {
+  const audit = await readFile(
+    new URL("../scripts/audit-public-mobile.mjs", import.meta.url),
+    "utf8",
+  );
+  assert.match(audit, /viewportImages/);
+  assert.match(audit, /brokenViewportImages/);
+  assert.match(audit, /image[.]complete/);
+  assert.match(audit, /image[.]naturalWidth === 0/);
+  assert.match(audit, /recipeScroll[.]brokenViewportImages[.]length/);
+});
+
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /Crea una ricetta con gli avanzi/);
