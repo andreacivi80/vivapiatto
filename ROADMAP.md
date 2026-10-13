@@ -2,7 +2,13 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.35 — in verifica
+## v1.19.36 — in verifica
+
+- [x] Target 1400 e 2600 kcal selezionati realmente e confrontati sul piano visibile.
+- [x] Verificato che un target diverso cambia calorie pianificate o composizione del menu.
+- [x] Contesto Lavoro/Casa confrontato sul piano reale, senza uscita orizzontale.
+
+## v1.19.35 — verificata
 
 - [x] Gonfiore verificato con cambio reale del menu e cena senza i trigger comuni mappati.
 - [x] Stanchezza e riposo scarso verificati con ricalcolo e indicazioni coerenti.

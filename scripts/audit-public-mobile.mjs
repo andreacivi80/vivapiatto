@@ -672,6 +672,55 @@ try {
   }))()`));
   await chooseCheckinAnswer('Attività oggi', 'Nessuna');
   await evaluate(`document.querySelector('.checkin-toggle')?.click()`);
+  const changeSelectValue = async (selector, index, value) => {
+    const changed = await evaluate(`(() => {
+      const select = document.querySelectorAll(${JSON.stringify(selector)})[${index}];
+      if (!select) return false;
+      const setter = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value').set;
+      setter.call(select, ${JSON.stringify(value)});
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+      return true;
+    })()`);
+    if (!changed) throw new Error(`Selettore ${selector}[${index}] non trovato`);
+    await wait(1_200);
+  };
+  const profileAdaptation = { found: true };
+  await changeSelectValue('.compact-config select', 1, '1400');
+  Object.assign(profileAdaptation, await evaluate(`(() => {
+    const strip = document.querySelector('.today-strip')?.innerText || '';
+    const match = strip.match(/piano\s+(\d+)/i);
+    return {
+      lowTargetSelected: strip.includes('scelto 1400 kcal'),
+      lowPlanKcal: Number(match?.[1] || 0),
+      lowMenu: [...document.querySelectorAll('.meal-card h3')].map((heading) => heading.innerText.trim()),
+    };
+  })()`));
+  await changeSelectValue('.compact-config select', 1, '2600');
+  Object.assign(profileAdaptation, await evaluate(`(() => {
+    const strip = document.querySelector('.today-strip')?.innerText || '';
+    const match = strip.match(/piano\s+(\d+)/i);
+    const highMenu = [...document.querySelectorAll('.meal-card h3')].map((heading) => heading.innerText.trim());
+    return {
+      highTargetSelected: strip.includes('scelto 2600 kcal'),
+      highPlanKcal: Number(match?.[1] || 0),
+      highMenu,
+      targetChangesPlan: Number(match?.[1] || 0) !== ${profileAdaptation.lowPlanKcal} || JSON.stringify(highMenu) !== JSON.stringify(${JSON.stringify(profileAdaptation.lowMenu)}),
+    };
+  })()`));
+  await changeSelectValue('.cuisine-picker select', 1, 'Lavoro');
+  profileAdaptation.workMenu = await evaluate(`[...document.querySelectorAll('.meal-card h3')].map((heading) => heading.innerText.trim())`);
+  await changeSelectValue('.cuisine-picker select', 1, 'Casa');
+  Object.assign(profileAdaptation, await evaluate(`(() => {
+    const homeMenu = [...document.querySelectorAll('.meal-card h3')].map((heading) => heading.innerText.trim());
+    const context = document.querySelectorAll('.cuisine-picker select')[1];
+    return {
+      homeSelected: context?.value === 'Casa',
+      homeMenu,
+      contextChangesPlan: JSON.stringify(homeMenu) !== JSON.stringify(${JSON.stringify(profileAdaptation.workMenu)}),
+      horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+    };
+  })()`));
+  await changeSelectValue('.cuisine-picker select', 1, 'Lavoro');
   const exceptions = page.events.filter((event) =>
     event.method === "Runtime.exceptionThrown" ||
     (event.method === "Log.entryAdded" && event.params?.entry?.level === "error")
@@ -702,6 +751,7 @@ try {
     mealRegistration,
     mealPartAddition,
     checkinAdaptation,
+    profileAdaptation,
     javascriptErrors: exceptions.length,
   };
   console.log(JSON.stringify(report));
@@ -749,6 +799,9 @@ try {
     !checkinAdaptation.tiredActive || !checkinAdaptation.tiredNote || !checkinAdaptation.tiredMenuChanged ||
     !checkinAdaptation.poorSleepActive || !checkinAdaptation.poorSleepNote ||
     !checkinAdaptation.intenseActivityActive || !checkinAdaptation.intenseActivityNote || checkinAdaptation.horizontalOverflow ||
+    !profileAdaptation.found || !profileAdaptation.lowTargetSelected || !profileAdaptation.highTargetSelected ||
+    !profileAdaptation.targetChangesPlan || !profileAdaptation.homeSelected || !profileAdaptation.contextChangesPlan ||
+    profileAdaptation.horizontalOverflow ||
     exceptions.length
   ) process.exitCode = 1;
   page.close();

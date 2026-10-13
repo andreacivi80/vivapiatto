@@ -1161,6 +1161,18 @@ test("v1.19.35 verifies that every check-in answer has a real planning effect", 
   assert.doesNotMatch(app, /\["medio", "Poco"\]/);
 });
 
+test("v1.19.36 verifies calorie target and work or home context change the plan", async () => {
+  const audit = await readFile(
+    new URL("../scripts/audit-public-mobile.mjs", import.meta.url),
+    "utf8",
+  );
+  assert.match(audit, /profileAdaptation[.]lowTargetSelected/);
+  assert.match(audit, /profileAdaptation[.]highTargetSelected/);
+  assert.match(audit, /profileAdaptation[.]targetChangesPlan/);
+  assert.match(audit, /profileAdaptation[.]homeSelected/);
+  assert.match(audit, /profileAdaptation[.]contextChangesPlan/);
+});
+
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /Crea una ricetta con gli avanzi/);
