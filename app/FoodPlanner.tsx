@@ -4469,7 +4469,7 @@ const balancedDinnerRecipes: Recipe[] = [
     kicker: "Pentola tradizionale di Tokyo · ricetta verificata MAFF",
     course: "Piatto unico",
     cuisine: "Asiatico",
-    image: photo("recipe-asian-negima-v1163"),
+    image: photo("recipe-asian-negima-v11950"),
     time: 30,
     ingredients: [
       { food: "Riso basmati cotto", grams: 150 },

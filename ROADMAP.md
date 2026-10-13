@@ -2,7 +2,12 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.49 — in verifica
+## v1.19.50 — in verifica
+
+- [x] Negima-nabe MAFF con nuova fotografia completa: tonno cotto, porro, shiitake e ciotola di riso separata.
+- [x] Tonno chiaramente cotto e nessun sashimi o ingrediente estraneo nella card.
+
+## v1.19.49 — verificata
 
 - [x] Phat Thai con fotografia finale fedele: noodles di riso, gamberi cotti, uovo, germogli, erba cipollina, arachidi e lime.
 - [x] Foto in formato mobile senza spaghetti, ingredienti estranei, testo o ritagli del piatto.

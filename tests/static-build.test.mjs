@@ -381,7 +381,7 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /USDA/);
   assert.match(css, /overflow-x:\s*hidden/);
   assert.match(css, /max-width:\s*520px/);
-  await access(new URL("../dist/food/recipe-asian-negima-v1163.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-asian-negima-v11950.png", import.meta.url));
   await access(new URL("../dist/food/recipe-asian-japchae-v11948.png", import.meta.url));
   await access(new URL("../dist/food/recipe-asian-phat-thai-v11949.png", import.meta.url));
   await access(new URL("../dist/food/part-lime-v1163.png", import.meta.url));
@@ -1305,6 +1305,21 @@ test("v1.19.49 gives the verified phat thai a faithful complete-dish photograph"
   assert.match(recipe, /Arachidi/);
   assert.match(recipe, /Lime/);
   await access(new URL("../public/food/recipe-asian-phat-thai-v11949.png", import.meta.url));
+});
+
+test("v1.19.50 gives the verified negima nabe a faithful complete-meal photograph", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const recipeStart = source.indexOf('id: "asian-negima-nabe-authentic"');
+  const recipeEnd = source.indexOf('id: "asian-japchae-authentic"');
+  const recipe = source.slice(recipeStart, recipeEnd);
+  assert.ok(recipeStart > 0 && recipeEnd > recipeStart);
+  assert.match(recipe, /recipe-asian-negima-v11950/);
+  assert.match(recipe, /Tonno fresco cotto/);
+  assert.match(recipe, /Porro cotto/);
+  assert.match(recipe, /Funghi/);
+  assert.match(recipe, /Riso basmati cotto/);
+  assert.match(recipe, /MAFF/);
+  await access(new URL("../public/food/recipe-asian-negima-v11950.png", import.meta.url));
 });
 
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {
