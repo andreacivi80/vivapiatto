@@ -1231,6 +1231,21 @@ test("v1.19.41 verifies a weekly component edit is identical in Today", async ()
   assert.match(audit, /weekValues[.]includes/);
 });
 
+test("v1.19.42 verifies an automatic live release preserves the active plan", async () => {
+  const [audit, packageFile] = await Promise.all([
+    readFile(new URL("../scripts/audit-live-release-update.mjs", import.meta.url), "utf8"),
+    readFile(new URL("../package.json", import.meta.url), "utf8").then(JSON.parse),
+  ]);
+  assert.equal(packageFile.scripts["test:live-update"], "node scripts/audit-live-release-update.mjs");
+  assert.match(audit, /VIVAPIATTO_FROM_VERSION/);
+  assert.match(audit, /VIVAPIATTO_TO_VERSION/);
+  assert.match(audit, /location[.]search[.]includes\('_release='\)/);
+  assert.match(audit, /gramsPreserved/);
+  assert.match(audit, /menuPreserved/);
+  assert.match(audit, /scrollPreserved/);
+  assert.match(audit, /windowsHide: true/);
+});
+
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /Crea una ricetta con gli avanzi/);

@@ -2,7 +2,13 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.41 — in verifica
+## v1.19.42 — in verifica
+
+- [x] Aggiornamento automatico tra due release pubbliche verificato senza azione dell'utilizzatore.
+- [x] Menu, grammatura modificata e posizione di scorrimento devono restare invariati dopo il refresh automatico.
+- [x] Schermata di recupero, overflow ed errori JavaScript bloccano la pubblicazione.
+
+## v1.19.41 — verificata
 
 - [x] Componente del Giorno 1 modificato realmente dall'editor settimanale.
 - [x] La scelta persiste nella scheda Settimana e coincide esattamente nella vista Oggi.
