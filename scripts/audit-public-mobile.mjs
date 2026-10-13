@@ -613,6 +613,65 @@ try {
       removed: afterRemove === ${mealPartAddition.before},
     };
   })()`));
+  const checkinAdaptation = await evaluate(`(() => {
+    const toggle = document.querySelector('.checkin-toggle');
+    const beforeMenu = [...document.querySelectorAll('.meal-card h3')].map((heading) => heading.innerText.trim());
+    toggle?.click();
+    return { found: Boolean(toggle), beforeMenu };
+  })()`);
+  const chooseCheckinAnswer = async (questionLabel, answerLabel) => {
+    const clicked = await evaluate(`(() => {
+      const question = [...document.querySelectorAll('.checkin-body .question')].find((item) =>
+        item.querySelector(':scope > span')?.innerText.trim() === ${JSON.stringify(questionLabel)}
+      );
+      const button = [...(question?.querySelectorAll('button') || [])].find((item) => item.innerText.trim() === ${JSON.stringify(answerLabel)});
+      button?.click();
+      return Boolean(button);
+    })()`);
+    if (!clicked) throw new Error(`Check-in ${questionLabel}/${answerLabel} non trovato`);
+    await wait(800);
+  };
+  await chooseCheckinAnswer('Stato', 'Gonfio');
+  Object.assign(checkinAdaptation, await evaluate(`(() => {
+    const afterMenu = [...document.querySelectorAll('.meal-card h3')].map((heading) => heading.innerText.trim());
+    const dinner = document.querySelectorAll('.meal-card')[4]?.innerText.toLowerCase() || '';
+    const note = document.querySelector('.replan-note')?.innerText || '';
+    return {
+      bloatingActive: [...document.querySelectorAll('.checkin-body .question')].some((question) =>
+        question.querySelector(':scope > span')?.innerText.trim() === 'Stato' &&
+        [...question.querySelectorAll('button')].some((button) => button.innerText.trim() === 'Gonfio' && button.classList.contains('active'))
+      ),
+      bloatingNote: note.includes('Gonfio') && note.includes('senza legumi'),
+      bloatingMenuChanged: JSON.stringify(afterMenu) !== JSON.stringify(${JSON.stringify(checkinAdaptation.beforeMenu)}),
+      bloatingDinnerAvoidsTriggers: !/ceci|lenticchie|fagioli|piselli|cavolo|cavolfiore|broccoli|cipolla|porro/.test(dinner),
+      afterBloatingMenu: afterMenu,
+    };
+  })()`));
+  await chooseCheckinAnswer('Stato', 'Stanco');
+  Object.assign(checkinAdaptation, await evaluate(`(() => {
+    const menu = [...document.querySelectorAll('.meal-card h3')].map((heading) => heading.innerText.trim());
+    const note = document.querySelector('.replan-note')?.innerText || '';
+    return {
+      tiredActive: [...document.querySelectorAll('.checkin-body button.active')].some((button) => button.innerText.trim() === 'Stanco'),
+      tiredNote: note.includes('Stanco') && note.includes('carboidrati distribuiti'),
+      tiredMenuChanged: JSON.stringify(menu) !== JSON.stringify(${JSON.stringify(checkinAdaptation.afterBloatingMenu)}),
+    };
+  })()`));
+  await chooseCheckinAnswer('Stato', 'Bene');
+  await chooseCheckinAnswer('Riposo', 'Male');
+  Object.assign(checkinAdaptation, await evaluate(`(() => ({
+    poorSleepActive: [...document.querySelectorAll('.checkin-body button.active')].some((button) => button.innerText.trim() === 'Male'),
+    poorSleepNote: document.querySelector('.replan-note')?.innerText.includes('poco riposato') || false,
+  }))()`));
+  await chooseCheckinAnswer('Riposo', 'Bene');
+  await chooseCheckinAnswer('Attività oggi', 'Intensa');
+  Object.assign(checkinAdaptation, await evaluate(`(() => ({
+    intenseActivityActive: [...document.querySelectorAll('.checkin-body button.active')].some((button) => button.innerText.trim() === 'Intensa'),
+    intenseActivityNote: document.querySelector('.replan-note')?.innerText.includes('Attività intensa') || false,
+    horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+  }))()`));
+  await chooseCheckinAnswer('Attività oggi', 'Nessuna');
+  await evaluate(`document.querySelector('.checkin-toggle')?.click()`);
   const exceptions = page.events.filter((event) =>
     event.method === "Runtime.exceptionThrown" ||
     (event.method === "Log.entryAdded" && event.params?.entry?.level === "error")
@@ -642,6 +701,7 @@ try {
     historyConsent,
     mealRegistration,
     mealPartAddition,
+    checkinAdaptation,
     javascriptErrors: exceptions.length,
   };
   console.log(JSON.stringify(report));
@@ -684,6 +744,11 @@ try {
     !mealPartAddition.hasRecommendedChoices || !mealPartAddition.noBlankChoice || !mealPartAddition.closeVisible ||
     mealPartAddition.horizontalOverflow || !mealPartAddition.added || !mealPartAddition.pickerClosed ||
     !mealPartAddition.hasDirectRemove || !mealPartAddition.removed ||
+    !checkinAdaptation.found || !checkinAdaptation.bloatingActive || !checkinAdaptation.bloatingNote ||
+    !checkinAdaptation.bloatingMenuChanged || !checkinAdaptation.bloatingDinnerAvoidsTriggers ||
+    !checkinAdaptation.tiredActive || !checkinAdaptation.tiredNote || !checkinAdaptation.tiredMenuChanged ||
+    !checkinAdaptation.poorSleepActive || !checkinAdaptation.poorSleepNote ||
+    !checkinAdaptation.intenseActivityActive || !checkinAdaptation.intenseActivityNote || checkinAdaptation.horizontalOverflow ||
     exceptions.length
   ) process.exitCode = 1;
   page.close();

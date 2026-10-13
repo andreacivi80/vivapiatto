@@ -1146,6 +1146,21 @@ test("v1.19.34 verifies weekly confirmation, rotation and print preview publicly
   assert.match(audit, /weeklyPrintPreview[.]hasExports/);
 });
 
+test("v1.19.35 verifies that every check-in answer has a real planning effect", async () => {
+  const audit = await readFile(
+    new URL("../scripts/audit-public-mobile.mjs", import.meta.url),
+    "utf8",
+  );
+  assert.match(audit, /checkinAdaptation[.]bloatingMenuChanged/);
+  assert.match(audit, /checkinAdaptation[.]bloatingDinnerAvoidsTriggers/);
+  assert.match(audit, /checkinAdaptation[.]tiredMenuChanged/);
+  assert.match(audit, /checkinAdaptation[.]poorSleepNote/);
+  assert.match(audit, /checkinAdaptation[.]intenseActivityNote/);
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(app, /\["leggero", "Poco"\]/);
+  assert.doesNotMatch(app, /\["medio", "Poco"\]/);
+});
+
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /Crea una ricetta con gli avanzi/);

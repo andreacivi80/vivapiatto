@@ -13634,7 +13634,7 @@ export function FoodPlanner() {
                     <div className="chips">
                       {[
                         ["bene", "Bene"],
-                        ["medio", "Poco"],
+                        ["leggero", "Poco"],
                         ["scarso", "Male"],
                       ].map(([v, l]) => (
                         <button

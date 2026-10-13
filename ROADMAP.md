@@ -2,7 +2,13 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.34 — in verifica
+## v1.19.35 — in verifica
+
+- [x] Gonfiore verificato con cambio reale del menu e cena senza i trigger comuni mappati.
+- [x] Stanchezza e riposo scarso verificati con ricalcolo e indicazioni coerenti.
+- [x] Attività intensa verificata con adattamento energetico, senza overflow mobile.
+
+## v1.19.34 — verificata
 
 - [x] Conferma della settimana verificata con sette totali calorici e media giornaliera.
 - [x] Rotazione confermata verificata interamente nei range del piano proposto.
