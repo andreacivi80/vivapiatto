@@ -87,7 +87,7 @@ try {
   };
 
   await wait(6_000);
-  const initial = await evaluate(`(() => {
+  const initialMeal = await evaluate(`(() => {
     const input = document.querySelector('.meal-part input[type="number"]');
     if (!input) return { ready: false };
     const before = Number(input.value);
@@ -99,46 +99,81 @@ try {
     input.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertText', data: String(expected) }));
     input.dispatchEvent(new Event('change', { bubbles: true }));
     input.blur();
-    window.scrollTo(0, Math.min(900, Math.max(0, document.body.scrollHeight - window.innerHeight)));
     return {
       ready: document.body.innerText.includes(${JSON.stringify(`v${fromVersion}`)}),
       before,
       expected,
       label: input.getAttribute('aria-label'),
-      scrollY: Math.round(window.scrollY),
       menu: [...document.querySelectorAll('.meal-card h3')].map((heading) => heading.innerText.trim()),
     };
   })()`);
-  if (!initial.ready || !initial.expected || initial.scrollY <= 0) throw new Error("Versione iniziale o stato di prova non disponibile");
+  if (!initialMeal.ready || !initialMeal.expected) throw new Error("Versione iniziale o stato di prova non disponibile");
+  await wait(750);
+  const openedLibrary = await evaluate(`(() => {
+    const button = [...document.querySelectorAll('button')].find((item) => item.innerText.trim() === 'Ricette');
+    button?.click();
+    return Boolean(button);
+  })()`);
+  if (!openedLibrary) throw new Error("Navigazione Ricette non disponibile");
+  await wait(2_000);
+  const initialView = await evaluate(`(() => {
+    window.scrollTo(0, Math.min(900, Math.max(0, document.documentElement.scrollHeight - window.innerHeight)));
+    return new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve({
+      scrollY: Math.round(window.scrollY),
+      libraryVisible: document.body.innerText.includes('Le tue 214'),
+    }))));
+  })()`);
+  const initial = { ...initialMeal, ...initialView };
+  if (!initial.libraryVisible || initial.scrollY <= 0) throw new Error(`Vista lunga di prova non disponibile: ${JSON.stringify(initial)}`);
   await wait(7_000);
 
   let finalState = null;
+  let releaseNavigation = false;
   for (let attempt = 0; attempt < 120; attempt += 1) {
     await wait(5_000);
     try {
       finalState = await evaluate(`(() => ({
         versionUpdated: document.body.innerText.includes(${JSON.stringify(`v${toVersion}`)}),
-        releaseUrl: location.search.includes('_release='),
-        grams: Number(document.querySelector('.meal-part input[type="number"]')?.value || 0),
         scrollY: Math.round(window.scrollY),
-        menu: [...document.querySelectorAll('.meal-card h3')].map((heading) => heading.innerText.trim()),
+        libraryVisible: document.body.innerText.includes('Le tue 214'),
         recovery: document.body.innerText.includes('La pagina ha incontrato un errore'),
         horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
       }))()`);
-      if (finalState.versionUpdated && finalState.releaseUrl) break;
+      releaseNavigation = page.events.some((event) =>
+        event.method === 'Page.frameNavigated' &&
+        String(event.params?.frame?.url || '').includes('_release=') &&
+        String(event.params?.frame?.url || '').includes(toVersion)
+      );
+      if (finalState.versionUpdated && releaseNavigation) break;
     } catch {
       // Il contesto JavaScript viene sostituito durante il refresh automatico.
     }
   }
 
+  const restoredScrollY = finalState?.scrollY || 0;
+  const openedToday = await evaluate(`(() => {
+    const button = [...document.querySelectorAll('button')].find((item) => item.innerText.trim() === 'Oggi');
+    button?.click();
+    return Boolean(button);
+  })()`);
+  await wait(1_500);
+  const restoredMeal = openedToday ? await evaluate(`(() => {
+    const input = [...document.querySelectorAll('.meal-part input[type="number"]')]
+      .find((item) => item.getAttribute('aria-label') === ${JSON.stringify(initialMeal.label)});
+    return {
+      grams: Number(input?.value || 0),
+      menu: [...document.querySelectorAll('.meal-card h3')].map((heading) => heading.innerText.trim()),
+    };
+  })()`) : { grams: 0, menu: [] };
+
   const report = {
     fromVersion,
     toVersion,
     initial,
-    finalState,
-    gramsPreserved: finalState?.grams === initial.expected,
-    menuPreserved: JSON.stringify(finalState?.menu) === JSON.stringify(initial.menu),
-    scrollPreserved: Math.abs((finalState?.scrollY || 0) - initial.scrollY) <= 20,
+    finalState: { ...finalState, releaseNavigation, restoredScrollY, restoredMeal },
+    gramsPreserved: restoredMeal.grams === initial.expected,
+    menuPreserved: JSON.stringify(restoredMeal.menu) === JSON.stringify(initial.menu),
+    scrollPreserved: Math.abs(restoredScrollY - initial.scrollY) <= 20,
     javascriptErrors: page.events.filter((event) =>
       event.method === "Runtime.exceptionThrown" ||
       (event.method === "Log.entryAdded" && event.params?.entry?.level === "error")
@@ -146,7 +181,7 @@ try {
   };
   console.log(JSON.stringify(report));
   if (
-    !finalState?.versionUpdated || !finalState.releaseUrl || finalState.recovery || finalState.horizontalOverflow ||
+    !finalState?.versionUpdated || !releaseNavigation || !finalState.libraryVisible || finalState.recovery || finalState.horizontalOverflow ||
     !report.gramsPreserved || !report.menuPreserved || !report.scrollPreserved || report.javascriptErrors
   ) process.exitCode = 1;
   page.close();

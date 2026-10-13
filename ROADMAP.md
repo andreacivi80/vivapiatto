@@ -2,7 +2,13 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.42 — in verifica
+## v1.19.43 — in verifica
+
+- [x] Il collaudo usa una vista Ricette realmente più alta dello schermo mobile per misurare lo scroll.
+- [x] La navigazione automatica di release viene rilevata prima che l'app ripulisca il parametro tecnico dall'indirizzo.
+- [x] Dopo il ripristino della posizione, il test torna in Oggi e confronta menu e grammatura reali.
+
+## v1.19.42 — verificata staticamente
 
 - [x] Aggiornamento automatico tra due release pubbliche verificato senza azione dell'utilizzatore.
 - [x] Menu, grammatura modificata e posizione di scorrimento devono restare invariati dopo il refresh automatico.

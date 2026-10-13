@@ -1231,7 +1231,7 @@ test("v1.19.41 verifies a weekly component edit is identical in Today", async ()
   assert.match(audit, /weekValues[.]includes/);
 });
 
-test("v1.19.42 verifies an automatic live release preserves the active plan", async () => {
+test("v1.19.43 verifies an automatic live release preserves the active plan", async () => {
   const [audit, packageFile] = await Promise.all([
     readFile(new URL("../scripts/audit-live-release-update.mjs", import.meta.url), "utf8"),
     readFile(new URL("../package.json", import.meta.url), "utf8").then(JSON.parse),
@@ -1239,7 +1239,8 @@ test("v1.19.42 verifies an automatic live release preserves the active plan", as
   assert.equal(packageFile.scripts["test:live-update"], "node scripts/audit-live-release-update.mjs");
   assert.match(audit, /VIVAPIATTO_FROM_VERSION/);
   assert.match(audit, /VIVAPIATTO_TO_VERSION/);
-  assert.match(audit, /location[.]search[.]includes\('_release='\)/);
+  assert.match(audit, /Page[.]frameNavigated/);
+  assert.match(audit, /releaseNavigation/);
   assert.match(audit, /gramsPreserved/);
   assert.match(audit, /menuPreserved/);
   assert.match(audit, /scrollPreserved/);
