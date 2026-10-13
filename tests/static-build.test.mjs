@@ -930,6 +930,18 @@ test("v1.19.18 pins the patched build toolchain", async () => {
   assert.equal(packageFile.devDependencies.vite, "8.2.2");
 });
 
+test("v1.19.19 keeps source and built release manifests aligned", async () => {
+  const [packageFile, packageLock, sourceRelease, builtRelease] = await Promise.all([
+    readFile(new URL("../package.json", import.meta.url), "utf8").then(JSON.parse),
+    readFile(new URL("../package-lock.json", import.meta.url), "utf8").then(JSON.parse),
+    readFile(new URL("../public/version.json", import.meta.url), "utf8").then(JSON.parse),
+    readFile(new URL("../dist/version.json", import.meta.url), "utf8").then(JSON.parse),
+  ]);
+  assert.equal(sourceRelease.version, packageFile.version);
+  assert.equal(builtRelease.version, packageFile.version);
+  assert.equal(packageLock.packages["node_modules/source-map-js"].version, "1.2.2");
+});
+
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /Crea una ricetta con gli avanzi/);

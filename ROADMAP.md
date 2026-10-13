@@ -2,7 +2,14 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.18 — in verifica
+## v1.19.19 — in verifica
+
+- [x] Il manifest sorgente e la versione visibile derivano dalla stessa release anche prima della build.
+- [x] Verifica pubblica della 1.19.18 conclusa sul link GitHub Pages unico.
+- [x] Checklist finale riallineata alla suite corrente di 163/163 test.
+- [x] Dipendenza transitiva `source-map-js` aggiornata alla 1.2.2 dopo il nuovo avviso di sicurezza; audit nuovamente a zero vulnerabilità.
+
+## v1.19.18 — pubblicata
 
 - [x] Vite aggiornato e fissato alla versione corretta 8.2.2.
 - [x] Audit delle dipendenze senza vulnerabilità note.
