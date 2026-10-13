@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { access, readFile } from "node:fs/promises";
+import { access, readFile, readdir, stat } from "node:fs/promises";
 import test from "node:test";
 
 test("build GitHub Pages autonomo e completo", async () => {
@@ -940,6 +940,22 @@ test("v1.19.19 keeps source and built release manifests aligned", async () => {
   assert.equal(sourceRelease.version, packageFile.version);
   assert.equal(builtRelease.version, packageFile.version);
   assert.equal(packageLock.packages["node_modules/source-map-js"].version, "1.2.2");
+});
+
+test("v1.19.20 caches framework dependencies without lazy-loading the planner", async () => {
+  const [config, main, assets] = await Promise.all([
+    readFile(new URL("../vite.config.ts", import.meta.url), "utf8"),
+    readFile(new URL("../main.tsx", import.meta.url), "utf8"),
+    readdir(new URL("../dist/assets/", import.meta.url)),
+  ]);
+  const vendorChunk = assets.find((name) => /^vendor-.*[.]js$/.test(name));
+  const appChunk = assets.find((name) => /^index-.*[.]js$/.test(name));
+  assert.ok(vendorChunk);
+  assert.ok(appChunk);
+  assert.match(config, /codeSplitting:[\s\S]*name: "vendor"[\s\S]*test: \/node_modules\//);
+  assert.doesNotMatch(main, /lazy\(\(\) =>/);
+  assert.ok((await stat(new URL(`../dist/assets/${vendorChunk}`, import.meta.url))).size < 250_000);
+  assert.ok((await stat(new URL(`../dist/assets/${appChunk}`, import.meta.url))).size < 560_000);
 });
 
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {

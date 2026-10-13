@@ -2,6 +2,12 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
+## v1.19.20 — in verifica
+
+- [x] React e le dipendenze stabili sono separate in un chunk cacheabile, riducendo il download delle revisioni successive.
+- [x] Nessun caricamento lazy del pianificatore: il guscio di recupero continua a proteggere dalle schermate bianche.
+- [x] Budget automatico sui file prodotti per impedire una nuova crescita silenziosa del pacchetto mobile.
+
 ## v1.19.19 — in verifica
 
 - [x] Il manifest sorgente e la versione visibile derivano dalla stessa release anche prima della build.
