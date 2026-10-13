@@ -2,7 +2,12 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.48 — in verifica
+## v1.19.49 — in verifica
+
+- [x] Phat Thai con fotografia finale fedele: noodles di riso, gamberi cotti, uovo, germogli, erba cipollina, arachidi e lime.
+- [x] Foto in formato mobile senza spaghetti, ingredienti estranei, testo o ritagli del piatto.
+
+## v1.19.48 — verificata
 
 - [x] Japchae VisitKorea con nuova fotografia finale fedele: vermicelli traslucidi, manzo cotto, spinaci, carote, funghi e sesamo.
 - [x] Piatto intero leggibile nella card mobile e immagine separata dalle fotografie atomiche.

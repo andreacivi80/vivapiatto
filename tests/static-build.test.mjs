@@ -383,7 +383,7 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(css, /max-width:\s*520px/);
   await access(new URL("../dist/food/recipe-asian-negima-v1163.png", import.meta.url));
   await access(new URL("../dist/food/recipe-asian-japchae-v11948.png", import.meta.url));
-  await access(new URL("../dist/food/recipe-asian-phat-thai-v1163.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-asian-phat-thai-v11949.png", import.meta.url));
   await access(new URL("../dist/food/part-lime-v1163.png", import.meta.url));
   await access(new URL("../dist/food/part-leek-v1163.png", import.meta.url));
   await access(new URL("../dist/food/part-garlic-chives-v1163.png", import.meta.url));
@@ -1289,6 +1289,22 @@ test("v1.19.48 gives the verified japchae a faithful complete-dish photograph", 
   assert.match(recipe, /Funghi/);
   assert.match(recipe, /VisitKorea/);
   await access(new URL("../public/food/recipe-asian-japchae-v11948.png", import.meta.url));
+});
+
+test("v1.19.49 gives the verified phat thai a faithful complete-dish photograph", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const recipeStart = source.indexOf('id: "asian-phat-thai-authentic"');
+  const recipeEnd = source.indexOf('id: "italian-minestrone-complete"');
+  const recipe = source.slice(recipeStart, recipeEnd);
+  assert.ok(recipeStart > 0 && recipeEnd > recipeStart);
+  assert.match(recipe, /recipe-asian-phat-thai-v11949/);
+  assert.match(recipe, /Noodles di riso cotti/);
+  assert.match(recipe, /Gamberi cotti/);
+  assert.match(recipe, /Uovo/);
+  assert.match(recipe, /Germogli di soia/);
+  assert.match(recipe, /Arachidi/);
+  assert.match(recipe, /Lime/);
+  await access(new URL("../public/food/recipe-asian-phat-thai-v11949.png", import.meta.url));
 });
 
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {

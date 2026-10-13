@@ -4535,7 +4535,7 @@ const balancedDinnerRecipes: Recipe[] = [
     kicker: "Noodles thailandesi · riferimento ufficiale TAT",
     course: "Piatto unico",
     cuisine: "Asiatico",
-    image: photo("recipe-asian-phat-thai-v1163"),
+    image: photo("recipe-asian-phat-thai-v11949"),
     time: 30,
     ingredients: [
       { food: "Noodles di riso cotti", grams: 180 },
