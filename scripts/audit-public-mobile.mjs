@@ -244,12 +244,15 @@ try {
     "/T",
     "/F",
   ], { windowsHide: true, stdio: "ignore" });
-  await wait(750);
-  rmSync(profile, {
-    recursive: true,
-    force: true,
-    maxRetries: 10,
-    retryDelay: 500,
-  });
+  for (let attempt = 0; attempt < 6; attempt += 1) {
+    await wait(attempt === 0 ? 1_500 : 1_000);
+    try {
+      rmSync(profile, { recursive: true, force: true });
+      break;
+    } catch {
+      // Edge can retain a short-lived crash-report handle after its process tree exits.
+      // A cleanup race must not turn a successful application audit into a failure.
+    }
+  }
 }
 

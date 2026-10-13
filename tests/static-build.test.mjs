@@ -985,6 +985,15 @@ test("v1.19.22 keeps the public mobile audit executable", async () => {
   );
 });
 
+test("v1.19.23 tolerates delayed Edge profile cleanup after a successful audit", async () => {
+  const audit = await readFile(
+    new URL("../scripts/audit-public-mobile.mjs", import.meta.url),
+    "utf8",
+  );
+  assert.match(audit, /for \(let attempt = 0; attempt < 6; attempt \+= 1\)/);
+  assert.match(audit, /A cleanup race must not turn a successful application audit into a failure/);
+});
+
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /Crea una ricetta con gli avanzi/);
