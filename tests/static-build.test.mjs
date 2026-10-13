@@ -1043,6 +1043,19 @@ test("v1.19.27 stress-tests shopping and the sticky weekly editor", async () => 
   assert.match(audit, /weekEditor[.]returnedToWeek/);
 });
 
+test("v1.19.28 opens and validates a complete public recipe", async () => {
+  const audit = await readFile(
+    new URL("../scripts/audit-public-mobile.mjs", import.meta.url),
+    "utf8",
+  );
+  assert.match(audit, /Apertura ricetta consigliata non trovata/);
+  assert.match(audit, /Ingredienti e grammi reali/);
+  assert.match(audit, /hasPreparation/);
+  assert.match(audit, /hasNutrition/);
+  assert.match(audit, /hasAllergens/);
+  assert.match(audit, /recipeDetail[.]photoLoaded/);
+});
+
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /Crea una ricetta con gli avanzi/);

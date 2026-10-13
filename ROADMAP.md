@@ -2,6 +2,12 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
+## v1.19.28 — in verifica
+
+- [x] Apertura reale della prima ricetta consigliata nel sito pubblico mobile.
+- [x] Verifica di fotografia caricata, ingredienti, preparazione, macro e allergeni nella scheda completa.
+- [x] Nessun overflow della scheda e chiusura verificata prima di proseguire nel ricettario.
+
 ## v1.19.27 — in verifica
 
 - [x] Stress pubblico della lista della spesa settimanale con elementi reali, nessun overflow e chiusura corretta.

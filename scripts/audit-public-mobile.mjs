@@ -147,6 +147,33 @@ try {
   const week = await snapshot();
   await clickTab("Ricette");
   const recipes = await snapshot();
+  const openedRecipe = await evaluate(`(() => {
+    const button = document.querySelector('.start-here button');
+    if (!button) return false;
+    button.click();
+    return true;
+  })()`);
+  if (!openedRecipe) throw new Error("Apertura ricetta consigliata non trovata");
+  await wait(500);
+  await settleViewportImages();
+  const recipeDetail = await evaluate(`(() => {
+    const sheet = document.querySelector('.recipe-sheet');
+    if (!sheet) return { found: false };
+    const image = sheet.querySelector('img');
+    const text = sheet.innerText;
+    return {
+      found: true,
+      hasIngredients: text.includes('Ingredienti e grammi reali'),
+      hasPreparation: text.includes('Preparazione'),
+      hasNutrition: text.includes('proteine') && text.includes('carboidrati') && text.includes('grassi'),
+      hasAllergens: text.includes('Allergeni rilevati'),
+      photoLoaded: Boolean(image?.complete && image.naturalWidth > 0),
+      horizontalOverflow: sheet.scrollWidth > sheet.clientWidth + 1,
+    };
+  })()`);
+  await evaluate(`document.querySelector('.recipe-sheet .close')?.click()`);
+  await wait(300);
+  recipeDetail.closed = await evaluate(`!document.querySelector('.recipe-sheet')`);
   await clickTab("Le tue 214");
   const recipeCoverage = await evaluate(`document.body.innerText.includes('214/214 presenti')`);
   await evaluate(`window.scrollTo(0, Math.max(0, document.body.scrollHeight - window.innerHeight))`);
@@ -311,6 +338,7 @@ try {
     today,
     week,
     recipes,
+    recipeDetail,
     recipeCoverage,
     recipeScrollY: recipeScroll.scrollY,
     backToday,
@@ -329,7 +357,9 @@ try {
   if (
     !today.version || today.recovery || today.horizontalOverflow || today.brokenViewportImages.length || today.pendingViewportImages.length ||
     week.recovery || week.horizontalOverflow || week.brokenViewportImages.length || week.pendingViewportImages.length ||
-    recipes.recovery || recipes.horizontalOverflow || recipes.brokenViewportImages.length || recipes.pendingViewportImages.length || !recipeCoverage ||
+    recipes.recovery || recipes.horizontalOverflow || recipes.brokenViewportImages.length || recipes.pendingViewportImages.length ||
+    !recipeDetail.found || !recipeDetail.hasIngredients || !recipeDetail.hasPreparation || !recipeDetail.hasNutrition ||
+    !recipeDetail.hasAllergens || !recipeDetail.photoLoaded || recipeDetail.horizontalOverflow || !recipeDetail.closed || !recipeCoverage ||
     recipeScroll.brokenViewportImages.length || recipeScroll.pendingViewportImages.length ||
     backToday.recovery || backToday.horizontalOverflow || backToday.brokenViewportImages.length || backToday.pendingViewportImages.length ||
     swap.recovery || swap.horizontalOverflow || swap.brokenViewportImages.length || swap.pendingViewportImages.length || !swapBottom.found || !swapBottom.visible ||
