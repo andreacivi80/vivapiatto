@@ -2,7 +2,12 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.46 — in verifica
+## v1.19.47 — in verifica
+
+- [x] Oyakodon MAFF con nuova fotografia finale fedele: riso, pollo, cipolla, funghi e uovo cotto tutti riconoscibili.
+- [x] Inquadratura mobile mostra la ciotola intera, senza collage, testo o ingredienti estranei.
+
+## v1.19.46 — verificata
 
 - [x] Bibimbap verificato da fonte ufficiale VisitKorea con fotografia finale nuova e fedele alla ricetta.
 - [x] Zucchine e sesamo presenti sia nel testo nutrizionale sia nell'immagine, con componenti sostituibili separatamente.

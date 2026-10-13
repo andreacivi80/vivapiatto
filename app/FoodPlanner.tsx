@@ -4427,7 +4427,7 @@ const balancedDinnerRecipes: Recipe[] = [
     id: "asian-oyakodon-authentic",
     name: "Oyakodon giapponese · pollo e uovo su riso",
     kicker: "Ricetta giapponese verificata · MAFF", course: "Piatto unico", cuisine: "Asiatico",
-    image: photo("recipe-asian-oyakodon-v11520"), time: 25,
+    image: photo("recipe-asian-oyakodon-v11947"), time: 25,
     ingredients: [{ food: "Riso basmati cotto", grams: 150 }, { food: "Petto di pollo · peso a crudo", grams: 80 }, { food: "Uovo", grams: 100 }, { food: "Cipolle crude", grams: 40 }, { food: "Funghi", grams: 20 }, { food: "Salsa di soia", grams: 10 }, { food: "Mirin", grams: 10 }, { food: "Zucchero", grams: 5 }],
     parts: [
       { category: "Carboidrato", food: "Riso basmati cotto", grams: 150, label: "Riso cotto · 150 g", image: photo("part-basmati-cooked-v11650") },
