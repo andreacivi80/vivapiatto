@@ -2,7 +2,13 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.32 — in verifica
+## v1.19.33 — in verifica
+
+- [x] Le quattro famiglie fornite vengono aperte e contate separatamente sul sito pubblico mobile.
+- [x] Verificati 44 colazioni, 42 spuntini, 64 pranzi e 64 cene senza uscita orizzontale.
+- [x] Prima scheda e fotografia realmente caricata verificate in ogni famiglia.
+
+## v1.19.32 — verificata
 
 - [x] Aggiunta reale di un componente al pranzo verificata sul sito pubblico mobile.
 - [x] Pannello “AGGIUNGI AL PASTO” verificato senza card bianche né uscita orizzontale.

@@ -11081,25 +11081,28 @@ export function FoodPlanner() {
       return !/pollo|tacchino|coniglio|manzo|vitello|maiale|cavallo|bresaola|prosciutto|salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|gamber|polpo|cozze|calamari/.test(foodsText);
     return recipeCourse(recipe) === quickRecipeFilter;
   };
+  const suppliedCatalogView = quickRecipeFilter === "Le tue 214" && !swapTarget;
   const filteredRecipes = allRecipes
     .filter(
       (r) =>
-        (swapTarget || r.kind !== "combination") &&
-        (swapTarget || isSubstantialRecipe(r)) &&
         r.ingredients.every((item) => Boolean(foodSearchDatabase[item.food])) &&
         isAllowed(r) &&
         matchesFoodStyle(r) &&
-        matchesEquipment(r) &&
-        r.time <= maxPrepTime &&
-        (swapTarget || compatibleWithSlot(r)) &&
-        compatibleWithPlace(r) &&
         recipeMatchesQuickFilter(r) &&
-        healthyFilters.every((filter) => recipeMatchesHealthyFilter(r, filter)) &&
-        (cuisineFilter === "Tutte" ||
-          (cuisineFilter === "Sgarri"
-            ? r.id.startsWith("occasional-")
-            : !r.id.startsWith("occasional-") && recipeCuisine(r) === cuisineFilter)) &&
-        r.name.toLowerCase().includes(libraryQuery.toLowerCase()),
+        r.name.toLowerCase().includes(libraryQuery.toLowerCase()) &&
+        (suppliedCatalogView || (
+          (swapTarget || r.kind !== "combination") &&
+          (swapTarget || isSubstantialRecipe(r)) &&
+          matchesEquipment(r) &&
+          r.time <= maxPrepTime &&
+          (swapTarget || compatibleWithSlot(r)) &&
+          compatibleWithPlace(r) &&
+          healthyFilters.every((filter) => recipeMatchesHealthyFilter(r, filter)) &&
+          (cuisineFilter === "Tutte" ||
+            (cuisineFilter === "Sgarri"
+              ? r.id.startsWith("occasional-")
+              : !r.id.startsWith("occasional-") && recipeCuisine(r) === cuisineFilter))
+        )),
     )
     .sort((a, b) => {
       if (swapTarget) {
@@ -14413,7 +14416,13 @@ export function FoodPlanner() {
                   aria-pressed={quickRecipeFilter === filter}
                   onClick={() => {
                     setQuickRecipeFilter(filter);
-                    if (filter === "Le tue 214") setSuppliedRecipeGroup("all");
+                    if (filter === "Le tue 214") {
+                      setSuppliedRecipeGroup("all");
+                      setCuisineFilter("Tutte");
+                      setHealthyFilters([]);
+                      setLibraryQuery("");
+                      setVisibleRecipeCount(10);
+                    }
                   }}
                 >
                   {filter}

@@ -1113,6 +1113,25 @@ test("v1.19.32 verifies adding and directly removing a meal component publicly",
   assert.match(audit, /[.]part-remove/);
 });
 
+test("v1.19.33 verifies every supplied recipe family publicly on mobile", async () => {
+  const audit = await readFile(
+    new URL("../scripts/audit-public-mobile.mjs", import.meta.url),
+    "utf8",
+  );
+  assert.match(audit, /suppliedRecipeGroups/);
+  assert.match(audit, /44 colazioni/);
+  assert.match(audit, /42 spuntini/);
+  assert.match(audit, /64 pranzi/);
+  assert.match(audit, /64 cene/);
+  assert.match(audit, /group[.]firstPhotoLoaded/);
+  assert.match(audit, /group[.]countMatches/);
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(app, /const suppliedCatalogView = quickRecipeFilter === "Le tue 214" && !swapTarget/);
+  assert.match(app, /suppliedCatalogView \|\| \(/);
+  assert.match(app, /setCuisineFilter\("Tutte"\)/);
+  assert.match(app, /setHealthyFilters\(\[\]\)/);
+});
+
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /Crea una ricetta con gli avanzi/);

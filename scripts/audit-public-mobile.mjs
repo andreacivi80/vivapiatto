@@ -8,6 +8,7 @@ const packageFile = JSON.parse(
   readFileSync(new URL("../package.json", import.meta.url), "utf8"),
 );
 const version = process.env.VIVAPIATTO_AUDIT_VERSION || packageFile.version;
+const auditBaseUrl = process.env.VIVAPIATTO_AUDIT_URL || "https://andreacivi80.github.io/vivapiatto/";
 const edge = [
   "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe",
   "C:/Program Files/Microsoft/Edge/Application/msedge.exe",
@@ -23,7 +24,7 @@ const child = spawn(edge, [
   "--remote-debugging-port=0",
   "--window-size=390,844",
   `--user-data-dir=${profile}`,
-  `https://andreacivi80.github.io/vivapiatto/?stress=${version.replaceAll(".", "")}`,
+  `${auditBaseUrl}${auditBaseUrl.includes("?") ? "&" : "?"}stress=${version.replaceAll(".", "")}`,
 ], { windowsHide: true, stdio: "ignore" });
 
 const connect = async (url) => {
@@ -176,6 +177,39 @@ try {
   recipeDetail.closed = await evaluate(`!document.querySelector('.recipe-sheet')`);
   await clickTab("Le tue 214");
   const recipeCoverage = await evaluate(`document.body.innerText.includes('214/214 presenti')`);
+  const suppliedRecipeGroups = [];
+  for (const [label, expected] of [
+    ["44 colazioni", 44],
+    ["42 spuntini", 42],
+    ["64 pranzi", 64],
+    ["64 cene", 64],
+  ]) {
+    const clicked = await evaluate(`(() => {
+      const coverage = document.querySelector('.supplied-recipe-coverage');
+      const button = [...(coverage?.querySelectorAll('button') || [])].find((item) => item.innerText.trim() === ${JSON.stringify(label)});
+      button?.click();
+      return Boolean(button);
+    })()`);
+    if (!clicked) throw new Error(`Gruppo ricette ${label} non trovato`);
+    await wait(400);
+    await settleViewportImages();
+    suppliedRecipeGroups.push(await evaluate(`(() => {
+      const coverage = document.querySelector('.supplied-recipe-coverage');
+      const active = [...(coverage?.querySelectorAll('button') || [])].find((button) => button.getAttribute('aria-pressed') === 'true');
+      const counter = document.querySelector('.library-tools b')?.innerText.trim() || '';
+      const cards = [...document.querySelectorAll('.recipe-grid article')].filter((card) => card.offsetParent !== null);
+      const image = cards[0]?.querySelector('img');
+      return {
+        label: ${JSON.stringify(label)},
+        expected: ${expected},
+        active: active?.innerText.trim() === ${JSON.stringify(label)},
+        countMatches: counter.startsWith(${JSON.stringify(`${expected}/`)}),
+        visibleCards: cards.length,
+        firstPhotoLoaded: Boolean(image?.complete && image.naturalWidth > 0),
+        horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+      };
+    })()`));
+  }
   await evaluate(`window.scrollTo(0, Math.max(0, document.body.scrollHeight - window.innerHeight))`);
   const recipeScroll = await snapshot();
   await clickTab("Oggi");
@@ -538,6 +572,7 @@ try {
     recipes,
     recipeDetail,
     recipeCoverage,
+    suppliedRecipeGroups,
     recipeScrollY: recipeScroll.scrollY,
     backToday,
     swap,
@@ -563,6 +598,9 @@ try {
     recipes.recovery || recipes.horizontalOverflow || recipes.brokenViewportImages.length || recipes.pendingViewportImages.length ||
     !recipeDetail.found || !recipeDetail.hasIngredients || !recipeDetail.hasPreparation || !recipeDetail.hasNutrition ||
     !recipeDetail.hasAllergens || !recipeDetail.photoLoaded || recipeDetail.horizontalOverflow || !recipeDetail.closed || !recipeCoverage ||
+    suppliedRecipeGroups.length !== 4 || suppliedRecipeGroups.some((group) =>
+      !group.active || !group.countMatches || group.visibleCards === 0 || !group.firstPhotoLoaded || group.horizontalOverflow
+    ) ||
     recipeScroll.brokenViewportImages.length || recipeScroll.pendingViewportImages.length ||
     backToday.recovery || backToday.horizontalOverflow || backToday.brokenViewportImages.length || backToday.pendingViewportImages.length ||
     swap.recovery || swap.horizontalOverflow || swap.brokenViewportImages.length || swap.pendingViewportImages.length || !swapBottom.found || !swapBottom.visible ||
