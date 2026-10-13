@@ -1056,6 +1056,19 @@ test("v1.19.28 opens and validates a complete public recipe", async () => {
   assert.match(audit, /recipeDetail[.]photoLoaded/);
 });
 
+test("v1.19.29 logs and removes a real occasional food in the public diary", async () => {
+  const audit = await readFile(
+    new URL("../scripts/audit-public-mobile.mjs", import.meta.url),
+    "utf8",
+  );
+  assert.match(audit, /Gelato al pistacchio/);
+  assert.match(audit, /Grammi extra/);
+  assert.match(audit, /extraLog[.]added/);
+  assert.match(audit, /extraLog[.]hasCalories/);
+  assert.match(audit, /extraLog[.]hasMacros/);
+  assert.match(audit, /extraLog[.]removed/);
+});
+
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /Crea una ricetta con gli avanzi/);

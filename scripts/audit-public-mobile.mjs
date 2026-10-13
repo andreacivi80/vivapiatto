@@ -330,6 +330,41 @@ try {
   })()`);
   await wait(700);
   weekEditor.returnedToWeek = await evaluate(`document.body.innerText.includes('Calorie pianificate') && !document.querySelector('.week-edit-banner')`);
+  await clickTab("Oggi");
+  const extraLog = await evaluate(`(() => {
+    const details = document.querySelector('#sgarri-extra');
+    if (!details) return { found: false };
+    details.open = true;
+    const name = details.querySelector('input[placeholder^="Scrivi pane"]');
+    const grams = details.querySelector('input[aria-label="Grammi extra"]');
+    const add = [...details.querySelectorAll('button')].find((button) => button.innerText.trim() === 'Aggiungi');
+    if (!name || !grams || !add) return { found: false };
+    const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
+    name._valueTracker?.setValue(name.value);
+    setter.call(name, 'Gelato al pistacchio');
+    name.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertText', data: 'Gelato al pistacchio' }));
+    grams._valueTracker?.setValue(grams.value);
+    setter.call(grams, '60');
+    grams.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertText', data: '60' }));
+    add.click();
+    return { found: true };
+  })()`);
+  await wait(600);
+  Object.assign(extraLog, await evaluate(`(() => {
+    const rows = [...document.querySelectorAll('#sgarri-extra .log-list button')];
+    const row = rows.find((button) => button.innerText.includes('Gelato al pistacchio'));
+    return {
+      added: Boolean(row),
+      hasCalories: Boolean(row && /\\d+ kcal/.test(row.innerText)),
+      hasMacros: Boolean(row && row.innerText.includes('proteine') && row.innerText.includes('carboidrati') && row.innerText.includes('grassi')),
+    };
+  })()`));
+  await evaluate(`(() => {
+    const row = [...document.querySelectorAll('#sgarri-extra .log-list button')].find((button) => button.innerText.includes('Gelato al pistacchio'));
+    row?.click();
+  })()`);
+  await wait(500);
+  extraLog.removed = await evaluate(`![...document.querySelectorAll('#sgarri-extra .log-list button')].some((button) => button.innerText.includes('Gelato al pistacchio'))`);
   const exceptions = page.events.filter((event) =>
     event.method === "Runtime.exceptionThrown" ||
     (event.method === "Log.entryAdded" && event.params?.entry?.level === "error")
@@ -351,6 +386,7 @@ try {
     afterReload,
     shopping,
     weekEditor,
+    extraLog,
     javascriptErrors: exceptions.length,
   };
   console.log(JSON.stringify(report));
@@ -373,6 +409,7 @@ try {
     shopping.horizontalOverflow || !shopping.allSelected || !shopping.allDeselected || !shopping.closed ||
     !weekEditor.found || !weekEditor.visible || !weekEditor.hasClose || !weekEditor.hasRebalance ||
     weekEditor.horizontalOverflow || !weekEditor.returnedToWeek ||
+    !extraLog.found || !extraLog.added || !extraLog.hasCalories || !extraLog.hasMacros || !extraLog.removed ||
     exceptions.length
   ) process.exitCode = 1;
   page.close();

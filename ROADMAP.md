@@ -2,6 +2,12 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
+## v1.19.29 — in verifica
+
+- [x] Inserimento pubblico reale di uno sgarro tramite nome e grammi.
+- [x] Calorie e macronutrienti verificati nella riga registrata.
+- [x] Rimozione diretta dello sgarro verificata senza lasciare residui nel diario.
+
 ## v1.19.28 — in verifica
 
 - [x] Apertura reale della prima ricetta consigliata nel sito pubblico mobile.
