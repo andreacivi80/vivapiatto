@@ -110,7 +110,7 @@ try {
   if (!initialMeal.ready || !initialMeal.expected) throw new Error("Versione iniziale o stato di prova non disponibile");
   await wait(750);
   const openedLibrary = await evaluate(`(() => {
-    const button = [...document.querySelectorAll('button')].find((item) => item.innerText.trim() === 'Ricette');
+    const button = [...document.querySelectorAll('button')].find((item) => item.textContent?.includes('Ricette'));
     button?.click();
     return Boolean(button);
   })()`);
@@ -152,7 +152,7 @@ try {
 
   const restoredScrollY = finalState?.scrollY || 0;
   const openedToday = await evaluate(`(() => {
-    const button = [...document.querySelectorAll('button')].find((item) => item.innerText.trim() === 'Oggi');
+    const button = [...document.querySelectorAll('button')].find((item) => item.textContent?.includes('Oggi'));
     button?.click();
     return Boolean(button);
   })()`);

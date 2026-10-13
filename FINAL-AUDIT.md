@@ -1,6 +1,6 @@
 # Tavola Mia — audit finale del perimetro ricevuto
 
-Data verifica: 14 ottobre 2026. Ultimo checkpoint documentale: `1.19.43`.
+Data verifica: 14 ottobre 2026. Ultimo checkpoint documentale: `1.19.44`.
 
 ## Specifiche acquisite
 

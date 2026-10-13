@@ -2,7 +2,12 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.43 — in verifica
+## v1.19.44 — in verifica
+
+- [x] Navigazione mobile del collaudo individuata dal testo accessibile completo, comprese le icone dei pulsanti.
+- [x] Verifica automatica reale del passaggio 1.19.43 → 1.19.44 con stato utente conservato.
+
+## v1.19.43 — verificata staticamente
 
 - [x] Il collaudo usa una vista Ricette realmente più alta dello schermo mobile per misurare lo scroll.
 - [x] La navigazione automatica di release viene rilevata prima che l'app ripulisca il parametro tecnico dall'indirizzo.
