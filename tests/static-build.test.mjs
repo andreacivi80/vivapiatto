@@ -1132,6 +1132,20 @@ test("v1.19.33 verifies every supplied recipe family publicly on mobile", async 
   assert.match(app, /setHealthyFilters\(\[\]\)/);
 });
 
+test("v1.19.34 verifies weekly confirmation, rotation and print preview publicly", async () => {
+  const audit = await readFile(
+    new URL("../scripts/audit-public-mobile.mjs", import.meta.url),
+    "utf8",
+  );
+  assert.match(audit, /weeklyConfirmation[.]locked/);
+  assert.match(audit, /weeklyConfirmation[.]rotationInRange/);
+  assert.match(audit, /weeklyConfirmation[.]reopened/);
+  assert.match(audit, /weeklyPrintPreview[.]dayCount/);
+  assert.match(audit, /weeklyPrintPreview[.]mealCount/);
+  assert.match(audit, /weeklyPrintPreview[.]hasAllMacros/);
+  assert.match(audit, /weeklyPrintPreview[.]hasExports/);
+});
+
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /Crea una ricetta con gli avanzi/);

@@ -146,6 +146,57 @@ try {
   const today = await snapshot();
   await clickTab("Settimana");
   const week = await snapshot();
+  const weeklyConfirmation = await evaluate(`(() => {
+    const lock = document.querySelector('.week-lock');
+    const confirm = [...(lock?.querySelectorAll('button') || [])].find((button) => button.innerText.trim() === 'Conferma');
+    confirm?.click();
+    return { found: Boolean(lock && confirm) };
+  })()`);
+  await wait(500);
+  Object.assign(weeklyConfirmation, await evaluate(`(() => {
+    const lock = document.querySelector('.week-lock');
+    const kcalSummary = document.querySelector('.week-kcal-summary');
+    const frequency = document.querySelector('.weekly-frequency');
+    const print = document.querySelector('.print-preview-trigger');
+    const result = {
+      locked: lock?.innerText.includes('Settimana confermata'),
+      hasAverage: (kcalSummary?.innerText || '').toLowerCase().includes('media') && (kcalSummary?.innerText || '').includes('kcal'),
+      calorieDays: kcalSummary?.querySelectorAll(':scope > div > span').length || 0,
+      rotationConfirmed: frequency?.innerText.includes('Rotazione confermata'),
+      rotationRows: frequency?.querySelectorAll(':scope > div > span').length || 0,
+      rotationInRange: [...(frequency?.querySelectorAll(':scope > div > span') || [])].every((row) => row.classList.contains('within-target')),
+      hasPrintPreview: Boolean(print),
+    };
+    print?.click();
+    return result;
+  })()`));
+  await wait(500);
+  const weeklyPrintPreview = await evaluate(`(() => {
+    const sheet = document.querySelector('.print-preview-sheet');
+    const close = sheet?.querySelector('[aria-label="Chiudi anteprima stampa"]');
+    const text = sheet?.innerText || '';
+    const rect = close?.getBoundingClientRect();
+    return {
+      found: Boolean(sheet),
+      hasUpdatedAverage: text.includes('Media aggiornata'),
+      dayCount: sheet?.querySelectorAll('.print-day').length || 0,
+      mealCount: sheet?.querySelectorAll('.print-meal').length || 0,
+      foodRows: sheet?.querySelectorAll('.print-food-row').length || 0,
+      hasAllMacros: ['kcal', 'Proteine', 'Carboidrati', 'Grassi'].every((label) => text.includes(label)),
+      hasExports: ['Copia tutto', 'TXT', 'CSV', 'Word', 'Stampa'].every((label) => text.includes(label)),
+      closeVisible: Boolean(rect && rect.top >= 0 && rect.bottom <= window.innerHeight),
+      horizontalOverflow: Boolean(sheet && sheet.scrollWidth > sheet.clientWidth + 1),
+    };
+  })()`);
+  await evaluate(`document.querySelector('[aria-label="Chiudi anteprima stampa"]')?.click()`);
+  await wait(300);
+  weeklyPrintPreview.closed = await evaluate(`!document.querySelector('.print-preview-sheet')`);
+  await evaluate(`(() => {
+    const lock = document.querySelector('.week-lock');
+    [...(lock?.querySelectorAll('button') || [])].find((button) => button.innerText.trim() === 'Riapri')?.click();
+  })()`);
+  await wait(300);
+  weeklyConfirmation.reopened = await evaluate(`document.querySelector('.week-lock')?.innerText.includes('Settimana modificabile')`);
   await clickTab("Ricette");
   const recipes = await snapshot();
   const openedRecipe = await evaluate(`(() => {
@@ -569,6 +620,8 @@ try {
   const report = {
     today,
     week,
+    weeklyConfirmation,
+    weeklyPrintPreview,
     recipes,
     recipeDetail,
     recipeCoverage,
@@ -595,6 +648,12 @@ try {
   if (
     !today.version || today.recovery || today.horizontalOverflow || today.brokenViewportImages.length || today.pendingViewportImages.length ||
     week.recovery || week.horizontalOverflow || week.brokenViewportImages.length || week.pendingViewportImages.length ||
+    !weeklyConfirmation.found || !weeklyConfirmation.locked || !weeklyConfirmation.hasAverage || weeklyConfirmation.calorieDays !== 7 ||
+    !weeklyConfirmation.rotationConfirmed || weeklyConfirmation.rotationRows < 7 || !weeklyConfirmation.rotationInRange ||
+    !weeklyConfirmation.hasPrintPreview || !weeklyConfirmation.reopened ||
+    !weeklyPrintPreview.found || !weeklyPrintPreview.hasUpdatedAverage || weeklyPrintPreview.dayCount !== 7 ||
+    weeklyPrintPreview.mealCount < 21 || weeklyPrintPreview.foodRows === 0 || !weeklyPrintPreview.hasAllMacros ||
+    !weeklyPrintPreview.hasExports || !weeklyPrintPreview.closeVisible || weeklyPrintPreview.horizontalOverflow || !weeklyPrintPreview.closed ||
     recipes.recovery || recipes.horizontalOverflow || recipes.brokenViewportImages.length || recipes.pendingViewportImages.length ||
     !recipeDetail.found || !recipeDetail.hasIngredients || !recipeDetail.hasPreparation || !recipeDetail.hasNutrition ||
     !recipeDetail.hasAllergens || !recipeDetail.photoLoaded || recipeDetail.horizontalOverflow || !recipeDetail.closed || !recipeCoverage ||

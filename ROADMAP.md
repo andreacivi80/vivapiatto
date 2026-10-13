@@ -2,7 +2,13 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.33 — in verifica
+## v1.19.34 — in verifica
+
+- [x] Conferma della settimana verificata con sette totali calorici e media giornaliera.
+- [x] Rotazione confermata verificata interamente nei range del piano proposto.
+- [x] Anteprima stampa verificata con sette giorni, pasti, ingredienti, grammi, macro ed esportazioni.
+
+## v1.19.33 — verificata
 
 - [x] Le quattro famiglie fornite vengono aperte e contate separatamente sul sito pubblico mobile.
 - [x] Verificati 44 colazioni, 42 spuntini, 64 pranzi e 64 cene senza uscita orizzontale.
