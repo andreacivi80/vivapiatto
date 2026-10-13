@@ -382,7 +382,7 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(css, /overflow-x:\s*hidden/);
   assert.match(css, /max-width:\s*520px/);
   await access(new URL("../dist/food/recipe-asian-negima-v1163.png", import.meta.url));
-  await access(new URL("../dist/food/recipe-asian-japchae-v1163.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-asian-japchae-v11948.png", import.meta.url));
   await access(new URL("../dist/food/recipe-asian-phat-thai-v1163.png", import.meta.url));
   await access(new URL("../dist/food/part-lime-v1163.png", import.meta.url));
   await access(new URL("../dist/food/part-leek-v1163.png", import.meta.url));
@@ -1273,6 +1273,22 @@ test("v1.19.47 gives the verified oyakodon a faithful complete-dish photograph",
   assert.match(recipe, /Funghi/);
   assert.match(recipe, /MAFF/);
   await access(new URL("../public/food/recipe-asian-oyakodon-v11947.png", import.meta.url));
+});
+
+test("v1.19.48 gives the verified japchae a faithful complete-dish photograph", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const recipeStart = source.indexOf('id: "asian-japchae-authentic"');
+  const recipeEnd = source.indexOf('id: "asian-phat-thai-authentic"');
+  const recipe = source.slice(recipeStart, recipeEnd);
+  assert.ok(recipeStart > 0 && recipeEnd > recipeStart);
+  assert.match(recipe, /recipe-asian-japchae-v11948/);
+  assert.match(recipe, /Vermicelli di patata dolce cotti/);
+  assert.match(recipe, /Bistecca di manzo/);
+  assert.match(recipe, /Spinaci/);
+  assert.match(recipe, /Carote crude/);
+  assert.match(recipe, /Funghi/);
+  assert.match(recipe, /VisitKorea/);
+  await access(new URL("../public/food/recipe-asian-japchae-v11948.png", import.meta.url));
 });
 
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {

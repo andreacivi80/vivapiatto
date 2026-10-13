@@ -4500,7 +4500,7 @@ const balancedDinnerRecipes: Recipe[] = [
     kicker: "Noodles di patata dolce · ricetta verificata VisitKorea",
     course: "Piatto unico",
     cuisine: "Asiatico",
-    image: photo("recipe-asian-japchae-v1163"),
+    image: photo("recipe-asian-japchae-v11948"),
     time: 35,
     ingredients: [
       { food: "Vermicelli di patata dolce cotti", grams: 180 },
