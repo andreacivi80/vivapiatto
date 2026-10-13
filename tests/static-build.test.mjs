@@ -1097,6 +1097,22 @@ test("v1.19.31 verifies meal registration, persistence and reversal publicly", a
   assert.match(audit, /0\/5 registrati/);
 });
 
+test("v1.19.32 verifies adding and directly removing a meal component publicly", async () => {
+  const audit = await readFile(
+    new URL("../scripts/audit-public-mobile.mjs", import.meta.url),
+    "utf8",
+  );
+  assert.match(audit, /mealPartAddition[.]addHeading/);
+  assert.match(audit, /mealPartAddition[.]hasRecommendedChoices/);
+  assert.match(audit, /mealPartAddition[.]noBlankChoice/);
+  assert.match(audit, /mealPartAddition[.]added/);
+  assert.match(audit, /mealPartAddition[.]hasDirectRemove/);
+  assert.match(audit, /mealPartAddition[.]removed/);
+  assert.match(audit, /AGGIUNGI AL PASTO/);
+  assert.match(audit, /[.]add-part-compact/);
+  assert.match(audit, /[.]part-remove/);
+});
+
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /Crea una ricetta con gli avanzi/);

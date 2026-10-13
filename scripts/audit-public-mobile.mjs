@@ -475,6 +475,59 @@ try {
       summaryReverted: summary?.innerText.includes('0/5 registrati'),
     };
   })()`));
+  const mealPartAddition = await evaluate(`(() => {
+    const card = document.querySelectorAll('.meal-card')[2];
+    const add = card?.querySelector('.add-part-compact');
+    if (!card || !add) return { found: false };
+    const before = card.querySelectorAll('.meal-part').length;
+    add.click();
+    return { found: true, before };
+  })()`);
+  await wait(500);
+  Object.assign(mealPartAddition, await evaluate(`(() => {
+    const sheet = document.querySelector('.part-picker-sheet');
+    const close = sheet?.querySelector('[aria-label="Chiudi alternative"]');
+    const choice = sheet?.querySelector('.part-choice-grid button');
+    if (!sheet || !choice) return { pickerFound: false };
+    const rect = close?.getBoundingClientRect();
+    const result = {
+      pickerFound: true,
+      addHeading: sheet.innerText.includes('AGGIUNGI AL PASTO'),
+      hasRecommendedChoices: sheet.querySelectorAll('.part-choice-grid button').length > 0,
+      noBlankChoice: [...sheet.querySelectorAll('.part-choice-grid button')].every((button) =>
+        button.innerText.trim().length > 0 || Boolean(button.getAttribute('aria-label')) || Boolean(button.querySelector('img')?.alt)
+      ),
+      closeVisible: Boolean(rect && rect.top >= 0 && rect.bottom <= window.innerHeight),
+      horizontalOverflow: sheet.scrollWidth > sheet.clientWidth + 1,
+    };
+    choice.click();
+    return result;
+  })()`));
+  await wait(700);
+  Object.assign(mealPartAddition, await evaluate(`(() => {
+    const card = document.querySelectorAll('.meal-card')[2];
+    if (!card) return { added: false };
+    const afterAdd = card.querySelectorAll('.meal-part').length;
+    const removeButtons = card.querySelectorAll('.part-remove');
+    const lastRemove = removeButtons[removeButtons.length - 1];
+    const result = {
+      afterAdd,
+      added: afterAdd === ${mealPartAddition.before} + 1,
+      pickerClosed: !document.querySelector('.part-picker-sheet'),
+      hasDirectRemove: Boolean(lastRemove),
+    };
+    lastRemove?.click();
+    return result;
+  })()`));
+  await wait(700);
+  Object.assign(mealPartAddition, await evaluate(`(() => {
+    const card = document.querySelectorAll('.meal-card')[2];
+    const afterRemove = card?.querySelectorAll('.meal-part').length ?? -1;
+    return {
+      afterRemove,
+      removed: afterRemove === ${mealPartAddition.before},
+    };
+  })()`));
   const exceptions = page.events.filter((event) =>
     event.method === "Runtime.exceptionThrown" ||
     (event.method === "Log.entryAdded" && event.params?.entry?.level === "error")
@@ -500,6 +553,7 @@ try {
     gelatoComposer,
     historyConsent,
     mealRegistration,
+    mealPartAddition,
     javascriptErrors: exceptions.length,
   };
   console.log(JSON.stringify(report));
@@ -529,6 +583,10 @@ try {
     !historyConsent.found || !historyConsent.enabled ||
     !mealRegistration.found || !mealRegistration.marked || !mealRegistration.summaryUpdated ||
     !mealRegistration.persisted || !mealRegistration.unmarked || !mealRegistration.summaryReverted ||
+    !mealPartAddition.found || !mealPartAddition.pickerFound || !mealPartAddition.addHeading ||
+    !mealPartAddition.hasRecommendedChoices || !mealPartAddition.noBlankChoice || !mealPartAddition.closeVisible ||
+    mealPartAddition.horizontalOverflow || !mealPartAddition.added || !mealPartAddition.pickerClosed ||
+    !mealPartAddition.hasDirectRemove || !mealPartAddition.removed ||
     exceptions.length
   ) process.exitCode = 1;
   page.close();

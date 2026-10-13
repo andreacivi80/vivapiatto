@@ -2,7 +2,13 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.31 — in verifica
+## v1.19.32 — in verifica
+
+- [x] Aggiunta reale di un componente al pranzo verificata sul sito pubblico mobile.
+- [x] Pannello “AGGIUNGI AL PASTO” verificato senza card bianche né uscita orizzontale.
+- [x] Rimozione diretta col comando meno verificata con ritorno esatto al numero iniziale di componenti.
+
+## v1.19.31 — verificata
 
 - [x] Flag mangiato provato direttamente sullo spuntino nel sito pubblico.
 - [x] Riepilogo reale verificato nel passaggio 0/5 → 1/5 e dopo ricaricamento.
