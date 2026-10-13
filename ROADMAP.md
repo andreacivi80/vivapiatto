@@ -2,6 +2,12 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
+## v1.19.25 — in verifica
+
+- [x] Le immagini lazy vengono attese prima della verifica pubblica, senza falsi errori durante il cambio scheda.
+- [x] Il rapporto distingue fotografie ancora pendenti da risorse concluse con errore reale.
+- [x] Entrambe le condizioni bloccano la revisione se persistono dopo la finestra di caricamento.
+
 ## v1.19.24 — in verifica
 
 - [x] Lo stress test pubblico controlla anche che ogni fotografia presente nel viewport mobile sia realmente caricata e non sia un riquadro rotto.

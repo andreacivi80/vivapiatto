@@ -94,7 +94,19 @@ try {
     if (result.exceptionDetails) throw new Error(result.exceptionDetails.text);
     return result.result.value;
   };
-  const snapshot = () => evaluate(`(() => ({
+  const settleViewportImages = () => evaluate(`Promise.all(
+    [...document.images].filter((image) => {
+      const rect = image.getBoundingClientRect();
+      return image.offsetParent !== null && rect.bottom > 0 && rect.top < window.innerHeight;
+    }).map((image) => image.complete ? Promise.resolve() : new Promise((resolve) => {
+      image.addEventListener('load', resolve, { once: true });
+      image.addEventListener('error', resolve, { once: true });
+      setTimeout(resolve, 4000);
+    }))
+  )`);
+  const snapshot = async () => {
+    await settleViewportImages();
+    return evaluate(`(() => ({
     version: document.body.innerText.includes(${JSON.stringify(`v${version}`)}),
     recovery: document.body.innerText.includes('La pagina ha incontrato un errore'),
     horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
@@ -108,9 +120,14 @@ try {
     brokenViewportImages: [...document.images].filter((image) => {
       const rect = image.getBoundingClientRect();
       return image.offsetParent !== null && rect.bottom > 0 && rect.top < window.innerHeight &&
-        (!image.complete || image.naturalWidth === 0);
+        image.complete && image.naturalWidth === 0;
+    }).map((image) => image.alt || image.currentSrc || image.src),
+    pendingViewportImages: [...document.images].filter((image) => {
+      const rect = image.getBoundingClientRect();
+      return image.offsetParent !== null && rect.bottom > 0 && rect.top < window.innerHeight && !image.complete;
     }).map((image) => image.alt || image.currentSrc || image.src),
   }))()`);
+  };
   const clickTab = async (label) => {
     const clicked = await evaluate(`(() => {
       const button = [...document.querySelectorAll('button')].find((item) => item.innerText.trim().includes(${JSON.stringify(label)}));
@@ -231,18 +248,18 @@ try {
   };
   console.log(JSON.stringify(report));
   if (
-    !today.version || today.recovery || today.horizontalOverflow || today.brokenViewportImages.length ||
-    week.recovery || week.horizontalOverflow || week.brokenViewportImages.length ||
-    recipes.recovery || recipes.horizontalOverflow || recipes.brokenViewportImages.length || !recipeCoverage ||
-    recipeScroll.brokenViewportImages.length ||
-    backToday.recovery || backToday.horizontalOverflow || backToday.brokenViewportImages.length ||
-    swap.recovery || swap.horizontalOverflow || swap.brokenViewportImages.length || !swapBottom.found || !swapBottom.visible ||
+    !today.version || today.recovery || today.horizontalOverflow || today.brokenViewportImages.length || today.pendingViewportImages.length ||
+    week.recovery || week.horizontalOverflow || week.brokenViewportImages.length || week.pendingViewportImages.length ||
+    recipes.recovery || recipes.horizontalOverflow || recipes.brokenViewportImages.length || recipes.pendingViewportImages.length || !recipeCoverage ||
+    recipeScroll.brokenViewportImages.length || recipeScroll.pendingViewportImages.length ||
+    backToday.recovery || backToday.horizontalOverflow || backToday.brokenViewportImages.length || backToday.pendingViewportImages.length ||
+    swap.recovery || swap.horizontalOverflow || swap.brokenViewportImages.length || swap.pendingViewportImages.length || !swapBottom.found || !swapBottom.visible ||
     !swapBottom.hasOccasionalChoices || !swapBottom.hasCompleteChoices ||
-    afterSwapReturn.recovery || afterSwapReturn.horizontalOverflow || afterSwapReturn.brokenViewportImages.length ||
+    afterSwapReturn.recovery || afterSwapReturn.horizontalOverflow || afterSwapReturn.brokenViewportImages.length || afterSwapReturn.pendingViewportImages.length ||
     !milkAlternatives.found || !milkAlternatives.hasNone || !milkAlternatives.hasSoy ||
     !milkAlternatives.hasOat || !milkAlternatives.hasSkimmed ||
     !milkAlternatives.closeVisible || milkAlternatives.horizontalOverflow || !pickerClosed ||
-    !gramsEdit.persisted || afterReload.recovery || afterReload.horizontalOverflow || afterReload.brokenViewportImages.length ||
+    !gramsEdit.persisted || afterReload.recovery || afterReload.horizontalOverflow || afterReload.brokenViewportImages.length || afterReload.pendingViewportImages.length ||
     exceptions.length
   ) process.exitCode = 1;
   page.close();

@@ -1006,6 +1006,18 @@ test("v1.19.24 rejects broken photographs in every audited mobile viewport", asy
   assert.match(audit, /recipeScroll[.]brokenViewportImages[.]length/);
 });
 
+test("v1.19.25 waits for lazy photographs and distinguishes pending from broken", async () => {
+  const audit = await readFile(
+    new URL("../scripts/audit-public-mobile.mjs", import.meta.url),
+    "utf8",
+  );
+  assert.match(audit, /const settleViewportImages/);
+  assert.match(audit, /image[.]addEventListener\('load'/);
+  assert.match(audit, /image[.]addEventListener\('error'/);
+  assert.match(audit, /pendingViewportImages/);
+  assert.match(audit, /image[.]complete && image[.]naturalWidth === 0/);
+});
+
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /Crea una ricetta con gli avanzi/);
