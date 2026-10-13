@@ -349,7 +349,7 @@ try {
     add.click();
     return { found: true };
   })()`);
-  await wait(600);
+  await wait(1_500);
   Object.assign(extraLog, await evaluate(`(() => {
     const rows = [...document.querySelectorAll('#sgarri-extra .log-list button')];
     const row = rows.find((button) => button.innerText.includes('Gelato al pistacchio'));
@@ -432,6 +432,49 @@ try {
       pickerClosed: !document.querySelector('.part-picker-sheet'),
     };
   })()`));
+  await clickTab("Progressi");
+  const historyConsent = await evaluate(`(() => {
+    const input = document.querySelector('.history-consent input[type="checkbox"]');
+    if (!input) return { found: false };
+    if (!input.checked) input.click();
+    return { found: true, enabled: input.checked };
+  })()`);
+  await wait(500);
+  await clickTab("Oggi");
+  const mealRegistration = await evaluate(`(() => {
+    const button = document.querySelectorAll('.meal-card')[1]?.querySelector('.check');
+    if (!button) return { found: false };
+    button.click();
+    return { found: true };
+  })()`);
+  await wait(1_500);
+  Object.assign(mealRegistration, await evaluate(`(() => {
+    const button = document.querySelectorAll('.meal-card')[1]?.querySelector('.check');
+    const summary = document.querySelector('.actual-day-summary');
+    return {
+      marked: button?.classList.contains('done') && button.getAttribute('aria-label') === 'Segna da fare',
+      summaryUpdated: summary?.innerText.includes('1/5 registrati'),
+    };
+  })()`));
+  await page.send("Page.reload", { ignoreCache: false });
+  await wait(5000);
+  Object.assign(mealRegistration, await evaluate(`(() => {
+    const button = document.querySelectorAll('.meal-card')[1]?.querySelector('.check');
+    const summary = document.querySelector('.actual-day-summary');
+    return {
+      persisted: button?.classList.contains('done') && summary?.innerText.includes('1/5 registrati'),
+    };
+  })()`));
+  await evaluate(`document.querySelectorAll('.meal-card')[1]?.querySelector('.check')?.click()`);
+  await wait(600);
+  Object.assign(mealRegistration, await evaluate(`(() => {
+    const button = document.querySelectorAll('.meal-card')[1]?.querySelector('.check');
+    const summary = document.querySelector('.actual-day-summary');
+    return {
+      unmarked: !button?.classList.contains('done') && button?.getAttribute('aria-label') === 'Segna mangiato',
+      summaryReverted: summary?.innerText.includes('0/5 registrati'),
+    };
+  })()`));
   const exceptions = page.events.filter((event) =>
     event.method === "Runtime.exceptionThrown" ||
     (event.method === "Log.entryAdded" && event.params?.entry?.level === "error")
@@ -455,6 +498,8 @@ try {
     weekEditor,
     extraLog,
     gelatoComposer,
+    historyConsent,
+    mealRegistration,
     javascriptErrors: exceptions.length,
   };
   console.log(JSON.stringify(report));
@@ -481,6 +526,9 @@ try {
     !gelatoComposer.found || !gelatoComposer.hasTwoScoops || !gelatoComposer.hasThreeScoops ||
     gelatoComposer.horizontalOverflow || gelatoComposer.flavorSelectors !== 3 || gelatoComposer.flavorOptions < 10 ||
     !gelatoComposer.hasCalculatedCalories || !gelatoComposer.applied || !gelatoComposer.photosLoaded || !gelatoComposer.pickerClosed ||
+    !historyConsent.found || !historyConsent.enabled ||
+    !mealRegistration.found || !mealRegistration.marked || !mealRegistration.summaryUpdated ||
+    !mealRegistration.persisted || !mealRegistration.unmarked || !mealRegistration.summaryReverted ||
     exceptions.length
   ) process.exitCode = 1;
   page.close();

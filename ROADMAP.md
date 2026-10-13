@@ -2,6 +2,12 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
+## v1.19.31 — in verifica
+
+- [x] Flag mangiato provato direttamente sullo spuntino nel sito pubblico.
+- [x] Riepilogo reale verificato nel passaggio 0/5 → 1/5 e dopo ricaricamento.
+- [x] Deflag verificato nel passaggio 1/5 → 0/5 senza aprire la ricetta.
+
 ## v1.19.30 — in verifica
 
 - [x] Compositore gelato aperto realmente dallo sgarro dello spuntino mattutino.

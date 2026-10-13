@@ -1082,6 +1082,21 @@ test("v1.19.30 composes a photographed three-scoop gelato in the public snack", 
   assert.match(audit, /gelatoComposer[.]pickerClosed/);
 });
 
+test("v1.19.31 verifies meal registration, persistence and reversal publicly", async () => {
+  const audit = await readFile(
+    new URL("../scripts/audit-public-mobile.mjs", import.meta.url),
+    "utf8",
+  );
+  assert.match(audit, /mealRegistration[.]marked/);
+  assert.match(audit, /historyConsent[.]enabled/);
+  assert.match(audit, /mealRegistration[.]summaryUpdated/);
+  assert.match(audit, /mealRegistration[.]persisted/);
+  assert.match(audit, /mealRegistration[.]unmarked/);
+  assert.match(audit, /mealRegistration[.]summaryReverted/);
+  assert.match(audit, /1\/5 registrati/);
+  assert.match(audit, /0\/5 registrati/);
+});
+
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /Crea una ricetta con gli avanzi/);
