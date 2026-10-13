@@ -1,6 +1,6 @@
 # Tavola Mia — audit finale del perimetro ricevuto
 
-Data verifica: 13 ottobre 2026. Ultimo checkpoint documentale: `1.19.20`.
+Data verifica: 13 ottobre 2026. Ultimo checkpoint documentale: `1.19.21`.
 
 ## Specifiche acquisite
 
@@ -18,7 +18,8 @@ Data verifica: 13 ottobre 2026. Ultimo checkpoint documentale: `1.19.20`.
 - Extra/sgarri: 114 voci univoche con chilocalorie, proteine, carboidrati, grassi, fibre e fonte.
 - Alternative: 268 alimenti senza duplicati né card vuote nella stessa categoria.
 - Rotazione: 14/14 pasti principali nei range definiti, senza famiglie proteiche consecutive.
-- Suite pubblicabile: 164/164 test superati, SSR superato, audit dipendenze pulito e build GitHub Pages riuscita.
+- Suite pubblicabile: 165/165 test superati, SSR superato, audit dipendenze pulito e build GitHub Pages riuscita.
+- Stress mobile pubblico ripetibile: viewport 390×844, navigazione completa, ritorno fisso, alternative del latte, modifica grammatura persistente e zero errori JavaScript.
 - Pubblicazione precedente verificata sul link unico: manifest `1.19.18` e workflow GitHub Pages concluso con successo; la `1.19.19` mantiene allineato anche il manifest sorgente.
 
 ## Stress test pubblico mobile

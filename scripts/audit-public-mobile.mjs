@@ -1,0 +1,256 @@
+import { spawn, spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
+import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const packageFile = JSON.parse(
+  readFileSync(new URL("../package.json", import.meta.url), "utf8"),
+);
+const version = packageFile.version;
+const edge = [
+  "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe",
+  "C:/Program Files/Microsoft/Edge/Application/msedge.exe",
+].find(existsSync);
+if (!edge) throw new Error("Microsoft Edge non trovato");
+const profile = mkdtempSync(join(tmpdir(), "vivapiatto-cdp-"));
+const child = spawn(edge, [
+  "--headless=new",
+  "--disable-gpu",
+  "--disable-extensions",
+  "--no-first-run",
+  "--no-default-browser-check",
+  "--remote-debugging-port=0",
+  "--window-size=390,844",
+  `--user-data-dir=${profile}`,
+  `https://andreacivi80.github.io/vivapiatto/?stress=${version.replaceAll(".", "")}`,
+], { windowsHide: true, stdio: "ignore" });
+
+const connect = async (url) => {
+  const socket = new WebSocket(url);
+  await new Promise((resolve, reject) => {
+    socket.addEventListener("open", resolve, { once: true });
+    socket.addEventListener("error", reject, { once: true });
+  });
+  let nextId = 1;
+  const pending = new Map();
+  const events = [];
+  socket.addEventListener("message", ({ data }) => {
+    const message = JSON.parse(data);
+    if (message.id && pending.has(message.id)) {
+      const { resolve, reject } = pending.get(message.id);
+      pending.delete(message.id);
+      if (message.error) reject(new Error(message.error.message));
+      else resolve(message.result);
+    } else {
+      events.push(message);
+    }
+  });
+  return {
+    events,
+    send(method, params = {}) {
+      const id = nextId++;
+      return new Promise((resolve, reject) => {
+        pending.set(id, { resolve, reject });
+        socket.send(JSON.stringify({ id, method, params }));
+      });
+    },
+    close() { socket.close(); },
+  };
+};
+
+let browser;
+try {
+  let port;
+  let browserPath;
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    try {
+      const lines = readFileSync(join(profile, "DevToolsActivePort"), "utf8").trim().split(/\r?\n/);
+      port = Number(lines[0]);
+      browserPath = lines[1];
+      break;
+    } catch {
+      await wait(100);
+    }
+  }
+  if (!port || !browserPath) throw new Error("Edge headless non disponibile");
+  const targets = await fetch(`http://127.0.0.1:${port}/json/list`).then((response) => response.json());
+  const target = targets.find((item) => item.type === "page");
+  if (!target) throw new Error("Pagina headless non trovata");
+  const page = await connect(target.webSocketDebuggerUrl);
+  browser = await connect(`ws://127.0.0.1:${port}${browserPath}`);
+  await Promise.all([
+    page.send("Page.enable"),
+    page.send("Runtime.enable"),
+    page.send("Log.enable"),
+  ]);
+  await wait(5000);
+  const evaluate = async (expression) => {
+    const result = await page.send("Runtime.evaluate", {
+      expression,
+      returnByValue: true,
+      awaitPromise: true,
+    });
+    if (result.exceptionDetails) throw new Error(result.exceptionDetails.text);
+    return result.result.value;
+  };
+  const snapshot = () => evaluate(`(() => ({
+    version: document.body.innerText.includes(${JSON.stringify(`v${version}`)}),
+    recovery: document.body.innerText.includes('La pagina ha incontrato un errore'),
+    horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+    textLength: document.body.innerText.length,
+    scrollY: window.scrollY,
+    visibleButtonCount: [...document.querySelectorAll('button')].filter((button) => button.offsetParent !== null).length,
+  }))()`);
+  const clickTab = async (label) => {
+    const clicked = await evaluate(`(() => {
+      const button = [...document.querySelectorAll('button')].find((item) => item.innerText.trim().includes(${JSON.stringify(label)}));
+      if (!button) return false;
+      button.click();
+      return true;
+    })()`);
+    if (!clicked) throw new Error(`Scheda ${label} non trovata`);
+    await wait(1000);
+  };
+
+  const today = await snapshot();
+  await clickTab("Settimana");
+  const week = await snapshot();
+  await clickTab("Ricette");
+  const recipes = await snapshot();
+  await clickTab("Le tue 214");
+  const recipeCoverage = await evaluate(`document.body.innerText.includes('214/214 presenti')`);
+  await evaluate(`window.scrollTo(0, Math.max(0, document.body.scrollHeight - window.innerHeight))`);
+  const recipeScroll = await snapshot();
+  await clickTab("Oggi");
+  const backToday = await snapshot();
+  const openedSwap = await evaluate(`(() => {
+    const button = [...document.querySelectorAll('button')].find((item) => item.innerText.includes('Cambia piatto'));
+    if (!button) return false;
+    button.click();
+    return true;
+  })()`);
+  if (!openedSwap) throw new Error("Cambio piatto non trovato");
+  await wait(1000);
+  const swap = await snapshot();
+  await evaluate(`window.scrollTo(0, Math.max(0, document.body.scrollHeight - window.innerHeight))`);
+  await wait(500);
+  const swapBottom = await evaluate(`(() => {
+    const button = document.querySelector('.swap-back');
+    if (!button) return { found: false };
+    const rect = button.getBoundingClientRect();
+    return {
+      found: true,
+      visible: rect.top >= 0 && rect.bottom <= window.innerHeight,
+      top: Math.round(rect.top),
+      bottom: Math.round(rect.bottom),
+      scrollY: Math.round(window.scrollY),
+      hasOccasionalChoices: document.body.innerText.includes('Sgarri'),
+      hasCompleteChoices: document.body.innerText.includes('Piatto unico'),
+    };
+  })()`);
+  await evaluate(`document.querySelector('.swap-back')?.click()`);
+  await wait(1000);
+  const afterSwapReturn = await snapshot();
+  const openedMilkAlternatives = await evaluate(`(() => {
+    const button = [...document.querySelectorAll('button')].find((item) => item.innerText.includes('Latte') && item.innerText.includes('Alternative'));
+    if (!button) return false;
+    button.click();
+    return true;
+  })()`);
+  if (!openedMilkAlternatives) throw new Error("Alternative latte non trovate");
+  await wait(750);
+  const milkAlternatives = await evaluate(`(() => {
+    const sheet = document.querySelector('.part-picker-sheet');
+    const scroller = document.querySelector('.part-picker-scroll');
+    const close = document.querySelector('[aria-label="Chiudi alternative"]');
+    if (!sheet || !scroller || !close) return { found: false };
+    scroller.scrollTop = scroller.scrollHeight;
+    const rect = close.getBoundingClientRect();
+    const text = sheet.innerText;
+    return {
+      found: true,
+      hasNone: text.includes('Nessuno'),
+      hasSoy: text.includes('Bevanda di soia'),
+      hasOat: text.includes('Bevanda d’avena') || text.includes("Bevanda d'avena"),
+      hasSkimmed: text.includes('Latte scremato'),
+      closeVisible: rect.top >= 0 && rect.bottom <= window.innerHeight,
+      horizontalOverflow: sheet.scrollWidth > sheet.clientWidth + 1,
+    };
+  })()`);
+  await evaluate(`document.querySelector('[aria-label="Chiudi alternative"]')?.click()`);
+  await wait(500);
+  const pickerClosed = await evaluate(`!document.querySelector('.part-picker-sheet')`);
+  const gramsEdit = await evaluate(`(() => {
+    const input = document.querySelector('.meal-part input[type="number"]');
+    if (!input) return { found: false };
+    const before = Number(input.value);
+    const expected = before + 5;
+    const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
+    setter.call(input, String(expected));
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+    return { found: true, label: input.getAttribute('aria-label'), before, expected };
+  })()`);
+  if (!gramsEdit.found) throw new Error("Grammatura modificabile non trovata");
+  await wait(1000);
+  gramsEdit.afterEdit = await evaluate(`Number(document.querySelector('.meal-part input[type="number"]')?.value)`);
+  await page.send("Page.reload", { ignoreCache: false });
+  await wait(5000);
+  gramsEdit.afterReload = await evaluate(`Number(document.querySelector('.meal-part input[type="number"]')?.value)`);
+  gramsEdit.persisted = gramsEdit.afterEdit === gramsEdit.expected && gramsEdit.afterReload === gramsEdit.expected;
+  const afterReload = await snapshot();
+  const exceptions = page.events.filter((event) =>
+    event.method === "Runtime.exceptionThrown" ||
+    (event.method === "Log.entryAdded" && event.params?.entry?.level === "error")
+  );
+  const report = {
+    today,
+    week,
+    recipes,
+    recipeCoverage,
+    recipeScrollY: recipeScroll.scrollY,
+    backToday,
+    swap,
+    swapBottom,
+    afterSwapReturn,
+    milkAlternatives,
+    pickerClosed,
+    gramsEdit,
+    afterReload,
+    javascriptErrors: exceptions.length,
+  };
+  console.log(JSON.stringify(report));
+  if (
+    !today.version || today.recovery || today.horizontalOverflow ||
+    week.recovery || week.horizontalOverflow ||
+    recipes.recovery || recipes.horizontalOverflow || !recipeCoverage ||
+    backToday.recovery || backToday.horizontalOverflow ||
+    swap.recovery || swap.horizontalOverflow || !swapBottom.found || !swapBottom.visible ||
+    !swapBottom.hasOccasionalChoices || !swapBottom.hasCompleteChoices ||
+    afterSwapReturn.recovery || afterSwapReturn.horizontalOverflow ||
+    !milkAlternatives.found || !milkAlternatives.hasNone || !milkAlternatives.hasSoy ||
+    !milkAlternatives.hasOat || !milkAlternatives.hasSkimmed ||
+    !milkAlternatives.closeVisible || milkAlternatives.horizontalOverflow || !pickerClosed ||
+    !gramsEdit.persisted || afterReload.recovery || afterReload.horizontalOverflow ||
+    exceptions.length
+  ) process.exitCode = 1;
+  page.close();
+  browser.close();
+} finally {
+  spawnSync("C:/Windows/System32/taskkill.exe", [
+    "/PID",
+    String(child.pid),
+    "/T",
+    "/F",
+  ], { windowsHide: true, stdio: "ignore" });
+  await wait(750);
+  rmSync(profile, {
+    recursive: true,
+    force: true,
+    maxRetries: 10,
+    retryDelay: 500,
+  });
+}
+

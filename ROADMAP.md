@@ -2,7 +2,14 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.20 — in verifica
+## v1.19.21 — in verifica
+
+- [x] Stress test pubblico mobile riutilizzabile aggiunto al repository e avviabile senza finestre.
+- [x] Il test attraversa Oggi, Settimana, Ricette, cambio piatto e ritorno a fondo pagina.
+- [x] Alternative del latte, chiusura del pannello, modifica grammatura e persistenza dopo ricarica verificate automaticamente.
+- [x] Overflow orizzontale, schermata di recupero ed errori JavaScript bloccano il test.
+
+## v1.19.20 — pubblicata
 
 - [x] React e le dipendenze stabili sono separate in un chunk cacheabile, riducendo il download delle revisioni successive.
 - [x] Nessun caricamento lazy del pianificatore: il guscio di recupero continua a proteggere dalle schermate bianche.

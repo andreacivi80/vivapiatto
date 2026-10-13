@@ -958,6 +958,22 @@ test("v1.19.20 caches framework dependencies without lazy-loading the planner", 
   assert.ok((await stat(new URL(`../dist/assets/${appChunk}`, import.meta.url))).size < 560_000);
 });
 
+test("v1.19.21 keeps the public mobile stress audit silent and reusable", async () => {
+  const [audit, packageFile] = await Promise.all([
+    readFile(new URL("../scripts/audit-public-mobile.mjs", import.meta.url), "utf8"),
+    readFile(new URL("../package.json", import.meta.url), "utf8").then(JSON.parse),
+  ]);
+  assert.equal(packageFile.scripts["test:public-mobile"], "node scripts/audit-public-mobile.mjs");
+  assert.match(audit, /--headless=new/);
+  assert.match(audit, /windowsHide: true/);
+  assert.match(audit, /window-size=390,844/);
+  assert.match(audit, /214\/214 presenti/);
+  assert.match(audit, /const gramsEdit/);
+  assert.match(audit, /Grammatura modificabile non trovata/);
+  assert.match(audit, /afterReload/);
+  assert.match(audit, /javascriptErrors/);
+});
+
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /Crea una ricetta con gli avanzi/);
