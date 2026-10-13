@@ -1208,6 +1208,18 @@ test("v1.19.39 proves repeated mobile scrolling never changes meals or grams", a
   assert.match(audit, /for \(let pass = 0; pass < 3; pass \+= 1\)/);
 });
 
+test("v1.19.40 verifies the visible high-calorie plan is materially larger", async () => {
+  const audit = await readFile(
+    new URL("../scripts/audit-public-mobile.mjs", import.meta.url),
+    "utf8",
+  );
+  assert.match(audit, /today-strip b/);
+  assert.match(audit, /profileAdaptation[.]lowPlanKcal <= 0/);
+  assert.match(audit, /profileAdaptation[.]highPlanKcal <= profileAdaptation[.]lowPlanKcal \+ 300/);
+  assert.match(audit, /visiblePlanKcal > \$\{profileAdaptation[.]lowPlanKcal\} \+ 300/);
+  assert.match(audit, /split\('piano '\)\[1\][?][.]split\(' · '\)\[0\]/);
+});
+
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /Crea una ricetta con gli avanzi/);

@@ -2,7 +2,12 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.39 — in verifica
+## v1.19.40 — in verifica
+
+- [x] Totale calorico visibile letto direttamente dalla barra del giorno per 1400 e 2600 kcal.
+- [x] Il piano alto deve superare quello basso di almeno 300 kcal e cambiare realmente composizione.
+
+## v1.19.39 — verificata
 
 - [x] Tre cicli completi di scroll mobile verificano che menu e grammature non cambino.
 - [x] Ritorno in cima e assenza di scorrimento orizzontale controllati dopo ogni stress.

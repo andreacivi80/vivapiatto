@@ -831,23 +831,29 @@ try {
   await changeSelectValue('.compact-config select', 1, '1400');
   Object.assign(profileAdaptation, await evaluate(`(() => {
     const strip = document.querySelector('.today-strip')?.innerText || '';
-    const match = strip.match(/piano\s+(\d+)/i);
+    const planText = document.querySelector('.today-strip b')?.textContent || '';
+    const planSegment = planText.toLowerCase().split('piano ')[1]?.split(' · ')[0] || '';
+    const visiblePlanKcal = Number(planSegment.replaceAll('.', '').replaceAll(',', '').trim());
     return {
       lowTargetSelected: strip.includes('scelto 1400 kcal'),
-      lowPlanKcal: Number(match?.[1] || 0),
+      lowPlanText: planText,
+      lowPlanKcal: visiblePlanKcal,
       lowMenu: [...document.querySelectorAll('.meal-card h3')].map((heading) => heading.innerText.trim()),
     };
   })()`));
   await changeSelectValue('.compact-config select', 1, '2600');
   Object.assign(profileAdaptation, await evaluate(`(() => {
     const strip = document.querySelector('.today-strip')?.innerText || '';
-    const match = strip.match(/piano\s+(\d+)/i);
+    const planText = document.querySelector('.today-strip b')?.textContent || '';
+    const planSegment = planText.toLowerCase().split('piano ')[1]?.split(' · ')[0] || '';
+    const visiblePlanKcal = Number(planSegment.replaceAll('.', '').replaceAll(',', '').trim());
     const highMenu = [...document.querySelectorAll('.meal-card h3')].map((heading) => heading.innerText.trim());
     return {
       highTargetSelected: strip.includes('scelto 2600 kcal'),
-      highPlanKcal: Number(match?.[1] || 0),
+      highPlanText: planText,
+      highPlanKcal: visiblePlanKcal,
       highMenu,
-      targetChangesPlan: Number(match?.[1] || 0) !== ${profileAdaptation.lowPlanKcal} || JSON.stringify(highMenu) !== JSON.stringify(${JSON.stringify(profileAdaptation.lowMenu)}),
+      targetChangesPlan: visiblePlanKcal > ${profileAdaptation.lowPlanKcal} + 300 && JSON.stringify(highMenu) !== JSON.stringify(${JSON.stringify(profileAdaptation.lowMenu)}),
     };
   })()`));
   await changeSelectValue('.cuisine-picker select', 1, 'Lavoro');
@@ -956,6 +962,7 @@ try {
     !checkinAdaptation.poorSleepActive || !checkinAdaptation.poorSleepNote ||
     !checkinAdaptation.intenseActivityActive || !checkinAdaptation.intenseActivityNote || checkinAdaptation.horizontalOverflow ||
     !profileAdaptation.found || !profileAdaptation.lowTargetSelected || !profileAdaptation.highTargetSelected ||
+    profileAdaptation.lowPlanKcal <= 0 || profileAdaptation.highPlanKcal <= profileAdaptation.lowPlanKcal + 300 ||
     !profileAdaptation.targetChangesPlan || !profileAdaptation.homeSelected || !profileAdaptation.contextChangesPlan ||
     profileAdaptation.horizontalOverflow ||
     exceptions.length
