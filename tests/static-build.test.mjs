@@ -1173,6 +1173,19 @@ test("v1.19.36 verifies calorie target and work or home context change the plan"
   assert.match(audit, /profileAdaptation[.]contextChangesPlan/);
 });
 
+test("v1.19.37 stress-tests complete dish replacement, split and safe recomposition", async () => {
+  const audit = await readFile(
+    new URL("../scripts/audit-public-mobile.mjs", import.meta.url),
+    "utf8",
+  );
+  assert.match(audit, /readyDishFlow[.]fullDishApplied/);
+  assert.match(audit, /readyDishFlow[.]detailHasPreparation/);
+  assert.match(audit, /readyDishFlow[.]splitPhotosLoaded/);
+  assert.match(audit, /readyDishFlow[.]recombineBeforeEdit/);
+  assert.match(audit, /readyDishFlow[.]recomposed/);
+  assert.match(audit, /readyDishFlow[.]recombineAfterEditHidden/);
+});
+
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /Crea una ricetta con gli avanzi/);

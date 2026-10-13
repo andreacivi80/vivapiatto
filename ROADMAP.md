@@ -2,7 +2,13 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.36 — in verifica
+## v1.19.37 — in verifica
+
+- [x] Piatto completo sostituito realmente dal pannello alternative e fotografia verificata.
+- [x] Scheda ricetta aperta con ingredienti, preparazione e fotografia caricata.
+- [x] Divisione in componenti, ricomposizione invariata e blocco della ricomposizione dopo una sostituzione verificati su mobile.
+
+## v1.19.36 — verificata
 
 - [x] Target 1400 e 2600 kcal selezionati realmente e confrontati sul piano visibile.
 - [x] Verificato che un target diverso cambia calorie pianificate o composizione del menu.

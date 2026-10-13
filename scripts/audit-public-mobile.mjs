@@ -613,6 +613,108 @@ try {
       removed: afterRemove === ${mealPartAddition.before},
     };
   })()`));
+  const readyDishFlow = await evaluate(`(() => {
+    const card = document.querySelectorAll('.meal-card')[2];
+    const changePart = card?.querySelector('.meal-part .part-change');
+    if (!card || !changePart) return { found: false };
+    changePart.click();
+    return { found: true };
+  })()`);
+  await wait(500);
+  Object.assign(readyDishFlow, await evaluate(`(() => {
+    const picker = document.querySelector('.part-picker-sheet');
+    const complete = picker?.querySelector('.complete-meal-select');
+    if (!picker || !complete) return { completePickerFound: false };
+    const name = complete.querySelector('span')?.innerText.trim() || '';
+    const result = {
+      completePickerFound: true,
+      completeOptions: picker.querySelectorAll('.complete-meal-select').length,
+      recipeInfoAvailableBeforeChoice: Boolean(picker.querySelector('.complete-meal-info')),
+      firstDishName: name,
+    };
+    complete.click();
+    return result;
+  })()`));
+  await wait(900);
+  await evaluate(`document.querySelectorAll('.meal-card')[2]?.scrollIntoView({ block: 'center' })`);
+  await wait(500);
+  Object.assign(readyDishFlow, await evaluate(`(() => {
+    const card = document.querySelectorAll('.meal-card')[2];
+    const buttons = [...(card?.querySelectorAll('.dish-view-actions button') || [])];
+    return {
+      fullDishApplied: Boolean(card?.querySelector('.recipe-visual-single, .recipe-visual-parts')) && card?.querySelector('h3')?.innerText.trim() === ${JSON.stringify(readyDishFlow.firstDishName)},
+      hasRecipeDetail: buttons.some((button) => button.innerText.includes('Ricetta e preparazione')),
+      hasReadyDishChange: buttons.some((button) => button.innerText.includes('Cambia piatto pronto')),
+      hasSplit: buttons.some((button) => button.innerText.includes('Dividi in componenti')),
+    };
+  })()`));
+  await evaluate(`(() => {
+    const card = document.querySelectorAll('.meal-card')[2];
+    [...(card?.querySelectorAll('.dish-view-actions button') || [])]
+      .find((button) => button.innerText.includes('Ricetta e preparazione'))?.click();
+  })()`);
+  await wait(500);
+  Object.assign(readyDishFlow, await evaluate(`(() => {
+    const sheet = document.querySelector('.recipe-sheet');
+    const photos = [...(sheet?.querySelectorAll('.recipe-visual-single, .recipe-visual-parts img') || [])];
+    const result = {
+      detailOpened: Boolean(sheet),
+      detailHasIngredients: Boolean(sheet?.querySelector('.ingredients li')),
+      detailHasPreparation: Boolean(sheet?.querySelector('.steps li')),
+      detailPhotoLoaded: photos.length > 0 && photos.every((photo) => photo.complete && photo.naturalWidth > 0),
+    };
+    sheet?.querySelector('.close')?.click();
+    return result;
+  })()`));
+  await wait(350);
+  await evaluate(`(() => {
+    const card = document.querySelectorAll('.meal-card')[2];
+    [...(card?.querySelectorAll('.dish-view-actions button') || [])]
+      .find((button) => button.innerText.includes('Dividi in componenti'))?.click();
+  })()`);
+  await wait(550);
+  Object.assign(readyDishFlow, await evaluate(`(() => {
+    const card = document.querySelectorAll('.meal-card')[2];
+    const photos = [...(card?.querySelectorAll('.meal-part img') || [])];
+    return {
+      splitApplied: card?.querySelectorAll('.meal-part').length >= 2,
+      splitPhotosLoaded: photos.length >= 2 && photos.every((photo) => photo.complete && photo.naturalWidth > 0),
+      recombineBeforeEdit: [...(card?.querySelectorAll('.dish-view-actions button') || [])].some((button) => button.innerText.includes('Ricomponi piatto')),
+    };
+  })()`));
+  await evaluate(`(() => {
+    const card = document.querySelectorAll('.meal-card')[2];
+    [...(card?.querySelectorAll('.dish-view-actions button') || [])]
+      .find((button) => button.innerText.includes('Ricomponi piatto'))?.click();
+  })()`);
+  await wait(450);
+  Object.assign(readyDishFlow, await evaluate(`(() => {
+    const card = document.querySelectorAll('.meal-card')[2];
+    const recomposed = !card?.querySelector('.meal-parts') && Boolean(card?.querySelector('.recipe-visual-single, .recipe-visual-parts'));
+    [...(card?.querySelectorAll('.dish-view-actions button') || [])]
+      .find((button) => button.innerText.includes('Dividi in componenti'))?.click();
+    return { recomposed };
+  })()`));
+  await wait(450);
+  await evaluate(`document.querySelectorAll('.meal-card')[2]?.querySelector('.meal-part .part-change')?.click()`);
+  await wait(450);
+  Object.assign(readyDishFlow, await evaluate(`(() => {
+    const picker = document.querySelector('.part-picker-sheet');
+    const alternatives = [...(picker?.querySelectorAll('.part-choice-grid button') || [])];
+    const replacement = alternatives.find((button) => !button.classList.contains('selected'));
+    const result = { componentAlternatives: alternatives.length, componentReplacementFound: Boolean(replacement) };
+    replacement?.click();
+    return result;
+  })()`));
+  await wait(650);
+  Object.assign(readyDishFlow, await evaluate(`(() => {
+    const card = document.querySelectorAll('.meal-card')[2];
+    return {
+      componentChanged: Boolean(card?.querySelector('.meal-parts')),
+      recombineAfterEditHidden: ![...(card?.querySelectorAll('.dish-view-actions button') || [])].some((button) => button.innerText.includes('Ricomponi piatto')),
+      horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+    };
+  })()`));
   const checkinAdaptation = await evaluate(`(() => {
     const toggle = document.querySelector('.checkin-toggle');
     const beforeMenu = [...document.querySelectorAll('.meal-card h3')].map((heading) => heading.innerText.trim());
@@ -750,6 +852,7 @@ try {
     historyConsent,
     mealRegistration,
     mealPartAddition,
+    readyDishFlow,
     checkinAdaptation,
     profileAdaptation,
     javascriptErrors: exceptions.length,
@@ -794,6 +897,14 @@ try {
     !mealPartAddition.hasRecommendedChoices || !mealPartAddition.noBlankChoice || !mealPartAddition.closeVisible ||
     mealPartAddition.horizontalOverflow || !mealPartAddition.added || !mealPartAddition.pickerClosed ||
     !mealPartAddition.hasDirectRemove || !mealPartAddition.removed ||
+    !readyDishFlow.found || !readyDishFlow.completePickerFound || readyDishFlow.completeOptions < 2 ||
+    !readyDishFlow.recipeInfoAvailableBeforeChoice || !readyDishFlow.fullDishApplied ||
+    !readyDishFlow.hasRecipeDetail || !readyDishFlow.hasReadyDishChange || !readyDishFlow.hasSplit ||
+    !readyDishFlow.detailOpened || !readyDishFlow.detailHasIngredients || !readyDishFlow.detailHasPreparation ||
+    !readyDishFlow.detailPhotoLoaded || !readyDishFlow.splitApplied || !readyDishFlow.splitPhotosLoaded ||
+    !readyDishFlow.recombineBeforeEdit || !readyDishFlow.recomposed || readyDishFlow.componentAlternatives < 2 ||
+    !readyDishFlow.componentReplacementFound || !readyDishFlow.componentChanged ||
+    !readyDishFlow.recombineAfterEditHidden || readyDishFlow.horizontalOverflow ||
     !checkinAdaptation.found || !checkinAdaptation.bloatingActive || !checkinAdaptation.bloatingNote ||
     !checkinAdaptation.bloatingMenuChanged || !checkinAdaptation.bloatingDinnerAvoidsTriggers ||
     !checkinAdaptation.tiredActive || !checkinAdaptation.tiredNote || !checkinAdaptation.tiredMenuChanged ||
