@@ -2019,7 +2019,7 @@ const recipes: Recipe[] = [
     id: "rice",
     name: "Riso basmati, tonno e verdure",
     kicker: "Pranzo rapido da portare",
-    image: photo("tuna-rice"),
+    image: photo("recipe-rice-tuna-vegetables-v11957"),
     time: 15,
     ingredients: [
       { food: "Riso basmati cotto", grams: 190 },
@@ -2130,7 +2130,7 @@ const recipes: Recipe[] = [
     id: "salmon-rice",
     name: "Bowl salmone, riso e cetriolo",
     kicker: "Fresca, completa e ricca di proteine",
-    image: photo("salmon"),
+    image: photo("recipe-salmon-rice-cucumber-v11957"),
     time: 20,
     ingredients: [
       { food: "Salmone cotto", grams: 125 },
@@ -2181,7 +2181,7 @@ const recipes: Recipe[] = [
     id: "tuna-chickpeas",
     name: "Insalatona tonno, ceci e croccante",
     kicker: "Molto saziante, pronta in dieci minuti",
-    image: photo("tuna-rice"),
+    image: photo("recipe-tuna-chickpeas-salad-v11957"),
     time: 10,
     ingredients: [
       { food: "Tonno al naturale sgocciolato", grams: 110 },
@@ -2229,7 +2229,7 @@ const recipes: Recipe[] = [
     id: "apple-oats",
     name: "Coppa mela, avena e yogurt",
     kicker: "Dolce naturale e lunga sazietà",
-    image: photo("yogurt"),
+    image: photo("recipe-apple-oats-yogurt-v11957"),
     time: 8,
     ingredients: [
       { food: "Yogurt greco 2%", grams: 200 },
@@ -2736,7 +2736,7 @@ const simpleBreakfasts: Recipe[] = [
     kicker: "Salata-dolce, pronta senza cucinare",
     course: "Colazione",
     cuisine: "Italiano",
-    image: photo("rusks-ricotta-jam-v3"),
+    image: photo("recipe-breakfast-crackers-ricotta-honey-v11957"),
     time: 3,
     ingredients: [
       { food: "Cracker integrali", grams: 50 },
@@ -2789,7 +2789,7 @@ const simpleBreakfasts: Recipe[] = [
     kicker: "Classica, con quantità chiare",
     course: "Colazione",
     cuisine: "Italiano",
-    image: photo("rusks-ricotta-jam-v3"),
+    image: photo("recipe-breakfast-rusks-butter-jam-v11957"),
     time: 3,
     ingredients: [
       { food: "Fette biscottate integrali", grams: 45 },

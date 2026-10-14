@@ -2839,3 +2839,23 @@ test("v1.19.56 audits calorie targets on a clean profile", async () => {
   assert.match(audit, /cleanProfile/);
   assert.match(audit, /profileAdaptation[.]recovery/);
 });
+
+test("v1.19.57 gives every real recipe a distinct faithful photograph", async () => {
+  const [source, packageSource] = await Promise.all([
+    readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../package.json", import.meta.url), "utf8"),
+  ]);
+  const mappings = [
+    ["breakfast-crackers-ricotta", "recipe-breakfast-crackers-ricotta-honey-v11957"],
+    ["breakfast-rusks-butter", "recipe-breakfast-rusks-butter-jam-v11957"],
+    ["apple-oats", "recipe-apple-oats-yogurt-v11957"],
+    ["rice", "recipe-rice-tuna-vegetables-v11957"],
+    ["salmon-rice", "recipe-salmon-rice-cucumber-v11957"],
+    ["tuna-chickpeas", "recipe-tuna-chickpeas-salad-v11957"],
+  ];
+  for (const [id, asset] of mappings) {
+    assert.match(source, new RegExp(`id: "${id}"[\\s\\S]{0,500}image: photo\\("${asset}"\\)`));
+    await access(new URL(`../public/food/${asset}.png`, import.meta.url));
+  }
+  assert.match(packageSource, /audit-recipe-photo-uniqueness[.]mjs --strict/);
+});

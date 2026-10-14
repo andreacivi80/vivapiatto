@@ -2,6 +2,12 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
+## v1.19.57 — in verifica
+
+- [x] Sei ricette con immagini condivise o semanticamente errate ricevono fotografie finali distinte: cracker-ricotta-miele, fette-burro-confettura, coppa mela-avena, riso-tonno-verdure, bowl salmone-riso e insalatona tonno-ceci.
+- [x] Eliminata la poke con tonno crudo e ingredienti estranei dalla ricetta quotidiana riso basmati e tonno.
+- [x] Nuovo audit bloccante: nessuna fotografia può essere condivisa da due ricette reali differenti.
+
 ## v1.19.56 — verificata
 
 - [x] Lo stress test del target calorico riparte da un profilo pulito, separato da gelato, piatti pronti e grammature modificati nelle prove precedenti.
