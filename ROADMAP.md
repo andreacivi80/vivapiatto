@@ -2,13 +2,20 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.67 — verificata in locale, in pubblicazione
+## v1.19.68 — verificata in locale, in pubblicazione
+
+- [x] Colazione automatica di Lavoro/Mensa limitata alle preparazioni da massimo tre minuti, lasciando frullati, pancake e toast nel ricettario e nella scelta libera.
+- [x] Prova mobile aggiunta per bloccare il ritorno di colazioni elaborate nella modalità Lavoro.
+- [x] Test completi e collaudo mobile: in Lavoro compare una colazione con fette biscottate, confettura e latte, senza frullato automatico.
+- [ ] Pubblicazione sullo stesso link e collaudo pubblico della versione esatta.
+
+## v1.19.67 — pubblicata e verificata
 
 - [x] Corrette le dichiarazioni di tipo delle fonti alimentari senza perdere i codici di provenienza CREA e USDA.
 - [x] Ripristino filtri da memoria limitato alle opzioni valide; modalità del gelato composta ricondotta a `parts`.
 - [x] Controllo TypeScript pulito e integrato nel comando di test, con tipi Node per il file di configurazione Vite.
 - [x] Test completi e verifica mobile locale senza errori JavaScript o overflow.
-- [ ] Pubblicazione sullo stesso link e collaudo pubblico della versione esatta.
+- [x] Pubblicazione sullo stesso link e collaudo pubblico della versione esatta.
 
 ## v1.19.66 — pubblicata e verificata
 

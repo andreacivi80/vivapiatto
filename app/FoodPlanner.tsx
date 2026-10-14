@@ -10872,15 +10872,25 @@ export function FoodPlanner() {
     const savoury = /uov|prosciutto|bresaola|tacchino|pomodor|avocado|salmone|tonno|formaggio/.test(text);
     return Number(breakfastStyle === "Salata" ? !savoury : savoury);
   };
-  const availableBreakfasts = (selectedContext = dayContext) =>
-    allRecipes
+  const availableBreakfasts = (selectedContext = dayContext) => {
+    const eligible = allRecipes
       .filter(
         (recipe) =>
           recipe.course === "Colazione" &&
           (selectedContext === "Casa" || recipe.time <= 7),
       )
-      .filter(isProfileEligible)
-      .sort((a, b) => breakfastStyleScore(a) - breakfastStyleScore(b));
+      .filter(isProfileEligible);
+    const workMorning = ["Lavoro", "Mensa"].includes(selectedContext)
+      ? eligible.filter(
+          (recipe) =>
+            recipe.time <= 3 &&
+            !/frullat|smoothie|centrifug|pancake|toast|uov/i.test(recipe.name),
+        )
+      : eligible;
+    return (workMorning.length ? workMorning : eligible).sort(
+      (a, b) => breakfastStyleScore(a) - breakfastStyleScore(b),
+    );
+  };
   const availableSnacks = () =>
     allRecipes
       .filter((recipe) =>

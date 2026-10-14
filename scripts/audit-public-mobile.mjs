@@ -985,6 +985,7 @@ try {
   })()`));
   await changeSelectValue('.cuisine-picker select', 1, 'Lavoro');
   profileAdaptation.workMenu = await evaluate(`[...document.querySelectorAll('.meal-card h3')].map((heading) => heading.innerText.trim())`);
+  profileAdaptation.workBreakfastPractical = !/frullat|smoothie|centrifug|pancake|toast|uov/i.test(profileAdaptation.workMenu[0] || '');
   profileAdaptation.workSnacksPractical = [profileAdaptation.workMenu[1], profileAdaptation.workMenu[3]]
     .every((heading) => !/wafer|grissini/i.test(heading || ''));
   await changeSelectValue('.cuisine-picker select', 1, 'Casa');
@@ -1128,7 +1129,7 @@ try {
     !profileAdaptation.lowTargetSelected || !profileAdaptation.highTargetSelected ||
     profileAdaptation.lowPlanKcal <= 0 || profileAdaptation.highPlanKcal <= profileAdaptation.lowPlanKcal + 300 ||
     !profileAdaptation.targetChangesPlan || !profileAdaptation.highBreakfastHasNoDuplicateDairyOrNuts ||
-    !profileAdaptation.workSnacksPractical || !profileAdaptation.homeSelected || !profileAdaptation.contextChangesPlan ||
+    !profileAdaptation.workBreakfastPractical || !profileAdaptation.workSnacksPractical || !profileAdaptation.homeSelected || !profileAdaptation.contextChangesPlan ||
     profileAdaptation.horizontalOverflow ||
     exceptions.length
   ) process.exitCode = 1;
