@@ -2,9 +2,10 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.61 — in lavorazione
+## v1.19.61 — pubblicata e verificata
 
 - [x] L'avvio del collaudo mobile concede fino a 30 secondi a Edge headless e, in caso di blocco reale, riporta stato del processo e profilo temporaneo invece di un errore generico.
+- [x] Stress pubblico 390×844 concluso sulla versione esatta: tutti i flussi verdi, fotografie caricate, grammi persistenti e zero errori JavaScript.
 
 ## v1.19.60 — pubblicata e verificata
 
