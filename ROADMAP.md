@@ -2,7 +2,12 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.55 — in verifica
+## v1.19.56 — in verifica
+
+- [x] Lo stress test del target calorico riparte da un profilo pulito, separato da gelato, piatti pronti e grammature modificati nelle prove precedenti.
+- [x] Il controllo pubblico blocca la release se il ripristino pulito apre la schermata di recupero o conserva scelte manuali.
+
+## v1.19.55 — verificata
 
 - [x] Pasta in bianco, bowl pollo-quinoa-ceci e pollo-farro-peperoni ricevono tre fotografie complete e fedeli, senza immagini atomiche o generiche condivise.
 - [x] Nuovo audit semantico bloccante: 257/257 ricette reali usano una fotografia finale esplicita.

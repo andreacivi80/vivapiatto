@@ -873,7 +873,19 @@ try {
     if (!changed) throw new Error(`Selettore ${selector}[${index}] non trovato`);
     await wait(1_200);
   };
-  const profileAdaptation = { found: true };
+  await evaluate(`(() => {
+    localStorage.clear();
+    sessionStorage.clear();
+    return true;
+  })()`);
+  await page.send("Page.reload", { ignoreCache: true });
+  await wait(5_000);
+  const profileAdaptation = await evaluate(`(() => ({
+    found: true,
+    cleanProfile: !document.body.innerText.includes('Gelato artigianale personalizzabile') &&
+      !document.body.innerText.includes('Pasta di farro con sgombro e broccoli'),
+    recovery: document.body.innerText.includes('La pagina ha incontrato un errore'),
+  }))()`);
   await changeSelectValue('.compact-config select', 1, '1400');
   Object.assign(profileAdaptation, await evaluate(`(() => {
     const strip = document.querySelector('.today-strip')?.innerText || '';
@@ -1011,7 +1023,8 @@ try {
     !checkinAdaptation.tiredActive || !checkinAdaptation.tiredNote || !checkinAdaptation.tiredMenuChanged ||
     !checkinAdaptation.poorSleepActive || !checkinAdaptation.poorSleepNote ||
     !checkinAdaptation.intenseActivityActive || !checkinAdaptation.intenseActivityNote || checkinAdaptation.horizontalOverflow ||
-    !profileAdaptation.found || !profileAdaptation.lowTargetSelected || !profileAdaptation.highTargetSelected ||
+    !profileAdaptation.found || !profileAdaptation.cleanProfile || profileAdaptation.recovery ||
+    !profileAdaptation.lowTargetSelected || !profileAdaptation.highTargetSelected ||
     profileAdaptation.lowPlanKcal <= 0 || profileAdaptation.highPlanKcal <= profileAdaptation.lowPlanKcal + 300 ||
     !profileAdaptation.targetChangesPlan || !profileAdaptation.homeSelected || !profileAdaptation.contextChangesPlan ||
     profileAdaptation.horizontalOverflow ||

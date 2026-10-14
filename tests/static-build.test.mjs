@@ -2830,3 +2830,12 @@ test("v1.19.55 requires semantically complete photos for every real recipe", asy
   }
   assert.match(packageSource, /audit-recipe-photo-semantics[.]mjs --strict/);
 });
+
+test("v1.19.56 audits calorie targets on a clean profile", async () => {
+  const audit = await readFile(new URL("../scripts/audit-public-mobile.mjs", import.meta.url), "utf8");
+  assert.match(audit, /localStorage[.]clear\(\)/);
+  assert.match(audit, /sessionStorage[.]clear\(\)/);
+  assert.match(audit, /Page[.]reload/);
+  assert.match(audit, /cleanProfile/);
+  assert.match(audit, /profileAdaptation[.]recovery/);
+});
