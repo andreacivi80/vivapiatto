@@ -8,7 +8,7 @@ import { readSessionItem, removeSessionItem, writeStorageItem } from "./storageR
 type Macro = { kcal: number; protein: number; carbs: number; fat: number };
 type Food = Macro & {
   fiber: number;
-  source: "CREA" | "USDA" | "FRIDA" | "ETICHETTA" | "HUMANITAS" | "IEO" | "RICETTA CALCOLATA";
+  source: "CREA" | `CREA ${string}` | "USDA" | "USDA FoodData Central" | "FRIDA" | "ETICHETTA" | "ETICHETTA: verificare confezione" | "HUMANITAS" | "IEO" | "RICETTA CALCOLATA";
 };
 type RecipeIngredient = { food: string; grams: number; label?: string };
 type MealPart = RecipeIngredient & {
@@ -10049,7 +10049,7 @@ const allRecipes: Recipe[] = rawRecipes.map((recipe) => {
           }
         : null;
     })
-    .filter((part): part is MealPart => Boolean(part));
+    .filter((part): part is NonNullable<typeof part> => part !== null);
   return inferredParts.length >= 2
     ? { ...enrichedRecipe, parts: inferredParts }
     : enrichedRecipe;
@@ -10648,7 +10648,11 @@ export function FoodPlanner() {
         setWeekLocked(Boolean(s.weekLocked));
         setWeekPreference(safeChoice(s.weekPreference, ["variety", "repeat"] as const, "variety"));
         setCuisineChoice(safeText(s.cuisineChoice, "Italiano"));
-        setHealthyFilters(safeStringArray(s.healthyFilters));
+        setHealthyFilters(
+          safeStringArray(s.healthyFilters).filter(
+            (id): id is HealthyFilterId => HEALTHY_FILTERS.some(([known]) => known === id),
+          ),
+        );
         setPeopleCount(Math.max(1, Math.min(12, Number(s.peopleCount) || 1)));
         setAgeGroup(safeText(s.ageGroup, "Adulto"));
         setFoodStyle(safeText(s.foodStyle, "Onnivoro"));
@@ -11950,7 +11954,7 @@ export function FoodPlanner() {
       image: gelatoFlavorPhoto(food),
     }));
     setChoices((current) => ({ ...current, [key]: "occasional-gelato" }));
-    setMealView((current) => ({ ...current, [key]: "components" }));
+    setMealView((current) => ({ ...current, [key]: "parts" }));
     setPartSelections((current) => ({ ...current, [key]: scoops }));
     setActualWeights((current) => { const next = { ...current }; delete next[key]; return next; });
     setRemovedIngredients((current) => { const next = { ...current }; delete next[key]; return next; });

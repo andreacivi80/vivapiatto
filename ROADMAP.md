@@ -2,13 +2,21 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.66 — in verifica
+## v1.19.67 — verificata in locale, in pubblicazione
+
+- [x] Corrette le dichiarazioni di tipo delle fonti alimentari senza perdere i codici di provenienza CREA e USDA.
+- [x] Ripristino filtri da memoria limitato alle opzioni valide; modalità del gelato composta ricondotta a `parts`.
+- [x] Controllo TypeScript pulito e integrato nel comando di test, con tipi Node per il file di configurazione Vite.
+- [x] Test completi e verifica mobile locale senza errori JavaScript o overflow.
+- [ ] Pubblicazione sullo stesso link e collaudo pubblico della versione esatta.
+
+## v1.19.66 — pubblicata e verificata
 
 - [x] Le proposte automatiche di spuntino privilegiano frutta, yogurt, frutta secca e abbinamenti pratici; wafer e grissini restano selezionabili solo a scelta dell'utente.
 - [x] Ai target calorici più alti non viene aggiunto un secondo yogurt/skyr o una seconda frutta secca quando il piatto ne contiene già.
 - [x] La proposta iniziale riduce la priorità dei piatti con tre legumi; il ricettario e le alternative li mantengono disponibili.
 - [x] Fagiolini riconosciuti come contorno e roast beef come carne rossa: verificata la famiglia proteica effettiva di tutti i 14 pasti principali della settimana iniziale.
-- [ ] Verifica mobile reale della 1.19.66, pubblicazione sul link unico e collaudo pubblico della versione esatta.
+- [x] Verifica mobile reale della 1.19.66, pubblicazione sul link unico e collaudo pubblico della versione esatta.
 
 ## v1.19.65 — pubblicata e verificata
 
