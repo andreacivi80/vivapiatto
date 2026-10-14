@@ -2,7 +2,12 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.51 — in verifica
+## v1.19.52 — in verifica
+
+- [x] Kashiwa-meshi MAFF riceve una fotografia finale autentica del riso condito con pollo, carote e funghi.
+- [x] Eliminato il precedente riuso della foto generica del solo riso; ciotola completa e margini sicuri per le card mobili.
+
+## v1.19.51 — verificata
 
 - [x] Keihan MAFF sostituito con una fotografia finale autentica e completa, non più con la foto generica del solo riso.
 - [x] Riso, pollo sfilacciato, uovo a striscioline, funghi, fagiolini e brodo sono tutti riconoscibili e coerenti con ingredienti e preparazione.

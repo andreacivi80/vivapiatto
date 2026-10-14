@@ -1338,6 +1338,22 @@ test("v1.19.51 gives verified Keihan a faithful complete-dish photograph", async
   await access(new URL("../public/food/recipe-asian-keihan-v11951.png", import.meta.url));
 });
 
+test("v1.19.52 gives verified Kashiwa-meshi a faithful complete-dish photograph", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const recipeStart = source.indexOf('id: "catalog-verified-kashiwa-meshi"');
+  const recipeEnd = source.indexOf('id: "catalog-verified-lentil-pumpkin-bulgur"');
+  const recipe = source.slice(recipeStart, recipeEnd);
+  assert.ok(recipeStart > 0 && recipeEnd > recipeStart);
+  assert.match(recipe, /recipe-asian-kashiwa-meshi-v11952/);
+  assert.match(recipe, /Riso basmati cotto/);
+  assert.match(recipe, /Petto di pollo/);
+  assert.match(recipe, /Carote cotte bollite/);
+  assert.match(recipe, /Funghi/);
+  assert.match(recipe, /Salsa di soia/);
+  assert.match(recipe, /MAFF/);
+  await access(new URL("../public/food/recipe-asian-kashiwa-meshi-v11952.png", import.meta.url));
+});
+
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /Crea una ricetta con gli avanzi/);
