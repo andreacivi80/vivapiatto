@@ -1370,6 +1370,22 @@ test("v1.19.53 aligns the verified Bulgogi photograph with its actual ingredient
   await access(new URL("../public/food/recipe-asian-bulgogi-v11953.png", import.meta.url));
 });
 
+test("v1.19.54 replaces the atomic chicken photo with the complete quinoa and beet dish", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const recipeStart = source.indexOf('id: "catalog-verified-chicken-quinoa-beet"');
+  const recipeEnd = source.indexOf("const attachmentBaseBreakfasts", recipeStart);
+  const recipe = source.slice(recipeStart, recipeEnd);
+  assert.ok(recipeStart > 0 && recipeEnd > recipeStart);
+  assert.match(recipe, /recipe-gourmet-chicken-quinoa-beet-v11954/);
+  assert.doesNotMatch(recipe, /image: photo\("part-chicken-grilled-v7"\)/);
+  assert.match(recipe, /Quinoa cotta/);
+  assert.match(recipe, /Petto di pollo/);
+  assert.match(recipe, /Barbabietole cotte/);
+  assert.match(recipe, /Spinaci/);
+  assert.match(recipe, /Harvard T[.]H[.] Chan/);
+  await access(new URL("../public/food/recipe-gourmet-chicken-quinoa-beet-v11954.png", import.meta.url));
+});
+
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /Crea una ricetta con gli avanzi/);

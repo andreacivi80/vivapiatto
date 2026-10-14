@@ -7782,7 +7782,7 @@ const verifiedWorldRecipeExpansion: Recipe[] = [
     kicker: "Composizione equilibrata · modello Harvard",
     course: "Piatto unico",
     cuisine: "Gourmet",
-    image: photo("part-chicken-grilled-v7"),
+    image: photo("recipe-gourmet-chicken-quinoa-beet-v11954"),
     time: 25,
     ingredients: [
       { food: "Quinoa cotta", grams: 160 },

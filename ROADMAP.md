@@ -2,7 +2,12 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.53 — in verifica
+## v1.19.54 — in verifica
+
+- [x] Pollo con quinoa, barbabietola e spinaci riceve una fotografia completa della ricetta, non più la sola foto atomica del pollo.
+- [x] I quattro componenti restano separati e riconoscibili nella tessera mobile, senza ingredienti estranei.
+
+## v1.19.53 — verificata
 
 - [x] Bulgogi VisitKorea riallineato agli ingredienti effettivi: riso, manzo, carote, cipolla e spinaci.
 - [x] Rimossa dalla fotografia la zucchina non presente nella ricetta e mantenuta la ciotola intera nelle card mobili.
