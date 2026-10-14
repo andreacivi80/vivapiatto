@@ -320,7 +320,7 @@ try {
     return true;
   })()`);
   if (!openedSwap) throw new Error("Cambio piatto non trovato");
-  await wait(1000);
+  await wait(2500);
   const swap = await snapshot();
   await evaluate(`window.scrollTo(0, Math.max(0, document.body.scrollHeight - window.innerHeight))`);
   await wait(500);
@@ -747,10 +747,21 @@ try {
     [...(card?.querySelectorAll('.dish-view-actions button') || [])]
       .find((button) => button.innerText.includes('Ricetta e preparazione'))?.click();
   })()`);
-  await wait(500);
+  await wait(350);
+  await evaluate(`(() => {
+    const photos = [...(document.querySelectorAll('.recipe-sheet img.recipe-visual-single, .recipe-sheet .recipe-visual-parts img') || [])];
+    return Promise.all(photos.map((photo) => {
+      photo.loading = 'eager';
+      return photo.complete ? Promise.resolve() : new Promise((resolve) => {
+        photo.addEventListener('load', resolve, { once: true });
+        photo.addEventListener('error', resolve, { once: true });
+        setTimeout(resolve, 8000);
+      });
+    }));
+  })()`);
   Object.assign(readyDishFlow, await evaluate(`(() => {
     const sheet = document.querySelector('.recipe-sheet');
-    const photos = [...(sheet?.querySelectorAll('.recipe-visual-single, .recipe-visual-parts img') || [])];
+    const photos = [...(sheet?.querySelectorAll('img.recipe-visual-single, .recipe-visual-parts img') || [])];
     const result = {
       detailOpened: Boolean(sheet),
       detailHasIngredients: Boolean(sheet?.querySelector('.ingredients li')),
@@ -1000,6 +1011,15 @@ try {
     checkinAdaptation,
     profileAdaptation,
     javascriptErrors: exceptions.length,
+    javascriptErrorDetails: exceptions.slice(-8).map((event) => ({
+      method: event.method,
+      text:
+        event.params?.exceptionDetails?.text ||
+        event.params?.exceptionDetails?.exception?.description ||
+        event.params?.entry?.text ||
+        "Errore senza dettaglio",
+      url: event.params?.exceptionDetails?.url || event.params?.entry?.url || "",
+    })),
   };
   console.log(JSON.stringify(report));
   if (

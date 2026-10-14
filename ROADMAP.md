@@ -2,10 +2,16 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.59 — in lavorazione
+## v1.19.60 — in lavorazione
+
+- [x] Lo stress pubblico attende realmente la fotografia del dettaglio del piatto pronto, sia quando l'immagine finale porta direttamente la classe visuale sia quando il piatto usa più fotografie.
+- [x] La persistenza dei grammi attende il salvataggio asincrono prima della ricarica e gli eventuali errori JavaScript riportano metodo, testo e URL invece del solo conteggio.
+
+## v1.19.59 — pubblicata e verificata
 
 - [x] Sostituite due immagini storiche non aderenti: toast ricotta-uovo-pomodoro e quinoa-lenticchie-kiwi ora mostrano esattamente gli ingredienti della ricetta.
 - [x] Prosegue l'audit visivo delle 17 ricette con asset storici, oltre ai controlli automatici di presenza, semantica e unicità.
+- [x] Audit visivo concluso sulle 17 ricette storiche: 15 immagini già aderenti e due sostituite con fotografie dedicate.
 
 ## v1.19.58 — pubblicata e verificata
 

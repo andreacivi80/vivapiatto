@@ -2879,3 +2879,11 @@ test("v1.19.59 replaces the two remaining visibly mismatched legacy recipe photo
     await access(new URL(`../public/food/${asset}.png`, import.meta.url));
   }
 });
+
+test("v1.19.60 waits for the actual ready-dish detail images", async () => {
+  const audit = await readFile(new URL("../scripts/audit-public-mobile.mjs", import.meta.url), "utf8");
+  assert.match(audit, /recipe-sheet img[.]recipe-visual-single/);
+  assert.match(audit, /photo[.]addEventListener\('load', resolve/);
+  assert.match(audit, /querySelectorAll\('img[.]recipe-visual-single, [.]recipe-visual-parts img'\)/);
+  assert.match(audit, /javascriptErrorDetails/);
+});
