@@ -64,7 +64,7 @@ let browser;
 try {
   let port;
   let browserPath;
-  for (let attempt = 0; attempt < 100; attempt += 1) {
+  for (let attempt = 0; attempt < 300; attempt += 1) {
     try {
       const lines = readFileSync(join(profile, "DevToolsActivePort"), "utf8").trim().split(/\r?\n/);
       port = Number(lines[0]);
@@ -74,7 +74,9 @@ try {
       await wait(100);
     }
   }
-  if (!port || !browserPath) throw new Error("Edge headless non disponibile");
+  if (!port || !browserPath) {
+    throw new Error(`Edge headless non disponibile dopo 30 secondi (exitCode: ${child.exitCode ?? "attivo"}, profilo: ${profile})`);
+  }
   const expectedHost = new URL(auditBaseUrl).host;
   let target;
   let targets = [];

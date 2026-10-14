@@ -2,10 +2,15 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.60 — in lavorazione
+## v1.19.61 — in lavorazione
+
+- [x] L'avvio del collaudo mobile concede fino a 30 secondi a Edge headless e, in caso di blocco reale, riporta stato del processo e profilo temporaneo invece di un errore generico.
+
+## v1.19.60 — pubblicata e verificata
 
 - [x] Lo stress pubblico attende realmente la fotografia del dettaglio del piatto pronto, sia quando l'immagine finale porta direttamente la classe visuale sia quando il piatto usa più fotografie.
 - [x] La persistenza dei grammi attende il salvataggio asincrono prima della ricarica e gli eventuali errori JavaScript riportano metodo, testo e URL invece del solo conteggio.
+- [x] Stress pubblico 390×844 superato integralmente: dettaglio piatto pronto e componenti caricati, grammatura persistente, zero errori JavaScript, zero immagini rotte e nessun overflow.
 
 ## v1.19.59 — pubblicata e verificata
 

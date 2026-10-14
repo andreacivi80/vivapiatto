@@ -1,6 +1,6 @@
 # Tavola Mia — audit finale del perimetro ricevuto
 
-Data verifica: 14 ottobre 2026. Ultimo checkpoint documentale: `1.19.60`.
+Data verifica: 14 ottobre 2026. Ultimo checkpoint documentale: `1.19.61`.
 
 ## Specifiche acquisite
 
@@ -21,7 +21,7 @@ Data verifica: 14 ottobre 2026. Ultimo checkpoint documentale: `1.19.60`.
 - Suite pubblicabile: 199/199 test superati, SSR superato, audit dipendenze pulito e build GitHub Pages riuscita.
 - Aggiornamento automatico tra release verificato su mobile reale: versione nuova rilevata senza intervento, menu, grammatura modificata e posizione di scorrimento conservati.
 - Stress mobile pubblico ripetibile: viewport 390×844, target calorico verificato su profilo pulito e contesto Lavoro/Casa, check-in adattivo, conferma/rotazione/stampa settimanale, quattro famiglie delle 214 ricette, ritorno fisso, alternative del latte, modifica grammatura persistente, aggiunta/rimozione diretta di componenti, fotografie visibili realmente caricate e zero errori JavaScript.
-- Pubblicazione verificata sul link unico: manifest `1.19.58` e stress mobile pubblico concluso senza errori, overflow, recupero o immagini rotte.
+- Pubblicazione verificata sul link unico: manifest `1.19.60` e stress mobile pubblico concluso senza errori, overflow, recupero o immagini rotte.
 
 ## Stress test pubblico mobile
 

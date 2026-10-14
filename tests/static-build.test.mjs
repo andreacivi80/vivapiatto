@@ -2887,3 +2887,10 @@ test("v1.19.60 waits for the actual ready-dish detail images", async () => {
   assert.match(audit, /querySelectorAll\('img[.]recipe-visual-single, [.]recipe-visual-parts img'\)/);
   assert.match(audit, /javascriptErrorDetails/);
 });
+
+test("v1.19.61 gives the silent mobile browser enough startup time and useful diagnostics", async () => {
+  const audit = await readFile(new URL("../scripts/audit-public-mobile.mjs", import.meta.url), "utf8");
+  assert.match(audit, /attempt < 300/);
+  assert.match(audit, /Edge headless non disponibile dopo 30 secondi/);
+  assert.match(audit, /child[.]exitCode/);
+});
