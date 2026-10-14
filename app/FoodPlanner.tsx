@@ -1937,7 +1937,7 @@ const recipes: Recipe[] = [
     id: "bowl",
     name: "Bowl pollo, quinoa e ceci",
     kicker: "Energia stabile e gusto mediterraneo",
-    image: photo("chicken-bowl"),
+    image: photo("recipe-bowl-chicken-quinoa-chickpeas-v11955"),
     time: 25,
     ingredients: [
       { food: "Petto di pollo cotto", grams: 130 },
@@ -2105,7 +2105,7 @@ const recipes: Recipe[] = [
     id: "chicken-farro",
     name: "Pollo speziato, farro e peperoni",
     kicker: "Piatto caldo, saziante e colorato",
-    image: photo("chicken-bowl"),
+    image: photo("recipe-chicken-farro-peppers-v11955"),
     time: 24,
     ingredients: [
       { food: "Petto di pollo cotto", grams: 130 },
@@ -3808,7 +3808,7 @@ const portableRecipes: Recipe[] = [
     kicker: "Semplice, disponibile anche in mensa",
     course: "Primo",
     cuisine: "Italiano",
-    image: photo("part-pasta-semolina-v11618"),
+    image: photo("recipe-simple-pasta-white-v11955"),
     time: 12,
     ingredients: [
       { food: "Pasta cotta", grams: 220 },

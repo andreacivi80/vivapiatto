@@ -2,7 +2,12 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.54 — in verifica
+## v1.19.55 — in verifica
+
+- [x] Pasta in bianco, bowl pollo-quinoa-ceci e pollo-farro-peperoni ricevono tre fotografie complete e fedeli, senza immagini atomiche o generiche condivise.
+- [x] Nuovo audit semantico bloccante: 257/257 ricette reali usano una fotografia finale esplicita.
+
+## v1.19.54 — verificata
 
 - [x] Pollo con quinoa, barbabietola e spinaci riceve una fotografia completa della ricetta, non più la sola foto atomica del pollo.
 - [x] I quattro componenti restano separati e riconoscibili nella tessera mobile, senza ingredienti estranei.

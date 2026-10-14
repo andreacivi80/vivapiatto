@@ -2813,3 +2813,20 @@ test("v1.19.6 audits a faithful final photo for every real recipe", async () => 
   }
   assert.match(packageSource, /audit-all-recipe-photos[.]mjs --strict/);
 });
+
+test("v1.19.55 requires semantically complete photos for every real recipe", async () => {
+  const [source, packageSource] = await Promise.all([
+    readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../package.json", import.meta.url), "utf8"),
+  ]);
+  const mappings = [
+    ["simple-pasta-white", "recipe-simple-pasta-white-v11955"],
+    ["bowl", "recipe-bowl-chicken-quinoa-chickpeas-v11955"],
+    ["chicken-farro", "recipe-chicken-farro-peppers-v11955"],
+  ];
+  for (const [id, asset] of mappings) {
+    assert.match(source, new RegExp(`id: "${id}"[\\s\\S]{0,500}image: photo\\("${asset}"\\)`));
+    await access(new URL(`../public/food/${asset}.png`, import.meta.url));
+  }
+  assert.match(packageSource, /audit-recipe-photo-semantics[.]mjs --strict/);
+});
