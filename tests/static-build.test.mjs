@@ -2915,3 +2915,12 @@ test("v1.19.64 injects the image timeout into every browser evaluation", async (
   assert.equal((audit.match(/setTimeout\(resolve, \$\{imageSettleTimeoutMs\}\)/g) || []).length, 4);
   assert.doesNotMatch(audit, /setTimeout\(resolve, imageSettleTimeoutMs\)/);
 });
+
+test("v1.19.65 rechecks transient CDN image errors without hiding missing assets", async () => {
+  const audit = await readFile(new URL("../scripts/audit-public-mobile.mjs", import.meta.url), "utf8");
+  assert.match(audit, /const rawExceptions = page[.]events[.]filter/);
+  assert.match(audit, /entryText[.]includes\("Failed to load resource"\)/);
+  assert.match(audit, /auditRetry=/);
+  assert.match(audit, /if \(response[.]ok\) continue/);
+  assert.match(audit, /exceptions[.]push\(event\)/);
+});

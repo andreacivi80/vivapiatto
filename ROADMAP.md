@@ -2,7 +2,12 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.64 — in verifica
+## v1.19.65 — in verifica
+
+- [x] Un errore temporaneo della CDN su una fotografia viene ricontrollato direttamente prima di bloccare il collaudo.
+- [x] Solo una risposta reale riuscita può classificare l'errore come transitorio; asset mancanti, non leggibili o ancora pendenti restano bloccanti.
+
+## v1.19.64 — pubblicata e verificata localmente
 
 - [x] Il timeout delle fotografie viene iniettato esplicitamente nelle quattro valutazioni eseguite dentro il browser.
 - [x] Un test permanente impedisce che una variabile Node non disponibile nella pagina interrompa nuovamente il collaudo.
