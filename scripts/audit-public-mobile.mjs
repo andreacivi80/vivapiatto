@@ -75,9 +75,16 @@ try {
     }
   }
   if (!port || !browserPath) throw new Error("Edge headless non disponibile");
-  const targets = await fetch(`http://127.0.0.1:${port}/json/list`).then((response) => response.json());
-  const target = targets.find((item) => item.type === "page");
-  if (!target) throw new Error("Pagina headless non trovata");
+  const expectedHost = new URL(auditBaseUrl).host;
+  let target;
+  let targets = [];
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    targets = await fetch(`http://127.0.0.1:${port}/json/list`).then((response) => response.json());
+    target = targets.find((item) => item.type === "page" && new URL(item.url).host === expectedHost);
+    if (target) break;
+    await wait(100);
+  }
+  if (!target) throw new Error(`Pagina headless Tavola Mia non trovata: ${JSON.stringify(targets.map((item) => item.url))}`);
   const page = await connect(target.webSocketDebuggerUrl);
   browser = await connect(`ws://127.0.0.1:${port}${browserPath}`);
   await Promise.all([
@@ -139,9 +146,28 @@ try {
       button.click();
       return true;
     })()`);
-    if (!clicked) throw new Error(`Scheda ${label} non trovata`);
+    if (!clicked) {
+      const state = await evaluate(`(() => ({
+        title: document.title,
+        body: document.body.innerText.slice(0, 1200),
+        readyState: document.readyState,
+        scripts: [...document.scripts].map((script) => script.src),
+      }))()`);
+      const recentErrors = page.events
+        .filter((event) => event.method === "Runtime.exceptionThrown" || event.method === "Log.entryAdded")
+        .slice(-5);
+      throw new Error(`Scheda ${label} non trovata: ${JSON.stringify({ state, recentErrors })}`);
+    }
     await wait(1000);
   };
+
+  let appReady = false;
+  for (let attempt = 0; attempt < 50; attempt += 1) {
+    appReady = await evaluate(`document.body.innerText.includes('Settimana') && document.body.innerText.includes(${JSON.stringify(`v${version}`)})`);
+    if (appReady) break;
+    await wait(400);
+  }
+  if (!appReady) throw new Error("Tavola Mia non ha completato il caricamento entro 20 secondi");
 
   const today = await snapshot();
   const scrollStability = await evaluate(`(() => ({
@@ -741,6 +767,17 @@ try {
       .find((button) => button.innerText.includes('Dividi in componenti'))?.click();
   })()`);
   await wait(550);
+  await evaluate(`(() => {
+    const card = document.querySelectorAll('.meal-card')[2];
+    return Promise.all([...(card?.querySelectorAll('.meal-part img') || [])].map((photo) => {
+      photo.loading = 'eager';
+      return photo.complete ? Promise.resolve() : new Promise((resolve) => {
+        photo.addEventListener('load', resolve, { once: true });
+        photo.addEventListener('error', resolve, { once: true });
+        setTimeout(resolve, 8000);
+      });
+    }));
+  })()`);
   Object.assign(readyDishFlow, await evaluate(`(() => {
     const card = document.querySelectorAll('.meal-card')[2];
     const photos = [...(card?.querySelectorAll('.meal-part img') || [])];

@@ -2859,3 +2859,11 @@ test("v1.19.57 gives every real recipe a distinct faithful photograph", async ()
   }
   assert.match(packageSource, /audit-recipe-photo-uniqueness[.]mjs --strict/);
 });
+
+test("v1.19.58 attaches the public audit to the real app and waits for images", async () => {
+  const audit = await readFile(new URL("../scripts/audit-public-mobile.mjs", import.meta.url), "utf8");
+  assert.match(audit, /new URL\(item[.]url\)[.]host === expectedHost/);
+  assert.match(audit, /Tavola Mia non ha completato il caricamento entro 20 secondi/);
+  assert.match(audit, /querySelectorAll\('\.meal-part img'\)/);
+  assert.match(audit, /photo[.]loading = 'eager'/);
+});

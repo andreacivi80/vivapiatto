@@ -2,7 +2,13 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.57 — in verifica
+## v1.19.58 — in verifica
+
+- [x] Lo stress test mobile seleziona obbligatoriamente la scheda Tavola Mia invece di una scheda Edge vuota.
+- [x] Il test attende il caricamento reale dell'interfaccia e delle foto dei componenti prima di misurare menu, scroll e immagini.
+- [x] Gli errori di caricamento riportano stato pagina, script e log recenti per distinguere un difetto dell'app da un bersaglio browser errato.
+
+## v1.19.57 — verificata
 
 - [x] Sei ricette con immagini condivise o semanticamente errate ricevono fotografie finali distinte: cracker-ricotta-miele, fette-burro-confettura, coppa mela-avena, riso-tonno-verdure, bowl salmone-riso e insalatona tonno-ceci.
 - [x] Eliminata la poke con tonno crudo e ingredienti estranei dalla ricetta quotidiana riso basmati e tonno.
