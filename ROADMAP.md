@@ -2,10 +2,12 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.65 — in verifica
+## v1.19.65 — pubblicata e verificata
 
 - [x] Un errore temporaneo della CDN su una fotografia viene ricontrollato direttamente prima di bloccare il collaudo.
 - [x] Solo una risposta reale riuscita può classificare l'errore come transitorio; asset mancanti, non leggibili o ancora pendenti restano bloccanti.
+- [x] Il collaudo ripete la scansione delle immagini quando React sostituisce una tessera durante il ritorno dal selettore, verificando i nodi realmente visibili.
+- [x] Stress pubblico 390×844 completato sulla versione esatta `1.19.65`: zero errori JavaScript, immagini rotte, immagini pendenti, overflow o schermate di recupero.
 
 ## v1.19.64 — pubblicata e verificata localmente
 
