@@ -7603,7 +7603,7 @@ const verifiedWorldRecipeExpansion: Recipe[] = [
     kicker: "Ricetta regionale verificata · MAFF",
     course: "Piatto unico",
     cuisine: "Asiatico",
-    image: photo("part-rice-basmati-v7"),
+    image: photo("recipe-asian-keihan-v11951"),
     time: 35,
     ingredients: [
       { food: "Riso basmati cotto", grams: 150 },

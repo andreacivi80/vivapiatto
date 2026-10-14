@@ -2,7 +2,12 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.50 — in verifica
+## v1.19.51 — in verifica
+
+- [x] Keihan MAFF sostituito con una fotografia finale autentica e completa, non più con la foto generica del solo riso.
+- [x] Riso, pollo sfilacciato, uovo a striscioline, funghi, fagiolini e brodo sono tutti riconoscibili e coerenti con ingredienti e preparazione.
+
+## v1.19.50 — verificata
 
 - [x] Negima-nabe MAFF con nuova fotografia completa: tonno cotto, porro, shiitake e ciotola di riso separata.
 - [x] Tonno chiaramente cotto e nessun sashimi o ingrediente estraneo nella card.

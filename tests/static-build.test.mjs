@@ -1322,6 +1322,22 @@ test("v1.19.50 gives the verified negima nabe a faithful complete-meal photograp
   await access(new URL("../public/food/recipe-asian-negima-v11950.png", import.meta.url));
 });
 
+test("v1.19.51 gives verified Keihan a faithful complete-dish photograph", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const recipeStart = source.indexOf('id: "catalog-verified-keihan"');
+  const recipeEnd = source.indexOf('id: "catalog-verified-kashiwa-meshi"');
+  const recipe = source.slice(recipeStart, recipeEnd);
+  assert.ok(recipeStart > 0 && recipeEnd > recipeStart);
+  assert.match(recipe, /recipe-asian-keihan-v11951/);
+  assert.match(recipe, /Riso basmati cotto/);
+  assert.match(recipe, /Petto di pollo/);
+  assert.match(recipe, /Uovo/);
+  assert.match(recipe, /Funghi/);
+  assert.match(recipe, /Fagiolini/);
+  assert.match(recipe, /MAFF/);
+  await access(new URL("../public/food/recipe-asian-keihan-v11951.png", import.meta.url));
+});
+
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /Crea una ricetta con gli avanzi/);
