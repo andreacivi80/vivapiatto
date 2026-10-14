@@ -14,7 +14,7 @@ Questa checklist resta nel repository e viene aggiornata a ogni revisione. Una v
 
 - [x] Collegare integralmente le quattro matrici di ricette al motore dei pasti. Verifica automatica: 214/214 (C44, S42, P64, D64).
 - [x] Eliminare dalla libreria ogni combinazione che non sia una ricetta vera. Spuntini elementari restano nel piano ma il ricettario richiede tecnica, piatto preparato riconoscibile oppure almeno quattro ingredienti.
-- [x] Creare fotografia specifica per ogni alimento e preparazione, senza riuso semanticamente errato. Prove: 217/217 alimenti richiesti con foto dedicata e 557/557 asset validi.
+- [x] Creare fotografia specifica per ogni alimento e preparazione, senza riuso semanticamente errato. Prove: 217/217 alimenti richiesti con foto dedicata e 561/561 asset validi.
 - [x] Creare fotografia finale specifica per ogni ricetta completa, con gli ingredienti realmente presenti. Prove: 214/214 foto matrice e 257/257 foto finali del catalogo (`--strict`).
 - [x] Controllare automaticamente riferimenti mancanti, associazioni foto/alimento e cache busting a ogni versione. `audit-photo-assets.mjs`, `audit-full-dish-photos.mjs`, `audit-all-recipe-photos.mjs`; URL foto versionati con `VERSION`.
 - [x] Completare ricette italiane, orientali, internazionali, semplici da lavoro e più elaborate da casa/weekend. Catalogo unico con stile, contesto, tempo, attrezzatura e trasportabilità applicati al ranking.
@@ -32,7 +32,7 @@ Questa checklist resta nel repository e viene aggiornata a ogni revisione. Una v
 
 - [x] Nessun testo, pulsante, foto o valore deve uscire dalla larghezza del telefono. Controllo statico v1.18.75 e prova reale a 390 px su Oggi e cambio piatto: nessun overflow orizzontale.
 - [x] Alternative richiudibili, chiusura sempre accessibile e scelta libera separata. Freccia mobile fissa corretta in v1.19.10 dopo stress test a fondo pagina.
-- [x] Foto complete nella Settimana e foto più grandi in Oggi, senza ritagli significativi. `object-fit` specifico per le due viste e audit asset mobile 557/557.
+- [x] Foto complete nella Settimana e foto più grandi in Oggi, senza ritagli significativi. `object-fit` specifico per le due viste e audit asset mobile 561/561.
 - [x] Barra di modifica settimanale fissa in alto e visibile solo durante quel flusso. Test v1.18.54 e selettore condizionale su `weekEditingDay`.
 - [x] Minimizzare spazi e testi inutili mantenendo leggibili grammi e nutrienti. Riepiloghi compatti senza porzione duplicata; nutrienti estesi nel riepilogo.
 - [x] Refresh automatico sicuro della nuova versione senza perdere lo stato locale. Manifest interrogato senza cache, scroll e stato preservati; recupero indipendente v1.19.7, rimonta pulita v1.19.11 e versione unica manifest/client v1.19.12.

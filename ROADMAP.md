@@ -2,7 +2,7 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.56 — in verifica
+## v1.19.56 — verificata
 
 - [x] Lo stress test del target calorico riparte da un profilo pulito, separato da gelato, piatti pronti e grammature modificati nelle prove precedenti.
 - [x] Il controllo pubblico blocca la release se il ripristino pulito apre la schermata di recupero o conserva scelte manuali.
