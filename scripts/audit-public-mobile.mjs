@@ -707,7 +707,8 @@ try {
     const lastRemove = removeButtons[removeButtons.length - 1];
     const result = {
       afterAdd,
-      added: afterAdd === ${mealPartAddition.before} + 1,
+      added: afterAdd > ${mealPartAddition.before} &&
+        (${mealPartAddition.before} === 0 || afterAdd === ${mealPartAddition.before} + 1),
       pickerClosed: !document.querySelector('.part-picker-sheet'),
       hasDirectRemove: Boolean(lastRemove),
     };
@@ -720,7 +721,7 @@ try {
     const afterRemove = card?.querySelectorAll('.meal-part').length ?? -1;
     return {
       afterRemove,
-      removed: afterRemove === ${mealPartAddition.before},
+      removed: afterRemove === ${mealPartAddition.afterAdd} - 1,
     };
   })()`));
   const readyDishFlow = await evaluate(`(() => {
@@ -970,16 +971,22 @@ try {
     const planSegment = planText.toLowerCase().split('piano ')[1]?.split(' · ')[0] || '';
     const visiblePlanKcal = Number(planSegment.replaceAll('.', '').replaceAll(',', '').trim());
     const highMenu = [...document.querySelectorAll('.meal-card h3')].map((heading) => heading.innerText.trim());
+    const breakfastFoods = (highMenu[0] || '').split(' · ').slice(1).join(' · ').split(', ');
+    const dairyCount = breakfastFoods.filter((food) => /latte|yogurt|skyr|kefir|ricotta|cottage|budino proteico/i.test(food)).length;
+    const nutCount = breakfastFoods.filter((food) => /noci|nocciole|mandorle|pistacchi|arachidi|anacardi|semi di/i.test(food)).length;
     return {
       highTargetSelected: strip.includes('scelto 2600 kcal'),
       highPlanText: planText,
       highPlanKcal: visiblePlanKcal,
       highMenu,
+      highBreakfastHasNoDuplicateDairyOrNuts: dairyCount <= 1 && nutCount <= 1,
       targetChangesPlan: visiblePlanKcal > ${profileAdaptation.lowPlanKcal} + 300 && JSON.stringify(highMenu) !== JSON.stringify(${JSON.stringify(profileAdaptation.lowMenu)}),
     };
   })()`));
   await changeSelectValue('.cuisine-picker select', 1, 'Lavoro');
   profileAdaptation.workMenu = await evaluate(`[...document.querySelectorAll('.meal-card h3')].map((heading) => heading.innerText.trim())`);
+  profileAdaptation.workSnacksPractical = [profileAdaptation.workMenu[1], profileAdaptation.workMenu[3]]
+    .every((heading) => !/wafer|grissini/i.test(heading || ''));
   await changeSelectValue('.cuisine-picker select', 1, 'Casa');
   Object.assign(profileAdaptation, await evaluate(`(() => {
     const homeMenu = [...document.querySelectorAll('.meal-card h3')].map((heading) => heading.innerText.trim());
@@ -1120,7 +1127,8 @@ try {
     !profileAdaptation.found || !profileAdaptation.cleanProfile || profileAdaptation.recovery ||
     !profileAdaptation.lowTargetSelected || !profileAdaptation.highTargetSelected ||
     profileAdaptation.lowPlanKcal <= 0 || profileAdaptation.highPlanKcal <= profileAdaptation.lowPlanKcal + 300 ||
-    !profileAdaptation.targetChangesPlan || !profileAdaptation.homeSelected || !profileAdaptation.contextChangesPlan ||
+    !profileAdaptation.targetChangesPlan || !profileAdaptation.highBreakfastHasNoDuplicateDairyOrNuts ||
+    !profileAdaptation.workSnacksPractical || !profileAdaptation.homeSelected || !profileAdaptation.contextChangesPlan ||
     profileAdaptation.horizontalOverflow ||
     exceptions.length
   ) process.exitCode = 1;

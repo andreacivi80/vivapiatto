@@ -1854,15 +1854,17 @@ const calc = (
   );
 
 type WeeklyProteinFamily = "pesce" | "carne-bianca" | "carne-rossa" | "uova" | "legumi" | "latticini" | "salumi" | "altro";
-const proteinFamilyForItems = (items: RecipeIngredient[]): WeeklyProteinFamily => {
+export const proteinFamilyForItems = (items: RecipeIngredient[]): WeeklyProteinFamily => {
   const names = items.map((item) => item.food.toLowerCase());
   const has = (terms: string[]) => names.some((name) => terms.some((term) => name.includes(term)));
   if (has(["bresaola", "prosciutto", "salame", "mortadella", "speck", "wurstel"])) return "salumi";
   if (has(["salmone", "tonno", "merluzzo", "nasello", "orata", "branzino", "spigola", "sogliola", "platessa", "rombo", "trota", "sgombro", "sardine", "alici", "acciughe", "pesce spada", "palombo", "polpo", "sepp", "calamar", "gamber", "cozz", "vongol", "pesce"])) return "pesce";
   if (has(["pollo", "tacchino", "coniglio"])) return "carne-bianca";
-  if (has(["manzo", "vitello", "maiale", "lonza", "cavallo", "bistecca"])) return "carne-rossa";
+  if (has(["manzo", "vitello", "maiale", "lonza", "cavallo", "bistecca", "roast beef", "roastbeef", "carpaccio"])) return "carne-rossa";
   if (has(["uovo", "uova", "albume"])) return "uova";
-  if (has(["ceci", "lenticchie", "fagioli", "piselli", "fave", "edamame", "lupini", "cicerchie", "tofu", "tempeh", "seitan", "burger vegetale", "legumi"])) return "legumi";
+  if (names.some((name) => !name.includes("fagiolini") &&
+    ["ceci", "lenticchie", "fagioli", "piselli", "fave", "edamame", "lupini", "cicerchie", "tofu", "tempeh", "seitan", "burger vegetale", "legumi"]
+      .some((term) => name.includes(term)))) return "legumi";
   if (has(["ricotta", "mozzarella", "feta", "crescenza", "stracchino", "primo sale", "scamorza", "provolone", "fiocchi di latte", "parmigiano", "grana"])) return "latticini";
   return "altro";
 };
@@ -9475,7 +9477,7 @@ const inferRecipeTags = (recipe: Recipe) => {
     recipe.course || "Piatto",
     recipe.cuisine || "Italiano",
     recipe.time <= 15 ? "Veloce" : "Da cucinare",
-    /ceci|lenticchie|fagioli|piselli|tofu|tempeh/.test(text) ? "Proteine vegetali" : "",
+    /ceci|lenticchie|fagioli(?!ni)|piselli|tofu|tempeh/.test(text) ? "Proteine vegetali" : "",
     /integrale|farro|orzo|quinoa|miglio|grano saraceno/.test(text) ? "Cereali e fibre" : "",
   ].filter(Boolean);
 };
@@ -10080,6 +10082,10 @@ if (recipeMetadataIssues.length) {
   throw new Error(`Metadati ricette non validi:\n${recipeMetadataIssues.join("\n")}`);
 }
 const recipeMap = Object.fromEntries(allRecipes.map((r) => [r.id, r]));
+const automaticMultiLegumePenalty = (recipe: Recipe) =>
+  recipe.ingredients.filter((item) =>
+    /ceci|lenticchie|fagioli(?!ni)|piselli|fave|edamame|lupini|cicerchie/i.test(item.food),
+  ).length >= 3 ? 240 : 0;
 const defaultWeeklyMainIds = (() => {
   const used = new Set<string>();
   return WEEKLY_MAIN_ROTATION.map((family, index) => {
@@ -10091,7 +10097,8 @@ const defaultWeeklyMainIds = (() => {
           recipeProteinFamily(recipe) === family,
       )
       .sort((left, right) =>
-        index % 2 === 0 ? left.time - right.time : right.time - left.time,
+        automaticMultiLegumePenalty(left) - automaticMultiLegumePenalty(right) +
+        (index % 2 === 0 ? left.time - right.time : right.time - left.time),
       );
     const selected = candidates.find((recipe) => !used.has(recipe.id)) || candidates[0];
     if (!selected) throw new Error(`Nessun pasto principale disponibile per ${family}`);
@@ -10099,6 +10106,9 @@ const defaultWeeklyMainIds = (() => {
     return selected.id;
   });
 })();
+export const initialWeeklyProteinFamilies = defaultWeeklyMainIds.map((id) =>
+  recipeProteinFamily(recipeMap[id]),
+);
 const days: Day[] = [
   {
     label: "Giorno 1",
@@ -10848,7 +10858,7 @@ export function FoodPlanner() {
     recipe.time <= maxPrepTime;
   const recipeProteinSignature = (recipe: Recipe) => {
     const protein = recipe.ingredients.find((ingredient) =>
-      /pollo|tacchino|coniglio|manzo|vitello|maiale|cavallo|bresaola|prosciutto|salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|gamber|polpo|cozze|calamari|rombo|seppia|uov|ceci|lenticchie|fagioli|piselli|tofu|tempeh|ricotta|feta|mozzarella|crescenza|scamorza|provolone/i.test(ingredient.food),
+      /pollo|tacchino|coniglio|manzo|vitello|maiale|cavallo|roast beef|carpaccio|bresaola|prosciutto|salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|gamber|polpo|cozze|calamari|rombo|seppia|uov|ceci|lenticchie|fagioli(?!ni)|piselli|tofu|tempeh|ricotta|feta|mozzarella|crescenza|scamorza|provolone/i.test(ingredient.food),
     );
     return protein?.food || recipeProteinFamily(recipe);
   };
@@ -10869,7 +10879,11 @@ export function FoodPlanner() {
       .sort((a, b) => breakfastStyleScore(a) - breakfastStyleScore(b));
   const availableSnacks = () =>
     allRecipes
-      .filter((recipe) => recipe.course === "Spuntino")
+      .filter((recipe) =>
+        recipe.course === "Spuntino" &&
+        !recipe.id.startsWith("occasional-") &&
+        !recipe.ingredients.some((item) => /wafer|grissini/i.test(item.food)),
+      )
       .filter(isProfileEligible);
   const recipeCuisine = (r: Recipe) =>
     r.cuisine ||
@@ -10896,7 +10910,7 @@ export function FoodPlanner() {
     if (categories.has("Carboidrato")) score += 1;
     if (categories.has("Proteina") || categories.has("Latticino")) score += 1;
     if (categories.has("Contorno") || categories.has("Frutta")) score += 1;
-    if (/integrale|farro|orzo|avena|quinoa|miglio|legum|ceci|lenticchie|fagioli/.test(text)) score += 1;
+    if (/integrale|farro|orzo|avena|quinoa|miglio|legum|ceci|lenticchie|fagioli(?!ni)/.test(text)) score += 1;
     if (macros.fiber >= 5 || recipe.ingredients.length >= 4) score += 1;
     return Math.min(5, score);
   };
@@ -10905,7 +10919,7 @@ export function FoodPlanner() {
     let score = 1;
     if (/salmone|orata|branzino|gamber|tonno fresco|cavallo|bresaola|frutti di mare|pistacch/.test(text)) score += 2;
     else if (/manzo|vitello|merluzzo|scamorza|mozzarella|feta|grana|prosciutto crudo/.test(text)) score += 1;
-    if (/uova|lenticchie|ceci|fagioli|piselli|pasta|riso|patate|verdure di stagione/.test(text)) score -= 1;
+    if (/uova|lenticchie|ceci|fagioli(?!ni)|piselli|pasta|riso|patate|verdure di stagione/.test(text)) score -= 1;
     return Math.max(0, score);
   };
   const budgetLabel = (recipe: Recipe) =>
@@ -11034,7 +11048,7 @@ export function FoodPlanner() {
     const eggs = /\buov|albume/.test(foodsText);
     const dairy = /latte|yogurt|skyr|kefir|ricotta|feta|mozzarella|crescenza|scamorza|provolone|fiocchi di latte|burro/.test(foodsText);
     const gluten = /pasta|pane|farro|orzo|bulgur|cous cous|cracker|fette biscottate|biscott|wafer|muesli|farina di frumento|segale/.test(foodsText);
-    const legumes = /ceci|lenticchie|fagioli|piselli|edamame|soia|tofu|tempeh|fave/.test(foodsText);
+    const legumes = /ceci|lenticchie|fagioli(?!ni)|piselli|edamame|soia|tofu|tempeh|fave/.test(foodsText);
     const wholeGrains = /integrale|farro|orzo|riso venere|riso rosso|quinoa|miglio|bulgur|grano saraceno/.test(foodsText);
     const month = new Date().getMonth() + 1;
     const seasonal = recipe.ingredients.some((item) => seasonalMonths[item.food]?.includes(month));
@@ -11284,8 +11298,12 @@ export function FoodPlanner() {
       return next;
     });
   };
-  const targetAdditionsFor = (slot: number, dailyTarget = calories): RecipeIngredient[] =>
-      dailyTarget >= 3000
+  const targetAdditionsFor = (
+    slot: number,
+    dailyTarget = calories,
+    currentItems: RecipeIngredient[] = [],
+  ): RecipeIngredient[] => {
+    const additions: RecipeIngredient[] = dailyTarget >= 3000
         ? slot === 0
           ? [{ food: "Yogurt greco 2%", grams: 125 }, { food: "Noci", grams: 35 }]
           : slot === 1
@@ -11373,6 +11391,21 @@ export function FoodPlanner() {
                   ]
                 : []
           : [];
+    return additions.filter((addition) => {
+      const food = addition.food.toLowerCase();
+      if (/yogurt|skyr|kefir/.test(food))
+        return !currentItems.some((item) =>
+          /latte|yogurt|skyr|kefir|ricotta|fiocchi di latte|cottage|budino proteico/i.test(item.food),
+        );
+      if (/noci|mandorle|nocciole|pistacchi|arachidi|anacardi/.test(food))
+        return !currentItems.some((item) =>
+          /noci|mandorle|nocciole|pistacchi|arachidi|anacardi|semi di/i.test(item.food),
+        );
+      if (food === "mela" || food === "banana")
+        return !currentItems.some((item) => item.food.toLowerCase() === food);
+      return true;
+    });
+  };
 
   const lowEnergyAdjusted = <T extends RecipeIngredient>(item: T): T => {
     if (calories >= 1800) return item;
@@ -11421,7 +11454,7 @@ export function FoodPlanner() {
     const slot = Number(slotText);
     const sourceParts = recipe.parts || recipe.ingredients.map(additionAsPart);
     const merged = sourceParts.map((part) => ({ ...part }));
-    targetAdditionsFor(slot, targetForDay(day)).forEach((item) => {
+    targetAdditionsFor(slot, targetForDay(day), sourceParts).forEach((item) => {
       const existing = merged.find((part) => part.food === item.food);
       if (existing) existing.grams += item.grams;
       else merged.push(additionAsPart(item));
@@ -11451,7 +11484,7 @@ export function FoodPlanner() {
     const adjustable = items.filter((item) => adjustableFoods.has(item.food));
     const fixed = items.filter((item) => !adjustableFoods.has(item.food));
     const mealFoodText = items.map((item) => item.food).join(" ").toLowerCase();
-    const hasLegumes = /ceci|lenticchie|fagioli|piselli|fave|edamame|lupini|cicerchie/.test(mealFoodText);
+    const hasLegumes = /ceci|lenticchie|fagioli(?!ni)|piselli|fave|edamame|lupini|cicerchie/.test(mealFoodText);
     const hasFattyFish = /salmone|sgombro|sardine|trota/.test(mealFoodText);
     const adjustableKcal = calc(adjustable).kcal;
     const fixedKcal = calc(fixed).kcal;
@@ -11490,7 +11523,7 @@ export function FoodPlanner() {
         );
       }
       if (/uovo|uova|albume/.test(food)) return roundWithin(50, 150, 50);
-      if (/ceci|lenticchie|fagioli|piselli|fave|edamame|lupini|tofu|tempeh|burger vegetale/.test(food))
+      if (/ceci|lenticchie|fagioli(?!ni)|piselli|fave|edamame|lupini|tofu|tempeh|burger vegetale/.test(food))
         return roundWithin(100, 200, 25);
       if (/bresaola|prosciutto|fesa|speck|salame|mortadella/.test(food))
         return roundWithin(40, 100, 10);
@@ -11510,7 +11543,9 @@ export function FoodPlanner() {
     const [dayText, slotText] = key.split("-");
     const day = Number(dayText);
     const slot = Number(slotText);
-    const targetAdditions = targetAdditionsFor(slot, targetForDay(day));
+    const targetAdditions = targetAdditionsFor(
+      slot, targetForDay(day), recipe.parts || recipe.ingredients,
+    );
     if (!recipe.parts && !partSelections[key])
       return calibratePlannedIngredients(
         key,
@@ -11844,7 +11879,7 @@ export function FoodPlanner() {
     const compatibilityScore = (recipe: Recipe) => {
       const candidateItems = mergeTargetAdditions(
         recipe.parts || recipe.ingredients,
-        targetAdditionsFor(slot, targetForDay(day)),
+        targetAdditionsFor(slot, targetForDay(day), recipe.parts || recipe.ingredients),
       ).map(lowEnergyAdjusted);
       const candidateMacros = calc(candidateItems);
       const candidateRoles = new Set(
@@ -11949,7 +11984,7 @@ export function FoodPlanner() {
   const profileRecipeKcal = (recipe: Recipe, slot: number) => {
     const source = recipe.parts || recipe.ingredients;
     return calc(
-      mergeTargetAdditions(source, targetAdditionsFor(slot)).map(lowEnergyAdjusted),
+      mergeTargetAdditions(source, targetAdditionsFor(slot, calories, source)).map(lowEnergyAdjusted),
     ).kcal;
   };
   const recipePartCategories = (recipe: Recipe) =>
@@ -11999,7 +12034,8 @@ export function FoodPlanner() {
         contextPenalty +
         prepPenalty +
         budgetPenalty +
-        Math.abs(profileRecipeKcal(recipe, slot) - target) -
+        Math.abs(profileRecipeKcal(recipe, slot) - target) +
+        (mainMeal ? automaticMultiLegumePenalty(recipe) : 0) -
         seasonalBonus -
         familiarBonus
       );
@@ -12253,8 +12289,7 @@ export function FoodPlanner() {
       mains = [...mains].sort(
         (a, b) => calc(b.ingredients).carbs - calc(a.ingredients).carbs,
       );
-      snacks = allRecipes
-        .filter((r) => isProfileEligible(r) && recipeCourse(r) === "Spuntino")
+      snacks = availableSnacks()
         .sort((a, b) => calc(b.ingredients).carbs - calc(a.ingredients).carbs);
     } else {
       mains = [...mains].sort(

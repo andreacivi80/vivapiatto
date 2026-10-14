@@ -2,6 +2,14 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
+## v1.19.66 — in verifica
+
+- [x] Le proposte automatiche di spuntino privilegiano frutta, yogurt, frutta secca e abbinamenti pratici; wafer e grissini restano selezionabili solo a scelta dell'utente.
+- [x] Ai target calorici più alti non viene aggiunto un secondo yogurt/skyr o una seconda frutta secca quando il piatto ne contiene già.
+- [x] La proposta iniziale riduce la priorità dei piatti con tre legumi; il ricettario e le alternative li mantengono disponibili.
+- [x] Fagiolini riconosciuti come contorno e roast beef come carne rossa: verificata la famiglia proteica effettiva di tutti i 14 pasti principali della settimana iniziale.
+- [ ] Verifica mobile reale della 1.19.66, pubblicazione sul link unico e collaudo pubblico della versione esatta.
+
 ## v1.19.65 — pubblicata e verificata
 
 - [x] Un errore temporaneo della CDN su una fotografia viene ricontrollato direttamente prima di bloccare il collaudo.

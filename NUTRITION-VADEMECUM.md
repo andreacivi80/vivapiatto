@@ -21,7 +21,10 @@ Questo documento è la base funzionale dell’app. Le fotografie e la grafica de
 
 - Cinque momenti: colazione, spuntino mattina, pranzo, spuntino pomeriggio, cena.
 - Colazione feriale: preparazioni semplici; latte o alternativa vegetale è parte della colazione, non bevanda dell’intera giornata.
-- Spuntino consigliato: prima frutta fresca, yogurt in vasetto, frutta secca, cracker/grissini, piccolo pane o abbinamenti leggeri e trasportabili. Il bicchiere di latte non è una proposta predefinita da lavoro e resta nella scelta libera.
+- Spuntino consigliato: prima frutta fresca, yogurt in vasetto, frutta secca, cracker, piccolo pane o abbinamenti leggeri e trasportabili. Wafer e grissini restano disponibili alla scelta dell'utente ma non sono proposte automatiche. Il bicchiere di latte non è una proposta predefinita da lavoro e resta nella scelta libera.
+- Se una colazione contiene già latte, skyr, yogurt, ricotta o altri latticini, l'aumento del target energetico non aggiunge un altro yogurt; vale lo stesso criterio per frutta secca e semi già presenti.
+- Il piatto con tre legumi resta disponibile, ma la proposta automatica dà priorità ad alternative con una combinazione più semplice. Le quantità dei legumi restano modificabili dall'utente.
+- I fagiolini sono trattati come ortaggio/contorno, non come una porzione di fagioli; la rotazione conta la fonte proteica del piatto effettivo, compreso il roast beef.
 - Due frutti diversi nelle proposte predefinite della giornata; la ripetizione è una scelta manuale.
 - Pranzo e cena: base di carboidrati + fonte proteica + ortaggio/contorno + condimento misurato, oppure piatto unico che contenga gli stessi ruoli.
 - Lavoro: priorità a mensa, panino, riso/pasta semplice, affettati magri, tonno, uova, insalate trasportabili e preparazioni brevi.
@@ -46,6 +49,8 @@ Questo documento è la base funzionale dell’app. Le fotografie e la grafica de
 - ISS/Cuore, organizzazione della giornata e spuntini: https://www.cuore.iss.it/prevenzione/alimentazione
 - ISS, spuntini freschi e leggeri: https://www.iss.it/-/dalla-colazione-leggera-agli-spuntini-freschi-il-decalogo-iss-per-contrastare-il-caldo-con-una-corretta-alimentazione
 - Ministero della Salute, dieta mediterranea: https://www.salute.gov.it/new/it/tema/dieta-mediterranea/come-seguire-la-dieta-mediterranea/
+- NHS, spuntini più equilibrati: https://www.nhs.uk/healthier-families/food-facts/healthier-snacks/
+- CREA, porzione di riferimento dei fagioli cotti (150 g): https://www.alimentinutrizione.it/tabelle-nutrizionali/004125
 
 ## Tracciabilità D41–D44 v1.15.19
 

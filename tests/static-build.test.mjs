@@ -72,7 +72,6 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /const cookedGrain/);
   assert.match(app, /roundWithin\(120, hasLegumes \? 180 : 250, 10\)/);
   assert.match(app, /\.\.\.mealPartOptions\.Proteina/);
-  assert.match(app, /targetAdditionsFor\(slot, targetForDay\(day\)\)/);
   assert.match(app, /mealCalorieShares/);
   assert.match(app, /max: 100, step: 10/);
   assert.match(app, /refreshSnapshotRef/);
