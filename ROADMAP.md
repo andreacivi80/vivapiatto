@@ -2,6 +2,11 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
+## v1.19.62 — in verifica
+
+- [x] La modifica della grammatura nel collaudo pubblico usa un vero evento di digitazione del browser, non una modifica artificiale del DOM.
+- [x] Il controllo attende il salvataggio effettivo prima della ricarica e continua a bloccare la pubblicazione se il valore non persiste.
+
 ## v1.19.61 — pubblicata e verificata
 
 - [x] L'avvio del collaudo mobile concede fino a 30 secondi a Edge headless e, in caso di blocco reale, riporta stato del processo e profilo temporaneo invece di un errore generico.

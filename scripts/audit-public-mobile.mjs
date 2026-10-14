@@ -377,17 +377,17 @@ try {
     if (!input) return { found: false };
     const before = Number(input.value);
     const expected = before + 5;
-    const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
     input.focus();
-    input._valueTracker?.setValue(String(before));
-    setter.call(input, String(expected));
-    input.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertText', data: String(expected) }));
-    input.dispatchEvent(new Event('change', { bubbles: true }));
-    input.blur();
+    input.select();
     return { found: true, label: input.getAttribute('aria-label'), before, expected };
   })()`);
   if (!gramsEdit.found) throw new Error("Grammatura modificabile non trovata");
-  await wait(1000);
+  // Use a real browser text insertion instead of mutating the DOM value. This
+  // follows the same React input path as a person typing on the phone and makes
+  // the persistence check meaningful across React/browser upgrades.
+  await page.send("Input.insertText", { text: String(gramsEdit.expected) });
+  await evaluate(`document.activeElement?.blur()`);
+  await wait(2500);
   gramsEdit.afterEdit = await evaluate(`Number(document.querySelector('.meal-part input[type="number"]')?.value)`);
   await page.send("Page.reload", { ignoreCache: false });
   await wait(5000);
