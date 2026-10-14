@@ -2,12 +2,13 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.68 — verificata in locale, in pubblicazione
+## v1.19.68 — pubblicata e verificata
 
 - [x] Colazione automatica di Lavoro/Mensa limitata alle preparazioni da massimo tre minuti, lasciando frullati, pancake e toast nel ricettario e nella scelta libera.
 - [x] Prova mobile aggiunta per bloccare il ritorno di colazioni elaborate nella modalità Lavoro.
 - [x] Test completi e collaudo mobile: in Lavoro compare una colazione con fette biscottate, confettura e latte, senza frullato automatico.
-- [ ] Pubblicazione sullo stesso link e collaudo pubblico della versione esatta.
+- [x] Pubblicazione sullo stesso link e collaudo pubblico della versione esatta.
+- [x] Refresh automatico reale `1.19.67 → 1.19.68`: menu, latte modificato da 200 a 209 g e scroll a 900 px conservati, senza recupero o errori JavaScript.
 
 ## v1.19.67 — pubblicata e verificata
 
