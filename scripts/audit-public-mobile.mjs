@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const imageSettleTimeoutMs = 20_000;
 const packageFile = JSON.parse(
   readFileSync(new URL("../package.json", import.meta.url), "utf8"),
 );
@@ -113,7 +114,7 @@ try {
       return image.complete ? Promise.resolve() : new Promise((resolve) => {
         image.addEventListener('load', resolve, { once: true });
         image.addEventListener('error', resolve, { once: true });
-        setTimeout(resolve, 8000);
+        setTimeout(resolve, imageSettleTimeoutMs);
       });
     })
   )`);
@@ -597,7 +598,7 @@ try {
     return image.complete ? Promise.resolve() : new Promise((resolve) => {
       image.addEventListener('load', resolve, { once: true });
       image.addEventListener('error', resolve, { once: true });
-      setTimeout(resolve, 8000);
+      setTimeout(resolve, imageSettleTimeoutMs);
     });
   }))`);
   Object.assign(gelatoComposer, await evaluate(`(() => {
@@ -757,7 +758,7 @@ try {
       return photo.complete ? Promise.resolve() : new Promise((resolve) => {
         photo.addEventListener('load', resolve, { once: true });
         photo.addEventListener('error', resolve, { once: true });
-        setTimeout(resolve, 8000);
+        setTimeout(resolve, imageSettleTimeoutMs);
       });
     }));
   })()`);
@@ -787,7 +788,7 @@ try {
       return photo.complete ? Promise.resolve() : new Promise((resolve) => {
         photo.addEventListener('load', resolve, { once: true });
         photo.addEventListener('error', resolve, { once: true });
-        setTimeout(resolve, 8000);
+        setTimeout(resolve, imageSettleTimeoutMs);
       });
     }));
   })()`);

@@ -2,7 +2,12 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.62 — in verifica
+## v1.19.63 — in verifica
+
+- [x] Il collaudo attende fino a 20 secondi le fotografie visibili quando GitHub Pages consegna gli asset lentamente.
+- [x] Le immagini concluse con errore e quelle ancora pendenti restano condizioni bloccanti: l'attesa maggiore non nasconde difetti reali.
+
+## v1.19.62 — pubblicata e verificata localmente
 
 - [x] La modifica della grammatura nel collaudo pubblico usa un vero evento di digitazione del browser, non una modifica artificiale del DOM.
 - [x] Il controllo attende il salvataggio effettivo prima della ricarica e continua a bloccare la pubblicazione se il valore non persiste.
