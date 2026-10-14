@@ -1914,7 +1914,7 @@ const recipes: Recipe[] = [
     id: "toast",
     name: "Toast ricotta, uovo e pomodoro",
     kicker: "Croccante, proteico, veloce",
-    image: photo("toast"),
+    image: photo("recipe-toast-ricotta-egg-tomatoes-v11959"),
     time: 10,
     ingredients: [
       { food: "Pane integrale", grams: 90 },
@@ -2155,7 +2155,7 @@ const recipes: Recipe[] = [
     id: "lentil-quinoa",
     name: "Quinoa tiepida, lenticchie e kiwi",
     kicker: "Contrasto particolare, fibre e freschezza",
-    image: photo("farro"),
+    image: photo("recipe-quinoa-lentils-kiwi-v11959"),
     time: 16,
     ingredients: [
       { food: "Quinoa cotta", grams: 150 },

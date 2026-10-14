@@ -2,11 +2,17 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.58 — in verifica
+## v1.19.59 — in lavorazione
+
+- [x] Sostituite due immagini storiche non aderenti: toast ricotta-uovo-pomodoro e quinoa-lenticchie-kiwi ora mostrano esattamente gli ingredienti della ricetta.
+- [x] Prosegue l'audit visivo delle 17 ricette con asset storici, oltre ai controlli automatici di presenza, semantica e unicità.
+
+## v1.19.58 — pubblicata e verificata
 
 - [x] Lo stress test mobile seleziona obbligatoriamente la scheda Tavola Mia invece di una scheda Edge vuota.
 - [x] Il test attende il caricamento reale dell'interfaccia e delle foto dei componenti prima di misurare menu, scroll e immagini.
 - [x] Gli errori di caricamento riportano stato pagina, script e log recenti per distinguere un difetto dell'app da un bersaglio browser errato.
+- [x] Stress pubblico 390×844 completato sulla versione esatta: nessun errore JavaScript, nessuna schermata di recupero, nessun overflow o immagine rotta; flussi Oggi, Settimana, Ricette, alternative, spesa, extra, gelato, registrazione, componenti, piatto pronto, check-in e profilo tutti operativi.
 
 ## v1.19.57 — verificata
 

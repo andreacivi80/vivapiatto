@@ -2867,3 +2867,15 @@ test("v1.19.58 attaches the public audit to the real app and waits for images", 
   assert.match(audit, /querySelectorAll\('\.meal-part img'\)/);
   assert.match(audit, /photo[.]loading = 'eager'/);
 });
+
+test("v1.19.59 replaces the two remaining visibly mismatched legacy recipe photos", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const mappings = [
+    ["toast", "recipe-toast-ricotta-egg-tomatoes-v11959"],
+    ["lentil-quinoa", "recipe-quinoa-lentils-kiwi-v11959"],
+  ];
+  for (const [id, asset] of mappings) {
+    assert.match(source, new RegExp(`id: "${id}"[\\s\\S]{0,500}image: photo\\("${asset}"\\)`));
+    await access(new URL(`../public/food/${asset}.png`, import.meta.url));
+  }
+});
