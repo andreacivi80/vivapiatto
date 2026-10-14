@@ -2,7 +2,12 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.52 — in verifica
+## v1.19.53 — in verifica
+
+- [x] Bulgogi VisitKorea riallineato agli ingredienti effettivi: riso, manzo, carote, cipolla e spinaci.
+- [x] Rimossa dalla fotografia la zucchina non presente nella ricetta e mantenuta la ciotola intera nelle card mobili.
+
+## v1.19.52 — verificata
 
 - [x] Kashiwa-meshi MAFF riceve una fotografia finale autentica del riso condito con pollo, carote e funghi.
 - [x] Eliminato il precedente riuso della foto generica del solo riso; ciotola completa e margini sicuri per le card mobili.

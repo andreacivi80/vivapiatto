@@ -7571,7 +7571,7 @@ const verifiedWorldRecipeExpansion: Recipe[] = [
     kicker: "Ricetta coreana verificata · VisitKorea",
     course: "Piatto unico",
     cuisine: "Asiatico",
-    image: photo("recipe-bulgogi-rice-v1196"),
+    image: photo("recipe-asian-bulgogi-v11953"),
     time: 30,
     ingredients: [
       { food: "Riso basmati cotto", grams: 150 },

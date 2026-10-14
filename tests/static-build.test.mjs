@@ -1354,6 +1354,22 @@ test("v1.19.52 gives verified Kashiwa-meshi a faithful complete-dish photograph"
   await access(new URL("../public/food/recipe-asian-kashiwa-meshi-v11952.png", import.meta.url));
 });
 
+test("v1.19.53 aligns the verified Bulgogi photograph with its actual ingredients", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const recipeStart = source.indexOf('id: "catalog-verified-bulgogi-rice"');
+  const recipeEnd = source.indexOf('id: "catalog-verified-keihan"');
+  const recipe = source.slice(recipeStart, recipeEnd);
+  assert.ok(recipeStart > 0 && recipeEnd > recipeStart);
+  assert.match(recipe, /recipe-asian-bulgogi-v11953/);
+  assert.match(recipe, /Riso basmati cotto/);
+  assert.match(recipe, /Bistecca di manzo/);
+  assert.match(recipe, /Carote cotte bollite/);
+  assert.match(recipe, /Cipolle crude/);
+  assert.match(recipe, /Spinaci/);
+  assert.match(recipe, /VisitKorea/);
+  await access(new URL("../public/food/recipe-asian-bulgogi-v11953.png", import.meta.url));
+});
+
 test("v1.16.89 validates storage before creating a leftovers recipe", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /Crea una ricetta con gli avanzi/);
@@ -2768,7 +2784,7 @@ test("v1.19.6 audits a faithful final photo for every real recipe", async () => 
     readFile(new URL("../package.json", import.meta.url), "utf8"),
   ]);
   const photos = [
-    "recipe-bulgogi-rice-v1196",
+    "recipe-asian-bulgogi-v11953",
     "recipe-lentil-pumpkin-bulgur-v1196",
     "recipe-salmon-quinoa-asparagus-v1196",
     "recipe-quinoa-feta-beet-v1196",
