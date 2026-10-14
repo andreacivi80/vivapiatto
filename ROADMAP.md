@@ -2,7 +2,12 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.63 — in verifica
+## v1.19.64 — in verifica
+
+- [x] Il timeout delle fotografie viene iniettato esplicitamente nelle quattro valutazioni eseguite dentro il browser.
+- [x] Un test permanente impedisce che una variabile Node non disponibile nella pagina interrompa nuovamente il collaudo.
+
+## v1.19.63 — pubblicata, collaudo sostituito
 
 - [x] Il collaudo attende fino a 20 secondi le fotografie visibili quando GitHub Pages consegna gli asset lentamente.
 - [x] Le immagini concluse con errore e quelle ancora pendenti restano condizioni bloccanti: l'attesa maggiore non nasconde difetti reali.

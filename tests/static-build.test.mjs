@@ -2905,7 +2905,13 @@ test("v1.19.62 verifies gram persistence through a real browser input event", as
 test("v1.19.63 tolerates a slow Pages image CDN without ignoring broken photos", async () => {
   const audit = await readFile(new URL("../scripts/audit-public-mobile.mjs", import.meta.url), "utf8");
   assert.match(audit, /const imageSettleTimeoutMs = 20_000/);
-  assert.match(audit, /setTimeout\(resolve, imageSettleTimeoutMs\)/);
+  assert.match(audit, /setTimeout\(resolve, \$\{imageSettleTimeoutMs\}\)/);
   assert.match(audit, /brokenViewportImages/);
   assert.match(audit, /pendingViewportImages/);
+});
+
+test("v1.19.64 injects the image timeout into every browser evaluation", async () => {
+  const audit = await readFile(new URL("../scripts/audit-public-mobile.mjs", import.meta.url), "utf8");
+  assert.equal((audit.match(/setTimeout\(resolve, \$\{imageSettleTimeoutMs\}\)/g) || []).length, 4);
+  assert.doesNotMatch(audit, /setTimeout\(resolve, imageSettleTimeoutMs\)/);
 });

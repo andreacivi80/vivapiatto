@@ -114,7 +114,7 @@ try {
       return image.complete ? Promise.resolve() : new Promise((resolve) => {
         image.addEventListener('load', resolve, { once: true });
         image.addEventListener('error', resolve, { once: true });
-        setTimeout(resolve, imageSettleTimeoutMs);
+        setTimeout(resolve, ${imageSettleTimeoutMs});
       });
     })
   )`);
@@ -598,7 +598,7 @@ try {
     return image.complete ? Promise.resolve() : new Promise((resolve) => {
       image.addEventListener('load', resolve, { once: true });
       image.addEventListener('error', resolve, { once: true });
-      setTimeout(resolve, imageSettleTimeoutMs);
+      setTimeout(resolve, ${imageSettleTimeoutMs});
     });
   }))`);
   Object.assign(gelatoComposer, await evaluate(`(() => {
@@ -758,7 +758,7 @@ try {
       return photo.complete ? Promise.resolve() : new Promise((resolve) => {
         photo.addEventListener('load', resolve, { once: true });
         photo.addEventListener('error', resolve, { once: true });
-        setTimeout(resolve, imageSettleTimeoutMs);
+        setTimeout(resolve, ${imageSettleTimeoutMs});
       });
     }));
   })()`);
@@ -788,7 +788,7 @@ try {
       return photo.complete ? Promise.resolve() : new Promise((resolve) => {
         photo.addEventListener('load', resolve, { once: true });
         photo.addEventListener('error', resolve, { once: true });
-        setTimeout(resolve, imageSettleTimeoutMs);
+        setTimeout(resolve, ${imageSettleTimeoutMs});
       });
     }));
   })()`);
