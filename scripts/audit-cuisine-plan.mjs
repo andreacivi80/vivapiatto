@@ -76,6 +76,32 @@ try {
     await wait(250);
   }
   if (!ready) throw new Error("Piano non caricato");
+  const readVisibleWeek = async () => {
+    const weekOpened = await evaluate(`(() => {
+      const button = [...document.querySelectorAll('button')]
+        .find((item) => item.textContent?.includes('Settimana'));
+      button?.click();
+      return Boolean(button);
+    })()`);
+    if (!weekOpened) throw new Error("Vista Settimana non disponibile");
+    await wait(500);
+    const mainMeals = await evaluate(`[...document.querySelectorAll('.week-day')]
+      .flatMap((day, dayIndex) => [...day.querySelectorAll('.week-meal-row')]
+        .filter((_, slot) => slot === 2 || slot === 4)
+        .map((row, index) => [
+          dayIndex + '-' + (index === 0 ? 2 : 4),
+          row.dataset.recipeId,
+          row.dataset.cuisine,
+          row.dataset.workFriendly,
+        ]))`);
+    await evaluate(`(() => {
+      [...document.querySelectorAll('button')]
+        .find((item) => item.textContent?.includes('Oggi'))?.click();
+    })()`);
+    await wait(300);
+    return mainMeals;
+  };
+  const initialItalian = await readVisibleWeek();
   const setStyle = async (style) => {
     const changed = await evaluate(`(() => {
       const select = document.querySelector('.cuisine-picker select');
@@ -86,22 +112,18 @@ try {
     })()`);
     if (!changed) throw new Error(`Stile ${style} non disponibile`);
     await wait(1500);
-    return evaluate(`(() => {
-      const data = JSON.parse(localStorage.getItem('vivapiatto-v1') || '{}');
-      const selected = Object.entries(data.choices || {})
-        .filter(([key]) => /^[0-6]-(2|4)$/.test(key))
-        .sort(([a], [b]) => a.localeCompare(b));
-      return { style: document.querySelector('.cuisine-picker select')?.value, mainMeals: selected };
-    })()`);
+    const mainMeals = await readVisibleWeek();
+    return { style, mainMeals };
   };
-  const italian = await setStyle("Italiano");
   const asian = await setStyle("Asiatico");
+  const italian = await setStyle("Italiano");
   const documented = new Set([
     "asian-oyakodon-authentic", "asian-bibimbap-authentic", "asian-negima-nabe-authentic",
     "asian-japchae-authentic", "asian-phat-thai-authentic", "catalog-verified-bulgogi-rice",
     "catalog-verified-keihan", "catalog-verified-kashiwa-meshi",
   ]);
   const report = {
+    initialItalian,
     italian,
     asian,
     asianDocumentedCount: asian.mainMeals.filter(([, id]) => documented.has(id)).length,
@@ -109,7 +131,17 @@ try {
     unsafeWorkLunches: asian.mainMeals.filter(([key, id]) => key.endsWith("-2") && id === "sweet-ricotta"),
   };
   console.log(JSON.stringify(report));
-  if (italian.mainMeals.length < 5 || asian.mainMeals.length !== 14 || asian.style !== "Asiatico" || report.unsafeWorkLunches.length) process.exitCode = 1;
+  const italianCuisine = ([, , cuisine]) => cuisine === "Italiano" || cuisine === "Mediterraneo";
+  const practicalWorkLunch = ([key, , , workFriendly]) =>
+    !key.endsWith("-2") || Number(key.split("-")[0]) >= 5 || workFriendly === "true";
+  if (
+    initialItalian.length !== 14 || !initialItalian.every(italianCuisine) ||
+    !initialItalian.every(practicalWorkLunch) ||
+    italian.mainMeals.length !== 14 || !italian.mainMeals.every(italianCuisine) ||
+    !italian.mainMeals.every(practicalWorkLunch) ||
+    asian.mainMeals.length !== 14 || asian.style !== "Asiatico" ||
+    report.unsafeWorkLunches.length
+  ) process.exitCode = 1;
   page.close();
   browser.close();
 } finally {

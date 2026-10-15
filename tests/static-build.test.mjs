@@ -2072,7 +2072,7 @@ test("v1.18.39 updates daily totals immediately after every visible weight chang
 test("v1.18.40 builds the first visible week from the same balanced protein rotation", async () => {
   const source = await readFile("app/FoodPlanner.tsx", "utf8");
   assert.match(source, /const defaultWeeklyMainIds = \(\(\) => \{/);
-  assert.match(source, /return WEEKLY_MAIN_ROTATION\.map\(\(family, index\) => \{/);
+  assert.match(source, /return weeklyFamilies\.map\(\(family, index\) => \{/);
   assert.match(source, /recipeProteinFamily\(recipe\) === family/);
   assert.match(source, /index % 2 === 0 \? left\.time - right\.time : right\.time - left\.time/);
   for (let index = 0; index < 14; index += 1) {
@@ -3047,4 +3047,16 @@ test("v1.19.90 verifies the public manifest and HTML asset after deployment", as
   assert.match(verifier, /manifest\.version !== packageFile\.version/);
   assert.match(verifier, /htmlScript !== manifest\.script/);
   assert.match(verifier, /method: "HEAD"/);
+});
+
+test("v1.19.91 starts with Italian meals and portable work lunches", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const photo = await readFile(new URL("../public/food/recipe-work-caprese-v11991.png", import.meta.url));
+  assert.match(source, /id: "work-caprese"/);
+  assert.match(source, /name: "Panino integrale caprese"/);
+  assert.match(source, /defaultItalianCuisineRank\(left\) - defaultItalianCuisineRank\(right\)/);
+  assert.match(source, /const practicalPool = slot === 2 && dayIndex < 5/);
+  assert.match(source, /const dayLunches = day >= 5/);
+  assert.match(source, /data-work-friendly=\{isWorkFriendly\(r\) \? "true" : "false"\}/);
+  assert.ok(photo.length > 100_000);
 });

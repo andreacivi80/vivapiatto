@@ -3863,6 +3863,28 @@ const portableRecipes: Recipe[] = [
     alternatives: ["Riso al pomodoro mantenendo una quota simile"],
   },
   {
+    id: "work-caprese",
+    name: "Panino integrale caprese",
+    kicker: "Mozzarella, pomodorini e basilico: pronto da portare al lavoro",
+    course: "Piatto unico",
+    cuisine: "Italiano",
+    image: photo("recipe-work-caprese-v11991"),
+    time: 5,
+    ingredients: [
+      { food: "Pane integrale", grams: 100 },
+      { food: "Mozzarella vaccina", grams: 100 },
+      { food: "Pomodorini", grams: 120 },
+      { food: "Basilico fresco", grams: 5 },
+      { food: "Olio extravergine", grams: 5 },
+    ],
+    steps: [
+      "Lava e asciuga i pomodorini, poi tagliali a metà. Taglia il pane e scola bene la mozzarella.",
+      "Farcisci il pane con mozzarella, pomodorini e qualche foglia di basilico lavata; distribuisci i 5 g di olio pesato.",
+      "Per portarlo al lavoro, chiudilo in un contenitore e mantienilo al fresco in frigorifero o in borsa termica con un panetto refrigerante fino al consumo.",
+    ],
+    alternatives: ["Mozzarella light al posto della mozzarella vaccina", "Pomodoro a fette al posto dei pomodorini"],
+  },
+  {
     id: "work-turkey",
     name: "Panino con fesa di tacchino e pomodorini",
     kicker: "Panino completo, distinto dalla fesa servita da sola",
@@ -10138,9 +10160,35 @@ const automaticMultiLegumePenalty = (recipe: Recipe) =>
   recipe.ingredients.filter((item) =>
     /ceci|lenticchie|fagioli(?!ni)|piselli|fave|edamame|lupini|cicerchie/i.test(item.food),
   ).length >= 3 ? 240 : 0;
+const defaultItalianCuisineRank = (recipe: Recipe) =>
+  recipe.cuisine === "Italiano" ? 0 :
+    !recipe.cuisine || recipe.cuisine === "Mediterraneo" ? 1 : 2;
+const isWorkFriendlyRecipe = (recipe: Recipe) =>
+  portableRecipes.some((portable) => portable.id === recipe.id) ||
+  (recipe.time <= 35 &&
+    recipe.alternatives.some((text) => /trasport|schiscetta|lavoro|preparabile la sera|buona anche fredda/i.test(text)) &&
+    !recipe.alternatives.some((text) => /pasto da casa|preferibile a casa/i.test(text)));
 const defaultWeeklyMainIds = (() => {
   const used = new Set<string>();
-  return WEEKLY_MAIN_ROTATION.map((family, index) => {
+  const weeklyFamilies = [...WEEKLY_MAIN_ROTATION];
+  for (let day = 0; day < 5; day += 1) {
+    const lunchIndex = day * 2;
+    const dinnerIndex = lunchIndex + 1;
+    const hasPracticalItalianLunch = (family: WeeklyProteinFamily) =>
+      allRecipes.some((recipe) =>
+        recipeProteinFamily(recipe) === family &&
+        defaultItalianCuisineRank(recipe) <= 1 &&
+        isWorkFriendlyRecipe(recipe),
+      );
+    if (
+      !hasPracticalItalianLunch(weeklyFamilies[lunchIndex]) &&
+      hasPracticalItalianLunch(weeklyFamilies[dinnerIndex])
+    ) {
+      [weeklyFamilies[lunchIndex], weeklyFamilies[dinnerIndex]] =
+        [weeklyFamilies[dinnerIndex], weeklyFamilies[lunchIndex]];
+    }
+  }
+  return weeklyFamilies.map((family, index) => {
     const candidates = allRecipes
       .filter(
         (recipe) =>
@@ -10149,7 +10197,11 @@ const defaultWeeklyMainIds = (() => {
           recipeProteinFamily(recipe) === family,
       )
       .sort((left, right) =>
-        automaticMultiLegumePenalty(left) - automaticMultiLegumePenalty(right) +
+        defaultItalianCuisineRank(left) - defaultItalianCuisineRank(right) ||
+        (index < 10 && index % 2 === 0
+          ? Number(!isWorkFriendlyRecipe(left)) - Number(!isWorkFriendlyRecipe(right))
+          : 0) ||
+        automaticMultiLegumePenalty(left) - automaticMultiLegumePenalty(right) ||
         (index % 2 === 0 ? left.time - right.time : right.time - left.time),
       );
     const selected = candidates.find((recipe) => !used.has(recipe.id)) || candidates[0];
@@ -10325,8 +10377,12 @@ const seasonalChoicesForNewPlan = () => {
       usedMains.add(original.id);
       return;
     }
-    const unused = pool.filter((recipe) => !usedMains.has(recipe.id));
-    const selected = [...(unused.length ? unused : pool)].sort((left, right) => {
+    const practicalPool = slot === 2 && dayIndex < 5
+      ? pool.filter(isWorkFriendlyRecipe)
+      : [];
+    const candidates = practicalPool.length ? practicalPool : pool;
+    const unused = candidates.filter((recipe) => !usedMains.has(recipe.id));
+    const selected = [...(unused.length ? unused : candidates)].sort((left, right) => {
       const score = (recipe: Recipe) =>
         Math.abs(calc(recipe.ingredients).kcal - calc(original.ingredients).kcal) +
         Math.abs(recipe.time - original.time) * 2 +
@@ -11199,11 +11255,7 @@ export function FoodPlanner() {
   );
   const compatibleWithSlot = (r: Recipe) =>
     !swapTarget || fitsSlot(r, swapTarget.slot);
-  const isWorkFriendly = (r: Recipe) =>
-    portableRecipes.some((x) => x.id === r.id) ||
-    (r.time <= 35 &&
-      r.alternatives.some((text) => /trasport|schiscetta|lavoro|preparabile la sera|buona anche fredda/i.test(text)) &&
-      !r.alternatives.some((text) => /pasto da casa|preferibile a casa/i.test(text)));
+  const isWorkFriendly = isWorkFriendlyRecipe;
   const uniqueRecipes = (recipes: Recipe[]) =>
     recipes.filter(
       (recipe, index, list) =>
@@ -12581,6 +12633,9 @@ export function FoodPlanner() {
       profileDays.forEach((day) => {
         const profileTarget = day === dayIndex ? plannedCalories : calories;
         const offset = profileSeed + day;
+        const dayLunches = day >= 5 && ["Lavoro", "Mensa"].includes(dayContext)
+          ? homeMains.length ? homeMains : mains
+          : lunches;
         const breakfastPool =
           plannedWholeEggBreakfasts >= 1
             ? breakfasts.filter((recipe) => !hasWholeEgg(recipe.ingredients))
@@ -12621,9 +12676,19 @@ export function FoodPlanner() {
           offset + 1,
           preference,
         );
+        let lunchFamily = WEEKLY_MAIN_ROTATION[day * 2];
+        let dinnerFamily = WEEKLY_MAIN_ROTATION[day * 2 + 1];
+        if (
+          ["Lavoro", "Mensa"].includes(dayContext) &&
+          !dayLunches.some((recipe) => recipeProteinFamily(recipe) === lunchFamily) &&
+          dayLunches.some((recipe) => recipeProteinFamily(recipe) === dinnerFamily) &&
+          dinners.some((recipe) => recipeProteinFamily(recipe) === lunchFamily)
+        ) {
+          [lunchFamily, dinnerFamily] = [dinnerFamily, lunchFamily];
+        }
         const lunch = chooseMain(
-          lunches,
-          WEEKLY_MAIN_ROTATION[day * 2],
+          dayLunches,
+          lunchFamily,
           2,
           profileTarget * shares[2],
           offset,
@@ -12631,7 +12696,7 @@ export function FoodPlanner() {
         const dinnerPool = dinners.filter((recipe) => recipeProteinFamily(recipe) !== recipeProteinFamily(lunch));
         const dinner = chooseMain(
           dinnerPool.length ? dinnerPool : dinners,
-          WEEKLY_MAIN_ROTATION[day * 2 + 1],
+          dinnerFamily,
           4,
           profileTarget * shares[4],
           offset + 1,
@@ -14814,7 +14879,7 @@ export function FoodPlanner() {
                     const excludedForCurrentProfile = mealContainsExcludedFood(key, r);
                     const outsideCurrentProfile = !excludedForCurrentProfile && !mealMatchesProfile(key, r);
                     return (
-                      <div className={`week-meal-row ${excludedForCurrentProfile ? "excluded" : outsideCurrentProfile ? "profile-mismatch" : ""}`} key={key} data-recipe-id={r.id} data-completed={completed[key] ? "true" : "false"}>
+                      <div className={`week-meal-row ${excludedForCurrentProfile ? "excluded" : outsideCurrentProfile ? "profile-mismatch" : ""}`} key={key} data-recipe-id={r.id} data-cuisine={recipeCuisine(r)} data-work-friendly={isWorkFriendly(r) ? "true" : "false"} data-completed={completed[key] ? "true" : "false"}>
                         <button
                           className="week-meal"
                           onClick={() => {
