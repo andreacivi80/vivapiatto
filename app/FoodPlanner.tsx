@@ -3451,8 +3451,8 @@ const matrixMainRecipes: Recipe[] = [
   },
   {
     id: "matrix-p42-basmati-cod-spinach", name: "Riso basmati con merluzzo, spinaci e carote", kicker: "Pranzo completo di pesce · matrice P42", course: "Piatto completo", cuisine: "Italiano", image: photo("recipe-p42-basmati-cod-spinach-v11513"), time: 30,
-    ingredients: [{ food: "Riso basmati secco", grams: 70 }, { food: "Merluzzo cotto", grams: 150 }, { food: "Spinaci", grams: 150 }, { food: "Carote cotte bollite", grams: 100 }, { food: "Olio extravergine", grams: 10 }],
-    parts: [{ category: "Carboidrato", food: "Riso basmati secco", grams: 70, label: "Riso basmati · peso a crudo", image: photo("part-basmati-dry-v11650") }, { category: "Proteina", food: "Merluzzo cotto", grams: 150, label: "Merluzzo cotto al vapore", image: photo("part-cod-steamed-v8") }, { category: "Contorno", food: "Spinaci", grams: 150, label: "Spinaci cotti", image: photo("part-spinach-v7") }, { category: "Contorno", food: "Carote cotte bollite", grams: 100, label: "Carote cotte bollite", image: photo("part-carrots-cooked-v11512") }, { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") }],
+    ingredients: [{ food: "Riso basmati secco", grams: 70 }, { food: "Merluzzo cotto", grams: 150 }, { food: "Spinaci cotti", grams: 150 }, { food: "Carote cotte bollite", grams: 100 }, { food: "Olio extravergine", grams: 10 }],
+    parts: [{ category: "Carboidrato", food: "Riso basmati secco", grams: 70, label: "Riso basmati · peso a crudo", image: photo("part-basmati-dry-v11650") }, { category: "Proteina", food: "Merluzzo cotto", grams: 150, label: "Merluzzo cotto al vapore", image: photo("part-cod-steamed-v8") }, { category: "Contorno", food: "Spinaci cotti", grams: 150, label: "Spinaci cotti · 150 g", image: photo("part-spinach-cooked-v11995") }, { category: "Contorno", food: "Carote cotte bollite", grams: 100, label: "Carote cotte bollite", image: photo("part-carrots-cooked-v11512") }, { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") }],
     steps: ["Sciacqua il riso e cuocilo secondo confezione, quindi scolalo o lascialo assorbire completamente.", "Cuoci il merluzzo al vapore fino a completa cottura; cuoci separatamente spinaci e carote senza grassi aggiunti.", "Servi le componenti distinguibili e condisci con 10 g di olio pesato, curcuma, zenzero e limone."], alternatives: ["Trasportabile in contenitore refrigerato", "Contiene pesce", "Ogni componente resta sostituibile separatamente"]
   },
   {
@@ -4205,7 +4205,7 @@ const balancedDinnerRecipes: Recipe[] = [
     ingredients: [
       { food: "Gnocchi di patate", grams: 150 },
       { food: "Salmone cotto", grams: 150 },
-      { food: "Spinaci", grams: 200 },
+      { food: "Spinaci cotti", grams: 200 },
       { food: "Olio extravergine", grams: 5 },
     ],
     parts: [
@@ -4225,10 +4225,10 @@ const balancedDinnerRecipes: Recipe[] = [
       },
       {
         category: "Contorno",
-        food: "Spinaci",
+        food: "Spinaci cotti",
         grams: 200,
         label: "Spinaci cotti",
-        image: photo("part-spinach-v7"),
+        image: photo("part-spinach-cooked-v11995"),
       },
       {
         category: "Extra",
@@ -4571,7 +4571,7 @@ const balancedDinnerRecipes: Recipe[] = [
     ingredients: [
       { food: "Vermicelli di patata dolce cotti", grams: 180 },
       { food: "Bistecca di manzo · peso a crudo", grams: 100 },
-      { food: "Spinaci", grams: 80 },
+      { food: "Spinaci cotti", grams: 80 },
       { food: "Carote crude", grams: 60 },
       { food: "Funghi", grams: 60 },
       { food: "Salsa di soia", grams: 12 },
@@ -4581,7 +4581,7 @@ const balancedDinnerRecipes: Recipe[] = [
     parts: [
       { category: "Carboidrato", food: "Vermicelli di patata dolce cotti", grams: 180, label: "Vermicelli traslucidi cotti · 180 g", image: photo("part-sweet-potato-noodles-v11652") },
       { category: "Proteina", food: "Bistecca di manzo · peso a crudo", grams: 100, label: "Manzo a striscioline · 100 g a crudo", image: photo("part-steak-beef-v114") },
-      { category: "Contorno", food: "Spinaci", grams: 80, label: "Spinaci cotti · 80 g", image: photo("part-spinach-v7") },
+      { category: "Contorno", food: "Spinaci cotti", grams: 80, label: "Spinaci cotti · 80 g", image: photo("part-spinach-cooked-v11995") },
       { category: "Contorno", food: "Carote crude", grams: 60, label: "Carote a julienne · 60 g", image: photo("part-carrots-raw-v11512") },
       { category: "Contorno", food: "Funghi", grams: 60, label: "Funghi shiitake · 60 g", image: photo("part-mushrooms-raw-v11663") },
       { category: "Extra", food: "Semi di sesamo", grams: 5, label: "Sesamo · 5 g", image: photo("part-sesame-v11512") },
@@ -5133,8 +5133,8 @@ const attachmentDinnersB: Recipe[] = [
     id: "matrix-d20-omelette-con-funghi-spinaci-e-ricotta",
     name: "Omelette con funghi, spinaci e ricotta", kicker: "Cena completa · matrice D20", course: "Piatto unico", cuisine: "Italiano", kind: "combination",
     image: photo("recipe-d20-omelette-mushrooms-spinach-ricotta-v11872"), time: 20,
-    ingredients: [{ food: "Uova strapazzate o in frittata", grams: 100 }, { food: "Funghi", grams: 125 }, { food: "Spinaci", grams: 125 }, { food: "Ricotta vaccina", grams: 50 }, { food: "Pane di segale", grams: 40 }, { food: "Olio extravergine", grams: 10 }],
-    parts: [{ category: "Proteina", food: "Uova strapazzate o in frittata", grams: 100, label: "Omelette · 2 uova", image: photo("part-eggs-scrambled-v1156") }, { category: "Contorno", food: "Funghi", grams: 125, label: "Funghi cotti · 125 g", image: photo("part-mushrooms-raw-v11663") }, { category: "Contorno", food: "Spinaci", grams: 125, label: "Spinaci cotti · 125 g", image: photo("part-spinach-v7") }, { category: "Latticino", food: "Ricotta vaccina", grams: 50, label: "Ricotta · 50 g", image: photo("part-ricotta-v7") }, { category: "Carboidrato", food: "Pane di segale", grams: 40, label: "Pane di segale · 40 g", image: photo("part-bread-rye-v1156") }, { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO complessivo · 10 g", image: photo("part-olive-oil-v8") }],
+    ingredients: [{ food: "Uova strapazzate o in frittata", grams: 100 }, { food: "Funghi", grams: 125 }, { food: "Spinaci cotti", grams: 125 }, { food: "Ricotta vaccina", grams: 50 }, { food: "Pane di segale", grams: 40 }, { food: "Olio extravergine", grams: 10 }],
+    parts: [{ category: "Proteina", food: "Uova strapazzate o in frittata", grams: 100, label: "Omelette · 2 uova", image: photo("part-eggs-scrambled-v1156") }, { category: "Contorno", food: "Funghi", grams: 125, label: "Funghi cotti · 125 g", image: photo("part-mushrooms-raw-v11663") }, { category: "Contorno", food: "Spinaci cotti", grams: 125, label: "Spinaci cotti · 125 g", image: photo("part-spinach-cooked-v11995") }, { category: "Latticino", food: "Ricotta vaccina", grams: 50, label: "Ricotta · 50 g", image: photo("part-ricotta-v7") }, { category: "Carboidrato", food: "Pane di segale", grams: 40, label: "Pane di segale · 40 g", image: photo("part-bread-rye-v1156") }, { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO complessivo · 10 g", image: photo("part-olive-oil-v8") }],
     steps: ["Cuoci funghi e spinaci in padella antiaderente finché perdono l'acqua in eccesso.","Aggiungi due uova sbattute, completa con ricotta e cuoci con coperchio fino al centro ben rappreso.","Servi con pane e usa complessivamente 10 g di olio."],
     alternatives: ["Ogni componente può essere sostituito separatamente", "Porzioni orientative per un adulto sano", "Pesi e stato di cottura sono indicati in ogni componente"],
   },
@@ -7001,6 +7001,7 @@ const seasonalMonths: Record<string, number[]> = {
   "Pomodorini": [6, 7, 8, 9, 10],
   "Rucola": [4, 5, 6, 7, 8, 9, 10, 11],
   "Spinaci": [9, 10, 11, 12, 1, 2, 3, 4, 5],
+  "Spinaci cotti": [9, 10, 11, 12, 1, 2, 3, 4, 5],
   Zucca: [8, 9, 10, 11, 12, 1, 2, 3],
   Zucchine: [5, 6, 7, 8, 9],
   Fagiolini: [5, 6, 7, 8, 9],

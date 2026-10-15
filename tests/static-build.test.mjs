@@ -3073,6 +3073,22 @@ test("v1.19.97 treats spring onions as vegetables rather than chicken", async ()
   assert.match(source, /asian-dondoroke-tofu-rice/);
 });
 
+test("v1.19.98 uses cooked spinach nutrition and photograph when the recipe says cooked", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  for (const id of [
+    "matrix-p42-basmati-cod-spinach",
+    "dinner-three-gnocchi-salmon",
+    "asian-japchae-authentic",
+    "matrix-d20-omelette-con-funghi-spinaci-e-ricotta",
+  ]) {
+    const block = source.match(new RegExp(`id: "${id}"[\\s\\S]*?steps:`))?.[0];
+    assert.ok(block, `${id}: ricetta assente`);
+    assert.match(block, /food: "Spinaci cotti"/);
+    assert.match(block, /part-spinach-cooked-v11995/);
+  }
+  assert.match(source, /"Spinaci cotti": \[9, 10, 11, 12, 1, 2, 3, 4, 5\]/);
+});
+
 test("v1.19.86 separates recipe provenance from ingredient nutrition data", async () => {
   const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(source, /const recipeSourceKind = \(recipe: Recipe\) => \{/);
