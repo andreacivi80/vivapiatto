@@ -2,12 +2,20 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.71 — verificata in locale, in pubblicazione
+## v1.19.72 — verificata in locale, in pubblicazione
+
+- [x] Il filtro glutine esclude l'avena generica, compresi fiocchi e bevanda, perché senza certificazione può essere contaminata.
+- [x] La verifica allergeni unisce la dichiarazione della ricetta al controllo dei singoli ingredienti, impedendo che un elenco incompleto renda eleggibili pane e pasta.
+- [x] Nuova colazione reale da lavoro senza cereali: yogurt, banana, noci e miele, due minuti, componenti modificabili e foto finale dedicata generata dalla ricetta.
+- [x] Il collaudo mobile include l'avena nel filtro, verifica 35/35 pasti e conserva il pasto registrato; 206 test, TypeScript e prova mobile locale passati.
+- [ ] Pubblicazione sul link unico e collaudo mobile pubblico della versione esatta.
+
+## v1.19.71 — pubblicata; lacuna individuata dal collaudo rafforzato
 
 - [x] Agli spuntini con biscotti o pane non vengono più aggiunti anche cracker per far salire le calorie: una quota di noci è più coerente e resta soggetta ad allergie e preferenze.
 - [x] Il collaudo mobile registra un pasto prima del cambio allergia e ne verifica nome e stato dopo il ricalcolo della settimana.
 - [x] 206 test, TypeScript e collaudo mobile locale superati: spuntino senza doppio cereale, pasto registrato preservato, nessun errore JavaScript.
-- [ ] Pubblicazione sullo stesso link e collaudo mobile pubblico della versione esatta.
+- [x] Pubblicazione sullo stesso link: spuntino e pasto registrato verificati; il test pubblico rafforzato ha rilevato avena con il filtro glutine e ha aperto la correzione della 1.19.72.
 
 ## v1.19.70 — pubblicata e verificata
 

@@ -2835,6 +2835,33 @@ const simpleBreakfasts: Recipe[] = [
     ],
     alternatives: ["Ricotta al posto del burro", "Yogurt al posto del latte"],
   },
+  {
+    id: "breakfast-yogurt-banana-walnuts",
+    name: "Yogurt greco con banana, noci e miele",
+    kicker: "Colazione pronta in due minuti, anche da portare al lavoro",
+    course: "Colazione",
+    cuisine: "Italiano",
+    image: photo("recipe-breakfast-yogurt-banana-walnuts-v11972"),
+    time: 2,
+    ingredients: [
+      { food: "Yogurt greco 2%", grams: 170 },
+      { food: "Banana", grams: 150 },
+      { food: "Noci", grams: 25 },
+      { food: "Miele", grams: 10 },
+    ],
+    parts: [
+      { category: "Latticino", food: "Yogurt greco 2%", grams: 170, label: "Yogurt greco", image: photo("part-greek-yogurt-2-v11663") },
+      { category: "Frutta", food: "Banana", grams: 150, label: "Banana", image: photo("part-banana-v7") },
+      { category: "Extra", food: "Noci", grams: 25, label: "Noci", image: photo("walnuts-20g-v5") },
+      { category: "Extra", food: "Miele", grams: 10, label: "Miele", image: photo("part-honey-v7") },
+    ],
+    steps: [
+      "Lava le mani, pesa 170 g di yogurt e versalo in una ciotola o in un contenitore da portare via.",
+      "Sbuccia una banana, tagliala a rondelle e aggiungila allo yogurt.",
+      "Pesa 25 g di noci, spezzettale e completa con 10 g di miele. Se prepari in anticipo, conserva lo yogurt refrigerato e unisci banana e noci al momento.",
+    ],
+    alternatives: ["Pera al posto della banana", "Senza miele se preferisci meno dolce", "Contiene latte e frutta a guscio; verifica le etichette dei prodotti"],
+  },
 ];
 simpleBreakfasts.forEach((recipe) => (recipe.kind = "combination"));
 const matrixBreakfasts: Recipe[] = [
@@ -9417,7 +9444,7 @@ const attachmentMainsP35P40: Recipe[] = [
 const inferTextAllergens = (textValue: string) => {
   const text = textValue.toLowerCase();
   const rules: Array<[string, RegExp]> = [
-    ["Glutine", /pasta|pane|farro|orzo|bulgur|cous cous|cracker|fette biscottate|biscott|wafer|muesli|frumento|segale|grissini/],
+    ["Glutine", /pasta|pane|farro|orzo|bulgur|cous cous|cracker|fette biscottate|biscott|wafer|muesli|frumento|segale|grissini|avena/],
     ["Latte", /latte|yogurt|skyr|kefir|ricotta|feta|mozzarella|crescenza|scamorza|provolone|grana|parmigiano|burro/],
     ["Uova", /uov|albume/],
     ["Pesce", /salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|rombo/],
@@ -10818,11 +10845,13 @@ export function FoodPlanner() {
       .flatMap((group) => groupFoods[group] || []),
   ];
   const recipeAllergens = (recipe: Recipe) =>
-    recipe.allergens?.length
-      ? recipe.allergens
-      : Object.entries(groupFoods)
-          .filter(([, members]) => recipe.ingredients.some((ingredient) => members.includes(ingredient.food)))
-          .map(([group]) => group);
+    [...new Set([
+      ...(recipe.allergens || []),
+      ...Object.entries(groupFoods)
+        .filter(([, members]) => recipe.ingredients.some((ingredient) => members.includes(ingredient.food)))
+        .map(([group]) => group),
+      ...inferRecipeAllergens(recipe),
+    ])];
   const blockedAllergenGroups = new Set([
     ...allergyGroups,
     ...intoleranceGroups,
@@ -12135,7 +12164,8 @@ export function FoodPlanner() {
       !lunches.length ||
       !dinners.length
     ) {
-      setReplanNote("Nessun menu compatibile con tutte le preferenze: modifica i filtri o scegli con il tuo professionista sanitario.");
+      const missingMeal = !breakfasts.length ? "colazione" : !snacks.length ? "spuntino" : "pasto principale";
+      setReplanNote(`Nessuna proposta compatibile per ${missingMeal}: modifica le preferenze.`);
       return;
     }
     const shares = mealCalorieShares;

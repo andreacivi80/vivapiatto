@@ -1049,9 +1049,9 @@ try {
   })()`));
   await changeSelectValue('.cuisine-picker select', 1, 'Lavoro');
   const loggedMealBeforeAllergy = await evaluate(`(() => {
-    const forbidden = /pasta|pane|farro|orzo|bulgur|cous cous|cracker|fette biscottate|biscott|wafer|muesli|frumento|segale|grissini/i;
+    const forbidden = /pasta|pane|farro|orzo|bulgur|cous cous|cracker|fette biscottate|biscott|wafer|muesli|frumento|segale|grissini|avena/i;
     const cards = [...document.querySelectorAll('.meal-card')];
-    const index = cards.findIndex((card) => !forbidden.test(card.querySelector('h3')?.innerText || ''));
+    const index = cards.findIndex((card) => !forbidden.test(card.innerText || ''));
     const card = cards[index];
     const heading = card?.querySelector('h3')?.innerText.trim() || '';
     card?.querySelector('.check')?.click();
@@ -1080,13 +1080,16 @@ try {
     return true;
   })()`);
   await wait(1_200);
+  profileAdaptation.postFilterNote = await evaluate(`document.querySelector('.replan-note')?.innerText || ''`);
   await clickTab('Settimana');
   Object.assign(profileAdaptation, await evaluate(`(() => {
     const weekMeals = [...document.querySelectorAll('.week-meal')];
-    const forbidden = /pasta|pane|farro|orzo|bulgur|cous cous|cracker|fette biscottate|biscott|wafer|muesli|frumento|segale|grissini/i;
+    const forbidden = /pasta|pane|farro|orzo|bulgur|cous cous|cracker|fette biscottate|biscott|wafer|muesli|frumento|segale|grissini|avena/i;
     return {
       lockedWeekReopenedForAllergy: document.querySelector('.week-lock')?.innerText.includes('Settimana modificabile') || false,
       weekMealsAfterAllergy: weekMeals.length,
+      weekReplanNote: document.querySelector('.replan-note')?.innerText || '',
+      weekForbiddenMeals: weekMeals.filter((meal) => forbidden.test(meal.innerText)).map((meal) => meal.innerText.slice(0, 180)),
       weekGlutenFree: weekMeals.length === 35 && weekMeals.every((meal) => !forbidden.test(meal.innerText)),
     };
   })()`));

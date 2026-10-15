@@ -14,7 +14,7 @@ Data verifica: 15 ottobre 2026. Ultimo checkpoint pubblico verificato: `1.19.70`
 - Copertura selezionabile: 282/282 voci nutrizionali e 265/265 ingredienti ricetta con componente e foto.
 - Paniere esplicito: 217/217 alimenti richiesti selezionabili, fotografati e utilizzati da almeno una ricetta reale.
 - Ricette: 214/214 elementi delle matrici completi e univoci; ingredienti, grammature e componenti allineati.
-- Fotografie: 568/568 asset validi; 214/214 foto matrice dedicate; 257/257 ricette reali con foto finale dedicata, semanticamente completa e non condivisa.
+- Fotografie: 569/569 asset validi; 214/214 foto matrice dedicate; 258/258 ricette reali con foto finale dedicata, semanticamente completa e non condivisa.
 - Extra/sgarri: 114 voci univoche con chilocalorie, proteine, carboidrati, grassi, fibre e fonte.
 - Alternative: 268 alimenti senza duplicati né card vuote nella stessa categoria.
 - Rotazione: 14/14 pasti principali nei range definiti, senza famiglie proteiche consecutive.

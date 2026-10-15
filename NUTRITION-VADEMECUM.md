@@ -23,6 +23,7 @@ Questo documento è la base funzionale dell’app. Le fotografie e la grafica de
 - Colazione feriale: preparazioni semplici; latte o alternativa vegetale è parte della colazione, non bevanda dell’intera giornata.
 - Spuntino consigliato: prima frutta fresca, yogurt in vasetto, frutta secca, cracker, piccolo pane o abbinamenti leggeri e trasportabili. Wafer e grissini restano disponibili alla scelta dell'utente ma non sono proposte automatiche. Il bicchiere di latte non è una proposta predefinita da lavoro e resta nella scelta libera.
 - Se una colazione contiene già latte, skyr, yogurt, ricotta o altri latticini, l'aumento del target energetico non aggiunge un altro yogurt; vale lo stesso criterio per frutta secca e semi già presenti.
+- Con il filtro glutine l'avena generica (anche fiocchi e bevanda) non viene proposta automaticamente: l'idoneità per celiachia richiede la dicitura del prodotto "senza glutine" e attenzione alle contaminazioni. Il filtro non certifica i prodotti acquistati.
 - Il piatto con tre legumi resta disponibile, ma la proposta automatica dà priorità ad alternative con una combinazione più semplice. Le quantità dei legumi restano modificabili dall'utente.
 - I fagiolini sono trattati come ortaggio/contorno, non come una porzione di fagioli; la rotazione conta la fonte proteica del piatto effettivo, compreso il roast beef.
 - Due frutti diversi nelle proposte predefinite della giornata; la ripetizione è una scelta manuale.
@@ -49,6 +50,7 @@ Questo documento è la base funzionale dell’app. Le fotografie e la grafica de
 - ISS/Cuore, organizzazione della giornata e spuntini: https://www.cuore.iss.it/prevenzione/alimentazione
 - ISS, spuntini freschi e leggeri: https://www.iss.it/-/dalla-colazione-leggera-agli-spuntini-freschi-il-decalogo-iss-per-contrastare-il-caldo-con-una-corretta-alimentazione
 - Ministero della Salute, dieta mediterranea: https://www.salute.gov.it/new/it/tema/dieta-mediterranea/come-seguire-la-dieta-mediterranea/
+- Ministero della Salute, dieta senza glutine e rischio di contaminazione dell'avena: https://www.salute.gov.it/imgs/C_17_pubblicazioni_3308_allegato.pdf
 - NHS, spuntini più equilibrati: https://www.nhs.uk/healthier-families/food-facts/healthier-snacks/
 - CREA, porzione di riferimento dei fagioli cotti (150 g): https://www.alimentinutrizione.it/tabelle-nutrizionali/004125
 
