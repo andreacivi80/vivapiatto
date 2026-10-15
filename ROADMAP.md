@@ -2,12 +2,19 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.70 — verificata in locale, in pubblicazione
+## v1.19.71 — verificata in locale, in pubblicazione
+
+- [x] Agli spuntini con biscotti o pane non vengono più aggiunti anche cracker per far salire le calorie: una quota di noci è più coerente e resta soggetta ad allergie e preferenze.
+- [x] Il collaudo mobile registra un pasto prima del cambio allergia e ne verifica nome e stato dopo il ricalcolo della settimana.
+- [x] 206 test, TypeScript e collaudo mobile locale superati: spuntino senza doppio cereale, pasto registrato preservato, nessun errore JavaScript.
+- [ ] Pubblicazione sullo stesso link e collaudo mobile pubblico della versione esatta.
+
+## v1.19.70 — pubblicata e verificata
 
 - [x] Se un'allergia, un'intolleranza o un'esclusione cambia dopo la conferma, la settimana torna modificabile e ricalcola tutti i giorni futuri non registrati.
 - [x] I pasti già registrati come mangiati restano invariati durante il ricalcolo.
 - [x] 206 test, TypeScript e prova mobile sulla settimana confermata superati in locale: 35/35 pasti coerenti dopo l'allergia al glutine, nessun errore JavaScript o overflow.
-- [ ] Pubblicazione e collaudo pubblico della versione esatta.
+- [x] Pubblicazione e collaudo pubblico della versione esatta `1.19.70`: 35 pasti senza glutine dopo il cambio, nessun errore JavaScript o overflow.
 
 ## v1.19.69 — pubblicata e verificata
 

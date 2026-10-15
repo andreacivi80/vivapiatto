@@ -997,6 +997,8 @@ try {
   })()`));
   profileAdaptation.maxSnackHarmonious = [profileAdaptation.maxMenu[1], profileAdaptation.maxMenu[3]]
     .every((heading) => !(/finocchi|carote|cetrioli|ravanelli/i.test(heading || '') && /banana|mela/i.test(heading || '')));
+  profileAdaptation.maxSnackNoDoubleCereal = [profileAdaptation.maxMenu[1], profileAdaptation.maxMenu[3]]
+    .every((heading) => !(/biscott|fette biscottate|pane|grissini/i.test(heading || '') && /cracker/i.test(heading || '')));
   await evaluate(`(() => {
     [...document.querySelectorAll('.today-strip-actions button')]
       .find((button) => button.textContent?.includes('Preferenze'))?.click();
@@ -1046,6 +1048,16 @@ try {
     };
   })()`));
   await changeSelectValue('.cuisine-picker select', 1, 'Lavoro');
+  const loggedMealBeforeAllergy = await evaluate(`(() => {
+    const forbidden = /pasta|pane|farro|orzo|bulgur|cous cous|cracker|fette biscottate|biscott|wafer|muesli|frumento|segale|grissini/i;
+    const cards = [...document.querySelectorAll('.meal-card')];
+    const index = cards.findIndex((card) => !forbidden.test(card.querySelector('h3')?.innerText || ''));
+    const card = cards[index];
+    const heading = card?.querySelector('h3')?.innerText.trim() || '';
+    card?.querySelector('.check')?.click();
+    return { index, heading, marked: Boolean(card?.querySelector('.check')) };
+  })()`);
+  await wait(400);
   await clickTab('Settimana');
   profileAdaptation.lockedWeekConfirmed = await evaluate(`(() => {
     const lock = document.querySelector('.week-lock');
@@ -1078,6 +1090,13 @@ try {
       weekGlutenFree: weekMeals.length === 35 && weekMeals.every((meal) => !forbidden.test(meal.innerText)),
     };
   })()`));
+  await clickTab('Oggi');
+  profileAdaptation.loggedMealPreserved = Boolean(loggedMealBeforeAllergy.marked &&
+    await evaluate(`(() => {
+      const card = document.querySelectorAll('.meal-card')[${loggedMealBeforeAllergy.index}];
+      return card?.querySelector('h3')?.innerText.trim() === ${JSON.stringify(loggedMealBeforeAllergy.heading)} &&
+        card?.querySelector('.check')?.classList.contains('done');
+    })()`));
   const rawExceptions = page.events.filter((event) =>
     event.method === "Runtime.exceptionThrown" ||
     (event.method === "Log.entryAdded" && event.params?.entry?.level === "error")
@@ -1208,10 +1227,10 @@ try {
     profileAdaptation.lowPlanKcal <= 0 || profileAdaptation.highPlanKcal <= profileAdaptation.lowPlanKcal + 300 ||
     !profileAdaptation.targetChangesPlan || !profileAdaptation.highBreakfastHasNoDuplicateDairyOrNuts ||
     !profileAdaptation.maxTargetSelected || profileAdaptation.maxPlanKcal <= profileAdaptation.highPlanKcal + 250 ||
-    !profileAdaptation.maxSnackHarmonious || !profileAdaptation.glutenFilterActive ||
+    !profileAdaptation.maxSnackHarmonious || !profileAdaptation.maxSnackNoDoubleCereal || !profileAdaptation.glutenFilterActive ||
     !profileAdaptation.glutenPlanSafe || !profileAdaptation.glutenFilterRestored ||
     !profileAdaptation.lockedWeekConfirmed || !profileAdaptation.lockedWeekReopenedForAllergy ||
-    !profileAdaptation.weekGlutenFree ||
+    !profileAdaptation.weekGlutenFree || !profileAdaptation.loggedMealPreserved ||
     !profileAdaptation.workBreakfastPractical || !profileAdaptation.workSnacksPractical || !profileAdaptation.homeSelected || !profileAdaptation.contextChangesPlan ||
     profileAdaptation.horizontalOverflow ||
     exceptions.length

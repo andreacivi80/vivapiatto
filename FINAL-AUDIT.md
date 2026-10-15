@@ -1,6 +1,6 @@
 # Tavola Mia — audit finale del perimetro ricevuto
 
-Data verifica: 14 ottobre 2026. Ultimo checkpoint documentale: `1.19.68`.
+Data verifica: 15 ottobre 2026. Ultimo checkpoint pubblico verificato: `1.19.70`.
 
 ## Specifiche acquisite
 
@@ -21,7 +21,8 @@ Data verifica: 14 ottobre 2026. Ultimo checkpoint documentale: `1.19.68`.
 - Suite pubblicabile: 206/206 test superati, controllo TypeScript senza errori, SSR superato, audit dipendenze con zero vulnerabilità e build GitHub Pages riuscita.
 - Aggiornamento automatico tra release verificato su mobile reale: versione nuova rilevata senza intervento, menu, grammatura modificata e posizione di scorrimento conservati.
 - Stress mobile pubblico ripetibile: viewport 390×844, target calorico verificato su profilo pulito e contesto Lavoro/Casa, check-in adattivo, conferma/rotazione/stampa settimanale, quattro famiglie delle 214 ricette, ritorno fisso, alternative del latte, modifica grammatura persistente, aggiunta/rimozione diretta di componenti, fotografie visibili realmente caricate e zero errori JavaScript.
-- Pubblicazione verificata sul link unico: manifest `1.19.68` e stress mobile pubblico concluso senza errori JavaScript, overflow, recupero, immagini rotte o immagini pendenti.
+- Pubblicazione verificata sul link unico: manifest `1.19.70` e stress mobile pubblico concluso senza errori JavaScript, overflow, recupero, immagini rotte o immagini pendenti.
+- Cambio allergie dopo conferma: settimana riaperta e tutti i 35 pasti aggiornati nel collaudo pubblico mobile, senza ingredienti con glutine nelle proposte mostrate.
 - Revisione pratica: spuntini automatici senza wafer o grissini, colazione Lavoro entro tre minuti, aggiunte caloriche senza duplicare yogurt o frutta secca, fagiolini distinti dai fagioli nella rotazione.
 - Refresh automatico reale `1.19.67 → 1.19.68`: grammi del latte `200 → 209` conservati, stesso menu e scroll a 900 px dopo l'aggiornamento, senza errore JavaScript.
 

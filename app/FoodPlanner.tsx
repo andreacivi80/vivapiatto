@@ -11416,7 +11416,15 @@ export function FoodPlanner() {
     const coherentAdditions = savouryVegetableSnack && additions.length
       ? [{ food: "Pane integrale", grams: dailyTarget >= 2800 ? 100 : 50 }]
       : additions;
-    return coherentAdditions.filter((addition) => {
+    const alreadyHasCrunchyCereal = [1, 3].includes(slot) && currentItems.some((item) =>
+      /biscott|cracker|fette biscottate|grissini|pane/i.test(item.food),
+    );
+    const sensibleAdditions = coherentAdditions.map((addition) =>
+      alreadyHasCrunchyCereal && /cracker/i.test(addition.food)
+        ? { food: "Noci", grams: 20 }
+        : addition,
+    );
+    return sensibleAdditions.filter((addition) => {
       const food = addition.food.toLowerCase();
       if (blockedFoods.includes(addition.food) ||
           inferTextAllergens(addition.food).some((group) => blockedAllergenGroups.has(group)) ||
