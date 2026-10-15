@@ -2,6 +2,14 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
+## v1.19.77 — verifica nella cartella richiesta
+
+- [x] Allineata la cartella `C:\Users\utente38\Desktop\Manuale\Scheda Alimenti` al repository GitHub senza sovrascrivere le modifiche precedenti, conservate in uno stash recuperabile.
+- [x] Corretto l'audit fotografico che interpretava lo spazio del percorso come `%20` e interrompeva `npm test` nella cartella reale.
+- [x] Nella cartella richiesta: 569 fotografie controllate, 214 ricette della matrice e 217 alimenti del paniere; aggiunta una prova regressiva per i percorsi con spazi.
+- [x] Suite completa nella cartella richiesta: 207/207 test, build e prova mobile locale della v1.19.77 superati senza errori JavaScript o overflow.
+- [ ] Pubblicazione sullo stesso link e prova mobile della versione esatta.
+
 ## v1.19.76 — pubblicata e verificata
 
 - [x] Cambiare stile alimentare, tempo massimo o attrezzature su una settimana confermata la riapre e ricalcola tutti i pasti ancora da fare, non solo il giorno corrente.

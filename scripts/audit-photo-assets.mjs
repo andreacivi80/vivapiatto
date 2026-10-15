@@ -1,8 +1,9 @@
 import { readFile, stat } from "node:fs/promises";
 import { createHash } from "node:crypto";
+import { fileURLToPath } from "node:url";
 import path from "node:path";
 
-const root = path.resolve(new URL("..", import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1"));
+const root = fileURLToPath(new URL("..", import.meta.url));
 const source = await readFile(path.join(root, "app", "FoodPlanner.tsx"), "utf8");
 const names = [...source.matchAll(/photo\("([^"]+)"\)/g)].map((match) => match[1]);
 const uniqueNames = [...new Set(names)];

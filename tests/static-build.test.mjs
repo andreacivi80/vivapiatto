@@ -2,6 +2,12 @@ import assert from "node:assert/strict";
 import { access, readFile, readdir, stat } from "node:fs/promises";
 import test from "node:test";
 
+test("audit fotografie compatibile con cartelle che contengono spazi", async () => {
+  const audit = await readFile(new URL("../scripts/audit-photo-assets.mjs", import.meta.url), "utf8");
+  assert.match(audit, /fileURLToPath\(new URL\("\.\."[,]? import\.meta\.url\)\)/);
+  assert.doesNotMatch(audit, /\.pathname/);
+});
+
 test("build GitHub Pages autonomo e completo", async () => {
   const html = await readFile(new URL("../dist/index.html", import.meta.url), "utf8");
   assert.match(html, /Tavola Mia/);
