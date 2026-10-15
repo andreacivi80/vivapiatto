@@ -11005,7 +11005,9 @@ export function FoodPlanner() {
   const getDayIds = (day: number) =>
     days[day].recipes.map((fallback, slot) => {
       const chosen = choices[`${day}-${slot}`];
-      return chosen && recipeMap[chosen] && fitsSlot(recipeMap[chosen], slot)
+      // A deliberate free-choice swap must remain visible even when its recipe
+      // category is unusual for this time of day. Automatic plans still use fitsSlot.
+      return chosen && recipeMap[chosen]
         ? chosen
         : fallback;
     });
@@ -11306,7 +11308,7 @@ export function FoodPlanner() {
     const snacks = availableSnacks();
     const mains = allRecipes.filter(
       (r) =>
-        isAllowed(r) &&
+        isProfileEligible(r) &&
         recipeCuisine(r) === cuisineChoice &&
         ["Piatto unico", "Piatto completo", "Primo", "Secondo"].includes(recipeCourse(r)),
     );
@@ -11326,7 +11328,8 @@ export function FoodPlanner() {
           if (completed[key]) return;
           const balancedItalianId = days[day].recipes[slot];
           next[key] =
-            cuisineChoice === "Italiano" && dayContext === "Lavoro" && recipeMap[balancedItalianId]
+            cuisineChoice === "Italiano" && dayContext === "Lavoro" &&
+            pool.some((recipe) => recipe.id === balancedItalianId)
               ? balancedItalianId
               : pool[(day * 3 + slot) % pool.length].id;
         });
@@ -11640,6 +11643,23 @@ export function FoodPlanner() {
       }))
       .filter((x) => !removed.includes(x.originalIndex));
   };
+  const mealContainsExcludedFood = (key: string, recipe: Recipe) =>
+    !isAllowed(recipe) ||
+    actualIngredients(key, recipe).some(
+      (item) =>
+        blockedFoods.includes(item.food) ||
+        inferTextAllergens(item.food).some((group) => blockedAllergenGroups.has(group)),
+    );
+  const pendingExcludedMeals = days.reduce((count, _, day) =>
+    count + getDayIds(day).reduce((dayCount, id, slot) => {
+      const key = `${day}-${slot}`;
+      return dayCount + Number(
+        isActiveMealSlot(slot) &&
+        !completed[key] &&
+        mealContainsExcludedFood(key, recipeMap[id]),
+      );
+    }, 0),
+  0);
   const scale = 1;
   const dayTotals = useMemo(
     () =>
@@ -13856,10 +13876,7 @@ export function FoodPlanner() {
                       r.kind !== "combination" &&
                       (mealView[key] || "dish") === "dish",
                   );
-                  const allowed = isAllowed(r) && visibleIngredients.every((item) =>
-                    !blockedFoods.includes(item.food) &&
-                    inferTextAllergens(item.food).every((group) => !blockedAllergenGroups.has(group))
-                  );
+                  const allowed = !mealContainsExcludedFood(key, r);
                   const actual = completed[key]
                     ? calc(actualIngredients(key, r))
                     : null;
@@ -14251,13 +14268,16 @@ export function FoodPlanner() {
               <div>
                 <b>{weekLocked ? "Settimana confermata" : "Settimana modificabile"}</b>
                 <span>
-                  {weekLocked
+                  {pendingExcludedMeals > 0
+                    ? `${pendingExcludedMeals} pasti da sostituire: contengono alimenti esclusi. Non confermare il menu finché restano evidenziati.`
+                    : weekLocked
                     ? "Le modifiche in Oggi restano solo giornaliere."
                     : "Apri un giorno, cambialo e chiudilo per riequilibrare i successivi."}
                 </span>
               </div>
               <div className="week-lock-actions">
                 <button
+                  disabled={!weekLocked && pendingExcludedMeals > 0}
                   onClick={() => {
                     setWeekLocked((value) => !value);
                     setReplanNote(
@@ -14391,8 +14411,9 @@ export function FoodPlanner() {
                       .map((part, originalIndex) => ({ ...part, originalIndex }))
                       .filter((part) => part.grams > 0);
                     const weekIngredients = plannedIngredients(key, r);
+                    const excludedForCurrentProfile = mealContainsExcludedFood(key, r);
                     return (
-                      <div className="week-meal-row" key={key}>
+                      <div className={`week-meal-row ${excludedForCurrentProfile ? "excluded" : ""}`} key={key}>
                         <button
                           className="week-meal"
                           onClick={() => {
@@ -14417,7 +14438,9 @@ export function FoodPlanner() {
                                 : r.name}
                             </b>
                             <em>
-                              {round(calc(weekIngredients).kcal)} kcal
+                              {excludedForCurrentProfile
+                                ? `${round(calc(weekIngredients).kcal)} kcal · ${completed[key] ? "Registrato, ora escluso" : "Da sostituire: alimento escluso"}`
+                                : `${round(calc(weekIngredients).kcal)} kcal`}
                             </em>
                           </span>
                           <i>{completed[key] ? "✓" : "→"}</i>

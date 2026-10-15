@@ -2203,6 +2203,19 @@ button {
   align-items: center;
   border-top: 1px solid #edf0ea;
 }
+.week-meal-row.excluded {
+  background: #fff2ee;
+  border-left: 3px solid #c14f39;
+  padding-left: 4px;
+}
+.week-meal-row.excluded .week-meal em {
+  color: #a63725;
+  font-weight: 800;
+}
+.week-lock button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
 .week-meal-row .week-meal {
   border-top: 0;
 }

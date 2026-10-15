@@ -1100,6 +1100,40 @@ try {
       return card?.querySelector('h3')?.innerText.trim() === ${JSON.stringify(loggedMealBeforeAllergy.heading)} &&
         card?.querySelector('.check')?.classList.contains('done');
     })()`));
+  await clickTab('Settimana');
+  const freeChoiceAndReplan = await evaluate(`(() => {
+    const secondDay = document.querySelectorAll('.week-day')[1];
+    const breakfastChange = secondDay?.querySelector('.week-meal-row .week-change');
+    breakfastChange?.click();
+    return { pickerOpened: Boolean(breakfastChange) };
+  })()`);
+  await wait(600);
+  Object.assign(freeChoiceAndReplan, await evaluate(`(() => {
+    const filter = [...document.querySelectorAll('.quick-recipe-tabs button')]
+      .find((button) => button.innerText.trim() === 'Piatto unico');
+    filter?.click();
+    return { completeMealFilterFound: Boolean(filter) };
+  })()`));
+  await wait(600);
+  Object.assign(freeChoiceAndReplan, await evaluate(`(() => {
+    const recipe = document.querySelector('.recipe-grid article');
+    const name = recipe?.querySelector('h3')?.innerText.trim() || '';
+    recipe?.click();
+    return { completeMealFound: Boolean(recipe), chosenName: name };
+  })()`));
+  await wait(850);
+  Object.assign(freeChoiceAndReplan, await evaluate(`(() => {
+    const rows = [...document.querySelectorAll('.week-meal')];
+    const forbidden = /pasta|pane|farro|orzo|bulgur|cous cous|cracker|fette biscottate|biscott|wafer|muesli|frumento|segale|grissini|avena/i;
+    return {
+      breakfastShowsFreeChoice: rows[5]?.innerText.includes(${JSON.stringify(freeChoiceAndReplan.chosenName)}) || false,
+      nextDaysGlutenFree: rows.slice(10).length === 25 && rows.slice(10).every((meal) => !forbidden.test(meal.innerText)),
+      nextDaysNotBlocked: [...document.querySelectorAll('.week-day')].slice(2).every((day) => !day.querySelector('.week-meal-row.excluded')),
+    };
+  })()`));
+  await page.send('Page.reload', { ignoreCache: false });
+  await wait(5_000);
+  freeChoiceAndReplan.persistedAfterReload = await evaluate(`document.querySelectorAll('.week-day')[1]?.querySelector('.week-meal')?.innerText.includes(${JSON.stringify(freeChoiceAndReplan.chosenName)}) || false`);
   const rawExceptions = page.events.filter((event) =>
     event.method === "Runtime.exceptionThrown" ||
     (event.method === "Log.entryAdded" && event.params?.entry?.level === "error")
@@ -1155,6 +1189,7 @@ try {
     readyDishFlow,
     checkinAdaptation,
     profileAdaptation,
+    freeChoiceAndReplan,
     javascriptErrors: exceptions.length,
     javascriptErrorDetails: exceptions.slice(-8).map((event) => ({
       method: event.method,
@@ -1236,6 +1271,10 @@ try {
     !profileAdaptation.weekGlutenFree || !profileAdaptation.loggedMealPreserved ||
     !profileAdaptation.workBreakfastPractical || !profileAdaptation.workSnacksPractical || !profileAdaptation.homeSelected || !profileAdaptation.contextChangesPlan ||
     profileAdaptation.horizontalOverflow ||
+    !freeChoiceAndReplan.pickerOpened || !freeChoiceAndReplan.completeMealFilterFound ||
+    !freeChoiceAndReplan.completeMealFound || !freeChoiceAndReplan.breakfastShowsFreeChoice ||
+    !freeChoiceAndReplan.nextDaysGlutenFree || !freeChoiceAndReplan.nextDaysNotBlocked ||
+    !freeChoiceAndReplan.persistedAfterReload ||
     exceptions.length
   ) process.exitCode = 1;
   page.close();

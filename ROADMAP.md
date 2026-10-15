@@ -2,6 +2,14 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
+## v1.19.73 — pronta per pubblicazione
+
+- [x] Il riequilibrio dei giorni seguenti usa solo ricette compatibili anche con allergie, attrezzature e tempo massimo: il menu italiano da lavoro non può più reinserire una ricetta predefinita fuori dal paniere filtrato.
+- [x] Una scelta esplicita libera rimane applicata anche se il piatto appartiene a una categoria diversa dal momento del pasto; il piano automatico continua a usare le categorie coerenti.
+- [x] Nella settimana i pasti ancora da fare con alimenti esclusi sono evidenziati e non è possibile confermare il piano finché non vengono sostituiti; quelli già registrati restano nello storico.
+- [x] Collaudo mobile locale: scelta libera di piatto completo a colazione salvata anche dopo ricarica, cinque giorni successivi senza glutine, nessun errore JavaScript; suite 206/206 superata.
+- [ ] Pubblicazione e collaudo mobile pubblico della versione esatta sul link unico.
+
 ## v1.19.72 — pubblicata e verificata
 
 - [x] Il filtro glutine esclude l'avena generica, compresi fiocchi e bevanda, perché senza certificazione può essere contaminata.
