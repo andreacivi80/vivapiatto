@@ -2886,7 +2886,7 @@ const matrixBreakfasts: Recipe[] = [
     kicker: "Colazione da casa · matrice C05",
     course: "Colazione",
     cuisine: "Italiano",
-    image: photo("recipe-oat-pancakes-v112"),
+    image: photo("recipe-c05-oat-pancakes-v1204"),
     time: 15,
     ingredients: [
       { food: "Farina d'avena", grams: 40 },

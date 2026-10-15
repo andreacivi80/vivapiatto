@@ -3210,3 +3210,11 @@ test("v1.19.91 starts with Italian meals and portable work lunches", async () =>
   assert.match(source, /data-work-friendly=\{isWorkFriendly\(r\) \? "true" : "false"\}/);
   assert.ok(photo.length > 100_000);
 });
+
+test("v1.20.4 shows strawberries with the oat-and-banana pancakes", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const asset = await readFile(new URL("../public/food/recipe-c05-oat-pancakes-v1204.png", import.meta.url));
+  assert.match(source, /id: "matrix-c05-oat-pancakes"[\s\S]{0,300}image: photo\("recipe-c05-oat-pancakes-v1204"\)/);
+  assert.match(source, /matrix-c05-oat-pancakes[\s\S]{0,800}food: "Fragole"/);
+  assert.ok(asset.length > 100_000);
+});

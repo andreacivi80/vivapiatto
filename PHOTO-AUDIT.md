@@ -47,3 +47,9 @@ Gli audit automatici garantiscono presenza, formato leggibile, collegamento e un
 - [x] Verificate visivamente anche le immagini atomiche di broccoli, cavolfiori, carote cotte, olive, lattuga e zucchine cotte: il soggetto principale è riconoscibile.
 - [x] Scansione visiva aggiuntiva delle fotografie C08–C29: i soggetti principali sono riconoscibili e non è emersa un'altra omissione evidente come in C06. La verifica nutrizionale degli ingredienti resta distinta da questo giudizio fotografico.
 - [ ] Il controllo visivo dell'intero catalogo resta aperto: la verifica qui è limitata agli asset elencati.
+
+## v1.20.4 — prima scansione completa delle 44 colazioni
+
+- [x] Controllate visivamente le fotografie C01–C44, compresa C05 fuori dalla serie nominale `recipe-c...`.
+- [x] C05: la vecchia foto mostrava banana e yogurt ma ometteva le fragole della ricetta. Nuova foto con tre pancake di avena e banana, yogurt greco e fragole riconoscibili.
+- [ ] Resta aperta la revisione visiva delle altre famiglie di ricette, degli ingredienti atomici non ancora esaminati e dei casi ambigui; questa scansione non certifica quantità o macronutrienti dai pixel.
