@@ -2,7 +2,16 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.74 — pronta per pubblicazione
+## v1.19.75 — pronta per pubblicazione
+
+- [x] Il paniere da lavoro non riprende più ricette fuori dallo stile alimentare, dal tempo massimo o dalle attrezzature disponibili.
+- [x] Se nessuna colazione rapida è compatibile, il sistema non sostituisce di nascosto con una preparazione troppo lunga.
+- [x] Oggi e Settimana mostrano in modo permanente quando i filtri non permettono un piano automatico; i pasti preesistenti fuori preferenze sono distinguibili dagli alimenti esclusi.
+- [x] Stress mobile locale con 14 allergie, stile vegano, massimo 5 minuti e nessuna cottura: avviso persistente in Oggi/Settimana anche dopo reload, 28 pasti esclusi evidenziati e settimana non confermabile, 6 fuori preferenze distinti, zero overflow o errori JavaScript.
+- [x] Suite completa: TypeScript, build e 206/206 test superati.
+- [ ] Pubblicazione e collaudo mobile pubblico della versione esatta.
+
+## v1.19.74 — pubblicata e verificata
 
 - [x] Sostituire un piatto intero azzera componenti, grammi e rimozioni della ricetta precedente; il nuovo piatto mostra solo i propri ingredienti.
 - [x] Se un pasto già registrato viene sostituito, la spunta torna da fare: una ricetta mai mangiata non viene conteggiata come consumata.
@@ -10,7 +19,7 @@ Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggior
 - [x] Il collaudo da cellulare verifica una grammatura modificata, la registrazione, la sostituzione completa, la sparizione della vecchia quantità e lo stato da fare, oltre alla persistenza dopo ricarica.
 - [x] Prova mobile locale: modifica a 777 g, registrazione, sostituzione intera, vecchia grammatura sparita, pasto non più segnato come mangiato, identità nuova persistente dopo ricarica; cinque giorni successivi senza glutine, zero errori JavaScript.
 - [x] Suite tecnica completa: TypeScript, build e 206/206 test superati.
-- [ ] Pubblicazione e prova mobile pubblica della versione esatta.
+- [x] Pubblicazione e prova mobile pubblica della versione esatta: nuova ricetta persistente, vecchio peso rimosso e pasto da registrare, 35 pasti senza glutine dopo il filtro, zero errori JavaScript e overflow.
 
 ## v1.19.73 — pubblicata e verificata
 

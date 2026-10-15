@@ -1178,6 +1178,58 @@ try {
   await evaluate(`document.querySelectorAll('.week-day')[1]?.querySelector('header button')?.click()`);
   await wait(500);
   freeChoiceAndReplan.persistedAfterReload = await evaluate(`document.querySelector('.meal-card')?.dataset.recipeId === ${JSON.stringify(freeChoiceAndReplan.chosenId)}`);
+  await evaluate(`(() => {
+    if (!document.querySelector('.preferences'))
+      [...document.querySelectorAll('.today-strip-actions button')]
+        .find((button) => button.innerText.includes('Preferenze'))?.click();
+  })()`);
+  await wait(350);
+  const setPreference = async (label, value) => {
+    const found = await evaluate(`(() => {
+      const field = [...document.querySelectorAll('.preferences label')]
+        .find((item) => item.querySelector('span')?.innerText.trim() === ${JSON.stringify(label)});
+      const select = field?.querySelector('select');
+      if (!select) return false;
+      const setter = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value').set;
+      setter.call(select, ${JSON.stringify(value)});
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+      return true;
+    })()`);
+    if (!found) throw new Error(`Preferenza ${label} non trovata`);
+    await wait(350);
+  };
+  await setPreference('Tempo massimo', '5');
+  await setPreference('Attrezzature', 'Nessuna cottura');
+  await setPreference('Stile alimentare', 'Vegano');
+  const severeProfile = await evaluate(`(() => {
+    const buttons = [...document.querySelectorAll('.preferences .chips')[0]?.querySelectorAll('button') || []];
+    buttons.filter((button) => !button.classList.contains('active')).forEach((button) => button.click());
+    return { allergyFiltersFound: buttons.length, selected: buttons.map((button) => button.innerText.trim()) };
+  })()`);
+  await wait(1_200);
+  Object.assign(severeProfile, await evaluate(`(() => ({
+    persistentWarningToday: Boolean(document.querySelector('.replan-note.profile-warning')?.innerText.includes('Nessuna proposta automatica')),
+    excludedToday: document.querySelectorAll('.meal-card.blocked').length,
+    mismatchToday: document.querySelectorAll('.meal-card.profile-mismatch').length,
+  }))()`));
+  await clickTab('Settimana');
+  Object.assign(severeProfile, await evaluate(`(() => {
+    const excluded = document.querySelectorAll('.week-meal-row.excluded').length;
+    const mismatch = document.querySelectorAll('.week-meal-row.profile-mismatch').length;
+    const confirm = [...document.querySelectorAll('.week-lock button')]
+      .find((button) => button.innerText.trim() === 'Conferma');
+    return {
+      persistentWarningWeek: Boolean(document.querySelector('.week-plan-gap')?.innerText.includes('Nessuna proposta automatica')),
+      excludedWeek: excluded,
+      mismatchWeek: mismatch,
+      incompatibleMealsFlagged: excluded + mismatch > 0,
+      unsafeWeekCannotConfirm: excluded === 0 || Boolean(confirm?.disabled),
+      horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+    };
+  })()`));
+  await page.send('Page.reload', { ignoreCache: false });
+  await wait(5_000);
+  severeProfile.warningSurvivesReload = await evaluate(`Boolean(document.querySelector('.week-plan-gap')?.innerText.includes('Nessuna proposta automatica'))`);
   const rawExceptions = page.events.filter((event) =>
     event.method === "Runtime.exceptionThrown" ||
     (event.method === "Log.entryAdded" && event.params?.entry?.level === "error")
@@ -1234,6 +1286,7 @@ try {
     checkinAdaptation,
     profileAdaptation,
     freeChoiceAndReplan,
+    severeProfile,
     javascriptErrors: exceptions.length,
     javascriptErrorDetails: exceptions.slice(-8).map((event) => ({
       method: event.method,
@@ -1322,6 +1375,10 @@ try {
     !freeChoiceAndReplan.oldGramsCleared || !freeChoiceAndReplan.mealUnregisteredAfterSwap ||
     !freeChoiceAndReplan.nextDaysGlutenFree || !freeChoiceAndReplan.nextDaysNotBlocked ||
     !freeChoiceAndReplan.persistedAfterReload ||
+    severeProfile.allergyFiltersFound < 5 || !severeProfile.persistentWarningToday ||
+    !severeProfile.persistentWarningWeek || !severeProfile.incompatibleMealsFlagged ||
+    !severeProfile.unsafeWeekCannotConfirm || severeProfile.horizontalOverflow ||
+    !severeProfile.warningSurvivesReload ||
     exceptions.length
   ) process.exitCode = 1;
   page.close();

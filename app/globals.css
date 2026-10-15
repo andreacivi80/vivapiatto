@@ -1585,6 +1585,16 @@ button {
   background: #fff0d6;
   border: 1px solid #efc98e;
 }
+.week-plan-gap {
+  margin: 0 0 7px;
+  padding: 7px 9px;
+  border-radius: 10px;
+  background: #fff2ee;
+  border: 1px solid #d98978;
+  color: #8e3426;
+  font-size: 10px;
+  font-weight: 750;
+}
 .week-edit-banner {
   position: fixed;
   left: 50%;
@@ -1879,6 +1889,21 @@ button {
 .meal-card.blocked {
   border-color: #e79a86;
   background: #fff2ee;
+}
+.meal-card.profile-mismatch,
+.week-meal-row.profile-mismatch {
+  background: #fff8e8;
+  border-color: #d9ad57;
+}
+.profile-mismatch-note {
+  display: block;
+  color: #805b24;
+  font-weight: 800;
+  font-size: 9px;
+}
+.replan-note.profile-warning {
+  border-color: #d9ad57;
+  background: #fff8e8;
 }
 .swap-link {
   border: 0;
@@ -2210,6 +2235,10 @@ button {
 }
 .week-meal-row.excluded .week-meal em {
   color: #a63725;
+  font-weight: 800;
+}
+.week-meal-row.profile-mismatch .week-meal em {
+  color: #805b24;
   font-weight: 800;
 }
 .week-lock button:disabled {

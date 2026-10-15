@@ -10917,7 +10917,7 @@ export function FoodPlanner() {
             !/frullat|smoothie|centrifug|pancake|toast|uov/i.test(recipe.name),
         )
       : eligible;
-    return (workMorning.length ? workMorning : eligible).sort(
+    return workMorning.sort(
       (a, b) => breakfastStyleScore(a) - breakfastStyleScore(b),
     );
   };
@@ -11066,13 +11066,13 @@ export function FoodPlanner() {
       ...catalogWorkMains.filter(
         (recipe) => recipeCuisine(recipe) === selectedCuisine,
       ),
-    ]).filter(isAllowed);
+    ]).filter(isProfileEligible);
     if (sameCuisine.length) return sameCuisine;
     return uniqueRecipes([
       ...recipes.filter(isWorkFriendly),
       ...portableRecipes,
       ...catalogWorkMains,
-    ]).filter(isAllowed);
+    ]).filter(isProfileEligible);
   };
   const isMensaFriendly = (recipe: Recipe) => {
     const text = `${recipe.name} ${recipe.ingredients.map((item) => item.food).join(" ")}`.toLowerCase();
@@ -11666,6 +11666,9 @@ export function FoodPlanner() {
         blockedFoods.includes(item.food) ||
         inferTextAllergens(item.food).some((group) => blockedAllergenGroups.has(group)),
     );
+  const mealMatchesProfile = (key: string, recipe: Recipe) =>
+    isProfileEligible(recipe) &&
+    textMatchesFoodStyle(actualIngredients(key, recipe).map((item) => item.food).join(" "));
   const pendingExcludedMeals = days.reduce((count, _, day) =>
     count + getDayIds(day).reduce((dayCount, id, slot) => {
       const key = `${day}-${slot}`;
@@ -11676,6 +11679,40 @@ export function FoodPlanner() {
       );
     }, 0),
   0);
+  const pendingProfileMismatches = days.reduce((count, _, day) =>
+    count + getDayIds(day).reduce((dayCount, id, slot) => {
+      const key = `${day}-${slot}`;
+      const recipe = recipeMap[id];
+      return dayCount + Number(
+        isActiveMealSlot(slot) &&
+        !completed[key] &&
+        !mealContainsExcludedFood(key, recipe) &&
+        !mealMatchesProfile(key, recipe),
+      );
+    }, 0),
+  0);
+  const automaticMains = allRecipes.filter((recipe) =>
+    isProfileEligible(recipe) &&
+    recipeCuisine(recipe) === cuisineChoice &&
+    ["Piatto unico", "Piatto completo", "Primo", "Secondo"].includes(recipeCourse(recipe)),
+  );
+  const automaticHomeMains = automaticMains.filter((recipe) =>
+    recipe.time >= 20 && !portableRecipes.some((portable) => portable.id === recipe.id),
+  );
+  const automaticLunches = ["Lavoro", "Mensa"].includes(dayContext)
+    ? workLunchesFrom(automaticMains)
+    : automaticHomeMains.length ? automaticHomeMains : automaticMains;
+  const automaticDinners = (automaticHomeMains.length ? automaticHomeMains : automaticMains)
+    .filter((recipe) => recipe.id !== "sweet-ricotta");
+  const automaticPlanGap = ageGroup === "Minore"
+    ? null
+    : !availableBreakfasts().length
+      ? "colazione"
+      : !availableSnacks().length
+        ? "spuntino"
+        : !automaticMains.length || !automaticLunches.length || !automaticDinners.length
+          ? "pranzo o cena"
+          : null;
   const scale = 1;
   const dayTotals = useMemo(
     () =>
@@ -13881,6 +13918,11 @@ export function FoodPlanner() {
               </button>
             )}
             {replanNote && <div className="replan-note">{replanNote}</div>}
+            {automaticPlanGap && (
+              <div className="replan-note profile-warning" role="alert">
+                Nessuna proposta automatica compatibile per {automaticPlanGap}. Il menu visibile può provenire dalle preferenze precedenti: cambia i filtri o scegli liberamente un pasto.
+              </div>
+            )}
             <section>
               <div className="section-title">
                 <div>
@@ -13910,6 +13952,7 @@ export function FoodPlanner() {
                       (mealView[key] || "dish") === "dish",
                   );
                   const allowed = !mealContainsExcludedFood(key, r);
+                  const profileCompatible = mealMatchesProfile(key, r);
                   const actual = completed[key]
                     ? calc(actualIngredients(key, r))
                     : null;
@@ -13935,7 +13978,7 @@ export function FoodPlanner() {
                   const vegetablePortion = vegetablePortionForItems(visibleIngredients);
                   return (
                     <article
-                      className={`meal-card ${hasPartCards && !fullDishView ? "composed" : "detailed"} ${allowed ? "" : "blocked"} ${caution ? "caution" : ""}`}
+                      className={`meal-card ${hasPartCards && !fullDishView ? "composed" : "detailed"} ${allowed ? profileCompatible ? "" : "profile-mismatch" : "blocked"} ${caution ? "caution" : ""}`}
                       key={key}
                       data-recipe-id={r.id}
                       onClick={() => {
@@ -14150,6 +14193,9 @@ export function FoodPlanner() {
                                 : `${round(m.kcal)} kcal · ${round(m.protein)} g proteine · ${round(m.carbs)} g carboidrati · ${round(m.fat)} g grassi · ${r.time} min`
                               : "Contiene un alimento escluso"}
                         </p>
+                        {allowed && !profileCompatible && !completed[key] && (
+                          <small className="profile-mismatch-note">Fuori preferenze attuali · cambia piatto o filtri</small>
+                        )}
                       </div>
                       <div className="meal-actions">
                         <button
@@ -14298,12 +14344,21 @@ export function FoodPlanner() {
           <section>
             <span className="eyebrow">SETTIMANA</span>
             <h1 className="page-title">Menu e andamento</h1>
+            {automaticPlanGap && (
+              <p className="week-plan-gap" role="alert">
+                Nessuna proposta automatica compatibile per {automaticPlanGap}: il menu sotto può essere precedente. Cambia filtri o scegli tu.
+              </p>
+            )}
             <section className={`week-lock ${weekLocked ? "locked" : ""}`}>
               <div>
                 <b>{weekLocked ? "Settimana confermata" : "Settimana modificabile"}</b>
                 <span>
                   {pendingExcludedMeals > 0
                     ? `${pendingExcludedMeals} pasti da sostituire: contengono alimenti esclusi. Non confermare il menu finché restano evidenziati.`
+                    : automaticPlanGap
+                      ? `Nessuna proposta automatica compatibile per ${automaticPlanGap}. Il piano visibile può essere precedente: cambia i filtri o scegli tu.`
+                    : pendingProfileMismatches > 0
+                      ? `${pendingProfileMismatches} pasti fuori preferenze di tempo, attrezzatura o stile: puoi cambiarli oppure mantenere la tua scelta.`
                     : weekLocked
                     ? "Le modifiche in Oggi restano solo giornaliere."
                     : "Apri un giorno, cambialo e chiudilo per riequilibrare i successivi."}
@@ -14446,8 +14501,9 @@ export function FoodPlanner() {
                       .filter((part) => part.grams > 0);
                     const weekIngredients = plannedIngredients(key, r);
                     const excludedForCurrentProfile = mealContainsExcludedFood(key, r);
+                    const outsideCurrentProfile = !excludedForCurrentProfile && !mealMatchesProfile(key, r);
                     return (
-                      <div className={`week-meal-row ${excludedForCurrentProfile ? "excluded" : ""}`} key={key} data-recipe-id={r.id}>
+                      <div className={`week-meal-row ${excludedForCurrentProfile ? "excluded" : outsideCurrentProfile ? "profile-mismatch" : ""}`} key={key} data-recipe-id={r.id}>
                         <button
                           className="week-meal"
                           onClick={() => {
@@ -14474,6 +14530,8 @@ export function FoodPlanner() {
                             <em>
                               {excludedForCurrentProfile
                                 ? `${round(calc(weekIngredients).kcal)} kcal · ${completed[key] ? "Registrato, ora escluso" : "Da sostituire: alimento escluso"}`
+                                : outsideCurrentProfile && !completed[key]
+                                  ? `${round(calc(weekIngredients).kcal)} kcal · Fuori preferenze`
                                 : `${round(calc(weekIngredients).kcal)} kcal`}
                             </em>
                           </span>
