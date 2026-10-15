@@ -1982,7 +1982,8 @@ test("v1.18.30 shows the planned daily fruit and vegetable quantity", async () =
 
 test("v1.18.31 never reloads a newer client toward an older queued Pages release", async () => {
   const app = await readFile("app/FoodPlanner.tsx", "utf8");
-  assert.match(app, /const isNewerRelease =/);
+  const release = await readFile("app/release.ts", "utf8");
+  assert.match(release, /export const isNewerRelease =/);
   assert.match(app, /isNewerRelease\(release\.version, VERSION\)/);
   assert.doesNotMatch(app, /release\.version !== VERSION/);
 });
@@ -3013,4 +3014,24 @@ test("v1.19.88 keeps update notice out of page flow without a guessed scroll off
   assert.match(css, /\.release-pending \{\s*position: fixed;/);
   assert.match(source, /window\.scrollTo\(\{ top: savedScrollY, left: 0, behavior: "auto" \}\)/);
   assert.doesNotMatch(source, /previousBannerHeight/);
+});
+
+test("v1.19.89 checks for the published release before mounting a stale page", async () => {
+  const [main, release] = await Promise.all([
+    readFile(new URL("../main.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/release.ts", import.meta.url), "utf8"),
+  ]);
+  assert.match(main, /const startWithLatestRelease = async \(\) => \{/);
+  assert.match(main, /version\.json\?start=\$\{Date\.now\(\)\}/);
+  assert.match(main, /cache: "no-store"/);
+  assert.match(main, /isNewerRelease\(release\.version, packageFile\.version\)/);
+  assert.match(main, /window\.location\.replace\(url\.toString\(\)\)/);
+  assert.match(main, /void startWithLatestRelease\(\)/);
+  assert.match(release, /export const isNewerRelease/);
+});
+
+test("v1.19.89 keeps work and canteen fallback lunches practical", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(source, /slot !== 2 \|\| dayContext !== "Lavoro" \|\| isWorkFriendly\(recipe\)/);
+  assert.match(source, /slot !== 2 \|\| dayContext !== "Mensa" \|\| isMensaFriendly\(recipe\)/);
 });

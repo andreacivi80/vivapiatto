@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import "./app/globals.css";
 import packageFile from "./package.json";
 import { FoodPlanner } from "./app/FoodPlanner";
+import { isNewerRelease } from "./app/release";
 import {
   browserLocalStorage,
   browserSessionStorage,
@@ -78,14 +79,7 @@ class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
     try {
       const response = await fetch(`./version.json?recovery=${Date.now()}`, { cache: "no-store" });
       const release = (await response.json()) as { version?: string };
-      const current = packageFile.version.split(".").map(Number);
-      const candidate = String(release.version || "").split(".").map(Number);
-      const length = Math.max(current.length, candidate.length);
-      const newer = Array.from({ length }).some((_, index) => {
-        const before = candidate.slice(0, index).every((part, partIndex) => part === (current[partIndex] || 0));
-        return before && (candidate[index] || 0) > (current[index] || 0);
-      });
-      if (newer) {
+      if (release.version && isNewerRelease(release.version, packageFile.version)) {
         const url = new URL(window.location.href);
         url.searchParams.set("_recovery_release", `${release.version}-${Date.now()}`);
         window.location.replace(url.toString());
@@ -134,10 +128,44 @@ class AppGuard extends Component<{ children: ReactNode }, AppGuardState> {
   }
 }
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
+const mountApp = () => ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <AppGuard>
       <FoodPlanner />
     </AppGuard>
   </React.StrictMode>,
 );
+
+const startWithLatestRelease = async () => {
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), 2500);
+  try {
+    const response = await fetch(`${import.meta.env.BASE_URL}version.json?start=${Date.now()}`, {
+      cache: "no-store",
+      signal: controller.signal,
+    });
+    if (response.ok) {
+      const release = (await response.json()) as { version?: string };
+      if (release.version && isNewerRelease(release.version, packageFile.version)) {
+        const session = browserSessionStorage();
+        const attemptKey = `vivapiatto-start-refresh-${release.version}`;
+        if (
+          readSessionItem(session, attemptKey) !== packageFile.version &&
+          writeSessionItem(session, attemptKey, packageFile.version)
+        ) {
+          const url = new URL(window.location.href);
+          url.searchParams.set("_release", `${release.version}-${Date.now()}`);
+          window.location.replace(url.toString());
+          return;
+        }
+      }
+    }
+  } catch {
+    // Offline or slow connection: open the saved plan; the in-app checker retries.
+  } finally {
+    window.clearTimeout(timeout);
+  }
+  mountApp();
+};
+
+void startWithLatestRelease();

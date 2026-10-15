@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import packageFile from "../package.json";
 import { portionOptions, STANDARD_SOURCES } from "./nutritionEngine";
+import { isNewerRelease } from "./release";
 import { readSessionItem, removeSessionItem, writeStorageItem } from "./storageRecovery";
 
 type Macro = { kcal: number; protein: number; carbs: number; fat: number };
@@ -100,21 +101,6 @@ const SLOT_LABELS = [
 // One source of truth: the visible version and the automatic release checker
 // must never drift apart, otherwise the client refreshes itself forever.
 const VERSION = packageFile.version;
-const isNewerRelease = (candidate: string, current: string) => {
-  const candidateParts = candidate.split(".").map(Number);
-  const currentParts = current.split(".").map(Number);
-  if (
-    candidateParts.some((part) => !Number.isFinite(part)) ||
-    currentParts.some((part) => !Number.isFinite(part))
-  ) return false;
-  const length = Math.max(candidateParts.length, currentParts.length);
-  for (let index = 0; index < length; index += 1) {
-    const next = candidateParts[index] || 0;
-    const active = currentParts[index] || 0;
-    if (next !== active) return next > active;
-  }
-  return false;
-};
 const recipeSourceKind = (recipe: Recipe) => {
   const label = recipe.sourceLabel || "";
   if (/^(MAFF|VisitKorea|Tourism Authority of Thailand)/.test(label)) return "dish";
@@ -12541,7 +12527,10 @@ export function FoodPlanner() {
           (recipe) =>
             isProfileEligible(recipe) &&
             fitsSlot(recipe, slot) &&
-            recipeCuisine(recipe) === cuisineChoice &&
+            (recipeCuisine(recipe) === cuisineChoice ||
+              (cuisineChoice === "Italiano" && recipeCuisine(recipe) === "Mediterraneo")) &&
+            (slot !== 2 || dayContext !== "Lavoro" || isWorkFriendly(recipe)) &&
+            (slot !== 2 || dayContext !== "Mensa" || isMensaFriendly(recipe)) &&
             recipeProteinFamily(recipe) === family &&
             (preference === "repeat" || !usedRecipes.has(recipe.id)),
         );
@@ -12549,6 +12538,8 @@ export function FoodPlanner() {
           (recipe) =>
             isProfileEligible(recipe) &&
             fitsSlot(recipe, slot) &&
+            (slot !== 2 || dayContext !== "Lavoro" || isWorkFriendly(recipe)) &&
+            (slot !== 2 || dayContext !== "Mensa" || isMensaFriendly(recipe)) &&
             recipeProteinFamily(recipe) === family &&
             (preference === "repeat" || !usedRecipes.has(recipe.id)),
         );
