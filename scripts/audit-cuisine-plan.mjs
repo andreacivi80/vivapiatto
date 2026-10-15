@@ -122,6 +122,7 @@ try {
     "asian-japchae-authentic", "asian-phat-thai-authentic", "catalog-verified-bulgogi-rice",
     "catalog-verified-keihan", "catalog-verified-kashiwa-meshi",
     "asian-kadhai-paneer-rice", "asian-hariyali-paneer-rice", "asian-baked-paneer-tikka-rice",
+    "asian-tamagoyaki-rice-vegetables", "asian-green-vegetable-egg-chahan",
   ]);
   const paneerDishes = new Set([
     "asian-kadhai-paneer-rice", "asian-hariyali-paneer-rice", "asian-baked-paneer-tikka-rice",
@@ -132,6 +133,8 @@ try {
     asian,
     asianDocumentedCount: asian.mainMeals.filter(([, id]) => documented.has(id)).length,
     paneerDishesProposed: asian.mainMeals.filter(([, id]) => paneerDishes.has(id)).length,
+    japaneseEggDishesProposed: asian.mainMeals.filter(([, id]) =>
+      id === "asian-tamagoyaki-rice-vegetables" || id === "asian-green-vegetable-egg-chahan").length,
     asianDistinct: new Set(asian.mainMeals.map(([, id]) => id)).size,
     unsafeWorkLunches: asian.mainMeals.filter(([key, id]) => key.endsWith("-2") && id === "sweet-ricotta"),
   };
@@ -146,6 +149,7 @@ try {
     !italian.mainMeals.every(practicalWorkLunch) ||
     asian.mainMeals.length !== 14 || asian.style !== "Asiatico" ||
     report.paneerDishesProposed !== 3 ||
+    report.japaneseEggDishesProposed !== 2 ||
     report.unsafeWorkLunches.length
   ) process.exitCode = 1;
   page.close();

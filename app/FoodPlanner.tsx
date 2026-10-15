@@ -1800,6 +1800,8 @@ foods["Platessa cotta"] = { kcal: 86, protein: 18.6, carbs: 0, fat: 1.2, fiber: 
 
 foods["Pompelmo rosa fresco"] = { kcal: 42, protein: 0.8, carbs: 10.7, fat: 0.1, fiber: 1.6, source: "USDA" };
 foods["Riso parboiled cotto"] = { kcal: 123, protein: 2.9, carbs: 26, fat: 0.4, fiber: 0.9, source: "USDA" };
+// USDA SR28, NDB 20053: valori per 100 g di riso a chicco corto già cotto.
+foods["Riso giapponese cotto"] = { kcal: 130, protein: 2.36, carbs: 28.7, fat: 0.19, fiber: 0, source: "USDA" };
 foods["Vongole cotte"] = { kcal: 148, protein: 25.6, carbs: 5.1, fat: 2, fiber: 0, source: "USDA" };
 foods["Lattuga fresca"] = { kcal: 15, protein: 1.4, carbs: 2.9, fat: 0.2, fiber: 1.3, source: "USDA" };
 foods["Songino fresco"] = { kcal: 21, protein: 2, carbs: 3.6, fat: 0.4, fiber: 1.8, source: "USDA" };
@@ -5800,6 +5802,7 @@ const attachmentMainsP53P64: Recipe[] = [
 const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
   Carboidrato: [
     { category: "Carboidrato", food: "Riso parboiled cotto", grams: 150, label: "Riso parboiled cotto · 150 g", image: photo("part-parboiled-rice-v11668") },
+    { category: "Carboidrato", food: "Riso giapponese cotto", grams: 150, label: "Riso giapponese cotto · 150 g", image: photo("part-japanese-shortgrain-rice-v11994") },
     {
       category: "Carboidrato",
       food: "Vermicelli di patata dolce cotti",
@@ -10101,6 +10104,72 @@ const verifiedIndianPaneerRecipes: Recipe[] = [
   },
 ];
 
+// MAFF documents the traditional preparations; these one-person complete
+// meals add measured rice and vegetables and calculate every nutrient from
+// their ingredients. They are adapted dishes, not claims of clinical approval.
+const verifiedJapaneseEggRecipes: Recipe[] = [
+  {
+    id: "asian-tamagoyaki-rice-vegetables",
+    name: "Tamagoyaki con riso e verdure",
+    kicker: "Frittata giapponese arrotolata · piatto completo adattato",
+    course: "Piatto unico",
+    cuisine: "Asiatico",
+    image: photo("recipe-asian-tamagoyaki-bowl-v11994"),
+    time: 30,
+    ingredients: [
+      { food: "Uova strapazzate o in frittata", grams: 100, label: "Due uova cotte in frittata arrotolata · 100 g" },
+      { food: "Riso giapponese cotto", grams: 150 },
+      { food: "Carote cotte bollite", grams: 120 },
+      { food: "Cetrioli crudi", grams: 100 },
+      { food: "Zucchero", grams: 5 },
+      { food: "Salsa di soia", grams: 5 },
+      { food: "Olio extravergine", grams: 5 },
+    ],
+    steps: [
+      "Lava circa 55 g di riso giapponese secco e cuocilo con l'acqua indicata sulla confezione. Dopo il riposo pesane 150 g cotti: le calorie qui si riferiscono al peso cotto.",
+      "Lessa le carote tagliate a bastoncini finché sono tenere, circa 8-10 minuti; pesane 120 g cotte. Lava e taglia 100 g di cetriolo a fettine.",
+      "Sbatti due uova con 5 g di zucchero e 5 g di salsa di soia. Scalda una padella antiaderente piccola con 5 g d'olio misurato.",
+      "Versa un velo d'uovo. Quando si rapprende, arrotolalo da un lato; versa un altro velo, solleva il rotolo e ripeti finché finisce l'uovo. Cuoci completamente, lascia intiepidire e taglia in fette.",
+      "Disponi 100 g di frittata cotta accanto a riso, carote e cetriolo. Se l'uovo cotto pesa di più, pesa e registra la porzione effettiva nell'app.",
+    ],
+    alternatives: [
+      "Per un gusto meno dolce riduci lo zucchero e aggiorna i grammi nella scheda.",
+      "Se porti il piatto al lavoro, raffredda rapidamente riso e uova e tienili in frigorifero o borsa termica fino al pasto.",
+    ],
+    sourceLabel: "MAFF · Tamagoyaki adattato in piatto completo; nutrienti calcolati da CREA/USDA",
+    sourceUrl: "https://www.maff.go.jp/e/policies/market/k_ryouri/search_menu/3533/index.html",
+  },
+  {
+    id: "asian-green-vegetable-egg-chahan",
+    name: "Chahan di verdure verdi e uovo",
+    kicker: "Riso saltato giapponese · ricetta MAFF adattata",
+    course: "Piatto unico",
+    cuisine: "Asiatico",
+    image: photo("recipe-asian-vegetable-chahan-v11994"),
+    time: 25,
+    ingredients: [
+      { food: "Riso giapponese cotto", grams: 170 },
+      { food: "Uova strapazzate o in frittata", grams: 100, label: "Due uova strapazzate ben cotte · 100 g" },
+      { food: "Peperoni crudi", grams: 100, label: "Peperone verde crudo · 100 g prima di saltare" },
+      { food: "Cipollotti freschi", grams: 40 },
+      { food: "Prezzemolo fresco", grams: 15 },
+      { food: "Olio extravergine", grams: 8 },
+    ],
+    steps: [
+      "Lava circa 60 g di riso giapponese secco e cuocilo secondo confezione. Lascialo intiepidire e pesane 170 g cotti.",
+      "Lava e trita 100 g di peperone verde, 40 g di cipollotto e 15 g di prezzemolo. Sbatti due uova.",
+      "In una padella ampia scalda 4 g d'olio, cuoci le uova mescolando fino a completa cottura e mettile da parte. Pesa 100 g di uova cotte per la porzione indicata.",
+      "Versa gli altri 4 g d'olio, salta peperone e cipollotto per 4-5 minuti, poi unisci il riso e saltalo altri 3 minuti. Aggiungi prezzemolo e uova cotte, mescola e servi caldo.",
+    ],
+    alternatives: [
+      "La fonte MAFF usa anche poco brodo granulare e fecola: questa versione li omette e conteggia solo gli ingredienti elencati.",
+      "Da portare al lavoro: raffredda rapidamente e conserva al freddo; riscalda completamente prima di mangiare.",
+    ],
+    sourceLabel: "MAFF · Chahan di verdure verdi e uovo adattato; nutrienti calcolati da CREA/USDA",
+    sourceUrl: "https://www.maff.go.jp/j/seisan/kakou/mezamasi/recipe/recipe018.html",
+  },
+];
+
 const rawRecipes: Recipe[] = [
   ...everydayLegumeRecipes,
   ...pantryIntegrationRecipes,
@@ -10137,6 +10206,7 @@ const rawRecipes: Recipe[] = [
   ...catalogMains,
   ...verifiedWorldRecipeExpansion,
   ...verifiedIndianPaneerRecipes,
+  ...verifiedJapaneseEggRecipes,
   ...occasionalRecipes,
   ...recipes,
 ];

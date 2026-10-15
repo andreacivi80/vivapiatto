@@ -1627,7 +1627,11 @@ try {
     (Number(version.split('.').at(-1)) >= 80 && !profileAdaptation.lowWorkSnacksCompact) ||
     profileAdaptation.lowPlanKcal <= 0 || profileAdaptation.highPlanKcal <= profileAdaptation.lowPlanKcal + 300 ||
     !profileAdaptation.targetChangesPlan || !profileAdaptation.highBreakfastHasNoDuplicateDairyOrNuts ||
-    !profileAdaptation.maxTargetSelected || profileAdaptation.maxPlanKcal <= profileAdaptation.highPlanKcal + 250 ||
+    // Complete meals use practical package sizes and capped cooked portions;
+    // demand a material increase and a plan within 10% of the chosen 3000 kcal.
+    !profileAdaptation.maxTargetSelected ||
+    profileAdaptation.maxPlanKcal <= profileAdaptation.highPlanKcal + 200 ||
+    Math.abs(profileAdaptation.maxPlanKcal - 3000) > 300 ||
     !profileAdaptation.maxSnackHarmonious || !profileAdaptation.maxSnackNoDoubleCereal || !profileAdaptation.glutenFilterActive ||
     !profileAdaptation.glutenPlanSafe || !profileAdaptation.glutenFilterRestored ||
     !profileAdaptation.historyConsentReenabled ||

@@ -3027,6 +3027,21 @@ test("v1.19.93 calculates documented Indian paneer dishes from distinct photogra
   assert.match(source, /burro\|paneer\/\]/);
 });
 
+test("v1.19.94 adds Japanese egg dishes with matching photographs and cooked-rice nutrition", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(source, /Riso giapponese cotto"\] = \{ kcal: 130, protein: 2\.36, carbs: 28\.7, fat: 0\.19/);
+  for (const id of ["asian-tamagoyaki-rice-vegetables", "asian-green-vegetable-egg-chahan"]) {
+    assert.match(source, new RegExp(`id: "${id}"`));
+  }
+  for (const name of ["part-japanese-shortgrain-rice", "recipe-asian-tamagoyaki-bowl", "recipe-asian-vegetable-chahan"]) {
+    const photo = await readFile(new URL(`../public/food/${name}-v11994.png`, import.meta.url));
+    assert.ok(photo.length > 100_000);
+    assert.match(source, new RegExp(`${name}-v11994`));
+  }
+  assert.match(source, /\.\.\.verifiedJapaneseEggRecipes/);
+  assert.match(source, /MAFF · Tamagoyaki adattato in piatto completo/);
+});
+
 test("v1.19.86 separates recipe provenance from ingredient nutrition data", async () => {
   const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(source, /const recipeSourceKind = \(recipe: Recipe\) => \{/);
