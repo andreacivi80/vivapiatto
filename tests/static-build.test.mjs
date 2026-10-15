@@ -3089,6 +3089,15 @@ test("v1.19.98 uses cooked spinach nutrition and photograph when the recipe says
   assert.match(source, /"Spinaci cotti": \[9, 10, 11, 12, 1, 2, 3, 4, 5\]/);
 });
 
+test("v1.19.99 keeps raw spinach photos and nutrition separate from cooked spinach", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(source, /USDA SR28, NDB 11457: spinaci crudi/);
+  assert.match(source, /Spinaci: \{\s*kcal: 23,\s*protein: 2\.86,\s*carbs: 3\.63,\s*fat: 0\.39,\s*fiber: 2\.2,\s*source: "USDA"/);
+  assert.doesNotMatch(source, /part-spinach-v7/);
+  assert.match(source, /food: "Spinaci", grams: 70, label: "Spinaci · peso a crudo", image: photo\("part-spinach-raw-v11995"\)/);
+  assert.match(source, /food: "Spinaci cotti", grams: 150, label: "Spinaci cotti · 150 g", image: photo\("part-spinach-cooked-v11995"\)/);
+});
+
 test("v1.19.86 separates recipe provenance from ingredient nutrition data", async () => {
   const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(source, /const recipeSourceKind = \(recipe: Recipe\) => \{/);
