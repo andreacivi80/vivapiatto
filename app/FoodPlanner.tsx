@@ -10890,12 +10890,13 @@ export function FoodPlanner() {
     matchesFoodStyle(recipe) &&
     matchesEquipment(recipe) &&
     recipe.time <= maxPrepTime;
-  const recipeProteinSignature = (recipe: Recipe) => {
-    const protein = recipe.ingredients.find((ingredient) =>
+  const proteinSignatureForItems = (items: RecipeIngredient[]) => {
+    const protein = items.find((ingredient) =>
       /pollo|tacchino|coniglio|manzo|vitello|maiale|cavallo|roast beef|carpaccio|bresaola|prosciutto|salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|gamber|polpo|cozze|calamari|rombo|seppia|uov|ceci|lenticchie|fagioli(?!ni)|piselli|tofu|tempeh|ricotta|feta|mozzarella|crescenza|scamorza|provolone/i.test(ingredient.food),
     );
-    return protein?.food || recipeProteinFamily(recipe);
+    return protein?.food || proteinFamilyForItems(items);
   };
+  const recipeProteinSignature = (recipe: Recipe) => proteinSignatureForItems(recipe.ingredients);
   const breakfastStyleScore = (recipe: Recipe) => {
     if (breakfastStyle === "Indifferente") return 0;
     const text = `${recipe.name} ${recipe.ingredients.map((item) => item.food).join(" ")}`.toLowerCase();
@@ -12933,6 +12934,14 @@ export function FoodPlanner() {
     weeklyPlannedFiber.reduce((sum, fiber) => sum + fiber, 0) /
       weeklyPlannedFiber.length,
   );
+  const standardWeeklyTargets = foodStyle === "Onnivoro";
+  const visibleWeeklyFamilies = foodStyle === "Vegano"
+    ? ["Legumi e vegetali"]
+    : foodStyle === "Vegetariano"
+      ? ["Legumi e vegetali", "Uova", "Formaggi"]
+      : foodStyle === "Pescetariano"
+        ? ["Pesce", "Legumi e vegetali", "Uova", "Formaggi"]
+        : null;
   const weeklyTargets = [
     { label: "Pesce", target: "2–3", min: 2, max: 3, count: weeklyCounts.Pesce },
     { label: "Legumi e vegetali", target: "3", min: 3, max: 3, count: weeklyCounts["Legumi e vegetali"] },
@@ -12941,16 +12950,19 @@ export function FoodPlanner() {
     { label: "Uova", target: "2–4", min: 2, max: 4, count: weeklyCounts.Uova },
     { label: "Formaggi", target: "2–3", min: 2, max: 3, count: weeklyCounts.Formaggi },
     { label: "Salumi", target: "0–1", min: 0, max: 1, count: weeklyCounts.Salumi },
-  ].map((item) => ({
+  ].filter((item) => !visibleWeeklyFamilies || visibleWeeklyFamilies.includes(item.label)).map((item) => ({
     ...item,
-    status: item.count >= item.min && item.count <= item.max ? "Nel range" : "Da riequilibrare",
+    status: standardWeeklyTargets
+      ? item.count >= item.min && item.count <= item.max ? "Nel range" : "Da riequilibrare"
+      : "Solo conteggio",
   }));
   const weeklyKcalDelta = weeklyAverageKcal - calories;
   const consecutiveProteinRepeats = days
     .flatMap((_, day) => [2, 4].map((slot) => ({ day, slot })))
     .map(({ day, slot }) => {
       const key = `${day}-${slot}`;
-      return proteinFamilyForItems(plannedIngredients(key, recipeMap[getDayIds(day)[slot]]));
+      const items = plannedIngredients(key, recipeMap[getDayIds(day)[slot]]);
+      return standardWeeklyTargets ? proteinFamilyForItems(items) : proteinSignatureForItems(items);
     })
     .filter((family, index, sequence) => index > 0 && family !== "altro" && family === sequence[index - 1])
     .length;
@@ -12996,11 +13008,13 @@ export function FoodPlanner() {
       }
       const family = requestedFamilies[index];
       const targetKcal = targetForDay(day) * mealCalorieShares[slot];
-      const suitable = allRecipes.filter((recipe) => {
+      const compatible = allRecipes.filter((recipe) => {
         if (recipe.id.startsWith("occasional-")) return false;
         if (!fitsSlot(recipe, slot) || !isProfileEligible(recipe)) return false;
-        return proteinFamilyForItems(recipe.ingredients) === family;
+        return true;
       });
+      const sameFamily = compatible.filter((recipe) => proteinFamilyForItems(recipe.ingredients) === family);
+      const suitable = sameFamily.length || standardWeeklyTargets ? sameFamily : compatible;
       const ranked = suitable.sort((left, right) => {
         const uniqueDelta = Number(used.has(left.id)) - Number(used.has(right.id));
         if (uniqueDelta) return uniqueDelta;
@@ -13027,7 +13041,9 @@ export function FoodPlanner() {
     setChoices((current) => ({ ...current, ...updates }));
     clearMealOverrides(Object.keys(updates));
     setWeekLocked(false);
-    setReplanNote("Rotazione settimanale ricalcolata sui pasti ancora da fare; quelli già registrati restano invariati. Controlla i range aggiornati prima di confermare.");
+    setReplanNote(standardWeeklyTargets
+      ? "Rotazione settimanale ricalcolata sui pasti ancora da fare; quelli già registrati restano invariati. Controlla i range aggiornati prima di confermare."
+      : "Varietà dei pasti compatibili ricalcolata; quelli già registrati restano invariati. I conteggi non sono target clinici per lo stile scelto.");
   };
   const replanNextDay = (day: number) => {
     if (day >= days.length - 1) {
@@ -14440,7 +14456,7 @@ export function FoodPlanner() {
             <div className="weekly-frequency">
               <header>
                 <b>{weekLocked ? "Rotazione confermata" : "Rotazione pianificata"}</b>
-                <span>pasti della settimana · riferimento CREA</span>
+                 <span>{standardWeeklyTargets ? "pasti della settimana · riferimento CREA" : `conteggi · stile ${foodStyle.toLowerCase()}`}</span>
                 <a
                   className="weekly-source"
                   href="https://www.crea.gov.it/documents/59764/0/Dossier%2BLG%2B2017_CAP10.pdf/"
@@ -14452,16 +14468,17 @@ export function FoodPlanner() {
               </header>
               <div>
                 {weeklyTargets.map((item) => (
-                  <span key={item.label} className={item.status === "Nel range" ? "within-target" : "outside-target"}>
+                   <span key={item.label} className={item.status === "Nel range" ? "within-target" : item.status === "Da riequilibrare" ? "outside-target" : ""}>
                     <b>{item.count}</b>
                     {item.label}
-                    <small>{item.status} · {item.target}</small>
+                     <small>{item.status}{standardWeeklyTargets ? ` · ${item.target}` : ""}</small>
                   </span>
                 ))}
               </div>
               <p>
-                Le proposte successive useranno ciò che registri per aumentare
-                la varietà; i riferimenti non sono obblighi clinici.
+                 {standardWeeklyTargets
+                   ? "Le proposte successive useranno ciò che registri per aumentare la varietà; i riferimenti non sono obblighi clinici."
+                   : "I range generali CREA non sono applicati automaticamente allo stile scelto; qui vedi solo le frequenze e puoi variare i pasti."}
               </p>
               {consecutiveProteinRepeats > 0 && (
                 <p className="weekly-protein-warning">

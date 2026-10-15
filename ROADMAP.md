@@ -2,13 +2,22 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.77 — verifica nella cartella richiesta
+## v1.19.78 — rotazione coerente con lo stile alimentare
+
+- [x] Per vegetariano, pescetariano e vegano la Settimana mostra solo le famiglie compatibili, senza presentare i range onnivori come errori da correggere.
+- [x] Il comando di rotazione cerca piatti compatibili anche quando la famiglia della sequenza onnivora non è disponibile; conserva i pasti già registrati.
+- [x] Le ripetizioni negli stili non onnivori confrontano l'alimento proteico effettivo, non l'intera famiglia vegetale.
+- [x] Inserito un collaudo mobile di rotazione vegetariana e conteggi vegani, senza inventare target clinici per questi stili.
+- [x] Suite completa nella cartella richiesta: 208/208 test, build e collaudo mobile locale della versione esatta superati. Settimana vegetariana con tre sole categorie pertinenti, rotazione senza carne/pesce, pasto registrato conservato; vegano senza falsi allarmi di range.
+- [ ] Pubblicazione sul link unico e collaudo mobile pubblico.
+
+## v1.19.77 — pubblicata e verificata
 
 - [x] Allineata la cartella `C:\Users\utente38\Desktop\Manuale\Scheda Alimenti` al repository GitHub senza sovrascrivere le modifiche precedenti, conservate in uno stash recuperabile.
 - [x] Corretto l'audit fotografico che interpretava lo spazio del percorso come `%20` e interrompeva `npm test` nella cartella reale.
 - [x] Nella cartella richiesta: 569 fotografie controllate, 214 ricette della matrice e 217 alimenti del paniere; aggiunta una prova regressiva per i percorsi con spazi.
 - [x] Suite completa nella cartella richiesta: 207/207 test, build e prova mobile locale della v1.19.77 superati senza errori JavaScript o overflow.
-- [ ] Pubblicazione sullo stesso link e prova mobile della versione esatta.
+- [x] Pubblicazione sullo stesso link e prova mobile pubblica della versione esatta: zero errori JavaScript, immagini pendenti o rotte e overflow.
 
 ## v1.19.76 — pubblicata e verificata
 

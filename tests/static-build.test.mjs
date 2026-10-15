@@ -1506,10 +1506,18 @@ test("v1.17.0 makes weekly calorie and rotation status explicit", async () => {
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
   assert.match(app, /weeklyKcalDelta/);
-  assert.match(app, /status: item\.count >= item\.min/);
+  assert.match(app, /status: standardWeeklyTargets/);
   assert.match(app, /Nel range/);
   assert.match(app, /Da riequilibrare/);
   assert.match(css, /\.weekly-frequency \.within-target/);
+});
+
+test("v1.19.78 reports compatible weekly categories for non-omnivore styles", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(app, /const visibleWeeklyFamilies = foodStyle === "Vegano"/);
+  assert.match(app, /"Solo conteggio"/);
+  assert.match(app, /sameFamily\.length \|\| standardWeeklyTargets \? sameFamily : compatible/);
+  assert.match(app, /proteinSignatureForItems\(items\)/);
 });
 
 test("v1.17.1 adds functional nutrition and preparation filters", async () => {

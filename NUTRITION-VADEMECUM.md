@@ -34,6 +34,7 @@ Questo documento è la base funzionale dell’app. Le fotografie e la grafica de
 - Formaggi: trattati come secondo/componente del pasto o aggiunta misurata, non come extra automatico a fine pasto.
 - La modifica di un pasto riequilibra i giorni successivi non registrati finché la settimana non viene confermata.
 - Dopo la conferma settimanale, le modifiche in “Oggi” restano giornaliere.
+- Per gli stili vegetariano, pescetariano e vegano le frequenze settimanali sono mostrate come conteggi delle categorie compatibili: i range generali del modello onnivoro non sono applicati automaticamente né presentati come prescrizione individuale. La rotazione cerca varietà tra gli alimenti consentiti.
 
 ## Regole in consolidamento
 

@@ -1238,6 +1238,25 @@ try {
           rows[${confirmedProfileReplan.recordedPosition}]?.dataset.completed === 'true',
       };
     })()`));
+    if (Number(version.split('.').at(-1)) >= 78) {
+      Object.assign(confirmedProfileReplan, await evaluate(`(() => ({
+        visibleTargets: document.querySelectorAll('.weekly-frequency > div span').length,
+        noAnimalTargets: ![...document.querySelectorAll('.weekly-frequency > div span')].some((row) => /Pesce|Carne|Salumi/.test(row.innerText)),
+        noFalseRangeWarnings: !document.querySelector('.weekly-frequency .outside-target'),
+        rotationButtonFound: Boolean(document.querySelector('.weekly-rotation-fix')),
+      }))()`));
+      await evaluate(`document.querySelector('.weekly-rotation-fix')?.click()`);
+      await wait(800);
+      Object.assign(confirmedProfileReplan, await evaluate(`(() => {
+        const rows = [...document.querySelectorAll('.week-meal-row')];
+        const animal = /pollo|tacchino|coniglio|manzo|vitello|maiale|cavallo|bresaola|prosciutto|salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|gamber|polpo|cozze|calamari|rombo|seppia/i;
+        return {
+          animalMealsAfterRotation: rows.filter((row) => row.dataset.completed !== 'true' && animal.test(row.innerText)).map((row) => row.innerText.slice(0, 100)),
+          recordedMealAfterRotation: rows[${confirmedProfileReplan.recordedPosition}]?.dataset.recipeId === ${JSON.stringify(confirmedProfileReplan.recordedId)} &&
+            rows[${confirmedProfileReplan.recordedPosition}]?.dataset.completed === 'true',
+        };
+      })()`));
+    }
     await clickTab('Oggi');
     await setPreference('Stile alimentare', 'Onnivoro');
     await wait(550);
@@ -1269,6 +1288,8 @@ try {
       incompatibleMealsFlagged: excluded + mismatch > 0,
       unsafeWeekCannotConfirm: excluded === 0 || Boolean(confirm?.disabled),
       horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+      veganTargetsOnlyPlant: [...document.querySelectorAll('.weekly-frequency > div span')].every((row) => row.innerText.includes('Legumi e vegetali')),
+      veganNoFalseRangeWarnings: !document.querySelector('.weekly-frequency .outside-target'),
     };
   })()`));
   await page.send('Page.reload', { ignoreCache: false });
@@ -1425,6 +1446,12 @@ try {
       !confirmedProfileReplan.confirmAvailable || !confirmedProfileReplan.lockedBeforeStyleChange ||
       !confirmedProfileReplan.weekReopened || confirmedProfileReplan.pendingMeals < 30 ||
       confirmedProfileReplan.animalMeals.length > 0 || !confirmedProfileReplan.recordedMealPreserved
+    )) ||
+    (Number(version.split('.').at(-1)) >= 78 && (
+      confirmedProfileReplan.visibleTargets !== 3 || !confirmedProfileReplan.noAnimalTargets ||
+      !confirmedProfileReplan.noFalseRangeWarnings || !confirmedProfileReplan.rotationButtonFound ||
+      confirmedProfileReplan.animalMealsAfterRotation.length > 0 || !confirmedProfileReplan.recordedMealAfterRotation ||
+      !severeProfile.veganTargetsOnlyPlant || !severeProfile.veganNoFalseRangeWarnings
     )) ||
     severeProfile.allergyFiltersFound < 5 || !severeProfile.persistentWarningToday ||
     !severeProfile.persistentWarningWeek || !severeProfile.incompatibleMealsFlagged ||

@@ -1,6 +1,6 @@
 # Tavola Mia — audit finale del perimetro ricevuto
 
-Data verifica: 15 ottobre 2026. Ultimo checkpoint pubblico verificato: `1.19.76`.
+Data verifica: 15 ottobre 2026. Ultimo checkpoint pubblico verificato: `1.19.77`.
 
 ## Specifiche acquisite
 
@@ -21,7 +21,8 @@ Data verifica: 15 ottobre 2026. Ultimo checkpoint pubblico verificato: `1.19.76`
 - Suite pubblicabile: 206/206 test superati, controllo TypeScript senza errori, SSR superato, audit dipendenze con zero vulnerabilità e build GitHub Pages riuscita.
 - Aggiornamento automatico tra release verificato su mobile reale: versione nuova rilevata senza intervento, menu, grammatura modificata e posizione di scorrimento conservati.
 - Stress mobile pubblico ripetibile: viewport 390×844, target calorico verificato su profilo pulito e contesto Lavoro/Casa, check-in adattivo, conferma/rotazione/stampa settimanale, quattro famiglie delle 214 ricette, ritorno fisso, alternative del latte, modifica grammatura persistente, aggiunta/rimozione diretta di componenti, fotografie visibili realmente caricate e zero errori JavaScript.
-- Pubblicazione verificata sul link unico: manifest `1.19.76` e stress mobile pubblico concluso senza errori JavaScript, overflow, recupero, immagini rotte o immagini pendenti.
+- Pubblicazione verificata sul link unico: manifest `1.19.77` e stress mobile pubblico concluso senza errori JavaScript, overflow, recupero, immagini rotte o immagini pendenti.
+- Il repository nella cartella `Scheda Alimenti` è stato allineato senza cancellare le modifiche locali preesistenti; lo script di audit fotografico usa un percorso filesystem corretto anche quando la cartella contiene spazi.
 - Su una settimana già confermata, il cambio dello stile alimentare a vegetariano ha riaperto il piano e ricalcolato 34 pasti non registrati senza carne o pesce, conservando il pasto già registrato.
 - Una scelta libera di piatto completo anche fuori dalla categoria automatica resta visibile dopo la ricarica; il riequilibrio dei giorni successivi non reintroduce ricette escluse. La settimana segnala i pasti incompatibili ancora da fare e ne impedisce la conferma finché non sono sostituiti.
 - Il collaudo pubblico modifica un componente a 777 g, registra il pasto, lo sostituisce con una ricetta diversa e verifica che peso vecchio e spunta scompaiano; la nuova identità resta dopo la ricarica. Check-in e ricalcoli puliscono solo gli override dei pasti modificati non registrati.
