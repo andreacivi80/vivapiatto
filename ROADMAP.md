@@ -2,14 +2,22 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.75 — pronta per pubblicazione
+## v1.19.76 — pronta per pubblicazione
+
+- [x] Cambiare stile alimentare, tempo massimo o attrezzature su una settimana confermata la riapre e ricalcola tutti i pasti ancora da fare, non solo il giorno corrente.
+- [x] Stress mobile aggiunto: settimana confermata, stile vegetariano, pasti non registrati senza carne/pesce, pasto già registrato conservato; poi ripristino dello stile e prova dei filtri estremi.
+- [x] Prova mobile locale: settimana bloccata riaperta dal cambio a vegetariano, 34 pasti non registrati senza carne o pesce, pasto registrato invariato dopo ricarica; test estremo delle allergie e zero errori JavaScript.
+- [x] Suite tecnica: 206/206 test, TypeScript e build superati.
+- [ ] Pubblicazione e collaudo mobile pubblico della versione esatta.
+
+## v1.19.75 — pubblicata e verificata
 
 - [x] Il paniere da lavoro non riprende più ricette fuori dallo stile alimentare, dal tempo massimo o dalle attrezzature disponibili.
 - [x] Se nessuna colazione rapida è compatibile, il sistema non sostituisce di nascosto con una preparazione troppo lunga.
 - [x] Oggi e Settimana mostrano in modo permanente quando i filtri non permettono un piano automatico; i pasti preesistenti fuori preferenze sono distinguibili dagli alimenti esclusi.
 - [x] Stress mobile locale con 14 allergie, stile vegano, massimo 5 minuti e nessuna cottura: avviso persistente in Oggi/Settimana anche dopo reload, 28 pasti esclusi evidenziati e settimana non confermabile, 6 fuori preferenze distinti, zero overflow o errori JavaScript.
 - [x] Suite completa: TypeScript, build e 206/206 test superati.
-- [ ] Pubblicazione e collaudo mobile pubblico della versione esatta.
+- [x] Pubblicazione e collaudo mobile pubblico della versione esatta: 14 allergie estreme, avvisi persistenti anche dopo reload, 28 pasti esclusi segnalati, settimana non confermabile, zero errori JavaScript e overflow.
 
 ## v1.19.74 — pubblicata e verificata
 

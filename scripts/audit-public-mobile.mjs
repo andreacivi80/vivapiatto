@@ -1048,6 +1048,15 @@ try {
     };
   })()`));
   await changeSelectValue('.cuisine-picker select', 1, 'Lavoro');
+  await clickTab('Progressi');
+  profileAdaptation.historyConsentReenabled = await evaluate(`(() => {
+    const input = document.querySelector('.history-consent input[type="checkbox"]');
+    if (!input) return false;
+    if (!input.checked) input.click();
+    return input.checked;
+  })()`);
+  await wait(350);
+  await clickTab('Oggi');
   const loggedMealBeforeAllergy = await evaluate(`(() => {
     const forbidden = /pasta|pane|farro|orzo|bulgur|cous cous|cracker|fette biscottate|biscott|wafer|muesli|frumento|segale|grissini|avena/i;
     const cards = [...document.querySelectorAll('.meal-card')];
@@ -1198,6 +1207,41 @@ try {
     if (!found) throw new Error(`Preferenza ${label} non trovata`);
     await wait(350);
   };
+  const confirmedProfileReplan = { skipped: Number(version.split('.').at(-1)) < 76 };
+  if (!confirmedProfileReplan.skipped) {
+    await clickTab('Settimana');
+    Object.assign(confirmedProfileReplan, await evaluate(`(() => {
+      const rows = [...document.querySelectorAll('.week-meal-row')];
+      const recordedPosition = rows.findIndex((row) => row.dataset.completed === 'true');
+      const recordedId = rows[recordedPosition]?.dataset.recipeId || '';
+      const confirm = [...document.querySelectorAll('.week-lock button')]
+        .find((button) => button.innerText.trim() === 'Conferma');
+      confirm?.click();
+      return { recordedId, recordedPosition, confirmAvailable: Boolean(confirm && !confirm.disabled) };
+    })()`));
+    await wait(450);
+    confirmedProfileReplan.lockedBeforeStyleChange = await evaluate(`document.querySelector('.week-lock')?.innerText.includes('Settimana confermata') || false`);
+    await clickTab('Oggi');
+    await setPreference('Stile alimentare', 'Vegetariano');
+    await wait(1_200);
+    await clickTab('Settimana');
+    Object.assign(confirmedProfileReplan, await evaluate(`(() => {
+      const rows = [...document.querySelectorAll('.week-meal-row')];
+      const animal = /pollo|tacchino|coniglio|manzo|vitello|maiale|cavallo|bresaola|prosciutto|salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|gamber|polpo|cozze|calamari|rombo|seppia/i;
+      const pending = rows.filter((row) => row.dataset.completed !== 'true');
+      return {
+        weekReopened: document.querySelector('.week-lock')?.innerText.includes('Settimana modificabile') || false,
+        pendingMeals: pending.length,
+        animalMeals: pending.filter((row) => animal.test(row.innerText)).map((row) => row.innerText.slice(0, 100)),
+        recordedMealPreserved: Boolean(${JSON.stringify(confirmedProfileReplan.recordedId)}) &&
+          rows[${confirmedProfileReplan.recordedPosition}]?.dataset.recipeId === ${JSON.stringify(confirmedProfileReplan.recordedId)} &&
+          rows[${confirmedProfileReplan.recordedPosition}]?.dataset.completed === 'true',
+      };
+    })()`));
+    await clickTab('Oggi');
+    await setPreference('Stile alimentare', 'Onnivoro');
+    await wait(550);
+  }
   await setPreference('Tempo massimo', '5');
   await setPreference('Attrezzature', 'Nessuna cottura');
   await setPreference('Stile alimentare', 'Vegano');
@@ -1286,6 +1330,7 @@ try {
     checkinAdaptation,
     profileAdaptation,
     freeChoiceAndReplan,
+    confirmedProfileReplan,
     severeProfile,
     javascriptErrors: exceptions.length,
     javascriptErrorDetails: exceptions.slice(-8).map((event) => ({
@@ -1364,6 +1409,7 @@ try {
     !profileAdaptation.maxTargetSelected || profileAdaptation.maxPlanKcal <= profileAdaptation.highPlanKcal + 250 ||
     !profileAdaptation.maxSnackHarmonious || !profileAdaptation.maxSnackNoDoubleCereal || !profileAdaptation.glutenFilterActive ||
     !profileAdaptation.glutenPlanSafe || !profileAdaptation.glutenFilterRestored ||
+    !profileAdaptation.historyConsentReenabled ||
     !profileAdaptation.lockedWeekConfirmed || !profileAdaptation.lockedWeekReopenedForAllergy ||
     !profileAdaptation.weekGlutenFree || !profileAdaptation.loggedMealPreserved ||
     !profileAdaptation.workBreakfastPractical || !profileAdaptation.workSnacksPractical || !profileAdaptation.homeSelected || !profileAdaptation.contextChangesPlan ||
@@ -1375,6 +1421,11 @@ try {
     !freeChoiceAndReplan.oldGramsCleared || !freeChoiceAndReplan.mealUnregisteredAfterSwap ||
     !freeChoiceAndReplan.nextDaysGlutenFree || !freeChoiceAndReplan.nextDaysNotBlocked ||
     !freeChoiceAndReplan.persistedAfterReload ||
+    (!confirmedProfileReplan.skipped && (
+      !confirmedProfileReplan.confirmAvailable || !confirmedProfileReplan.lockedBeforeStyleChange ||
+      !confirmedProfileReplan.weekReopened || confirmedProfileReplan.pendingMeals < 30 ||
+      confirmedProfileReplan.animalMeals.length > 0 || !confirmedProfileReplan.recordedMealPreserved
+    )) ||
     severeProfile.allergyFiltersFound < 5 || !severeProfile.persistentWarningToday ||
     !severeProfile.persistentWarningWeek || !severeProfile.incompatibleMealsFlagged ||
     !severeProfile.unsafeWeekCannotConfirm || severeProfile.horizontalOverflow ||

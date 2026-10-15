@@ -12749,6 +12749,7 @@ export function FoodPlanner() {
     if (!profileHydrated) return;
     const restrictionSignature = JSON.stringify([
       excludedGroups, allergyGroups, intoleranceGroups, healthConditions, dislikedFoods,
+      foodStyle, maxPrepTime, availableEquipment,
     ]);
     if (skipFirstProfileApplyRef.current) {
       skipFirstProfileApplyRef.current = false;
@@ -14503,7 +14504,7 @@ export function FoodPlanner() {
                     const excludedForCurrentProfile = mealContainsExcludedFood(key, r);
                     const outsideCurrentProfile = !excludedForCurrentProfile && !mealMatchesProfile(key, r);
                     return (
-                      <div className={`week-meal-row ${excludedForCurrentProfile ? "excluded" : outsideCurrentProfile ? "profile-mismatch" : ""}`} key={key} data-recipe-id={r.id}>
+                      <div className={`week-meal-row ${excludedForCurrentProfile ? "excluded" : outsideCurrentProfile ? "profile-mismatch" : ""}`} key={key} data-recipe-id={r.id} data-completed={completed[key] ? "true" : "false"}>
                         <button
                           className="week-meal"
                           onClick={() => {
