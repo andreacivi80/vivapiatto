@@ -2,13 +2,20 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.69 — verificata in locale, in pubblicazione
+## v1.19.70 — verificata in locale, in pubblicazione
+
+- [x] Se un'allergia, un'intolleranza o un'esclusione cambia dopo la conferma, la settimana torna modificabile e ricalcola tutti i giorni futuri non registrati.
+- [x] I pasti già registrati come mangiati restano invariati durante il ricalcolo.
+- [x] 206 test, TypeScript e prova mobile sulla settimana confermata superati in locale: 35/35 pasti coerenti dopo l'allergia al glutine, nessun errore JavaScript o overflow.
+- [ ] Pubblicazione e collaudo pubblico della versione esatta.
+
+## v1.19.69 — pubblicata e verificata
 
 - [x] A 3000 kcal le aggiunte a uno spuntino salato con verdure diventano una porzione pratica di pane, senza banana e cracker arbitrari.
 - [x] Le aggiunte automatiche rispettano alimenti esclusi, allergie dichiarate e stile alimentare; le card segnalano anche un ingrediente aggiunto incompatibile.
 - [x] Cambiare allergie, intolleranze o alimenti da evitare ricalcola subito le proposte non ancora registrate, mantenendo quelle già mangiate.
 - [x] 206/206 test, TypeScript e collaudo mobile del target 3000 e del filtro glutine superati in locale.
-- [ ] Pubblicazione sullo stesso link e collaudo mobile pubblico della versione esatta.
+- [x] Pubblicazione sullo stesso link e collaudo mobile pubblico della versione esatta, senza errori JavaScript o overflow.
 
 ## v1.19.68 — pubblicata e verificata
 

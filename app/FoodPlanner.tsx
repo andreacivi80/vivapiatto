@@ -10289,6 +10289,7 @@ export function FoodPlanner() {
   const [weekEditingDay, setWeekEditingDay] = useState<number | null>(null);
   const [profileHydrated, setProfileHydrated] = useState(false);
   const skipFirstProfileApplyRef = useRef(true);
+  const lastRestrictionSignatureRef = useRef("");
   const [groceryChecked, setGroceryChecked] = useState<Record<string, boolean>>(
     {},
   );
@@ -12081,7 +12082,10 @@ export function FoodPlanner() {
   };
   const isSmoothieRecipe = (recipe: Recipe) =>
     /frullato|smoothie/i.test(`${recipe.name} ${recipe.kicker}`);
-  const applyCuisine = (preference: "variety" | "repeat" = weekPreference) => {
+  const applyCuisine = (
+    preference: "variety" | "repeat" = weekPreference,
+    forceAllDays = false,
+  ) => {
     if (ageGroup === "Minore") {
       setReplanNote("Pianificazione automatica per minori disattivata: le ricette restano consultabili.");
       return;
@@ -12127,7 +12131,9 @@ export function FoodPlanner() {
       return;
     }
     const shares = mealCalorieShares;
-    const profileDays = weekLocked ? [dayIndex] : days.map((_, index) => index);
+    const profileDays = weekLocked && !forceAllDays
+      ? [dayIndex]
+      : days.map((_, index) => index);
     setChoices((current) => {
       const next = { ...current };
       const usedRecipes = new Set<string>();
@@ -12613,11 +12619,18 @@ export function FoodPlanner() {
   };
   useEffect(() => {
     if (!profileHydrated) return;
+    const restrictionSignature = JSON.stringify([
+      excludedGroups, allergyGroups, intoleranceGroups, healthConditions, dislikedFoods,
+    ]);
     if (skipFirstProfileApplyRef.current) {
       skipFirstProfileApplyRef.current = false;
+      lastRestrictionSignatureRef.current = restrictionSignature;
       return;
     }
-    applyCuisine();
+    const restrictionsChanged = lastRestrictionSignatureRef.current !== restrictionSignature;
+    lastRestrictionSignatureRef.current = restrictionSignature;
+    if (restrictionsChanged && weekLocked) setWeekLocked(false);
+    applyCuisine(weekPreference, restrictionsChanged);
   }, [
     goal,
     calories,

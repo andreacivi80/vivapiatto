@@ -1046,6 +1046,38 @@ try {
     };
   })()`));
   await changeSelectValue('.cuisine-picker select', 1, 'Lavoro');
+  await clickTab('Settimana');
+  profileAdaptation.lockedWeekConfirmed = await evaluate(`(() => {
+    const lock = document.querySelector('.week-lock');
+    const button = [...(lock?.querySelectorAll('button') || [])]
+      .find((item) => item.innerText.trim() === 'Conferma');
+    button?.click();
+    return Boolean(button);
+  })()`);
+  await wait(400);
+  await clickTab('Oggi');
+  await evaluate(`(() => {
+    [...document.querySelectorAll('.today-strip-actions button')]
+      .find((button) => button.textContent?.includes('Preferenze'))?.click();
+    return true;
+  })()`);
+  await wait(250);
+  await evaluate(`(() => {
+    [...document.querySelectorAll('.preferences .chips')[0].querySelectorAll('button')]
+      .find((button) => button.textContent?.trim() === 'Glutine')?.click();
+    return true;
+  })()`);
+  await wait(1_200);
+  await clickTab('Settimana');
+  Object.assign(profileAdaptation, await evaluate(`(() => {
+    const weekMeals = [...document.querySelectorAll('.week-meal')];
+    const forbidden = /pasta|pane|farro|orzo|bulgur|cous cous|cracker|fette biscottate|biscott|wafer|muesli|frumento|segale|grissini/i;
+    return {
+      lockedWeekReopenedForAllergy: document.querySelector('.week-lock')?.innerText.includes('Settimana modificabile') || false,
+      weekMealsAfterAllergy: weekMeals.length,
+      weekGlutenFree: weekMeals.length === 35 && weekMeals.every((meal) => !forbidden.test(meal.innerText)),
+    };
+  })()`));
   const rawExceptions = page.events.filter((event) =>
     event.method === "Runtime.exceptionThrown" ||
     (event.method === "Log.entryAdded" && event.params?.entry?.level === "error")
@@ -1178,6 +1210,8 @@ try {
     !profileAdaptation.maxTargetSelected || profileAdaptation.maxPlanKcal <= profileAdaptation.highPlanKcal + 250 ||
     !profileAdaptation.maxSnackHarmonious || !profileAdaptation.glutenFilterActive ||
     !profileAdaptation.glutenPlanSafe || !profileAdaptation.glutenFilterRestored ||
+    !profileAdaptation.lockedWeekConfirmed || !profileAdaptation.lockedWeekReopenedForAllergy ||
+    !profileAdaptation.weekGlutenFree ||
     !profileAdaptation.workBreakfastPractical || !profileAdaptation.workSnacksPractical || !profileAdaptation.homeSelected || !profileAdaptation.contextChangesPlan ||
     profileAdaptation.horizontalOverflow ||
     exceptions.length
