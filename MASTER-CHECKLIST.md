@@ -48,13 +48,14 @@ Questa checklist resta nel repository e viene aggiornata a ogni revisione. Una v
 ## Verifiche automatiche eseguite
 
 - [x] Riesaminare tutta la chat e tutti gli allegati confrontandoli con questa checklist. Verificati elenco generale, matrice iniziale, quattro addendum e obiettivo permanente; perimetro ricette `C01–C44`, `S01–S42`, `P01–P64`, `D01–D64`.
-- [x] Eseguire test statici, build, controllo fotografie e test mobile a ogni revisione. Ultima suite pubblicata: 210/210; audit foto 569/569, 214/214 matrice e 258/258 ricette reali con file dedicato; stress mobile con persistenza dei grammi, sincronizzazione Oggi–Settimana, aggiornamento senza perdita di stato, contesto, check-in, ricette, immagini, spesa, extra, gelato, componenti, piatti pronti, “+ → Sgarri” e scroll.
+- [x] Eseguire test statici, build, controllo fotografie e test mobile a ogni revisione. Ultima suite pubblicata: 210/210 sulla 1.19.84; audit foto 569/569, 214/214 matrice e 258/258 ricette reali con file dedicato; stress mobile con persistenza dei grammi, sincronizzazione Oggi–Settimana, aggiornamento senza perdita di stato, contesto, check-in, ricette, immagini, spesa, extra, gelato, componenti, piatti pronti, “+ → Sgarri”, pizza → tiramisù e scroll.
 - [x] Stress test finale da utilizzatore: sostituzioni, grammi, rimozioni, settimana, refresh, diario, extra, ricette e spesa. Prova pubblica a 390×844 su Oggi, cambio piatto a fondo pagina, ritorno, Settimana, barra fissa, Ricette, Progressi, spesa e refresh; nessun overflow, schermata bianca o errore console. Rimozione, grammi, extra e persistenza restano inoltre coperti dai test statici dedicati.
 - [x] Conservare le evidenze delle revisioni pubblicate in `FINAL-AUDIT.md`; il documento non sostituisce i controlli ancora aperti sotto.
 
 ## Controlli ancora aperti
 
 - [ ] Controllo visivo sistematico di tutte le fotografie: gli audit automatici verificano file, collegamenti e unicità, non possono certificare che ogni pixel corrisponda davvero al piatto o all'alimento. I casi segnalati dall'utente hanno priorità.
+- [x] Campione visivo mirato 1.19.84: grissini, olive, frutti di bosco, crema di mandorle, gelato fiordilatte e le due ricette di pollo con patate/catalogna e verza/polenta mostrano soggetti coerenti; questo non sostituisce la revisione dell'intero archivio.
 - [ ] Riesame delle frequenze settimanali personalizzate per tutti gli stili alimentari con fonti istituzionali e, prima di chiamarle prescrizioni individuali, revisione di un professionista qualificato.
 - [ ] Verifica di autenticità e provenienza per ogni ricetta internazionale, oltre al controllo automatico di ingredienti e grammature.
 - [ ] Riesame continuo da utilizzatore delle proposte di Lavoro, Casa e Mensa a diversi target calorici, per correggere pasti impraticabili prima di ulteriori rilasci.

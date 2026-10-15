@@ -2,14 +2,14 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.84 — sgarri sostituibili senza perdere il pasto (in verifica)
+## v1.19.84 — pubblicata e verificata
 
 - [x] Gli sgarri aggiunti con “+” portano un identificatore di gruppo: riaprendo Alternative e scegliendo un altro sgarro si sostituisce solo quella scelta, anche se ha più componenti, senza cancellare il resto del pasto.
 - [x] Il gelato aggiunto con “+” conserva lo stesso comportamento: i gusti scelti vengono sostituiti insieme, non trasformano tutto il pasto in gelato.
 - [x] Anche i piatti occasionali a un solo componente, per esempio il tiramisù, offrono “Modifica porzione”: grammi, foto e alternative restano accessibili senza alterare il catalogo dei piani automatici.
 - [x] Il componente può recuperare la fotografia dedicata del piatto prima di ricadere sulla foto generica.
 - [x] Suite completa 210/210 e verifica mobile locale: “+ → Pizza → Alternative → Tiramisù” conserva le sei parti originali; “Sgarri → Tiramisù → Modifica porzione” mostra il componente modificabile con la sua foto, non il pane generico; zero errori JavaScript.
-- [ ] Pubblicazione e prova mobile della versione esatta sul link pubblico.
+- [x] Pubblicazione e prova mobile della versione esatta sul link pubblico: manifest 1.19.84, pizza → tiramisù senza perdita dei sei componenti originali, tiramisù modificabile con foto dedicata, zero errori JavaScript o overflow.
 
 ## v1.19.83 — pubblicata e verificata
 
