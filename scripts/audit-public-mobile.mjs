@@ -9,6 +9,10 @@ const packageFile = JSON.parse(
   readFileSync(new URL("../package.json", import.meta.url), "utf8"),
 );
 const version = process.env.VIVAPIATTO_AUDIT_VERSION || packageFile.version;
+// The old audit gates used only the patch number. At 1.20.0 that reset to
+// zero and silently skipped established mobile flows (including Sgarri).
+const [versionMajor, versionMinor, versionPatch] = version.split(".").map(Number);
+const releasePatch = versionMajor > 1 || versionMinor >= 20 ? 1000 : versionPatch;
 const auditBaseUrl = process.env.VIVAPIATTO_AUDIT_URL || "https://andreacivi80.github.io/vivapiatto/";
 const edge = [
   "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe",
@@ -292,7 +296,7 @@ try {
   await wait(300);
   recipeDetail.closed = await evaluate(`!document.querySelector('.recipe-sheet')`);
   const recipeCardFit = [];
-  if (Number(version.split('.').at(-1)) >= 83) {
+  if (releasePatch >= 83) {
     for (const width of [320, 390]) {
       await page.send("Emulation.setDeviceMetricsOverride", { width, height: 844, deviceScaleFactor: 1, mobile: true });
       for (const name of ["Coscia di pollo arrosto con verza e polenta", "Petto di pollo arrosto con patate e catalogna"]) {
@@ -356,7 +360,7 @@ try {
       };
     })()`));
   }
-  const occasionalLibrary = { skipped: Number(version.split('.').at(-1)) < 85 };
+  const occasionalLibrary = { skipped: releasePatch < 85 };
   if (!occasionalLibrary.skipped) {
     Object.assign(occasionalLibrary, await evaluate(`(() => {
       const button = [...document.querySelectorAll('.cuisine-tabs button')]
@@ -778,7 +782,7 @@ try {
       removed: afterRemove === ${mealPartAddition.afterAdd} - 1,
     };
   })()`));
-  const occasionalAddition = { skipped: Number(version.split('.').at(-1)) < 83 };
+  const occasionalAddition = { skipped: releasePatch < 83 };
   if (!occasionalAddition.skipped) {
     Object.assign(occasionalAddition, await evaluate(`(() => {
       const card = document.querySelectorAll('.meal-card')[2];
@@ -793,7 +797,7 @@ try {
       const shortcutVisible = Boolean(shortcut && shortcut.getBoundingClientRect().height > 0);
       shortcut?.click();
       const group = picker?.querySelector('.cheat-picker-group');
-      if (group && !group.open && ${Number(version.split('.').at(-1)) < 85}) group.open = true;
+      if (group && !group.open && ${releasePatch < 85}) group.open = true;
       const pizza = [...(group?.querySelectorAll('.complete-meal-select') || [])]
         .find((button) => button.innerText.includes('Pizza margherita'));
       const result = {
@@ -818,11 +822,11 @@ try {
         pickerClosed: !document.querySelector('.part-picker-sheet'),
         originalPartsKept: parts.length > 1,
       };
-      if (${Number(version.split('.').at(-1)) >= 84}) pizza?.querySelector('.part-change')?.click();
+      if (${releasePatch >= 84}) pizza?.querySelector('.part-change')?.click();
       else pizza?.querySelector('.part-remove')?.click();
       return result;
     })()`));
-    if (Number(version.split('.').at(-1)) >= 84) {
+    if (releasePatch >= 84) {
       await wait(350);
       Object.assign(occasionalAddition, await evaluate(`(() => {
         const group = document.querySelector('.part-picker-sheet .cheat-picker-group');
@@ -995,7 +999,7 @@ try {
       secondDishStillSplittable: buttons.some((button) => button.innerText.includes('Dividi in componenti')),
     };
   })()`));
-  const occasionalSplitPhoto = { skipped: Number(version.split('.').at(-1)) < 84 };
+  const occasionalSplitPhoto = { skipped: releasePatch < 84 };
   if (!occasionalSplitPhoto.skipped) {
     await evaluate(`(() => {
       const card = document.querySelectorAll('.meal-card')[2];
@@ -1379,7 +1383,7 @@ try {
     if (!found) throw new Error(`Preferenza ${label} non trovata`);
     await wait(350);
   };
-  const confirmedProfileReplan = { skipped: Number(version.split('.').at(-1)) < 76 };
+  const confirmedProfileReplan = { skipped: releasePatch < 76 };
   if (!confirmedProfileReplan.skipped) {
     await clickTab('Settimana');
     Object.assign(confirmedProfileReplan, await evaluate(`(() => {
@@ -1410,7 +1414,7 @@ try {
           rows[${confirmedProfileReplan.recordedPosition}]?.dataset.completed === 'true',
       };
     })()`));
-    if (Number(version.split('.').at(-1)) >= 78) {
+    if (releasePatch >= 78) {
       Object.assign(confirmedProfileReplan, await evaluate(`(() => ({
         visibleTargets: document.querySelectorAll('.weekly-frequency > div span').length,
         noAnimalTargets: ![...document.querySelectorAll('.weekly-frequency > div span')].some((row) => /Pesce|Carne|Salumi/.test(row.innerText)),
@@ -1544,18 +1548,18 @@ try {
   if (
     !today.version || today.recovery || today.horizontalOverflow || today.brokenViewportImages.length || today.pendingViewportImages.length ||
     !scrollStability.menuUnchanged || !scrollStability.gramsUnchanged || !scrollStability.returnedTop || scrollStability.horizontalOverflow ||
-    (Number(version.split('.').at(-1)) >= 81 && new Date().getMonth() === 9 &&
+    (releasePatch >= 81 && new Date().getMonth() === 9 &&
       [scrollStability.beforeMenu[1], scrollStability.beforeMenu[3], profileAdaptation.lowMenu[1], profileAdaptation.lowMenu[3]]
         .some((heading) => /nettarina|anguria|pompelmo rosa|albicocc|ciliegie|melone estivo/i.test(heading || ''))) ||
-    (Number(version.split('.').at(-1)) >= 81 && new Date().getMonth() === 9 &&
+    (releasePatch >= 81 && new Date().getMonth() === 9 &&
       !/mela|pera|uva|melagrana|cachi|pesca/i.test(scrollStability.beforeMenu[1] || '')) ||
-    (Number(version.split('.').at(-1)) >= 81 &&
+    (releasePatch >= 81 &&
       [scrollStability.beforeMenu[1], scrollStability.beforeMenu[3]]
         .some((heading) => /· (?:noci|mandorle|nocciole|pistacchi|arachidi|anacardi)$/i.test(heading || ''))) ||
     week.recovery || week.horizontalOverflow || week.brokenViewportImages.length || week.pendingViewportImages.length ||
     !weeklyConfirmation.found || !weeklyConfirmation.locked || !weeklyConfirmation.hasAverage || weeklyConfirmation.calorieDays !== 7 ||
     !weeklyConfirmation.rotationConfirmed || weeklyConfirmation.rotationRows < 7 || !weeklyConfirmation.rotationInRange ||
-    (Number(version.split('.').at(-1)) >= 79 &&
+    (releasePatch >= 79 &&
       (!/\b\d+ basi · \d+ ortaggi\b/.test(weeklyConfirmation.varietyHeader) ||
        Number(weeklyConfirmation.varietyHeader.match(/(\d+) basi/)?.[1] || 0) < 2 ||
        Number(weeklyConfirmation.varietyHeader.match(/(\d+) ortaggi/)?.[1] || 0) < 2)) ||
@@ -1566,7 +1570,7 @@ try {
     recipes.recovery || recipes.horizontalOverflow || recipes.brokenViewportImages.length || recipes.pendingViewportImages.length ||
     !recipeDetail.found || !recipeDetail.hasIngredients || !recipeDetail.hasPreparation || !recipeDetail.hasNutrition ||
     !recipeDetail.hasAllergens || !recipeDetail.photoLoaded || recipeDetail.horizontalOverflow || !recipeDetail.closed || !recipeCoverage ||
-    (Number(version.split('.').at(-1)) >= 83 && (recipeCardFit.length !== 4 || recipeCardFit.some((card) => !card.found || !card.textInside || !card.noInternalOverflow || !card.noPageOverflow))) ||
+    (releasePatch >= 83 && (recipeCardFit.length !== 4 || recipeCardFit.some((card) => !card.found || !card.textInside || !card.noInternalOverflow || !card.noPageOverflow))) ||
     (!occasionalLibrary.skipped && (!occasionalLibrary.tabFound || !occasionalLibrary.quickFilterReset || !occasionalLibrary.choicesVisible || !occasionalLibrary.pizzaVisible)) ||
     suppliedRecipeGroups.length !== 4 || suppliedRecipeGroups.some((group) =>
       !group.active || !group.countMatches || group.visibleCards === 0 || !group.firstPhotoLoaded || group.horizontalOverflow
@@ -1599,11 +1603,11 @@ try {
     mealPartAddition.horizontalOverflow || !mealPartAddition.added || !mealPartAddition.pickerClosed ||
     !mealPartAddition.hasDirectRemove || !mealPartAddition.removed ||
     (!occasionalAddition.skipped && (!occasionalAddition.addOpened || !occasionalAddition.visibleWithPlus ||
-      (Number(version.split('.').at(-1)) >= 85 && (!occasionalAddition.shortcutVisible || !occasionalAddition.shortcutOpenedSgarri)) ||
+      (releasePatch >= 85 && (!occasionalAddition.shortcutVisible || !occasionalAddition.shortcutOpenedSgarri)) ||
       !occasionalAddition.pizzaAvailable || !occasionalAddition.freeChoiceAlsoAvailable ||
       !occasionalAddition.appended || !occasionalAddition.pizzaPhoto || !occasionalAddition.pizzaEditable ||
       !occasionalAddition.pickerClosed || !occasionalAddition.originalPartsKept || !occasionalAddition.removedDirectly)) ||
-    (Number(version.split('.').at(-1)) >= 84 && (!occasionalAddition.replacementAvailable ||
+    (releasePatch >= 84 && (!occasionalAddition.replacementAvailable ||
       !occasionalAddition.replacementKeptMeal || !occasionalAddition.oldPizzaGone || !occasionalAddition.tiramisuPhoto)) ||
     (!occasionalSplitPhoto.skipped && (!occasionalSplitPhoto.optionFound || !occasionalSplitPhoto.componentFound ||
       !occasionalSplitPhoto.dedicatedPhoto || !occasionalSplitPhoto.breadFallbackAbsent || !occasionalSplitPhoto.editable)) ||
@@ -1624,7 +1628,7 @@ try {
     !checkinAdaptation.intenseActivityActive || !checkinAdaptation.intenseActivityNote || checkinAdaptation.horizontalOverflow ||
     !profileAdaptation.found || !profileAdaptation.cleanProfile || profileAdaptation.recovery ||
     !profileAdaptation.lowTargetSelected || !profileAdaptation.highTargetSelected ||
-    (Number(version.split('.').at(-1)) >= 80 && !profileAdaptation.lowWorkSnacksCompact) ||
+    (releasePatch >= 80 && !profileAdaptation.lowWorkSnacksCompact) ||
     profileAdaptation.lowPlanKcal <= 0 || profileAdaptation.highPlanKcal <= profileAdaptation.lowPlanKcal + 300 ||
     !profileAdaptation.targetChangesPlan || !profileAdaptation.highBreakfastHasNoDuplicateDairyOrNuts ||
     // Complete meals use practical package sizes and capped cooked portions;
@@ -1651,7 +1655,7 @@ try {
       !confirmedProfileReplan.weekReopened || confirmedProfileReplan.pendingMeals < 30 ||
       confirmedProfileReplan.animalMeals.length > 0 || !confirmedProfileReplan.recordedMealPreserved
     )) ||
-    (Number(version.split('.').at(-1)) >= 78 && (
+    (releasePatch >= 78 && (
       confirmedProfileReplan.visibleTargets !== 3 || !confirmedProfileReplan.noAnimalTargets ||
       !confirmedProfileReplan.noFalseRangeWarnings || !confirmedProfileReplan.rotationButtonFound ||
       confirmedProfileReplan.animalMealsAfterRotation.length > 0 || !confirmedProfileReplan.recordedMealAfterRotation ||

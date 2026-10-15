@@ -3109,6 +3109,14 @@ test("v1.20.0 confirms scroll restoration after the latest live release", async 
   assert.match(audit, /for \(let settle = 0; settle < 20; settle \+= 1\)/);
 });
 
+test("v1.20.0 keeps historical mobile flows enabled after the minor-version rollover", async () => {
+  const audit = await readFile(new URL("../scripts/audit-public-mobile.mjs", import.meta.url), "utf8");
+  assert.match(audit, /const releasePatch = versionMajor > 1 \|\| versionMinor >= 20 \? 1000 : versionPatch/);
+  assert.match(audit, /const occasionalLibrary = \{ skipped: releasePatch < 85 \}/);
+  assert.match(audit, /const occasionalAddition = \{ skipped: releasePatch < 83 \}/);
+  assert.doesNotMatch(audit, /Number\(version\.split\('\.'\)\.at\(-1\)\)/);
+});
+
 test("v1.19.86 separates recipe provenance from ingredient nutrition data", async () => {
   const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(source, /const recipeSourceKind = \(recipe: Recipe\) => \{/);
