@@ -965,6 +965,8 @@ try {
       lowMenu: [...document.querySelectorAll('.meal-card h3')].map((heading) => heading.innerText.trim()),
     };
   })()`));
+  profileAdaptation.lowWorkSnacksCompact = [profileAdaptation.lowMenu[1], profileAdaptation.lowMenu[3]]
+    .every((heading) => ((heading || '').match(/carot|finocch|cetriol|ravanell|sedano/gi) || []).length < 2);
   await changeSelectValue('.compact-config select', 1, '2600');
   Object.assign(profileAdaptation, await evaluate(`(() => {
     const strip = document.querySelector('.today-strip')?.innerText || '';
@@ -1430,6 +1432,7 @@ try {
     !checkinAdaptation.intenseActivityActive || !checkinAdaptation.intenseActivityNote || checkinAdaptation.horizontalOverflow ||
     !profileAdaptation.found || !profileAdaptation.cleanProfile || profileAdaptation.recovery ||
     !profileAdaptation.lowTargetSelected || !profileAdaptation.highTargetSelected ||
+    (Number(version.split('.').at(-1)) >= 80 && !profileAdaptation.lowWorkSnacksCompact) ||
     profileAdaptation.lowPlanKcal <= 0 || profileAdaptation.highPlanKcal <= profileAdaptation.lowPlanKcal + 300 ||
     !profileAdaptation.targetChangesPlan || !profileAdaptation.highBreakfastHasNoDuplicateDairyOrNuts ||
     !profileAdaptation.maxTargetSelected || profileAdaptation.maxPlanKcal <= profileAdaptation.highPlanKcal + 250 ||

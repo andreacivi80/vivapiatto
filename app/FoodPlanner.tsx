@@ -12184,6 +12184,12 @@ export function FoodPlanner() {
           : 0;
       const budgetPenalty =
         budgetLevel === "Economico" ? recipeBudgetScore(recipe) * 30 : 0;
+      const quickWorkSnack = ["Lavoro", "Mensa"].includes(dayContext) && [1, 3].includes(slot);
+      const workSnackPenalty = quickWorkSnack
+        ? Math.max(0, recipe.ingredients.filter((item) => item.grams > 0).length - 2) * 45 +
+          Number(recipe.ingredients.filter((item) => pantryPartByFood.get(item.food)?.category === "Contorno").length > 1) * 140 +
+          Number(recipe.time > 5) * 120
+        : 0;
       const seasonalBonus = recipeSeasonalityScore(recipe) * 0.35;
       const familiarBonus =
         preference === "repeat" && recordedFavoriteRecipeIds.has(recipe.id)
@@ -12199,6 +12205,7 @@ export function FoodPlanner() {
         contextPenalty +
         prepPenalty +
         budgetPenalty +
+        workSnackPenalty +
         Math.abs(profileRecipeKcal(recipe, slot) - target) +
         (mainMeal ? automaticMultiLegumePenalty(recipe) : 0) -
         seasonalBonus -

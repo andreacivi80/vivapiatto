@@ -2,13 +2,20 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.79 — varietà effettiva nella settimana
+## v1.19.80 — spuntini pratici in Lavoro e Mensa
+
+- [x] Il ranking automatico penalizza spuntini con due o più ortaggi da preparare, più componenti o oltre cinque minuti; restano disponibili nelle alternative e nella scelta libera.
+- [x] Telefono simulato: a 1400 kcal pera e crema di mandorle / anguria e yogurt proteico; a 2600 banana e yogurt proteico / skyr e melagrana; a 3000 banana e yogurt proteico / uva, skyr e cracker. Casa mantiene scelte diverse. Nessun overflow o errore JavaScript.
+- [x] Suite completa 208/208, TypeScript, build e collaudo mobile locale della versione esatta.
+- [ ] Pubblicazione sullo stesso link e collaudo pubblico.
+
+## v1.19.79 — pubblicata e verificata
 
 - [x] “Più varietà” considera anche basi amidacee e ortaggi non ancora proposti nei pasti principali, con un peso inferiore a equilibrio e calorie.
 - [x] Le diverse cotture dello stesso alimento non gonfiano artificialmente il conteggio; la settimana mostra i due numeri senza inventare range nutrizionali.
 - [x] I pasti già registrati entrano nel conteggio e rimangono invariati quando si rigenera la settimana.
 - [x] Suite completa 208/208, build e collaudo mobile locale della v1.19.79: sette basi e sedici ortaggi distinti nei pasti principali, zero errori JavaScript, immagini rotte o overflow.
-- [ ] Pubblicazione sul link unico e collaudo mobile pubblico.
+- [x] Pubblicazione sul link unico e collaudo mobile pubblico della versione esatta: 7 basi e 16 ortaggi nella settimana, senza errori JavaScript, immagini rotte, schermate di recupero o overflow.
 
 ## v1.19.78 — pubblicata e verificata
 

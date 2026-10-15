@@ -14,8 +14,8 @@ Questa checklist resta nel repository e viene aggiornata a ogni revisione. Una v
 
 - [x] Collegare integralmente le quattro matrici di ricette al motore dei pasti. Verifica automatica: 214/214 (C44, S42, P64, D64).
 - [x] Eliminare dalla libreria ogni combinazione che non sia una ricetta vera. Spuntini elementari restano nel piano ma il ricettario richiede tecnica, piatto preparato riconoscibile oppure almeno quattro ingredienti.
-- [x] Creare fotografia specifica per ogni alimento e preparazione, senza riuso semanticamente errato. Prove: 217/217 alimenti richiesti con foto dedicata e 567/567 asset validi; 257/257 ricette reali con associazione fotografica univoca.
-- [x] Creare fotografia finale specifica per ogni ricetta completa, con gli ingredienti realmente presenti. Prove: 214/214 foto matrice e 257/257 foto finali del catalogo (`--strict`).
+- [x] Collegare fotografie dedicate agli alimenti e alle preparazioni. Prove automatiche: 217/217 alimenti richiesti con foto, 569/569 asset validi e 258/258 ricette reali con associazione fotografica univoca; il controllo visivo completo è ancora aperto sotto.
+- [x] Creare fotografie finali dedicate alle ricette complete. Prove automatiche: 214/214 foto matrice e 258/258 foto finali del catalogo (`--strict`); la corrispondenza visiva di ogni ingrediente resta da rivedere manualmente.
 - [x] Controllare automaticamente riferimenti mancanti, associazioni foto/alimento e cache busting a ogni versione. `audit-photo-assets.mjs`, `audit-full-dish-photos.mjs`, `audit-all-recipe-photos.mjs`; URL foto versionati con `VERSION`.
 - [x] Completare ricette italiane, orientali, internazionali, semplici da lavoro e più elaborate da casa/weekend. Catalogo unico con stile, contesto, tempo, attrezzatura e trasportabilità applicati al ranking.
 
@@ -45,9 +45,16 @@ Questa checklist resta nel repository e viene aggiornata a ogni revisione. Una v
 - [x] Autocomplete extra/sgarri con banca dati estesa e calcolo dai grammi. 114 voci univoche con macro, fibre e fonte (`audit-occasional-foods.mjs`).
 - [x] Lista della spesa generata dai piatti scelti, modificabile, spuntabile, condivisibile e con seleziona/deseleziona tutto. Ambito giorno/settimana e quantità derivate dai componenti attivi.
 
-## Verifica finale
+## Verifiche automatiche eseguite
 
 - [x] Riesaminare tutta la chat e tutti gli allegati confrontandoli con questa checklist. Verificati elenco generale, matrice iniziale, quattro addendum e obiettivo permanente; perimetro ricette `C01–C44`, `S01–S42`, `P01–P64`, `D01–D64`.
-- [x] Eseguire test statici, build, controllo fotografie e test mobile a ogni revisione. Ultima suite completa: 206/206; audit foto 568/568, 214/214 matrice e 257/257 ricette reali con semantica completa e foto univoca; stress mobile agganciato obbligatoriamente alla scheda Tavola Mia, con input reale per la persistenza dei grammi, attesa CDN fino a 20 secondi e ricontrollo diretto degli errori temporanei senza tollerare asset mancanti, target calorico misurato su profilo pulito, sincronizzazione Oggi–Settimana, aggiornamento automatico senza perdita di stato, contesto, check-in, ricette, immagini, spesa, extra, gelato, componenti, piatti pronti e scroll.
+- [x] Eseguire test statici, build, controllo fotografie e test mobile a ogni revisione. Ultima suite completa: 208/208; audit foto 569/569, 214/214 matrice e 258/258 ricette reali con file dedicato; stress mobile con persistenza dei grammi, sincronizzazione Oggi–Settimana, aggiornamento senza perdita di stato, contesto, check-in, ricette, immagini, spesa, extra, gelato, componenti, piatti pronti e scroll.
 - [x] Stress test finale da utilizzatore: sostituzioni, grammi, rimozioni, settimana, refresh, diario, extra, ricette e spesa. Prova pubblica a 390×844 su Oggi, cambio piatto a fondo pagina, ritorno, Settimana, barra fissa, Ricette, Progressi, spesa e refresh; nessun overflow, schermata bianca o errore console. Rimozione, grammi, extra e persistenza restano inoltre coperti dai test statici dedicati.
-- [x] Pubblicare l'ultima revisione soltanto dopo la chiusura documentata di ogni voce. Evidenze consolidate in `FINAL-AUDIT.md`.
+- [x] Conservare le evidenze delle revisioni pubblicate in `FINAL-AUDIT.md`; il documento non sostituisce i controlli ancora aperti sotto.
+
+## Controlli ancora aperti
+
+- [ ] Controllo visivo sistematico di tutte le fotografie: gli audit automatici verificano file, collegamenti e unicità, non possono certificare che ogni pixel corrisponda davvero al piatto o all'alimento. I casi segnalati dall'utente hanno priorità.
+- [ ] Riesame delle frequenze settimanali personalizzate per tutti gli stili alimentari con fonti istituzionali e, prima di chiamarle prescrizioni individuali, revisione di un professionista qualificato.
+- [ ] Verifica di autenticità e provenienza per ogni ricetta internazionale, oltre al controllo automatico di ingredienti e grammature.
+- [ ] Riesame continuo da utilizzatore delle proposte di Lavoro, Casa e Mensa a diversi target calorici, per correggere pasti impraticabili prima di ulteriori rilasci.

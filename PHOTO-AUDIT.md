@@ -37,3 +37,5 @@
 - [x] Audit finale del catalogo e delle immagini visibili nella settimana. 557/557 riferimenti validi; 214/214 ricette matrice con foto dedicata; componenti atomici verificati.
 
 Regola permanente: prima si definiscono ingredienti e preparazione, poi si crea o si seleziona la fotografia corrispondente. Un'immagine con ingredienti estranei viene scartata.
+
+Gli audit automatici garantiscono presenza, formato leggibile, collegamento e unicità dell'immagine, ma non certificano la corrispondenza visiva dei pixel. Il controllo manuale di tutto il catalogo resta aperto. Nella v1.19.79 sono stati controllati visivamente gli asset del prosciutto cotto e della fesa di tacchino (affettati separati dal pane), nonché la crema di mandorle, il gelato al cioccolato e il fiordilatte (immagini riconoscibili e distinte).
