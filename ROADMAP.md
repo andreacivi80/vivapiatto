@@ -2,7 +2,14 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.81 — proposte stagionali senza bloccare la scelta libera
+## v1.19.82 — colazioni più pratiche al lavoro (in verifica)
+
+- [x] Quando il contesto è Lavoro o Mensa, le proposte automatiche del mattino privilegiano latte e biscotti, fette biscottate, yogurt o cracker con ricotta: preparazioni entro tre minuti. La scelta libera e il ricettario mantengono anche le altre colazioni.
+- [x] Se allergie o preferenze rendono incompatibili tutte le colazioni familiari, resta disponibile il paniere rapido compatibile invece di svuotare il menu.
+- [x] Suite completa 209/209, build e collaudo mobile locale: colazione Lavoro latte/biscotti/mela, nessun errore JavaScript, foto mancante o overflow; menu e grammature invariati allo scroll.
+- [ ] Pubblicazione e collaudo pubblico sullo stesso link.
+
+## v1.19.81 — pubblicata e verificata
 
 - [x] Le proposte automatiche danno una penalità concreta a frutta e ortaggi noti fuori stagione; il check-in privilegia ricette senza ingredienti fuori stagione quando esistono alternative sufficienti.
 - [x] Un nuovo piano sostituisce gli spuntini fuori stagione con opzioni rapide del periodo e i pasti principali con ricette stagionali della stessa famiglia proteica quando disponibili; i piani già salvati restano intatti al refresh.
@@ -10,7 +17,7 @@ Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggior
 - [x] Collaudo mobile locale in ottobre: primo giorno con fette biscottate/latte, kefir/pera, uva/skyr, farro-lenticchie-feta e merluzzo/patate/sedano; nessuna frutta estiva o frutta secca isolata nei primi spuntini, settimana 14/14 nei range, zero errori JavaScript o overflow.
 - [x] La proposta iniziale privilegia la frutta locale del periodo rispetto a quella importata priva di calendario; le opzioni importate restano disponibili.
 - [x] Suite completa 208/208 e build della revisione finale superate.
-- [ ] Pubblicazione e collaudo mobile pubblico sul link unico.
+- [x] Pubblicazione e collaudo mobile pubblico sul link unico: manifest 1.19.81, primo spuntino kefir e pera, settimana nei range, zero errori JavaScript, immagini rotte o overflow.
 
 ## v1.19.80 — pubblicata e verificata
 

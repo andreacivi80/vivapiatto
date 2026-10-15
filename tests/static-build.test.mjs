@@ -2939,3 +2939,17 @@ test("v1.19.65 rechecks transient CDN image errors without hiding missing assets
   assert.match(audit, /if \(response[.]ok\) continue/);
   assert.match(audit, /exceptions[.]push\(event\)/);
 });
+
+test("v1.19.82 keeps work breakfasts familiar without restricting manual recipes", async () => {
+  const [source, audit] = await Promise.all([
+    readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../scripts/audit-public-mobile.mjs", import.meta.url), "utf8"),
+  ]);
+  assert.match(source, /const familiarWorkMorning = \["Lavoro", "Mensa"\]/);
+  for (const id of ["breakfast-rusks-jam", "breakfast-milk-biscuits", "breakfast-rusks-butter", "breakfast-yogurt-banana-walnuts"]) {
+    assert.match(source, new RegExp(`"${id}"`));
+  }
+  assert.match(source, /familiarWorkMorning\.length \? familiarWorkMorning : workMorning/);
+  assert.match(audit, /workBreakfastFamiliar/);
+  assert.match(audit, /milkAndRicotta/);
+});

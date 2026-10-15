@@ -11036,7 +11036,20 @@ export function FoodPlanner() {
             !/frullat|smoothie|centrifug|pancake|toast|uov/i.test(recipe.name),
         )
       : eligible;
-    return workMorning.sort(
+    const familiarWorkMorning = ["Lavoro", "Mensa"].includes(selectedContext)
+      ? workMorning.filter((recipe) =>
+          [
+            "breakfast-rusks-jam",
+            "breakfast-milk-biscuits",
+            "breakfast-rusks-butter",
+            "breakfast-yogurt-banana-walnuts",
+            "breakfast-crackers-ricotta",
+          ].includes(recipe.id),
+        )
+      : workMorning;
+    // Keep the entire compatible pool as a fallback for restrictive profiles.
+    // Manual choices and the recipe library are never narrowed by this ranking.
+    return (familiarWorkMorning.length ? familiarWorkMorning : workMorning).sort(
       (a, b) => breakfastStyleScore(a) - breakfastStyleScore(b),
     );
   };

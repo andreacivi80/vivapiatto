@@ -975,14 +975,16 @@ try {
     const visiblePlanKcal = Number(planSegment.replaceAll('.', '').replaceAll(',', '').trim());
     const highMenu = [...document.querySelectorAll('.meal-card h3')].map((heading) => heading.innerText.trim());
     const breakfastFoods = (highMenu[0] || '').split(' · ').slice(1).join(' · ').split(', ');
-    const dairyCount = breakfastFoods.filter((food) => /latte|yogurt|skyr|kefir|ricotta|cottage|budino proteico/i.test(food)).length;
+    const dairyFoods = breakfastFoods.filter((food) => /latte|yogurt|skyr|kefir|ricotta|cottage|budino proteico/i.test(food));
+    const dairyCount = dairyFoods.length;
+    const milkAndRicotta = dairyCount === 2 && dairyFoods.some((food) => /latte/i.test(food)) && dairyFoods.some((food) => /ricotta/i.test(food));
     const nutCount = breakfastFoods.filter((food) => /noci|nocciole|mandorle|pistacchi|arachidi|anacardi|semi di/i.test(food)).length;
     return {
       highTargetSelected: strip.includes('scelto 2600 kcal'),
       highPlanText: planText,
       highPlanKcal: visiblePlanKcal,
       highMenu,
-      highBreakfastHasNoDuplicateDairyOrNuts: dairyCount <= 1 && nutCount <= 1,
+      highBreakfastHasNoDuplicateDairyOrNuts: (dairyCount <= 1 || milkAndRicotta) && nutCount <= 1,
       targetChangesPlan: visiblePlanKcal > ${profileAdaptation.lowPlanKcal} + 300 && JSON.stringify(highMenu) !== JSON.stringify(${JSON.stringify(profileAdaptation.lowMenu)}),
     };
   })()`));
@@ -1037,6 +1039,7 @@ try {
   await changeSelectValue('.cuisine-picker select', 1, 'Lavoro');
   profileAdaptation.workMenu = await evaluate(`[...document.querySelectorAll('.meal-card h3')].map((heading) => heading.innerText.trim())`);
   profileAdaptation.workBreakfastPractical = !/frullat|smoothie|centrifug|pancake|toast|uov/i.test(profileAdaptation.workMenu[0] || '');
+  profileAdaptation.workBreakfastFamiliar = /latte|fette biscottate|yogurt greco|cracker integrali/i.test(profileAdaptation.workMenu[0] || '');
   profileAdaptation.workSnacksPractical = [profileAdaptation.workMenu[1], profileAdaptation.workMenu[3]]
     .every((heading) => !/wafer|grissini/i.test(heading || ''));
   await changeSelectValue('.cuisine-picker select', 1, 'Casa');
@@ -1449,7 +1452,7 @@ try {
     !profileAdaptation.historyConsentReenabled ||
     !profileAdaptation.lockedWeekConfirmed || !profileAdaptation.lockedWeekReopenedForAllergy ||
     !profileAdaptation.weekGlutenFree || !profileAdaptation.loggedMealPreserved ||
-    !profileAdaptation.workBreakfastPractical || !profileAdaptation.workSnacksPractical || !profileAdaptation.homeSelected || !profileAdaptation.contextChangesPlan ||
+    !profileAdaptation.workBreakfastPractical || (version === '1.19.82' && !profileAdaptation.workBreakfastFamiliar) || !profileAdaptation.workSnacksPractical || !profileAdaptation.homeSelected || !profileAdaptation.contextChangesPlan ||
     profileAdaptation.horizontalOverflow ||
     !freeChoiceAndReplan.editorOpened || !freeChoiceAndReplan.editablePartFound ||
     !freeChoiceAndReplan.registrationFound || !freeChoiceAndReplan.editedBeforeSwap ||
