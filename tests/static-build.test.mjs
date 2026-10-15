@@ -3132,6 +3132,16 @@ test("v1.20.1 shows cooked mushrooms in cooked dishes and preserves raw weighing
   assert.doesNotMatch(source, /label: "Funghi cotti[^\"]*", image: photo\("part-mushrooms-raw-v11663"\)/);
 });
 
+test("v1.20.2 shows cooked asparagus after preparation and keeps raw carrot raw", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const cooked = await readFile(new URL("../public/food/part-asparagus-cooked-v1202.png", import.meta.url));
+  assert.ok(cooked.length > 100_000);
+  assert.match(source, /label: "Asparagi cotti · 250 g a crudo", image: photo\("part-asparagus-cooked-v1202"\)/);
+  assert.match(source, /image: photo\("part-asparagus-v113"\)/);
+  assert.match(source, /Lascia carote e cavolo rosso crudi e croccanti; risciacqua i ceci/);
+  assert.doesNotMatch(source, /cuoci carote e zucchine lasciando il cavolo rosso crudo/);
+});
+
 test("v1.19.86 separates recipe provenance from ingredient nutrition data", async () => {
   const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(source, /const recipeSourceKind = \(recipe: Recipe\) => \{/);
