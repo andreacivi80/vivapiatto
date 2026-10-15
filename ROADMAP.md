@@ -2,13 +2,13 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.76 — pronta per pubblicazione
+## v1.19.76 — pubblicata e verificata
 
 - [x] Cambiare stile alimentare, tempo massimo o attrezzature su una settimana confermata la riapre e ricalcola tutti i pasti ancora da fare, non solo il giorno corrente.
 - [x] Stress mobile aggiunto: settimana confermata, stile vegetariano, pasti non registrati senza carne/pesce, pasto già registrato conservato; poi ripristino dello stile e prova dei filtri estremi.
 - [x] Prova mobile locale: settimana bloccata riaperta dal cambio a vegetariano, 34 pasti non registrati senza carne o pesce, pasto registrato invariato dopo ricarica; test estremo delle allergie e zero errori JavaScript.
 - [x] Suite tecnica: 206/206 test, TypeScript e build superati.
-- [ ] Pubblicazione e collaudo mobile pubblico della versione esatta.
+- [x] Pubblicazione e collaudo mobile pubblico della versione esatta: settimana confermata riaperta al cambio di stile, 34 pasti ancora da fare privi di carne e pesce, pasto registrato conservato, avvisi per filtri estremi persistenti e zero errori JavaScript o overflow.
 
 ## v1.19.75 — pubblicata e verificata
 
