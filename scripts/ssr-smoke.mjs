@@ -10,6 +10,9 @@ try {
   assert.equal(proteinFamilyForItems([{ food: "Roast beef magro", grams: 130 }, { food: "Fagiolini", grams: 180 }]), "carne-rossa");
   assert.equal(proteinFamilyForItems([{ food: "Fagiolini", grams: 180 }]), "altro");
   assert.equal(proteinFamilyForItems([{ food: "Fagioli cannellini cotti", grams: 150 }]), "legumi");
+  assert.equal(proteinFamilyForItems([{ food: "Cipollotti freschi", grams: 30 }]), "altro");
+  assert.equal(proteinFamilyForItems([{ food: "Cipollotti freschi", grams: 30 }, { food: "Tofu alla piastra", grams: 150 }]), "legumi");
+  assert.equal(proteinFamilyForItems([{ food: "Petto di pollo cotto", grams: 150 }, { food: "Cipollotti freschi", grams: 30 }]), "carne-bianca");
   assert.deepEqual(initialWeeklyProteinFamilies, [
     "legumi", "pesce", "carne-bianca", "uova", "legumi", "pesce", "latticini",
     "carne-bianca", "uova", "latticini", "legumi", "carne-rossa", "latticini", "uova",

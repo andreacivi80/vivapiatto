@@ -1870,7 +1870,8 @@ const calc = (
 type WeeklyProteinFamily = "pesce" | "carne-bianca" | "carne-rossa" | "uova" | "legumi" | "latticini" | "salumi" | "altro";
 export const proteinFamilyForItems = (items: RecipeIngredient[]): WeeklyProteinFamily => {
   const names = items.map((item) => item.food.toLowerCase());
-  const has = (terms: string[]) => names.some((name) => terms.some((term) => name.includes(term)));
+  const has = (terms: string[]) => names.some((name) => terms.some((term) =>
+    term === "pollo" ? /\bpollo\b/.test(name) : name.includes(term)));
   if (has(["bresaola", "prosciutto", "salame", "mortadella", "speck", "wurstel"])) return "salumi";
   if (has(["salmone", "tonno", "merluzzo", "nasello", "orata", "branzino", "spigola", "sogliola", "platessa", "rombo", "trota", "sgombro", "sardine", "alici", "acciughe", "pesce spada", "palombo", "polpo", "sepp", "calamar", "gamber", "cozz", "vongol", "pesce"])) return "pesce";
   if (has(["pollo", "tacchino", "coniglio"])) return "carne-bianca";
@@ -11340,7 +11341,7 @@ export function FoodPlanner() {
     recipeAllergens(recipe).every((allergen) => !blockedAllergenGroups.has(allergen));
   const textMatchesFoodStyle = (textValue: string) => {
     const text = textValue.toLowerCase();
-    const meat = /pollo|tacchino|coniglio|manzo|vitello|maiale|cavallo|bresaola|prosciutto|mortadella|salame|salsiccia|porchetta|pancetta/.test(text);
+    const meat = /\bpollo\b|tacchino|coniglio|manzo|vitello|maiale|cavallo|bresaola|prosciutto|mortadella|salame|salsiccia|porchetta|pancetta/.test(text);
     const fish = /salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|gamber|polpo|cozze|calamari|rombo|seppia/.test(text);
     const animal = meat || fish || /uov|albume|latte|yogurt|skyr|kefir|ricotta|feta|mozzarella|crescenza|scamorza|provolone|burro/.test(text);
     if (foodStyle === "Vegano") return !animal;
@@ -11370,7 +11371,7 @@ export function FoodPlanner() {
     recipe.time <= maxPrepTime;
   const proteinSignatureForItems = (items: RecipeIngredient[]) => {
     const protein = items.find((ingredient) =>
-      /pollo|tacchino|coniglio|manzo|vitello|maiale|cavallo|roast beef|carpaccio|bresaola|prosciutto|salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|gamber|polpo|cozze|calamari|rombo|seppia|uov|ceci|lenticchie|fagioli(?!ni)|piselli|tofu|tempeh|ricotta|feta|mozzarella|crescenza|scamorza|provolone/i.test(ingredient.food),
+      /\bpollo\b|tacchino|coniglio|manzo|vitello|maiale|cavallo|roast beef|carpaccio|bresaola|prosciutto|salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|gamber|polpo|cozze|calamari|rombo|seppia|uov|ceci|lenticchie|fagioli(?!ni)|piselli|tofu|tempeh|ricotta|feta|mozzarella|crescenza|scamorza|provolone/i.test(ingredient.food),
     );
     return protein?.food || proteinFamilyForItems(items);
   };
@@ -11576,7 +11577,7 @@ export function FoodPlanner() {
   };
   const isMensaFriendly = (recipe: Recipe) => {
     const text = `${recipe.name} ${recipe.ingredients.map((item) => item.food).join(" ")}`.toLowerCase();
-    return /pasta|riso|farro|orzo|pollo|tacchino|bistecca|merluzzo|uov|frittata|patate|verdure|insalata|minestrone/.test(text);
+    return /pasta|riso|farro|orzo|\bpollo\b|tacchino|bistecca|merluzzo|uov|frittata|patate|verdure|insalata|minestrone/.test(text);
   };
   const isRestaurantFriendly = (recipe: Recipe) =>
     recipe.ingredients.length >= 3 &&
@@ -11590,7 +11591,7 @@ export function FoodPlanner() {
       .filter((item) => vegetablePattern.test(item.food.toLowerCase()))
       .reduce((sum, item) => sum + item.grams, 0);
     const fish = /salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|gamber|polpo|cozze|calamari|rombo|seppia/.test(foodsText);
-    const meat = /pollo|tacchino|coniglio|manzo|vitello|maiale|cavallo|bresaola|prosciutto|mortadella|salame|salsiccia|porchetta|pancetta/.test(foodsText);
+    const meat = /\bpollo\b|tacchino|coniglio|manzo|vitello|maiale|cavallo|bresaola|prosciutto|mortadella|salame|salsiccia|porchetta|pancetta/.test(foodsText);
     const eggs = /\buov|albume/.test(foodsText);
     const dairy = /latte|yogurt|skyr|kefir|ricotta|feta|mozzarella|crescenza|scamorza|provolone|fiocchi di latte|burro/.test(foodsText);
     const gluten = /pasta|pane|farro|orzo|bulgur|cous cous|cracker|fette biscottate|biscott|wafer|muesli|farina di frumento|segale/.test(foodsText);
@@ -11604,7 +11605,7 @@ export function FoodPlanner() {
     if (filter === "legumi") return legumes;
     if (filter === "pesce") return fish;
     if (filter === "pesce-grasso") return /salmone|sgombro|sardine|trota/.test(foodsText);
-    if (filter === "carne-bianca") return /pollo|tacchino|coniglio/.test(foodsText);
+    if (filter === "carne-bianca") return /\bpollo\b|tacchino|coniglio/.test(foodsText);
     if (filter === "proteico") return calc(recipe.ingredients).protein >= 25;
     if (filter === "fibre") return calc(recipe.ingredients).fiber >= 7;
     if (filter === "vegetariana") return !meat && !fish;
@@ -11637,10 +11638,10 @@ export function FoodPlanner() {
     if (quickRecipeFilter === "Pesce")
       return /salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|gamber|polpo|cozze|calamari|rombo|seppia/.test(foodsText);
     if (quickRecipeFilter === "Carne")
-      return /pollo|tacchino|coniglio|manzo|vitello|maiale|cavallo|bresaola|prosciutto|lonza|hamburger/.test(foodsText);
+      return /\bpollo\b|tacchino|coniglio|manzo|vitello|maiale|cavallo|bresaola|prosciutto|lonza|hamburger/.test(foodsText);
     if (quickRecipeFilter === "Uova") return /\buov|albume/.test(foodsText);
     if (quickRecipeFilter === "Vegetale")
-      return !/pollo|tacchino|coniglio|manzo|vitello|maiale|cavallo|bresaola|prosciutto|salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|gamber|polpo|cozze|calamari/.test(foodsText);
+      return !/\bpollo\b|tacchino|coniglio|manzo|vitello|maiale|cavallo|bresaola|prosciutto|salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|gamber|polpo|cozze|calamari/.test(foodsText);
     return recipeCourse(recipe) === quickRecipeFilter;
   };
   const suppliedCatalogView = quickRecipeFilter === "Le tue 214" && !swapTarget;
@@ -12114,7 +12115,7 @@ export function FoodPlanner() {
         return roundWithin(100, 200, 25);
       if (/bresaola|prosciutto|fesa|speck|salame|mortadella/.test(food))
         return roundWithin(40, 100, 10);
-      if (/pollo|tacchino|coniglio|manzo|vitello|maiale|lonza|cavallo|bistecca|salmone|tonno|merluzzo|orata|branzino|sogliola|rombo|trota|seppia|gamber/.test(food))
+      if (/\bpollo\b|tacchino|coniglio|manzo|vitello|maiale|lonza|cavallo|bistecca|salmone|tonno|merluzzo|orata|branzino|sogliola|rombo|trota|seppia|gamber/.test(food))
         return roundWithin(80, 180, 10);
       if (/ricotta|mozzarella|feta|crescenza|primo sale|scamorza|provolone|grana|parmigiano/.test(food))
         return roundWithin(50, 150, 25);

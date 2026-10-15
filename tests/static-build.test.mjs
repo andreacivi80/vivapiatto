@@ -3065,6 +3065,14 @@ test("v1.19.96 restores the saved view only after profile hydration", async () =
   assert.match(source, /\}, \[profileHydrated\]\);/);
 });
 
+test("v1.19.97 treats spring onions as vegetables rather than chicken", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(source, /term === "pollo" \? \/\\bpollo\\b\/\.test\(name\)/);
+  assert.match(source, /const meat = \/\\bpollo\\b\|tacchino/);
+  assert.match(source, /const recipeProteinSignature = /);
+  assert.match(source, /asian-dondoroke-tofu-rice/);
+});
+
 test("v1.19.86 separates recipe provenance from ingredient nutrition data", async () => {
   const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(source, /const recipeSourceKind = \(recipe: Recipe\) => \{/);

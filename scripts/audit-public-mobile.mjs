@@ -1399,7 +1399,7 @@ try {
     await clickTab('Settimana');
     Object.assign(confirmedProfileReplan, await evaluate(`(() => {
       const rows = [...document.querySelectorAll('.week-meal-row')];
-      const animal = /pollo|tacchino|coniglio|manzo|vitello|maiale|cavallo|bresaola|prosciutto|salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|gamber|polpo|cozze|calamari|rombo|seppia/i;
+      const animal = /\\bpollo\\b|tacchino|coniglio|manzo|vitello|maiale|cavallo|bresaola|prosciutto|salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|gamber|polpo|cozze|calamari|rombo|seppia/i;
       const pending = rows.filter((row) => row.dataset.completed !== 'true');
       return {
         weekReopened: document.querySelector('.week-lock')?.innerText.includes('Settimana modificabile') || false,
@@ -1421,7 +1421,7 @@ try {
       await wait(800);
       Object.assign(confirmedProfileReplan, await evaluate(`(() => {
         const rows = [...document.querySelectorAll('.week-meal-row')];
-        const animal = /pollo|tacchino|coniglio|manzo|vitello|maiale|cavallo|bresaola|prosciutto|salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|gamber|polpo|cozze|calamari|rombo|seppia/i;
+        const animal = /\\bpollo\\b|tacchino|coniglio|manzo|vitello|maiale|cavallo|bresaola|prosciutto|salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|gamber|polpo|cozze|calamari|rombo|seppia/i;
         return {
           animalMealsAfterRotation: rows.filter((row) => row.dataset.completed !== 'true' && animal.test(row.innerText)).map((row) => row.innerText.slice(0, 100)),
           recordedMealAfterRotation: rows[${confirmedProfileReplan.recordedPosition}]?.dataset.recipeId === ${JSON.stringify(confirmedProfileReplan.recordedId)} &&

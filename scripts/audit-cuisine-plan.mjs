@@ -153,7 +153,9 @@ try {
     asian.mainMeals.length !== 14 || asian.style !== "Asiatico" ||
     report.paneerDishesProposed !== 3 ||
     report.japaneseEggDishesProposed !== 2 ||
-    report.newLegumeDishesProposed < 1 ||
+    report.newLegumeDishesProposed !== 2 ||
+    !asian.mainMeals.every(([, , cuisine]) => cuisine === "Asiatico") ||
+    !asian.mainMeals.every(practicalWorkLunch) ||
     report.unsafeWorkLunches.length
   ) process.exitCode = 1;
   page.close();
