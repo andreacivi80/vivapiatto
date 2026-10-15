@@ -1,6 +1,6 @@
 # Tavola Mia — audit progressivo del perimetro ricevuto
 
-Data verifica: 15 ottobre 2026. Ultimo checkpoint pubblico verificato: `1.20.3`.
+Data verifica: 16 ottobre 2026. Ultimo checkpoint pubblico verificato: `1.20.4`.
 
 Questo audit registra copertura tecnica e prove eseguite; non certifica clinicamente un piano alimentare né sostituisce la revisione visiva completa delle fotografie. I controlli residui sono in `MASTER-CHECKLIST.md`.
 
@@ -75,3 +75,11 @@ Il link resta unico: https://andreacivi80.github.io/vivapiatto/
 - Deploy GitHub Actions completato; manifest pubblico `1.20.3` e script `index-BBTNfnJ8.js` allineati sullo stesso link.
 - Aggiornamento reale `1.20.2 → 1.20.3`: menu, grammatura 54 g e scroll a 900 px conservati; nessun errore JavaScript.
 - Stress test pubblico mobile 390×844 superato: nessun overflow orizzontale, ricette e sgarri accessibili, anteprima settimana e passaggi di modifica operativi.
+
+## Checkpoint pubblico 1.20.4
+
+- Scansione visiva iniziale completata per C01–C44; sostituita la foto C05 che ometteva le fragole previste dalla preparazione.
+- `npm test`: 231/231 test passati; foto 585/585, ricette finali 266/266, paniere richiesto 217/217.
+- Manifest e script pubblici allineati: `1.20.4` e `index-gg4WG46A.js` sul link GitHub Pages unico.
+- Aggiornamento automatico reale `1.20.3 → 1.20.4`: menu, grammatura 54 g e scroll a 900 px conservati; nessun errore JavaScript.
+- Stress test pubblico mobile 390×844 superato, compresi ricettario, sgarri, settimana e modifiche dei pasti.

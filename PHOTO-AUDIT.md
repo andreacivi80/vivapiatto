@@ -53,3 +53,8 @@ Gli audit automatici garantiscono presenza, formato leggibile, collegamento e un
 - [x] Controllate visivamente le fotografie C01–C44, compresa C05 fuori dalla serie nominale `recipe-c...`.
 - [x] C05: la vecchia foto mostrava banana e yogurt ma ometteva le fragole della ricetta. Nuova foto con tre pancake di avena e banana, yogurt greco e fragole riconoscibili.
 - [ ] Resta aperta la revisione visiva delle altre famiglie di ricette, degli ingredienti atomici non ancora esaminati e dei casi ambigui; questa scansione non certifica quantità o macronutrienti dai pixel.
+
+## Spuntini: controllo visivo in corso
+
+- [x] Prima scansione delle foto S01–S19: soggetti principali riconoscibili (frutta, latticini, pane, verdure, frutta secca, cioccolato, hummus e frullato) senza omissioni evidenti rispetto ai nomi delle ricette.
+- [ ] Restano da esaminare S20–S42 e la corrispondenza fine di ogni ingrediente rispetto alla preparazione.
