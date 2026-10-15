@@ -983,6 +983,52 @@ try {
       targetChangesPlan: visiblePlanKcal > ${profileAdaptation.lowPlanKcal} + 300 && JSON.stringify(highMenu) !== JSON.stringify(${JSON.stringify(profileAdaptation.lowMenu)}),
     };
   })()`));
+  await changeSelectValue('.compact-config select', 1, '3000');
+  Object.assign(profileAdaptation, await evaluate(`(() => {
+    const strip = document.querySelector('.today-strip')?.innerText || '';
+    const planText = document.querySelector('.today-strip b')?.textContent || '';
+    const planSegment = planText.toLowerCase().split('piano ')[1]?.split(' · ')[0] || '';
+    return {
+      maxTargetSelected: strip.includes('scelto 3000 kcal'),
+      maxPlanText: planText,
+      maxPlanKcal: Number(planSegment.replaceAll('.', '').replaceAll(',', '').trim()),
+      maxMenu: [...document.querySelectorAll('.meal-card h3')].map((heading) => heading.innerText.trim()),
+    };
+  })()`));
+  profileAdaptation.maxSnackHarmonious = [profileAdaptation.maxMenu[1], profileAdaptation.maxMenu[3]]
+    .every((heading) => !(/finocchi|carote|cetrioli|ravanelli/i.test(heading || '') && /banana|mela/i.test(heading || '')));
+  await evaluate(`(() => {
+    [...document.querySelectorAll('.today-strip-actions button')]
+      .find((button) => button.textContent?.includes('Preferenze'))?.click();
+    return true;
+  })()`);
+  await wait(250);
+  const glutenToggleFound = await evaluate(`(() => {
+    const button = [...document.querySelectorAll('.preferences .chips')][0]
+      ? [...document.querySelectorAll('.preferences .chips')[0].querySelectorAll('button')]
+          .find((item) => item.textContent?.trim() === 'Glutine')
+      : null;
+    button?.click();
+    return Boolean(button);
+  })()`);
+  if (!glutenToggleFound) throw new Error('Filtro allergia Glutine non disponibile');
+  await wait(1_200);
+  Object.assign(profileAdaptation, await evaluate(`(() => ({
+    glutenFilterActive: [...document.querySelectorAll('.preferences .chips')[0].querySelectorAll('button')]
+      .some((button) => button.textContent?.trim() === 'Glutine' && button.classList.contains('active')),
+    glutenPlanSafe: document.querySelectorAll('.meal-card').length === 5 &&
+      document.querySelectorAll('.meal-card.blocked').length === 0,
+  }))()`));
+  await evaluate(`(() => {
+    [...document.querySelectorAll('.preferences .chips')[0].querySelectorAll('button')]
+      .find((button) => button.textContent?.trim() === 'Glutine')?.click();
+    [...document.querySelectorAll('.preferences button')]
+      .find((button) => button.textContent?.trim() === 'Chiudi')?.click();
+    return true;
+  })()`);
+  await wait(1_200);
+  profileAdaptation.glutenFilterRestored = !await evaluate(`document.querySelectorAll('.meal-card.blocked').length > 0`);
+  await changeSelectValue('.compact-config select', 1, '2600');
   await changeSelectValue('.cuisine-picker select', 1, 'Lavoro');
   profileAdaptation.workMenu = await evaluate(`[...document.querySelectorAll('.meal-card h3')].map((heading) => heading.innerText.trim())`);
   profileAdaptation.workBreakfastPractical = !/frullat|smoothie|centrifug|pancake|toast|uov/i.test(profileAdaptation.workMenu[0] || '');
@@ -1129,6 +1175,9 @@ try {
     !profileAdaptation.lowTargetSelected || !profileAdaptation.highTargetSelected ||
     profileAdaptation.lowPlanKcal <= 0 || profileAdaptation.highPlanKcal <= profileAdaptation.lowPlanKcal + 300 ||
     !profileAdaptation.targetChangesPlan || !profileAdaptation.highBreakfastHasNoDuplicateDairyOrNuts ||
+    !profileAdaptation.maxTargetSelected || profileAdaptation.maxPlanKcal <= profileAdaptation.highPlanKcal + 250 ||
+    !profileAdaptation.maxSnackHarmonious || !profileAdaptation.glutenFilterActive ||
+    !profileAdaptation.glutenPlanSafe || !profileAdaptation.glutenFilterRestored ||
     !profileAdaptation.workBreakfastPractical || !profileAdaptation.workSnacksPractical || !profileAdaptation.homeSelected || !profileAdaptation.contextChangesPlan ||
     profileAdaptation.horizontalOverflow ||
     exceptions.length

@@ -11405,8 +11405,21 @@ export function FoodPlanner() {
                   ]
                 : []
           : [];
-    return additions.filter((addition) => {
+    const savouryVegetableSnack = [1, 3].includes(slot) &&
+      currentItems.some((item) =>
+        /finocch|carot|cetriol|ravanell|sedan|pomodor/i.test(item.food),
+      ) &&
+      !currentItems.some((item) =>
+        /mela|banana|pera|arancia|fragol|mirtill|kiwi|pesca|uva|ananas/i.test(item.food),
+      );
+    const coherentAdditions = savouryVegetableSnack && additions.length
+      ? [{ food: "Pane integrale", grams: dailyTarget >= 2800 ? 100 : 50 }]
+      : additions;
+    return coherentAdditions.filter((addition) => {
       const food = addition.food.toLowerCase();
+      if (blockedFoods.includes(addition.food) ||
+          inferTextAllergens(addition.food).some((group) => blockedAllergenGroups.has(group)) ||
+          !textMatchesFoodStyle(addition.food)) return false;
       if (/yogurt|skyr|kefir/.test(food))
         return !currentItems.some((item) =>
           /latte|yogurt|skyr|kefir|ricotta|fiocchi di latte|cottage|budino proteico/i.test(item.food),
@@ -12109,8 +12122,10 @@ export function FoodPlanner() {
       !mains.length ||
       !lunches.length ||
       !dinners.length
-    )
+    ) {
+      setReplanNote("Nessun menu compatibile con tutte le preferenze: modifica i filtri o scegli con il tuo professionista sanitario.");
       return;
+    }
     const shares = mealCalorieShares;
     const profileDays = weekLocked ? [dayIndex] : days.map((_, index) => index);
     setChoices((current) => {
@@ -12618,6 +12633,11 @@ export function FoodPlanner() {
     mealPrepMode,
     ageGroup,
     weekPreference,
+    excludedGroups,
+    allergyGroups,
+    intoleranceGroups,
+    healthConditions,
+    dislikedFoods,
     profileHydrated,
   ]);
   const addDrink = (day: number, item: LogItem) =>
@@ -13785,7 +13805,10 @@ export function FoodPlanner() {
                       r.kind !== "combination" &&
                       (mealView[key] || "dish") === "dish",
                   );
-                  const allowed = isAllowed(r);
+                  const allowed = isAllowed(r) && visibleIngredients.every((item) =>
+                    !blockedFoods.includes(item.food) &&
+                    inferTextAllergens(item.food).every((group) => !blockedAllergenGroups.has(group))
+                  );
                   const actual = completed[key]
                     ? calc(actualIngredients(key, r))
                     : null;
