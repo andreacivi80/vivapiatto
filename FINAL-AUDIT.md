@@ -1,6 +1,6 @@
 # Tavola Mia — audit progressivo del perimetro ricevuto
 
-Data verifica: 15 ottobre 2026. Ultimo checkpoint pubblico verificato: `1.19.91`.
+Data verifica: 15 ottobre 2026. Ultimo checkpoint pubblico verificato: `1.19.92`.
 
 Questo audit registra copertura tecnica e prove eseguite; non certifica clinicamente un piano alimentare né sostituisce la revisione visiva completa delle fotografie. I controlli residui sono in `MASTER-CHECKLIST.md`.
 
@@ -20,10 +20,11 @@ Questo audit registra copertura tecnica e prove eseguite; non certifica clinicam
 - Extra/sgarri: 114 voci univoche con chilocalorie, proteine, carboidrati, grassi, fibre e fonte.
 - Alternative: 268 alimenti senza duplicati né card vuote nella stessa categoria.
 - Rotazione: 14/14 pasti principali nei range definiti, senza famiglie proteiche consecutive.
-- Suite pubblicabile: 218/218 test superati nella 1.19.91, controllo TypeScript senza errori, SSR superato e build GitHub Pages riuscita.
+- Suite pubblicabile: 219/219 test superati nella 1.19.92, controllo TypeScript senza errori, SSR superato e build GitHub Pages riuscita.
 - Aggiornamento automatico tra release verificato su mobile reale: versione nuova rilevata senza intervento, menu, grammatura modificata e posizione di scorrimento conservati.
 - Stress mobile pubblico ripetibile: viewport 390×844, target calorico verificato su profilo pulito e contesto Lavoro/Casa, check-in adattivo, conferma/rotazione/stampa settimanale, quattro famiglie delle 214 ricette, ritorno fisso, alternative del latte, modifica grammatura persistente, aggiunta/rimozione diretta di componenti, fotografie visibili realmente caricate e zero errori JavaScript.
 - Pubblicazione verificata sul link unico: manifest `1.19.91`, HTML e asset JavaScript allineati. Lo stress mobile pubblico della 1.19.91 è passato senza errori JavaScript, overflow globale, recupero, immagini rotte o immagini pendenti. Le due card lunghe segnalate contengono tutto il testo a 320/390 px; con “+ → Sgarri” la pizza è visibile attraverso un accesso rapido fisso, si aggiunge al pasto senza cancellarne le parti, mostra la propria foto e si rimuove direttamente. Anche dopo un filtro ricette precedente, la categoria Sgarri ripropone pizza e altre scelte occasionali. Pizza → tiramisù sostituisce soltanto lo sgarro aggiunto; il tiramisù offre “Modifica porzione”, componente e foto propri.
+- Pubblicazione 1.19.92 sullo stesso link: manifest, HTML e asset `index-BOZC7zJF.js` allineati dopo il deploy GitHub Pages; stress mobile pubblico riuscito con versione visibile, nessun recupero, nessun overflow, nessuna foto rotta e zero errori JavaScript. L'avvio ora accetta la nuova versione soltanto quando anche HTML e script risultano disponibili, con fino a tre tentativi anti-cache; la sessione aperta mostra separatamente la revisione in uso e quella appena pubblicata e riprova al ritorno in pagina o online. Un'attività aperta continua a differire il refresh per non interrompere il lavoro.
 - Collaudo stile e lavoro della 1.19.91 sulla versione pubblica: tutti i 14 pasti principali iniziali sono italiani, i cinque pranzi feriali sono trasportabili; anche dopo Asiatico → Italiano, i 14 pasti restano italiani/mediterranei e i cinque pranzi feriali restano pratici. Il nuovo panino caprese ha foto finale dedicata e istruzioni per mantenere al fresco la mozzarella, coerenti con le indicazioni di sicurezza alimentare della [FDA](https://www.fda.gov/food/buy-store-serve-safe-food/handling-food-safely-while-eating-outdoors) e del [Ministero della Salute](https://www.salute.gov.it/new/it/news-e-media/notizie/etichette-e-igiene-ecco-le-regole-la-sicurezza-alimentare/).
 - Il repository nella cartella `Scheda Alimenti` è stato allineato senza cancellare le modifiche locali preesistenti; lo script di audit fotografico usa un percorso filesystem corretto anche quando la cartella contiene spazi.
 - Su una settimana già confermata, il cambio dello stile alimentare a vegetariano ha riaperto il piano e ricalcolato 34 pasti non registrati senza carne o pesce, conservando il pasto già registrato.

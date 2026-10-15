@@ -26,7 +26,7 @@ export default defineConfig({
   build: {
     outDir: "dist",
     emptyOutDir: true,
-    chunkSizeWarningLimit: 550,
+    chunkSizeWarningLimit: 575,
     rolldownOptions: {
       output: {
         codeSplitting: {

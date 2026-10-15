@@ -969,7 +969,9 @@ test("v1.19.20 caches framework dependencies without lazy-loading the planner", 
   assert.match(config, /codeSplitting:[\s\S]*name: "vendor"[\s\S]*test: \/node_modules\//);
   assert.doesNotMatch(main, /lazy\(\(\) =>/);
   assert.ok((await stat(new URL(`../dist/assets/${vendorChunk}`, import.meta.url))).size < 250_000);
-  assert.ok((await stat(new URL(`../dist/assets/${appChunk}`, import.meta.url))).size < 560_000);
+  // The verified recipe catalog grows with complete instructions; keep the
+  // entry bundle bounded while the separate vendor chunk avoids duplication.
+  assert.ok((await stat(new URL(`../dist/assets/${appChunk}`, import.meta.url))).size < 575_000);
 });
 
 test("v1.19.21 keeps the public mobile stress audit silent and reusable", async () => {
@@ -3008,6 +3010,21 @@ test("v1.19.92 waits for an aligned public release and shows current versus publ
   assert.match(planner, /setReleaseReady\(ready\)/);
   assert.match(planner, /window\.addEventListener\("pageshow", checkVersion\)/);
   assert.match(planner, /Questa schermata è la v\{VERSION\}; pubblicata v\{availableRelease\}/);
+});
+
+test("v1.19.93 calculates documented Indian paneer dishes from distinct photographed ingredients", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(source, /Paneer: \{\s*kcal: 305, protein: 18\.86, carbs: 2\.41, fat: 24\.78, fiber: 0, source: "IFCT"/);
+  for (const id of ["asian-kadhai-paneer-rice", "asian-hariyali-paneer-rice", "asian-baked-paneer-tikka-rice"]) {
+    assert.match(source, new RegExp(`id: "${id}"`));
+  }
+  for (const photo of ["part-paneer", "part-coriander-leaves", "part-mint-leaves", "recipe-asian-kadhai-paneer", "recipe-asian-hariyali-paneer", "recipe-asian-baked-paneer"]) {
+    assert.match(source, new RegExp(`${photo}-v11993`));
+  }
+  assert.match(source, /FSSAI · Hariyali paneer tikka adattato in piatto completo/);
+  assert.match(source, /\.\.\.verifiedIndianPaneerRecipes/);
+  assert.match(source, /"paneer"\]\)\) return "latticini"/);
+  assert.match(source, /burro\|paneer\/\]/);
 });
 
 test("v1.19.86 separates recipe provenance from ingredient nutrition data", async () => {

@@ -9,7 +9,7 @@ import { readSessionItem, removeSessionItem, writeStorageItem } from "./storageR
 type Macro = { kcal: number; protein: number; carbs: number; fat: number };
 type Food = Macro & {
   fiber: number;
-  source: "CREA" | `CREA ${string}` | "USDA" | "USDA FoodData Central" | "FRIDA" | "ETICHETTA" | "ETICHETTA: verificare confezione" | "HUMANITAS" | "IEO" | "RICETTA CALCOLATA";
+  source: "CREA" | `CREA ${string}` | "USDA" | "USDA FoodData Central" | "IFCT" | "FRIDA" | "ETICHETTA" | "ETICHETTA: verificare confezione" | "HUMANITAS" | "IEO" | "RICETTA CALCOLATA";
 };
 type RecipeIngredient = { food: string; grams: number; label?: string };
 type MealPart = RecipeIngredient & {
@@ -103,7 +103,7 @@ const SLOT_LABELS = [
 const VERSION = packageFile.version;
 const recipeSourceKind = (recipe: Recipe) => {
   const label = recipe.sourceLabel || "";
-  if (/^(MAFF|VisitKorea|Tourism Authority of Thailand)/.test(label)) return "dish";
+  if (/^(FSSAI|MAFF|VisitKorea|Tourism Authority of Thailand)/.test(label)) return "dish";
   if (label.startsWith("Harvard T.H. Chan")) return "model";
   if (label.startsWith("USDA Food Safety")) return "safety";
   return "nutrition";
@@ -497,6 +497,15 @@ const foods: Record<string, Food> = {
   },
   "Mozzarella vaccina": {
     kcal: 253, protein: 18.7, carbs: 0.7, fat: 19.5, fiber: 0, source: "CREA",
+  },
+  Paneer: {
+    kcal: 305, protein: 18.86, carbs: 2.41, fat: 24.78, fiber: 0, source: "IFCT",
+  },
+  "Coriandolo fresco": {
+    kcal: 23, protein: 2.13, carbs: 3.67, fat: 0.52, fiber: 2.8, source: "USDA",
+  },
+  "Menta fresca": {
+    kcal: 44, protein: 3.29, carbs: 8.41, fat: 0.73, fiber: 6.8, source: "USDA",
   },
   "Mozzarella light": {
     kcal: 164, protein: 20, carbs: 1.5, fat: 8.7, fiber: 0, source: "ETICHETTA",
@@ -1859,7 +1868,7 @@ export const proteinFamilyForItems = (items: RecipeIngredient[]): WeeklyProteinF
   if (names.some((name) => !name.includes("fagiolini") &&
     ["ceci", "lenticchie", "fagioli", "piselli", "fave", "edamame", "lupini", "cicerchie", "tofu", "tempeh", "seitan", "burger vegetale", "legumi"]
       .some((term) => name.includes(term)))) return "legumi";
-  if (has(["ricotta", "mozzarella", "feta", "crescenza", "stracchino", "primo sale", "scamorza", "provolone", "fiocchi di latte", "parmigiano", "grana"])) return "latticini";
+  if (has(["ricotta", "mozzarella", "feta", "crescenza", "stracchino", "primo sale", "scamorza", "provolone", "fiocchi di latte", "parmigiano", "grana", "paneer"])) return "latticini";
   return "altro";
 };
 const recipeProteinFamily = (recipe: Recipe) => proteinFamilyForItems(recipe.parts || recipe.ingredients);
@@ -6424,6 +6433,7 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
   ],
   Latticino: [
     { category: "Latticino", food: "Formaggio fresco magro", grams: 80, label: "Formaggio fresco magro · 80 g", image: photo("part-low-fat-fresh-cheese-v1181") },
+    { category: "Latticino", food: "Paneer", grams: 80, label: "Paneer · 80 g", image: photo("part-paneer-v11993") },
     { category: "Latticino", food: "Mozzarella vaccina", grams: 100, label: "Mozzarella vaccina · 100 g", image: photo("part-mozzarella-v11522") },
     { category: "Latticino", food: "Mozzarella light", grams: 100, label: "Mozzarella light · 100 g", image: photo("part-mozzarella-light-v11522") },
     { category: "Latticino", food: "Yogurt greco 0%", grams: 150, label: "Yogurt greco 0% · 150 g", image: photo("part-greek-yogurt-zero-v11522") },
@@ -6888,6 +6898,8 @@ const ingredientPartCatalog: Record<string, MealPart> = {
   Zucchero: { category: "Extra", food: "Zucchero", grams: 5, label: "Zucchero", image: photo("part-sugar-v11819") },
   "Aglio crudo": { category: "Extra", food: "Aglio crudo", grams: 3, label: "Aglio · 1 spicchio piccolo", image: photo("part-garlic-v11866") },
   "Prezzemolo fresco": { category: "Extra", food: "Prezzemolo fresco", grams: 5, label: "Prezzemolo fresco · 5 g", image: photo("part-parsley-v11866") },
+  "Coriandolo fresco": { category: "Extra", food: "Coriandolo fresco", grams: 10, label: "Coriandolo fresco", image: photo("part-coriander-leaves-v11993") },
+  "Menta fresca": { category: "Extra", food: "Menta fresca", grams: 5, label: "Menta fresca", image: photo("part-mint-leaves-v11993") },
   "Basilico fresco": { category: "Extra", food: "Basilico fresco", grams: 5, label: "Basilico fresco · 5 g", image: photo("part-basil-v11866") },
   "Rosmarino fresco": { category: "Extra", food: "Rosmarino fresco", grams: 2, label: "Rosmarino fresco · 2 g", image: photo("part-rosemary-v11866") },
   "Salvia fresca": { category: "Extra", food: "Salvia fresca", grams: 2, label: "Salvia fresca · 2 g", image: photo("part-sage-v11866") },
@@ -9475,7 +9487,7 @@ const inferTextAllergens = (textValue: string) => {
   const text = textValue.toLowerCase();
   const rules: Array<[string, RegExp]> = [
     ["Glutine", /pasta|pane|farro|orzo|bulgur|cous cous|cracker|fette biscottate|biscott|wafer|muesli|frumento|segale|grissini|avena/],
-    ["Latte", /latte|yogurt|skyr|kefir|ricotta|feta|mozzarella|crescenza|scamorza|provolone|grana|parmigiano|burro/],
+    ["Latte", /latte|yogurt|skyr|kefir|ricotta|feta|mozzarella|crescenza|scamorza|provolone|grana|parmigiano|burro|paneer/],
     ["Uova", /uov|albume/],
     ["Pesce", /salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|rombo/],
     ["Crostacei", /gamber|scamp|aragost|granchio/],
@@ -9985,6 +9997,110 @@ const pantryIntegrationRecipes: Recipe[] = [
   },
 ];
 
+// The Indian dish identities come from FSSAI recipes. These are explicitly
+// adapted one-person complete meals: rice/vegetable sides and every macro are
+// calculated from the listed ingredients, not copied from FSSAI's dish totals.
+const verifiedIndianPaneerRecipes: Recipe[] = [
+  {
+    id: "asian-kadhai-paneer-rice",
+    name: "Kadhai paneer con peperoni e riso",
+    kicker: "Ricetta indiana adattata · salsa di pomodoro speziata",
+    course: "Piatto unico",
+    cuisine: "Asiatico",
+    image: photo("recipe-asian-kadhai-paneer-v11993"),
+    time: 35,
+    ingredients: [
+      { food: "Paneer", grams: 80 },
+      { food: "Riso basmati cotto", grams: 150 },
+      { food: "Peperoni cotti", grams: 150 },
+      { food: "Passata di pomodoro", grams: 120 },
+      { food: "Cipolle crude", grams: 50 },
+      { food: "Aglio crudo", grams: 3 },
+      { food: "Zenzero fresco", grams: 5 },
+      { food: "Curry in polvere", grams: 2 },
+      { food: "Coriandolo fresco", grams: 5 },
+    ],
+    steps: [
+      "Per 150 g di riso cotto pesa circa 50 g di basmati secco, sciacqualo e cuocilo in acqua secondo la confezione, normalmente 10-12 minuti. Pesa i 150 g dopo la cottura.",
+      "Taglia 80 g di paneer a cubi e 50 g di cipolla a fettine. Schiaccia 3 g d'aglio e grattugia 5 g di zenzero. Cuoci i peperoni in padella con poca acqua e pesane 150 g cotti.",
+      "Fai ammorbidire cipolla, aglio e zenzero in padella antiaderente con poca acqua. Aggiungi 120 g di passata e 2 g di curry, poi sobbolli 8 minuti.",
+      "Unisci peperoni e paneer; cuoci altri 6-8 minuti mescolando piano, finché il paneer è ben caldo e la salsa si addensa. Servi con il riso e 5 g di coriandolo lavato.",
+    ],
+    alternatives: [
+      "Per il lavoro: prepara la sera, raffredda rapidamente e trasporta in borsa termica; conserva al freddo fino al pasto.",
+      "Se vuoi meno piccante, riduci il curry senza cambiare il peso del paneer.",
+    ],
+    sourceLabel: "FSSAI · Kadhai paneer adattato; nutrienti ricalcolati da ingredienti IFCT/CREA/USDA",
+    sourceUrl: "https://www.fssai.gov.in/upload/knowledge_hub/9582262a819e8764cdBook_Tadke_bina_Zaika_14_06_2022.pdf",
+  },
+  {
+    id: "asian-hariyali-paneer-rice",
+    name: "Hariyali paneer con riso e verdure",
+    kicker: "Spiedini verdi ispirati alla ricetta FSSAI · marinatura rapida",
+    course: "Piatto unico",
+    cuisine: "Asiatico",
+    image: photo("recipe-asian-hariyali-paneer-v11993"),
+    time: 35,
+    ingredients: [
+      { food: "Paneer", grams: 75 },
+      { food: "Riso basmati cotto", grams: 150 },
+      { food: "Yogurt greco 2%", grams: 45 },
+      { food: "Peperoni cotti", grams: 100 },
+      { food: "Broccoli bolliti", grams: 100 },
+      { food: "Carote cotte bollite", grams: 100 },
+      { food: "Coriandolo fresco", grams: 10 },
+      { food: "Menta fresca", grams: 5 },
+      { food: "Succo di limone", grams: 10 },
+      { food: "Peperoncino rosso fresco", grams: 2 },
+      { food: "Curcuma in polvere", grams: 1 },
+    ],
+    steps: [
+      "Cuoci circa 50 g di riso basmati secco secondo la confezione e pesane 150 g cotti. Lessa separatamente broccoli e carote finché sono teneri; pesane 100 g ciascuno dopo cottura.",
+      "Lava coriandolo e menta. Frullali con 10 g di succo di limone, 2 g di peperoncino, 1 g di curcuma e 45 g di yogurt fino a ottenere una salsa verde.",
+      "Taglia 75 g di paneer a cubi e condisci con la salsa. Lascia marinare in frigo mentre prepari il riso e le verdure, almeno 10 minuti: questa è una versione rapida, non la marinatura di 4-6 ore della fonte.",
+      "Infila il paneer e 100 g di peperoni già cotti su piccoli spiedini. Cuoci in forno a 180 °C per circa 15 minuti girando a metà, finché i bordi sono dorati. Servi con riso, broccoli e carote.",
+    ],
+    alternatives: [
+      "Per un gusto più intenso, marina il paneer 4-6 ore in frigorifero come nella ricetta di riferimento; il tempo totale allora aumenta.",
+      "Puoi usare una teglia senza spiedini, mantenendo le stesse quantità.",
+    ],
+    sourceLabel: "FSSAI · Hariyali paneer tikka adattato in piatto completo; nutrienti ricalcolati",
+    sourceUrl: "https://www.fssai.gov.in/upload/knowledge_hub/9582262a819e8764cdBook_Tadke_bina_Zaika_14_06_2022.pdf",
+  },
+  {
+    id: "asian-baked-paneer-tikka-rice",
+    name: "Paneer tikka al forno con riso",
+    kicker: "Ricetta indiana adattata · yogurt, pomodoro e peperoni",
+    course: "Piatto unico",
+    cuisine: "Asiatico",
+    image: photo("recipe-asian-baked-paneer-v11993"),
+    time: 35,
+    ingredients: [
+      { food: "Paneer", grams: 80 },
+      { food: "Riso basmati cotto", grams: 150 },
+      { food: "Yogurt greco 2%", grams: 60 },
+      { food: "Peperoni cotti", grams: 120 },
+      { food: "Cipolle crude", grams: 50 },
+      { food: "Passata di pomodoro", grams: 120 },
+      { food: "Curry in polvere", grams: 2 },
+      { food: "Curcuma in polvere", grams: 1 },
+      { food: "Olio extravergine", grams: 5 },
+    ],
+    steps: [
+      "Cuoci circa 50 g di basmati secco secondo la confezione e pesane 150 g cotti. Scalda il forno a 200 °C.",
+      "Taglia il paneer a cubi e la cipolla a falde. Mescola 60 g di yogurt con curry, curcuma e 5 g d'olio; rivesti il paneer e lascialo insaporire mentre prepari le verdure.",
+      "Sistema paneer, cipolla e 120 g di peperoni cotti su carta forno. Cuoci 15-18 minuti, girando a metà, finché il paneer prende colore; non lasciarlo seccare.",
+      "Scalda 120 g di passata per 5 minuti, unisci il paneer e le verdure cotte e servi subito con 150 g di riso cotto.",
+    ],
+    alternatives: [
+      "Preparabile la sera per il lavoro: raffredda presto, conserva in frigorifero e trasporta al freddo; scalda bene prima di mangiare.",
+      "Se preferisci una versione più asciutta, servi la passata a lato, senza cambiare gli ingredienti conteggiati.",
+    ],
+    sourceLabel: "FSSAI · Baked Paneer Tikka Masala adattato; nutrienti ricalcolati da ingredienti",
+    sourceUrl: "https://fssai.gov.in/upload/knowledge_hub/7702660a6012297118Orange_Book_2nd_Edition_20_05_2021.pdf",
+  },
+];
+
 const rawRecipes: Recipe[] = [
   ...everydayLegumeRecipes,
   ...pantryIntegrationRecipes,
@@ -10020,6 +10136,7 @@ const rawRecipes: Recipe[] = [
   ...attachmentDinnersE,
   ...catalogMains,
   ...verifiedWorldRecipeExpansion,
+  ...verifiedIndianPaneerRecipes,
   ...occasionalRecipes,
   ...recipes,
 ];
