@@ -10949,6 +10949,10 @@ export function FoodPlanner() {
   }, []);
 
   useEffect(() => {
+    // Restore only after the saved profile (including its active tab) has
+    // rendered. On a cold update the initial Today view is too short, so an
+    // early scrollTo(900) silently clamps to zero and discards this marker.
+    if (!profileHydrated) return;
     const currentUrl = new URL(window.location.href);
     if (currentUrl.searchParams.has("_release")) {
       currentUrl.searchParams.delete("_release");
@@ -10967,7 +10971,7 @@ export function FoodPlanner() {
         });
       });
     }
-  }, []);
+  }, [profileHydrated]);
 
   useEffect(() => {
     try {

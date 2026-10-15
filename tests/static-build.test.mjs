@@ -3057,6 +3057,14 @@ test("v1.19.95 adds two source-documented Asian legume lunches with distinct fin
   assert.match(source, /\.\.\.verifiedAsianLegumeRecipes/);
 });
 
+test("v1.19.96 restores the saved view only after profile hydration", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(source, /if \(!profileHydrated\) return;\s*const currentUrl = new URL\(window\.location\.href\);/);
+  assert.match(source, /if \(readSessionItem\(sessionStorage, "vivapiatto-release-target"\) === VERSION\)/);
+  assert.match(source, /window\.scrollTo\(\{ top: savedScrollY, left: 0, behavior: "auto" \}\)/);
+  assert.match(source, /\}, \[profileHydrated\]\);/);
+});
+
 test("v1.19.86 separates recipe provenance from ingredient nutrition data", async () => {
   const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(source, /const recipeSourceKind = \(recipe: Recipe\) => \{/);
