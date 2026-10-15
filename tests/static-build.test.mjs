@@ -1813,7 +1813,7 @@ test("v1.18.15 applies current seasonality to automatic recipe ranking", async (
   const app = await readFile("app/FoodPlanner.tsx", "utf8");
   assert.match(app, /const recipeSeasonalityScore = \(recipe: Recipe\)/);
   assert.match(app, /inSeason \/ seasonalIngredients\.length/);
-  assert.match(app, /const seasonalBonus = recipeSeasonalityScore\(recipe\) \* 0\.35/);
+  assert.match(app, /const seasonalBonus = recipeSeasonalityScore\(recipe\) \* 0\.8/);
   assert.match(app, /stagione \$\{recipeSeasonalityScore\(r\)\}%/);
 });
 
@@ -2566,10 +2566,11 @@ test("v1.18.98 proposes breakfasts and snacks from the complete recipe catalog",
   assert.match(source, /const availableBreakfasts[\s\S]*?allRecipes[\s\S]*?recipe\.course === "Colazione"/);
   assert.match(source, /const availableSnacks[\s\S]*?allRecipes[\s\S]*?recipe\.course === "Spuntino"/);
   assert.equal(
-    (source.match(/const snacks = availableSnacks\(\)/g) || []).length,
+    (source.match(/const snacks = availableSnacks\(\)/g) || []).length +
+      (source.match(/const snacks = preferAvailableSeason\(availableSnacks\(\)\)/g) || []).length,
     2,
   );
-  assert.match(source, /let snacks = availableSnacks\(\)/);
+  assert.match(source, /let snacks = preferAvailableSeason\(availableSnacks\(\)\)/);
 });
 
 test("v1.18.99 gives the first pantry-integration recipes faithful final photos", async () => {

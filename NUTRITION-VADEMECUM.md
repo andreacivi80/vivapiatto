@@ -37,6 +37,7 @@ Questo documento è la base funzionale dell’app. Le fotografie e la grafica de
 - Dopo la conferma settimanale, le modifiche in “Oggi” restano giornaliere.
 - Per gli stili vegetariano, pescetariano e vegano le frequenze settimanali sono mostrate come conteggi delle categorie compatibili: i range generali del modello onnivoro non sono applicati automaticamente né presentati come prescrizione individuale. La rotazione cerca varietà tra gli alimenti consentiti.
 - Con “Più varietà”, la settimana dà una lieve preferenza a basi amidacee e ortaggi non ancora usati nei pasti principali, senza sacrificare composizione o target energetico; i pasti già registrati restano invariati. I conteggi di varietà non sono obiettivi clinici.
+- La proposta automatica preferisce frutta e ortaggi del periodo quando ci sono scelte compatibili; l'alimento fuori stagione resta sempre disponibile manualmente. Il calendario è orientativo e può variare per territorio e coltivazione, come specifica CREA.
 
 ## Regole in consolidamento
 
@@ -56,6 +57,7 @@ Questo documento è la base funzionale dell’app. Le fotografie e la grafica de
 - Ministero della Salute, dieta senza glutine e rischio di contaminazione dell'avena: https://www.salute.gov.it/imgs/C_17_pubblicazioni_3308_allegato.pdf
 - NHS, spuntini più equilibrati: https://www.nhs.uk/healthier-families/food-facts/healthier-snacks/
 - CREA, porzione di riferimento dei fagioli cotti (150 g): https://www.alimentinutrizione.it/tabelle-nutrizionali/004125
+- CREA, prodotti di stagione e limiti dei calendari: https://sapermangiare.an.crea.gov.it/528/prodotti-di-stagione.html
 
 ## Tracciabilità D41–D44 v1.15.19
 

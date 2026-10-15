@@ -1371,6 +1371,14 @@ try {
   if (
     !today.version || today.recovery || today.horizontalOverflow || today.brokenViewportImages.length || today.pendingViewportImages.length ||
     !scrollStability.menuUnchanged || !scrollStability.gramsUnchanged || !scrollStability.returnedTop || scrollStability.horizontalOverflow ||
+    (Number(version.split('.').at(-1)) >= 81 && new Date().getMonth() === 9 &&
+      [scrollStability.beforeMenu[1], scrollStability.beforeMenu[3], profileAdaptation.lowMenu[1], profileAdaptation.lowMenu[3]]
+        .some((heading) => /nettarina|anguria|pompelmo rosa|albicocc|ciliegie|melone estivo/i.test(heading || ''))) ||
+    (Number(version.split('.').at(-1)) >= 81 && new Date().getMonth() === 9 &&
+      !/mela|pera|uva|melagrana|cachi/i.test(scrollStability.beforeMenu[1] || '')) ||
+    (Number(version.split('.').at(-1)) >= 81 &&
+      [scrollStability.beforeMenu[1], scrollStability.beforeMenu[3]]
+        .some((heading) => /· (?:noci|mandorle|nocciole|pistacchi|arachidi|anacardi)$/i.test(heading || ''))) ||
     week.recovery || week.horizontalOverflow || week.brokenViewportImages.length || week.pendingViewportImages.length ||
     !weeklyConfirmation.found || !weeklyConfirmation.locked || !weeklyConfirmation.hasAverage || weeklyConfirmation.calorieDays !== 7 ||
     !weeklyConfirmation.rotationConfirmed || weeklyConfirmation.rotationRows < 7 || !weeklyConfirmation.rotationInRange ||

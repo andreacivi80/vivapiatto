@@ -10232,6 +10232,105 @@ const days: Day[] = [
     ],
   },
 ];
+const seasonalChoicesForNewPlan = () => {
+  const month = new Date().getMonth() + 1;
+  const used = new Set<string>();
+  const choices: Record<string, string> = {};
+  const fruitFoods = new Set(mealPartOptions.Frutta.map((part) => part.food));
+  const isOutOfSeason = (recipe: Recipe) => recipe.ingredients.some((ingredient) =>
+    seasonalMonths[ingredient.food]?.length &&
+    !seasonalMonths[ingredient.food].includes(month),
+  );
+  const candidates = allRecipes.filter((recipe) =>
+    recipe.course === "Spuntino" &&
+    recipe.time <= 5 &&
+    !recipe.id.startsWith("occasional-") &&
+    !recipe.ingredients.some((ingredient) => /wafer|grissini/i.test(ingredient.food)) &&
+    recipe.ingredients.some((ingredient) => ["Frutta", "Latticino"].includes(pantryPartByFood.get(ingredient.food)?.category || "")) &&
+    !isOutOfSeason(recipe),
+  );
+  const breakfasts = allRecipes.filter((recipe) =>
+    recipe.course === "Colazione" && recipe.time <= 3 && !isOutOfSeason(recipe),
+  );
+  const usedBreakfasts = new Set<string>();
+  days.forEach((day, dayIndex) => {
+    const original = recipeMap[day.recipes[0]];
+    if (!original) return;
+    if (!isOutOfSeason(original) || !breakfasts.length) {
+      usedBreakfasts.add(original.id);
+      return;
+    }
+    const unused = breakfasts.filter((recipe) => !usedBreakfasts.has(recipe.id));
+    const replacement = [...(unused.length ? unused : breakfasts)].sort((left, right) =>
+      Math.abs(calc(left.ingredients).kcal - calc(original.ingredients).kcal) -
+      Math.abs(calc(right.ingredients).kcal - calc(original.ingredients).kcal) ||
+      left.ingredients.length - right.ingredients.length,
+    )[0];
+    if (!replacement) return;
+    choices[`${dayIndex}-0`] = replacement.id;
+    usedBreakfasts.add(replacement.id);
+  });
+  days.forEach((day, dayIndex) => {
+    [1, 3].forEach((slot) => {
+      const original = recipeMap[day.recipes[slot]];
+      if (!original) return;
+      if (!isOutOfSeason(original) || !candidates.length) {
+        used.add(original.id);
+        return;
+      }
+      const unused = candidates.filter((recipe) => !used.has(recipe.id));
+      const morning = recipeMap[choices[`${dayIndex}-1`] || day.recipes[1]];
+      const morningFruit = new Set(morning.ingredients
+        .filter((ingredient) => fruitFoods.has(ingredient.food))
+        .map((ingredient) => ingredient.food));
+      const ranked = [...(unused.length ? unused : candidates)].sort((left, right) => {
+        const score = (recipe: Recipe) =>
+          Math.abs(calc(recipe.ingredients).kcal - calc(original.ingredients).kcal) +
+          Math.max(0, recipe.ingredients.length - 2) * 45 +
+          Number(recipe.ingredients.some((item) => fruitFoods.has(item.food) && seasonalMonths[item.food]?.includes(month))) * -80 +
+          Number(slot === 3 && recipe.ingredients.some((item) => morningFruit.has(item.food))) * 100;
+        return score(left) - score(right);
+      });
+      const replacement = ranked[0];
+      if (!replacement) return;
+      choices[`${dayIndex}-${slot}`] = replacement.id;
+      used.add(replacement.id);
+    });
+  });
+  const usedMains = new Set<string>();
+  days.forEach((day, dayIndex) => [2, 4].forEach((slot) => {
+    const original = recipeMap[day.recipes[slot]];
+    if (!original) return;
+    if (!isOutOfSeason(original)) {
+      usedMains.add(original.id);
+      return;
+    }
+    const sameFamily = allRecipes.filter((recipe) =>
+      recipeProteinFamily(recipe) === recipeProteinFamily(original) &&
+      ["Piatto unico", "Piatto completo", "Primo", "Secondo"].includes(recipe.course || "") &&
+      !recipe.id.startsWith("occasional-") &&
+      !isOutOfSeason(recipe),
+    );
+    const sameCuisine = sameFamily.filter((recipe) => recipe.cuisine === original.cuisine);
+    const pool = sameCuisine.length ? sameCuisine : sameFamily;
+    if (!pool.length) {
+      usedMains.add(original.id);
+      return;
+    }
+    const unused = pool.filter((recipe) => !usedMains.has(recipe.id));
+    const selected = [...(unused.length ? unused : pool)].sort((left, right) => {
+      const score = (recipe: Recipe) =>
+        Math.abs(calc(recipe.ingredients).kcal - calc(original.ingredients).kcal) +
+        Math.abs(recipe.time - original.time) * 2 +
+        Number(slot === 2 && recipe.time > 35) * 180;
+      return score(left) - score(right);
+    })[0];
+    if (!selected) return;
+    choices[`${dayIndex}-${slot}`] = selected.id;
+    usedMains.add(selected.id);
+  }));
+  return choices;
+};
 
 function round(n: number) {
   return Math.round(n);
@@ -10726,6 +10825,8 @@ export function FoodPlanner() {
           }));
           if (safeBuilder.length) setBuilder(safeBuilder);
         }
+      } else {
+        setChoices(seasonalChoicesForNewPlan());
       }
     } catch {}
     setProfileHydrated(true);
@@ -10944,7 +11045,8 @@ export function FoodPlanner() {
       .filter((recipe) =>
         recipe.course === "Spuntino" &&
         !recipe.id.startsWith("occasional-") &&
-        !recipe.ingredients.some((item) => /wafer|grissini/i.test(item.food)),
+        !recipe.ingredients.some((item) => /wafer|grissini/i.test(item.food)) &&
+        !(recipe.ingredients.length === 1 && /noci|mandorle|nocciole|pistacchi|arachidi|anacardi/i.test(recipe.ingredients[0].food)),
       )
       .filter(isProfileEligible);
   const recipeCuisine = (r: Recipe) =>
@@ -11011,6 +11113,17 @@ export function FoodPlanner() {
       seasonalMonths[ingredient.food].includes(month),
     ).length;
     return round((inSeason / seasonalIngredients.length) * 100);
+  };
+  const recipeOutOfSeasonProduceCount = (recipe: Recipe) => {
+    const month = new Date().getMonth() + 1;
+    return recipe.ingredients.filter((ingredient) =>
+      seasonalMonths[ingredient.food]?.length &&
+      !seasonalMonths[ingredient.food].includes(month),
+    ).length;
+  };
+  const preferAvailableSeason = (recipes: Recipe[]) => {
+    const inSeason = recipes.filter((recipe) => recipeOutOfSeasonProduceCount(recipe) === 0);
+    return inSeason.length >= 2 ? inSeason : recipes;
   };
   const cleanKicker = (text: string) =>
     text.replace(/\s*·?\s*matrice\s+[cspd]\d+/gi, "").trim();
@@ -11341,8 +11454,8 @@ export function FoodPlanner() {
       return;
     }
     if (weekLocked && !forceConfirmedWeek) return;
-    const breakfasts = availableBreakfasts();
-    const snacks = availableSnacks();
+    const breakfasts = preferAvailableSeason(availableBreakfasts());
+    const snacks = preferAvailableSeason(availableSnacks());
     const mains = allRecipes.filter(
       (r) =>
         isProfileEligible(r) &&
@@ -12190,7 +12303,8 @@ export function FoodPlanner() {
           Number(recipe.ingredients.filter((item) => pantryPartByFood.get(item.food)?.category === "Contorno").length > 1) * 140 +
           Number(recipe.time > 5) * 120
         : 0;
-      const seasonalBonus = recipeSeasonalityScore(recipe) * 0.35;
+      const seasonalBonus = recipeSeasonalityScore(recipe) * 0.8;
+      const outOfSeasonPenalty = recipeOutOfSeasonProduceCount(recipe) * 130;
       const familiarBonus =
         preference === "repeat" && recordedFavoriteRecipeIds.has(recipe.id)
           ? 320
@@ -12206,6 +12320,7 @@ export function FoodPlanner() {
         prepPenalty +
         budgetPenalty +
         workSnackPenalty +
+        outOfSeasonPenalty +
         Math.abs(profileRecipeKcal(recipe, slot) - target) +
         (mainMeal ? automaticMultiLegumePenalty(recipe) : 0) -
         seasonalBonus -
@@ -12336,14 +12451,16 @@ export function FoodPlanner() {
               : unused.length
                 ? unused
                 : pool;
+        const inSeasonCandidates = candidates.filter((recipe) => recipeOutOfSeasonProduceCount(recipe) === 0);
+        const seasonAwareCandidates = inSeasonCandidates.length ? inSeasonCandidates : candidates;
         const unusedSpecies =
           preference === "repeat"
-            ? candidates
-            : candidates.filter(
+            ? seasonAwareCandidates
+            : seasonAwareCandidates.filter(
                 (recipe) => !usedProteinSignatures.has(recipeProteinSignature(recipe)),
               );
         const chosen = closestForSlot(
-          unusedSpecies.length ? unusedSpecies : candidates,
+          unusedSpecies.length ? unusedSpecies : seasonAwareCandidates,
           slot,
           target,
           offset,
@@ -12452,8 +12569,8 @@ export function FoodPlanner() {
         : goal === "Mantenimento massa"
           ? 3
           : 2);
-    const breakfasts = availableBreakfasts(selectedContext);
-    let snacks = availableSnacks();
+    const breakfasts = preferAvailableSeason(availableBreakfasts(selectedContext));
+    let snacks = preferAvailableSeason(availableSnacks());
     let mains = allRecipes.filter(
       (r) =>
         isProfileEligible(r) &&
@@ -12493,7 +12610,7 @@ export function FoodPlanner() {
       mains = [...mains].sort(
         (a, b) => calc(b.ingredients).carbs - calc(a.ingredients).carbs,
       );
-      snacks = availableSnacks()
+      snacks = preferAvailableSeason(availableSnacks())
         .sort((a, b) => calc(b.ingredients).carbs - calc(a.ingredients).carbs);
     } else {
       mains = [...mains].sort(
@@ -12529,6 +12646,8 @@ export function FoodPlanner() {
           calc(b.ingredients).kcal - calc(a.ingredients).kcal,
       );
     }
+    mains = preferAvailableSeason(mains);
+    snacks = preferAvailableSeason(snacks);
     if (!breakfasts.length || !snacks.length || !mains.length) return;
     const homeMains = mains.filter(
       (r) =>

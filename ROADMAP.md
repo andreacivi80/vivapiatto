@@ -2,12 +2,22 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.80 — spuntini pratici in Lavoro e Mensa
+## v1.19.81 — proposte stagionali senza bloccare la scelta libera
+
+- [x] Le proposte automatiche danno una penalità concreta a frutta e ortaggi noti fuori stagione; il check-in privilegia ricette senza ingredienti fuori stagione quando esistono alternative sufficienti.
+- [x] Un nuovo piano sostituisce gli spuntini fuori stagione con opzioni rapide del periodo e i pasti principali con ricette stagionali della stessa famiglia proteica quando disponibili; i piani già salvati restano intatti al refresh.
+- [x] La scelta libera e le ricette restano consultabili tutto l'anno: le tabelle sono orientative, non un divieto di acquistare un prodotto disponibile.
+- [x] Collaudo mobile locale in ottobre: primo giorno con fette biscottate/latte, kefir/pera, uva/skyr, farro-lenticchie-feta e merluzzo/patate/sedano; nessuna frutta estiva o frutta secca isolata nei primi spuntini, settimana 14/14 nei range, zero errori JavaScript o overflow.
+- [x] La proposta iniziale privilegia la frutta locale del periodo rispetto a quella importata priva di calendario; le opzioni importate restano disponibili.
+- [x] Suite completa 208/208 e build della revisione finale superate.
+- [ ] Pubblicazione e collaudo mobile pubblico sul link unico.
+
+## v1.19.80 — pubblicata e verificata
 
 - [x] Il ranking automatico penalizza spuntini con due o più ortaggi da preparare, più componenti o oltre cinque minuti; restano disponibili nelle alternative e nella scelta libera.
 - [x] Telefono simulato: a 1400 kcal pera e crema di mandorle / anguria e yogurt proteico; a 2600 banana e yogurt proteico / skyr e melagrana; a 3000 banana e yogurt proteico / uva, skyr e cracker. Casa mantiene scelte diverse. Nessun overflow o errore JavaScript.
 - [x] Suite completa 208/208, TypeScript, build e collaudo mobile locale della versione esatta.
-- [ ] Pubblicazione sullo stesso link e collaudo pubblico.
+- [x] Pubblicazione sullo stesso link e collaudo pubblico della versione esatta: spuntini pratici ai target 1400/2600/3000, selezioni e dati persistenti, zero errori JavaScript, foto rotte o overflow.
 
 ## v1.19.79 — pubblicata e verificata
 
