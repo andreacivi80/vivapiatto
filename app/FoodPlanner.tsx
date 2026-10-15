@@ -11282,10 +11282,10 @@ export function FoodPlanner() {
     if (!swapTarget) return;
     const key = `${swapTarget.day}-${swapTarget.slot}`;
     const changedDay = swapTarget.day;
+    clearMealOverrides([key]);
+    clearMealRegistration(key);
     setPartSelections((current) => ({ ...current, [key]: [{ ...part }] }));
     setMealView((current) => ({ ...current, [key]: "parts" }));
-    setActualWeights((current) => { const next = { ...current }; delete next[key]; return next; });
-    setRemovedIngredients((current) => { const next = { ...current }; delete next[key]; return next; });
     setReplanNote(`Pasto sostituito liberamente con ${partDisplayName(part)}. Puoi aggiungere altri elementi con il pulsante più.`);
     replanFollowingDays(changedDay);
     setSwapTarget(null);
@@ -11298,6 +11298,25 @@ export function FoodPlanner() {
     setCuisineFilter("Tutte");
     setLibraryQuery("");
   }, [swapTarget]);
+  const clearMealOverrides = (keys: string[]) => {
+    const clearKeys = (current: Record<string, unknown>) => {
+      const next = { ...current };
+      keys.forEach((key) => delete next[key]);
+      return next;
+    };
+    setPartSelections((current) => clearKeys(current) as typeof current);
+    setActualWeights((current) => clearKeys(current) as typeof current);
+    setRemovedIngredients((current) => clearKeys(current) as typeof current);
+    setMealView((current) => clearKeys(current) as typeof current);
+  };
+  const clearMealRegistration = (key: string) => {
+    setCompleted((current) => ({ ...current, [key]: false }));
+    setCompletedRecipes((current) => {
+      const next = { ...current };
+      delete next[key];
+      return next;
+    });
+  };
   const replanFollowingDays = (changedDay: number, forceConfirmedWeek = false) => {
     if (ageGroup === "Minore") {
       setReplanNote("Pianificazione automatica per minori disattivata: serve un professionista sanitario.");
@@ -11336,14 +11355,11 @@ export function FoodPlanner() {
       }
       return next;
     });
-    setPartSelections((current) => {
-      const next = { ...current };
-      Object.keys(next).forEach((key) => {
-        const [dayText] = key.split("-");
-        if (Number(dayText) > changedDay && !completed[key]) delete next[key];
-      });
-      return next;
-    });
+    clearMealOverrides(days.flatMap((_, day) =>
+      day > changedDay
+        ? [0, 1, 2, 3, 4].map((slot) => `${day}-${slot}`).filter((key) => !completed[key])
+        : [],
+    ));
   };
   const targetAdditionsFor = (
     slot: number,
@@ -11939,11 +11955,14 @@ export function FoodPlanner() {
   const chooseRecipe = (recipe: Recipe) => {
     if (swapTarget) {
       const changedDay = swapTarget.day;
+      const key = `${swapTarget.day}-${swapTarget.slot}`;
+      clearMealOverrides([key]);
+      clearMealRegistration(key);
       setChoices((v) => ({
         ...v,
-        [`${swapTarget.day}-${swapTarget.slot}`]: recipe.id,
+        [key]: recipe.id,
       }));
-      setMealView((current) => ({ ...current, [`${swapTarget.day}-${swapTarget.slot}`]: "dish" }));
+      setMealView((current) => ({ ...current, [key]: "dish" }));
       setDayIndex(swapTarget.day);
       replanFollowingDays(changedDay);
       setSwapTarget(null);
@@ -12034,11 +12053,11 @@ export function FoodPlanner() {
       label: `Pallina ${index + 1} · ${food.replace("Gelato ", "")}`,
       image: gelatoFlavorPhoto(food),
     }));
+    clearMealOverrides([key]);
+    clearMealRegistration(key);
     setChoices((current) => ({ ...current, [key]: "occasional-gelato" }));
     setMealView((current) => ({ ...current, [key]: "parts" }));
     setPartSelections((current) => ({ ...current, [key]: scoops }));
-    setActualWeights((current) => { const next = { ...current }; delete next[key]; return next; });
-    setRemovedIngredients((current) => { const next = { ...current }; delete next[key]; return next; });
     setReplanNote(`Gelato inserito: ${gelatoScoops} palline. Il totale usa 60 g per gusto e resta modificabile.`);
     replanFollowingDays(changedDay);
     setGelatoComposerOpen(false);
@@ -12049,11 +12068,10 @@ export function FoodPlanner() {
     const [dayText] = partPicker.key.split("-");
     const changedDay = Number(dayText);
     const key = partPicker.key;
+    clearMealOverrides([key]);
+    clearMealRegistration(key);
     setChoices((current) => ({ ...current, [key]: recipe.id }));
     setMealView((current) => ({ ...current, [key]: "dish" }));
-    setPartSelections((current) => { const next = { ...current }; delete next[key]; return next; });
-    setActualWeights((current) => { const next = { ...current }; delete next[key]; return next; });
-    setRemovedIngredients((current) => { const next = { ...current }; delete next[key]; return next; });
     setReplanNote("Pasto completo sostituito con " + recipe.name + ". Puoi tenerlo intero o dividerlo in componenti.");
     replanFollowingDays(changedDay);
     setPartPicker(null);
@@ -12319,6 +12337,11 @@ export function FoodPlanner() {
       });
       return next;
     });
+    clearMealOverrides(profileDays.flatMap((day) =>
+      [0, 1, 2, 3, 4]
+        .map((slot) => `${day}-${slot}`)
+        .filter((key) => !completed[key]),
+    ));
     setReplanNote(
       preference === "repeat"
         ? `Menu ${cuisineChoice.toLowerCase()} ricalcolato dando priorità ai piatti già registrati.`
@@ -12558,6 +12581,14 @@ export function FoodPlanner() {
       }
       return updated;
     });
+    const checkinDays = [dayIndex];
+    if (!weekLocked && next.tomorrowActivity !== "no" && dayIndex + 1 < days.length)
+      checkinDays.push(dayIndex + 1);
+    clearMealOverrides(checkinDays.flatMap((day) =>
+      [0, 1, 2, 3, 4]
+        .map((slot) => `${day}-${slot}`)
+        .filter((key) => !completed[key]),
+    ));
     setReplanNote(
       next.feeling === "gonfio"
         ? "Gonfio: menu semplice, senza legumi e bibite gassate. Sintomi persistenti o dolore: medico."
@@ -12605,11 +12636,13 @@ export function FoodPlanner() {
         : [...activeParts, nextPart],
     }));
     const nextSlot = slot === 0 ? 1 : slot <= 2 ? 3 : null;
-    if (nextSlot !== null && !completed[`${day}-${nextSlot}`]) {
+    if (nextSlot !== null && !completed[`${day}-${nextSlot}`] && !partSelections[`${day}-${nextSlot}`]) {
       const snackId =
         delta > 80 ? "quick-apple" : delta < -80 ? "quick-nuts" : null;
-      if (snackId)
+      if (snackId) {
+        clearMealOverrides([`${day}-${nextSlot}`]);
         setChoices((v) => ({ ...v, [`${day}-${nextSlot}`]: snackId }));
+      }
     }
     setReplanNote(
       partPicker.adding
@@ -12916,6 +12949,13 @@ export function FoodPlanner() {
     const usedProteinSignatures = new Set<string>();
     const updates: Record<string, string> = {};
     mainSlots.forEach(({ day, slot }, index) => {
+      const key = `${day}-${slot}`;
+      if (completed[key]) {
+        const recordedRecipe = recipeMap[getDayIds(day)[slot]];
+        used.add(recordedRecipe.id);
+        usedProteinSignatures.add(recipeProteinSignature(recordedRecipe));
+        return;
+      }
       const family = requestedFamilies[index];
       const targetKcal = targetForDay(day) * mealCalorieShares[slot];
       const suitable = allRecipes.filter((recipe) => {
@@ -12941,24 +12981,15 @@ export function FoodPlanner() {
       );
       const selectedRecipe = freshSpecies || ranked.find((recipe) => !used.has(recipe.id)) || ranked[0];
       if (selectedRecipe) {
-        updates[`${day}-${slot}`] = selectedRecipe.id;
+        updates[key] = selectedRecipe.id;
         used.add(selectedRecipe.id);
         usedProteinSignatures.add(recipeProteinSignature(selectedRecipe));
       }
     });
     setChoices((current) => ({ ...current, ...updates }));
-    setPartSelections((current) => {
-      const next = { ...current };
-      mainSlots.forEach(({ day, slot }) => delete next[`${day}-${slot}`]);
-      return next;
-    });
-    setMealView((current) => {
-      const next = { ...current };
-      mainSlots.forEach(({ day, slot }) => delete next[`${day}-${slot}`]);
-      return next;
-    });
+    clearMealOverrides(Object.keys(updates));
     setWeekLocked(false);
-    setReplanNote("Rotazione settimanale ricostruita: 2 pesci, 3 legumi, 2 carni bianche, massimo 1 carne rossa, 3 uova e 3 formaggi, senza ripetere la stessa famiglia consecutivamente.");
+    setReplanNote("Rotazione settimanale ricalcolata sui pasti ancora da fare; quelli già registrati restano invariati. Controlla i range aggiornati prima di confermare.");
   };
   const replanNextDay = (day: number) => {
     if (day >= days.length - 1) {
@@ -13005,11 +13036,11 @@ export function FoodPlanner() {
       ? dinnerCandidates
       : lunchPool.filter((recipe) => recipe.id !== lunch.id);
     const dinner = (dinnerPool.length ? dinnerPool : pool)[(day * 2 + 1) % (dinnerPool.length || pool.length)];
-    setChoices((v) => ({
-      ...v,
-      [`${day + 1}-2`]: lunch.id,
-      [`${day + 1}-4`]: dinner.id,
-    }));
+    const nextDayUpdates: Record<string, string> = {};
+    if (!completed[`${day + 1}-2`]) nextDayUpdates[`${day + 1}-2`] = lunch.id;
+    if (!completed[`${day + 1}-4`]) nextDayUpdates[`${day + 1}-4`] = dinner.id;
+    setChoices((v) => ({ ...v, ...nextDayUpdates }));
+    clearMealOverrides(Object.keys(nextDayUpdates));
     setReplanNote(
       total > target * 1.1
         ? "Domani: pasti regolari e sazianti, senza saltare nulla."
@@ -13046,6 +13077,7 @@ export function FoodPlanner() {
       }
     });
     setChoices((v) => ({ ...v, ...updates }));
+    clearMealOverrides(Object.keys(updates));
     setReplanNote(
       `Restano circa ${round(remaining)} kcal: ho aggiornato ${open.length} proposte.`,
     );
@@ -13097,6 +13129,7 @@ export function FoodPlanner() {
       }
     });
     setChoices((current) => ({ ...current, ...updates }));
+    clearMealOverrides(Object.keys(updates));
     setReplanNote("Giornata riequilibrata mantenendo gli elementi modificati; aggiornati anche i giorni successivi.");
   };
   const shoppingItems = useMemo(() => {
@@ -13904,6 +13937,7 @@ export function FoodPlanner() {
                     <article
                       className={`meal-card ${hasPartCards && !fullDishView ? "composed" : "detailed"} ${allowed ? "" : "blocked"} ${caution ? "caution" : ""}`}
                       key={key}
+                      data-recipe-id={r.id}
                       onClick={() => {
                         setSelectedMealKey(key);
                         setSelected(r);
@@ -14413,7 +14447,7 @@ export function FoodPlanner() {
                     const weekIngredients = plannedIngredients(key, r);
                     const excludedForCurrentProfile = mealContainsExcludedFood(key, r);
                     return (
-                      <div className={`week-meal-row ${excludedForCurrentProfile ? "excluded" : ""}`} key={key}>
+                      <div className={`week-meal-row ${excludedForCurrentProfile ? "excluded" : ""}`} key={key} data-recipe-id={r.id}>
                         <button
                           className="week-meal"
                           onClick={() => {
@@ -14667,6 +14701,7 @@ export function FoodPlanner() {
                 return (
                   <article
                     key={r.id}
+                    data-recipe-id={r.id}
                     onClick={() => chooseRecipe(r)}
                     aria-label={swapTarget ? `Applica ${r.name}` : undefined}
                   >

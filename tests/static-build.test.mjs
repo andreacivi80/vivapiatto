@@ -1429,7 +1429,8 @@ test("v1.16.93 rebuilds the 14 main meals into a coherent weekly protein rotatio
   assert.match(app, /rebalanceWeeklyProteinRotation/);
   assert.match(app, /requestedFamilies/);
   assert.match(app, /Riequilibra la rotazione dei 14 pasti/);
-  assert.match(app, /2 pesci, 3 legumi, 2 carni bianche/);
+  assert.match(app, /già registrati restano invariati/);
+  assert.match(app, /if \(completed\[key\]\) \{/);
   assert.match(app, /used\.has\(recipe\.id\)/);
 });
 

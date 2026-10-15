@@ -1102,11 +1102,43 @@ try {
     })()`));
   await clickTab('Settimana');
   const freeChoiceAndReplan = await evaluate(`(() => {
+    const open = document.querySelectorAll('.week-day')[1]?.querySelector('header button');
+    open?.click();
+    return { editorOpened: Boolean(open) };
+  })()`);
+  await wait(500);
+  Object.assign(freeChoiceAndReplan, await evaluate(`(() => {
+    const card = document.querySelector('.meal-card');
+    const grams = card?.querySelector('.meal-part input[type="number"]');
+    const log = card?.querySelector('.check');
+    grams?.focus();
+    grams?.select();
+    return { editablePartFound: Boolean(grams), registrationFound: Boolean(log) };
+  })()`));
+  if (!freeChoiceAndReplan.editablePartFound) throw new Error('Componente della colazione del secondo giorno non trovato');
+  await page.send('Input.insertText', { text: '777' });
+  await evaluate(`document.activeElement?.blur()`);
+  await wait(500);
+  Object.assign(freeChoiceAndReplan, await evaluate(`(() => {
+    const card = document.querySelector('.meal-card');
+    const grams = card?.querySelector('.meal-part input[type="number"]');
+    const log = card?.querySelector('.check');
+    const edited = Number(grams?.value) === 777;
+    log?.click();
+    return { editedBeforeSwap: edited, loggedBeforeSwap: Boolean(log) };
+  })()`));
+  await wait(400);
+  await evaluate(`(() => {
+    [...document.querySelectorAll('.bottom-nav button')]
+      .find((button) => button.innerText.includes('Settimana'))?.click();
+  })()`);
+  await wait(550);
+  Object.assign(freeChoiceAndReplan, await evaluate(`(() => {
     const secondDay = document.querySelectorAll('.week-day')[1];
     const breakfastChange = secondDay?.querySelector('.week-meal-row .week-change');
     breakfastChange?.click();
     return { pickerOpened: Boolean(breakfastChange) };
-  })()`);
+  })()`));
   await wait(600);
   Object.assign(freeChoiceAndReplan, await evaluate(`(() => {
     const filter = [...document.querySelectorAll('.quick-recipe-tabs button')]
@@ -1118,22 +1150,34 @@ try {
   Object.assign(freeChoiceAndReplan, await evaluate(`(() => {
     const recipe = document.querySelector('.recipe-grid article');
     const name = recipe?.querySelector('h3')?.innerText.trim() || '';
+    const id = recipe?.dataset.recipeId || '';
     recipe?.click();
-    return { completeMealFound: Boolean(recipe), chosenName: name };
+    return { completeMealFound: Boolean(recipe && id), chosenName: name, chosenId: id };
   })()`));
   await wait(850);
   Object.assign(freeChoiceAndReplan, await evaluate(`(() => {
     const rows = [...document.querySelectorAll('.week-meal')];
     const forbidden = /pasta|pane|farro|orzo|bulgur|cous cous|cracker|fette biscottate|biscott|wafer|muesli|frumento|segale|grissini|avena/i;
     return {
-      breakfastShowsFreeChoice: rows[5]?.innerText.includes(${JSON.stringify(freeChoiceAndReplan.chosenName)}) || false,
+      oldGramsCleared: !document.querySelectorAll('.week-day')[1]?.querySelector('.week-part-strip')?.innerText.includes('777'),
+      mealUnregisteredAfterSwap: rows[5]?.querySelector('i')?.innerText.trim() === '→',
       nextDaysGlutenFree: rows.slice(10).length === 25 && rows.slice(10).every((meal) => !forbidden.test(meal.innerText)),
       nextDaysNotBlocked: [...document.querySelectorAll('.week-day')].slice(2).every((day) => !day.querySelector('.week-meal-row.excluded')),
     };
   })()`));
+  await evaluate(`document.querySelectorAll('.week-day')[1]?.querySelector('header button')?.click()`);
+  await wait(500);
+  freeChoiceAndReplan.breakfastShowsFreeChoice = await evaluate(`document.querySelector('.meal-card')?.dataset.recipeId === ${JSON.stringify(freeChoiceAndReplan.chosenId)}`);
+  await evaluate(`(() => {
+    [...document.querySelectorAll('.bottom-nav button')]
+      .find((button) => button.innerText.includes('Settimana'))?.click();
+  })()`);
+  await wait(450);
   await page.send('Page.reload', { ignoreCache: false });
   await wait(5_000);
-  freeChoiceAndReplan.persistedAfterReload = await evaluate(`document.querySelectorAll('.week-day')[1]?.querySelector('.week-meal')?.innerText.includes(${JSON.stringify(freeChoiceAndReplan.chosenName)}) || false`);
+  await evaluate(`document.querySelectorAll('.week-day')[1]?.querySelector('header button')?.click()`);
+  await wait(500);
+  freeChoiceAndReplan.persistedAfterReload = await evaluate(`document.querySelector('.meal-card')?.dataset.recipeId === ${JSON.stringify(freeChoiceAndReplan.chosenId)}`);
   const rawExceptions = page.events.filter((event) =>
     event.method === "Runtime.exceptionThrown" ||
     (event.method === "Log.entryAdded" && event.params?.entry?.level === "error")
@@ -1271,8 +1315,11 @@ try {
     !profileAdaptation.weekGlutenFree || !profileAdaptation.loggedMealPreserved ||
     !profileAdaptation.workBreakfastPractical || !profileAdaptation.workSnacksPractical || !profileAdaptation.homeSelected || !profileAdaptation.contextChangesPlan ||
     profileAdaptation.horizontalOverflow ||
-    !freeChoiceAndReplan.pickerOpened || !freeChoiceAndReplan.completeMealFilterFound ||
+    !freeChoiceAndReplan.editorOpened || !freeChoiceAndReplan.editablePartFound ||
+    !freeChoiceAndReplan.registrationFound || !freeChoiceAndReplan.editedBeforeSwap ||
+    !freeChoiceAndReplan.loggedBeforeSwap || !freeChoiceAndReplan.pickerOpened || !freeChoiceAndReplan.completeMealFilterFound ||
     !freeChoiceAndReplan.completeMealFound || !freeChoiceAndReplan.breakfastShowsFreeChoice ||
+    !freeChoiceAndReplan.oldGramsCleared || !freeChoiceAndReplan.mealUnregisteredAfterSwap ||
     !freeChoiceAndReplan.nextDaysGlutenFree || !freeChoiceAndReplan.nextDaysNotBlocked ||
     !freeChoiceAndReplan.persistedAfterReload ||
     exceptions.length

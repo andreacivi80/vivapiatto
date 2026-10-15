@@ -2,13 +2,23 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.73 — pronta per pubblicazione
+## v1.19.74 — pronta per pubblicazione
+
+- [x] Sostituire un piatto intero azzera componenti, grammi e rimozioni della ricetta precedente; il nuovo piatto mostra solo i propri ingredienti.
+- [x] Se un pasto già registrato viene sostituito, la spunta torna da fare: una ricetta mai mangiata non viene conteggiata come consumata.
+- [x] Check-in, cambio profilo, riequilibrio giornaliero e settimanale cancellano gli override obsoleti solo nei pasti ricalcolati e non registrati; i pasti già mangiati restano invariati.
+- [x] Il collaudo da cellulare verifica una grammatura modificata, la registrazione, la sostituzione completa, la sparizione della vecchia quantità e lo stato da fare, oltre alla persistenza dopo ricarica.
+- [x] Prova mobile locale: modifica a 777 g, registrazione, sostituzione intera, vecchia grammatura sparita, pasto non più segnato come mangiato, identità nuova persistente dopo ricarica; cinque giorni successivi senza glutine, zero errori JavaScript.
+- [x] Suite tecnica completa: TypeScript, build e 206/206 test superati.
+- [ ] Pubblicazione e prova mobile pubblica della versione esatta.
+
+## v1.19.73 — pubblicata e verificata
 
 - [x] Il riequilibrio dei giorni seguenti usa solo ricette compatibili anche con allergie, attrezzature e tempo massimo: il menu italiano da lavoro non può più reinserire una ricetta predefinita fuori dal paniere filtrato.
 - [x] Una scelta esplicita libera rimane applicata anche se il piatto appartiene a una categoria diversa dal momento del pasto; il piano automatico continua a usare le categorie coerenti.
 - [x] Nella settimana i pasti ancora da fare con alimenti esclusi sono evidenziati e non è possibile confermare il piano finché non vengono sostituiti; quelli già registrati restano nello storico.
 - [x] Collaudo mobile locale: scelta libera di piatto completo a colazione salvata anche dopo ricarica, cinque giorni successivi senza glutine, nessun errore JavaScript; suite 206/206 superata.
-- [ ] Pubblicazione e collaudo mobile pubblico della versione esatta sul link unico.
+- [x] Pubblicazione e collaudo mobile pubblico della versione esatta sul link unico: 35 pasti senza glutine, scelta libera persistente, giorni successivi compatibili, zero errori JavaScript e overflow.
 
 ## v1.19.72 — pubblicata e verificata
 
