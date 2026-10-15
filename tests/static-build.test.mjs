@@ -3035,3 +3035,16 @@ test("v1.19.89 keeps work and canteen fallback lunches practical", async () => {
   assert.match(source, /slot !== 2 \|\| dayContext !== "Lavoro" \|\| isWorkFriendly\(recipe\)/);
   assert.match(source, /slot !== 2 \|\| dayContext !== "Mensa" \|\| isMensaFriendly\(recipe\)/);
 });
+
+test("v1.19.90 verifies the public manifest and HTML asset after deployment", async () => {
+  const [workflow, config, verifier] = await Promise.all([
+    readFile(new URL("../.github/workflows/deploy-pages.yml", import.meta.url), "utf8"),
+    readFile(new URL("../vite.config.ts", import.meta.url), "utf8"),
+    readFile(new URL("../scripts/verify-public-release.mjs", import.meta.url), "utf8"),
+  ]);
+  assert.match(workflow, /node scripts\/verify-public-release\.mjs/);
+  assert.match(config, /JSON\.stringify\(\{ version: packageVersion, script \}\)/);
+  assert.match(verifier, /manifest\.version !== packageFile\.version/);
+  assert.match(verifier, /htmlScript !== manifest\.script/);
+  assert.match(verifier, /method: "HEAD"/);
+});

@@ -13,9 +13,12 @@ export default defineConfig({
     {
       name: "vivapiatto-release-version",
       closeBundle() {
+        const html = readFileSync(new URL("./dist/index.html", import.meta.url), "utf8");
+        const script = html.match(/<script\b[^>]*\bsrc="([^"]+)"/i)?.[1];
+        if (!script) throw new Error("Asset JavaScript della release non trovato");
         writeFileSync(
           new URL("./dist/version.json", import.meta.url),
-          `${JSON.stringify({ version: packageVersion })}\n`,
+          `${JSON.stringify({ version: packageVersion, script })}\n`,
         );
       },
     },
