@@ -10962,16 +10962,45 @@ export function FoodPlanner() {
       window.history.replaceState(window.history.state, "", cleanUrl);
     }
     if (readSessionItem(sessionStorage, "vivapiatto-release-target") === VERSION) {
-      const savedScrollY = Number(
-        readSessionItem(sessionStorage, "vivapiatto-release-scroll-y") || 0,
+      const savedScrollY = Math.max(
+        0,
+        Number(readSessionItem(sessionStorage, "vivapiatto-release-scroll-y") || 0) || 0,
       );
-      removeSessionItem(sessionStorage, "vivapiatto-release-target");
-      removeSessionItem(sessionStorage, "vivapiatto-release-scroll-y");
-      window.requestAnimationFrame(() => {
-        window.requestAnimationFrame(() => {
-          window.scrollTo({ top: savedScrollY, left: 0, behavior: "auto" });
-        });
+      let stopped = false;
+      let attempts = 0;
+      let retryTimer: number | undefined;
+      let firstFrame: number | undefined;
+      let secondFrame: number | undefined;
+      const clearMarkers = () => {
+        removeSessionItem(sessionStorage, "vivapiatto-release-target");
+        removeSessionItem(sessionStorage, "vivapiatto-release-scroll-y");
+      };
+      const stopRestore = () => {
+        stopped = true;
+        if (retryTimer !== undefined) window.clearTimeout(retryTimer);
+        if (firstFrame !== undefined) window.cancelAnimationFrame(firstFrame);
+        if (secondFrame !== undefined) window.cancelAnimationFrame(secondFrame);
+        window.removeEventListener("pointerdown", stopRestore);
+        window.removeEventListener("touchstart", stopRestore);
+        clearMarkers();
+      };
+      const restoreScroll = () => {
+        if (stopped) return;
+        window.scrollTo({ top: savedScrollY, left: 0, behavior: "auto" });
+        // Images and recipe cards can still be expanding after hydration.
+        // Keep the marker until the browser actually reaches the saved spot.
+        if (Math.abs(window.scrollY - savedScrollY) <= 20 || attempts++ >= 30) {
+          stopRestore();
+        } else {
+          retryTimer = window.setTimeout(restoreScroll, 100);
+        }
+      };
+      window.addEventListener("pointerdown", stopRestore, { once: true });
+      window.addEventListener("touchstart", stopRestore, { once: true });
+      firstFrame = window.requestAnimationFrame(() => {
+        secondFrame = window.requestAnimationFrame(restoreScroll);
       });
+      return stopRestore;
     }
   }, [profileHydrated]);
 

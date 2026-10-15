@@ -3098,6 +3098,17 @@ test("v1.19.99 keeps raw spinach photos and nutrition separate from cooked spina
   assert.match(source, /food: "Spinaci cotti", grams: 150, label: "Spinaci cotti · 150 g", image: photo\("part-spinach-cooked-v11995"\)/);
 });
 
+test("v1.20.0 confirms scroll restoration after the latest live release", async () => {
+  const [source, audit] = await Promise.all([
+    readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../scripts/audit-live-release-update.mjs", import.meta.url), "utf8"),
+  ]);
+  assert.match(source, /Math\.abs\(window\.scrollY - savedScrollY\) <= 20/);
+  assert.match(source, /retryTimer = window\.setTimeout\(restoreScroll, 100\)/);
+  assert.match(source, /window\.addEventListener\("pointerdown", stopRestore/);
+  assert.match(audit, /for \(let settle = 0; settle < 20; settle \+= 1\)/);
+});
+
 test("v1.19.86 separates recipe provenance from ingredient nutrition data", async () => {
   const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(source, /const recipeSourceKind = \(recipe: Recipe\) => \{/);

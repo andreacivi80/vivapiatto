@@ -149,7 +149,23 @@ try {
         String(event.params?.frame?.url || '').includes('_release=') &&
         String(event.params?.frame?.url || '').includes(toVersion)
       );
-      if (finalState.versionUpdated && releaseNavigation) break;
+      if (finalState.versionUpdated && releaseNavigation) {
+        // The new bundle can be visible before hydration, image layout and
+        // scroll restoration have completed. Give that process a bounded
+        // chance to settle, then still fail if the original view is lost.
+        for (let settle = 0; settle < 20; settle += 1) {
+          if (Math.abs(finalState.scrollY - initial.scrollY) <= 20) break;
+          await wait(100);
+          finalState = await evaluate(`(() => ({
+            versionUpdated: document.body.innerText.includes(${JSON.stringify(`v${toVersion}`)}),
+            scrollY: Math.round(window.scrollY),
+            libraryVisible: document.body.innerText.includes('Le tue 214'),
+            recovery: document.body.innerText.includes('La pagina ha incontrato un errore'),
+            horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+          }))()`);
+        }
+        break;
+      }
     } catch {
       // Il contesto JavaScript viene sostituito durante il refresh automatico.
     }
