@@ -1,6 +1,6 @@
 # Tavola Mia — audit progressivo del perimetro ricevuto
 
-Data verifica: 15 ottobre 2026. Ultimo checkpoint pubblico verificato: `1.20.2`.
+Data verifica: 15 ottobre 2026. Ultimo checkpoint pubblico verificato: `1.20.3`.
 
 Questo audit registra copertura tecnica e prove eseguite; non certifica clinicamente un piano alimentare né sostituisce la revisione visiva completa delle fotografie. I controlli residui sono in `MASTER-CHECKLIST.md`.
 
@@ -67,3 +67,11 @@ Le revisioni `1.19.11–1.19.12` hanno eliminato due cause concatenate:
 2. versione visibile e controllo aggiornamenti derivano dalla stessa proprietà di `package.json`, impedendo il ciclo continuo causato dal disallineamento manifest/client.
 
 Il link resta unico: https://andreacivi80.github.io/vivapiatto/
+
+## Checkpoint pubblico 1.20.3
+
+- Foto C06 corretta: omelette agli spinaci, pane integrale e kiwi ora compaiono insieme; PNG mobile ottimizzato a 512 px.
+- `npm test`: 230/230 test passati; audit foto 585/585, foto complete 266/266, paniere richiesto 217/217.
+- Deploy GitHub Actions completato; manifest pubblico `1.20.3` e script `index-BBTNfnJ8.js` allineati sullo stesso link.
+- Aggiornamento reale `1.20.2 → 1.20.3`: menu, grammatura 54 g e scroll a 900 px conservati; nessun errore JavaScript.
+- Stress test pubblico mobile 390×844 superato: nessun overflow orizzontale, ricette e sgarri accessibili, anteprima settimana e passaggi di modifica operativi.

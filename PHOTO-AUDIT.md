@@ -45,4 +45,5 @@ Gli audit automatici garantiscono presenza, formato leggibile, collegamento e un
 - [x] Controllate le foto complete C01-C04, C06 e C07 rispetto alla lista degli ingredienti.
 - [x] C06: la vecchia foto ometteva il kiwi; sostituita con una nuova immagine che mostra omelette agli spinaci, pane integrale e kiwi sullo stesso piatto.
 - [x] Verificate visivamente anche le immagini atomiche di broccoli, cavolfiori, carote cotte, olive, lattuga e zucchine cotte: il soggetto principale è riconoscibile.
+- [x] Scansione visiva aggiuntiva delle fotografie C08–C29: i soggetti principali sono riconoscibili e non è emersa un'altra omissione evidente come in C06. La verifica nutrizionale degli ingredienti resta distinta da questo giudizio fotografico.
 - [ ] Il controllo visivo dell'intero catalogo resta aperto: la verifica qui è limitata agli asset elencati.
