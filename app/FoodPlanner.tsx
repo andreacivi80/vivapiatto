@@ -10019,6 +10019,23 @@ const pantryPartByFood = new Map(
     (part) => [part.food, part] as const,
   ),
 );
+const weeklyVarietyKey = (food: string) =>
+  food.toLowerCase()
+    .replace(/\b(?:al forno|al vapore|in padella|alla piastra)\b/g, "")
+    .replace(/\b(?:crudo|cruda|crudi|crude|cotto|cotta|cotti|cotte|bollito|bollita|bolliti|bollite|lesso|lessa|lessi|lesse|fresco|fresca|freschi|fresche)\b/g, "")
+    .replace(/\s+/g, " ").trim();
+const varietyKeysForItems = (items: RecipeIngredient[]) => {
+  const bases = new Set<string>();
+  const vegetables = new Set<string>();
+  items.forEach((item) => {
+    if (item.grams < 40) return;
+    const category = pantryPartByFood.get(item.food)?.category;
+    const key = weeklyVarietyKey(item.food);
+    if (category === "Carboidrato") bases.add(key);
+    if (category === "Contorno" && !/passata|salsa|concentrato/i.test(item.food)) vegetables.add(key);
+  });
+  return { bases, vegetables };
+};
 const produceGramsForItems = (items: RecipeIngredient[]) =>
   items.reduce((sum, item) => {
     const category = pantryPartByFood.get(item.food)?.category;
@@ -12149,6 +12166,8 @@ export function FoodPlanner() {
     target: number,
     offset: number,
     preference: "variety" | "repeat" = weekPreference,
+    seenBases?: Set<string>,
+    seenVegetables?: Set<string>,
   ) => {
     const rankingScore = (recipe: Recipe) => {
       const mainMeal = [2, 4].includes(slot);
@@ -12170,6 +12189,11 @@ export function FoodPlanner() {
         preference === "repeat" && recordedFavoriteRecipeIds.has(recipe.id)
           ? 320
           : 0;
+      const plantKeys = varietyKeysForItems(recipe.ingredients);
+      const varietyBonus = preference === "variety" && mainMeal && seenBases && seenVegetables
+        ? [...plantKeys.bases].filter((key) => !seenBases.has(key)).length * 55 +
+          [...plantKeys.vegetables].filter((key) => !seenVegetables.has(key)).length * 35
+        : 0;
       return (
         balancePenalty +
         contextPenalty +
@@ -12178,7 +12202,8 @@ export function FoodPlanner() {
         Math.abs(profileRecipeKcal(recipe, slot) - target) +
         (mainMeal ? automaticMultiLegumePenalty(recipe) : 0) -
         seasonalBonus -
-        familiarBonus
+        familiarBonus -
+        varietyBonus
       );
     };
     const ranked = [...pool].sort((a, b) => rankingScore(a) - rankingScore(b));
@@ -12252,6 +12277,19 @@ export function FoodPlanner() {
       const next = { ...current };
       const usedRecipes = new Set<string>();
       const usedProteinSignatures = new Set<string>();
+      const seenBases = new Set<string>();
+      const seenVegetables = new Set<string>();
+      days.forEach((_, day) => [2, 4].forEach((slot) => {
+        const key = `${day}-${slot}`;
+        if (!completed[key]) return;
+        const recordedRecipe = recipeMap[completedRecipes[key] || getDayIds(day)[slot]];
+        if (!recordedRecipe) return;
+        usedRecipes.add(recordedRecipe.id);
+        usedProteinSignatures.add(recipeProteinSignature(recordedRecipe));
+        const keys = varietyKeysForItems(actualIngredients(key, recordedRecipe));
+        keys.bases.forEach((base) => seenBases.add(base));
+        keys.vegetables.forEach((vegetable) => seenVegetables.add(vegetable));
+      }));
       let plannedWholeEggBreakfasts = 0;
       const chooseMain = (
         pool: Recipe[],
@@ -12303,7 +12341,12 @@ export function FoodPlanner() {
           target,
           offset,
           preference,
+          seenBases,
+          seenVegetables,
         );
+        const keys = varietyKeysForItems(chosen.ingredients);
+        keys.bases.forEach((base) => seenBases.add(base));
+        keys.vegetables.forEach((vegetable) => seenVegetables.add(vegetable));
         if (preference === "variety") {
           usedRecipes.add(chosen.id);
           usedProteinSignatures.add(recipeProteinSignature(chosen));
@@ -12934,6 +12977,20 @@ export function FoodPlanner() {
     weeklyPlannedFiber.reduce((sum, fiber) => sum + fiber, 0) /
       weeklyPlannedFiber.length,
   );
+  const weeklyVariety = (() => {
+    const bases = new Set<string>();
+    const vegetables = new Set<string>();
+    days.forEach((_, day) => [2, 4].forEach((slot) => {
+      const key = `${day}-${slot}`;
+      const id = getDayIds(day)[slot];
+      const recipe = recipeMap[completed[key] ? completedRecipes[key] || id : id];
+      const items = completed[key] ? actualIngredients(key, recipe) : plannedIngredients(key, recipe);
+      const keys = varietyKeysForItems(items);
+      keys.bases.forEach((base) => bases.add(base));
+      keys.vegetables.forEach((vegetable) => vegetables.add(vegetable));
+    }));
+    return { bases: bases.size, vegetables: vegetables.size };
+  })();
   const standardWeeklyTargets = foodStyle === "Onnivoro";
   const visibleWeeklyFamilies = foodStyle === "Vegano"
     ? ["Legumi e vegetali"]
@@ -14456,7 +14513,7 @@ export function FoodPlanner() {
             <div className="weekly-frequency">
               <header>
                 <b>{weekLocked ? "Rotazione confermata" : "Rotazione pianificata"}</b>
-                 <span>{standardWeeklyTargets ? "pasti della settimana · riferimento CREA" : `conteggi · stile ${foodStyle.toLowerCase()}`}</span>
+                 <span>{standardWeeklyTargets ? "pasti della settimana · riferimento CREA" : `conteggi · stile ${foodStyle.toLowerCase()}`} · {weeklyVariety.bases} basi · {weeklyVariety.vegetables} ortaggi</span>
                 <a
                   className="weekly-source"
                   href="https://www.crea.gov.it/documents/59764/0/Dossier%2BLG%2B2017_CAP10.pdf/"

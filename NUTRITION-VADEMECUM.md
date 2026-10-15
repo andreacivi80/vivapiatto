@@ -35,10 +35,11 @@ Questo documento è la base funzionale dell’app. Le fotografie e la grafica de
 - La modifica di un pasto riequilibra i giorni successivi non registrati finché la settimana non viene confermata.
 - Dopo la conferma settimanale, le modifiche in “Oggi” restano giornaliere.
 - Per gli stili vegetariano, pescetariano e vegano le frequenze settimanali sono mostrate come conteggi delle categorie compatibili: i range generali del modello onnivoro non sono applicati automaticamente né presentati come prescrizione individuale. La rotazione cerca varietà tra gli alimenti consentiti.
+- Con “Più varietà”, la settimana dà una lieve preferenza a basi amidacee e ortaggi non ancora usati nei pasti principali, senza sacrificare composizione o target energetico; i pasti già registrati restano invariati. I conteggi di varietà non sono obiettivi clinici.
 
 ## Regole in consolidamento
 
-- Frequenze settimanali complete per pesce, carni, uova, legumi, formaggi, cereali e varietà degli ortaggi.
+- Frequenze settimanali complete e personalizzate per pesce, carni, uova, legumi e formaggi; la varietà di basi e ortaggi è un conteggio descrittivo, non un range prescritto.
 - Pannelli distinti per attività fisica, stanchezza, sonno e gonfiore, con suggerimenti prudenti e non diagnostici.
 - Banca dati completa del paniere allegato: valore per 100 g, porzione pratica, stato crudo/cotto, ruolo, alternative e fotografia.
 - Ricette autentiche internazionali con fonte e composizione verificabile; nessun nome geografico inventato.

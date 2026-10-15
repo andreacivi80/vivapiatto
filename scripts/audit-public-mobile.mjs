@@ -229,6 +229,7 @@ try {
       rotationConfirmed: frequency?.innerText.includes('Rotazione confermata'),
       rotationRows: frequency?.querySelectorAll(':scope > div > span').length || 0,
       rotationInRange: [...(frequency?.querySelectorAll(':scope > div > span') || [])].every((row) => row.classList.contains('within-target')),
+      varietyHeader: frequency?.querySelector('header span')?.innerText || '',
       hasPrintPreview: Boolean(print),
     };
     print?.click();
@@ -1371,6 +1372,10 @@ try {
     week.recovery || week.horizontalOverflow || week.brokenViewportImages.length || week.pendingViewportImages.length ||
     !weeklyConfirmation.found || !weeklyConfirmation.locked || !weeklyConfirmation.hasAverage || weeklyConfirmation.calorieDays !== 7 ||
     !weeklyConfirmation.rotationConfirmed || weeklyConfirmation.rotationRows < 7 || !weeklyConfirmation.rotationInRange ||
+    (Number(version.split('.').at(-1)) >= 79 &&
+      (!/\b\d+ basi · \d+ ortaggi\b/.test(weeklyConfirmation.varietyHeader) ||
+       Number(weeklyConfirmation.varietyHeader.match(/(\d+) basi/)?.[1] || 0) < 2 ||
+       Number(weeklyConfirmation.varietyHeader.match(/(\d+) ortaggi/)?.[1] || 0) < 2)) ||
     !weeklyConfirmation.hasPrintPreview || !weeklyConfirmation.reopened ||
     !weeklyPrintPreview.found || !weeklyPrintPreview.hasUpdatedAverage || weeklyPrintPreview.dayCount !== 7 ||
     weeklyPrintPreview.mealCount < 21 || weeklyPrintPreview.foodRows === 0 || !weeklyPrintPreview.hasAllMacros ||

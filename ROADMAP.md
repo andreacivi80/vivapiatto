@@ -2,14 +2,22 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.78 — rotazione coerente con lo stile alimentare
+## v1.19.79 — varietà effettiva nella settimana
+
+- [x] “Più varietà” considera anche basi amidacee e ortaggi non ancora proposti nei pasti principali, con un peso inferiore a equilibrio e calorie.
+- [x] Le diverse cotture dello stesso alimento non gonfiano artificialmente il conteggio; la settimana mostra i due numeri senza inventare range nutrizionali.
+- [x] I pasti già registrati entrano nel conteggio e rimangono invariati quando si rigenera la settimana.
+- [x] Suite completa 208/208, build e collaudo mobile locale della v1.19.79: sette basi e sedici ortaggi distinti nei pasti principali, zero errori JavaScript, immagini rotte o overflow.
+- [ ] Pubblicazione sul link unico e collaudo mobile pubblico.
+
+## v1.19.78 — pubblicata e verificata
 
 - [x] Per vegetariano, pescetariano e vegano la Settimana mostra solo le famiglie compatibili, senza presentare i range onnivori come errori da correggere.
 - [x] Il comando di rotazione cerca piatti compatibili anche quando la famiglia della sequenza onnivora non è disponibile; conserva i pasti già registrati.
 - [x] Le ripetizioni negli stili non onnivori confrontano l'alimento proteico effettivo, non l'intera famiglia vegetale.
 - [x] Inserito un collaudo mobile di rotazione vegetariana e conteggi vegani, senza inventare target clinici per questi stili.
 - [x] Suite completa nella cartella richiesta: 208/208 test, build e collaudo mobile locale della versione esatta superati. Settimana vegetariana con tre sole categorie pertinenti, rotazione senza carne/pesce, pasto registrato conservato; vegano senza falsi allarmi di range.
-- [ ] Pubblicazione sul link unico e collaudo mobile pubblico.
+- [x] Pubblicazione sul link unico e collaudo mobile pubblico: nessun errore JavaScript, foto rotta, immagine pendente o overflow; settimana vegetariana con tre categorie pertinenti, senza carne/pesce e con pasto registrato invariato.
 
 ## v1.19.77 — pubblicata e verificata
 
