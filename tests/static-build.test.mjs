@@ -3117,6 +3117,21 @@ test("v1.20.0 keeps historical mobile flows enabled after the minor-version roll
   assert.doesNotMatch(audit, /Number\(version\.split\('\.'\)\.at\(-1\)\)/);
 });
 
+test("v1.20.1 shows cooked mushrooms in cooked dishes and preserves raw weighing", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const cooked = await readFile(new URL("../public/food/part-mushrooms-cooked-v1201.png", import.meta.url));
+  const cookedReady = await readFile(new URL("../public/food/part-mushrooms-cooked-ready-v1201.png", import.meta.url));
+  const shiitake = await readFile(new URL("../public/food/part-shiitake-cooked-v1201.png", import.meta.url));
+  assert.ok(cooked.length > 100_000);
+  assert.ok(cookedReady.length > 100_000);
+  assert.ok(shiitake.length > 100_000);
+  assert.match(source, /"Funghi cotti": \{ category: "Contorno", food: "Funghi cotti", grams: 150, label: "Funghi cotti", image: photo\("part-mushrooms-cooked-ready-v1201"\)/);
+  assert.match(source, /label: "Shiitake · 80 g a crudo", image: photo\("part-shiitake-cooked-v1201"\)/);
+  assert.match(source, /food: "Funghi", grams: 130, label: "Funghi · 130 g a crudo", image: photo\("part-mushrooms-cooked-v1201"\)/);
+  assert.match(source, /image: photo\("part-mushrooms-raw-v11663"\)/);
+  assert.doesNotMatch(source, /label: "Funghi cotti[^\"]*", image: photo\("part-mushrooms-raw-v11663"\)/);
+});
+
 test("v1.19.86 separates recipe provenance from ingredient nutrition data", async () => {
   const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(source, /const recipeSourceKind = \(recipe: Recipe\) => \{/);
