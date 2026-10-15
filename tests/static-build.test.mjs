@@ -2567,7 +2567,7 @@ test("v1.18.97 keeps simple snack combinations out of the recipe library", async
   assert.match(source, /recipe\.id\.startsWith\("catalog-breakfast-"\)/);
   assert.match(source, /recipe\.id\.startsWith\("catalog-main-"\)/);
   assert.match(source, /recipe\.id\.startsWith\("dinner-three-"\)/);
-  assert.match(source, /\(swapTarget \|\| isSubstantialRecipe\(r\)\)/);
+  assert.match(source, /\(cuisineFilter === "Sgarri" \|\| swapTarget \|\| isSubstantialRecipe\(r\)\)/);
 });
 
 test("v1.18.98 proposes breakfasts and snacks from the complete recipe catalog", async () => {
@@ -2972,4 +2972,23 @@ test("v1.19.83 applies the CREA calendar to cooked and raw vegetable variants", 
   assert.match(season, /"Peperoni cotti": \[6, 7, 8, 9, 10\]/);
   assert.match(season, /"Cetrioli": \[6, 7, 8, 9\]/);
   assert.doesNotMatch(season, /"Passata di pomodoro":/);
+});
+
+test("v1.19.85 keeps occasional dishes reachable from + and the recipe library", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(source, /id="part-picker-sgarri"/);
+  assert.match(source, /🍕 Sgarri · pizza, gelato, dolci/);
+  assert.match(source, /section\.open = true/);
+  assert.match(source, /cuisineFilter === "Sgarri" \|\| recipeMatchesQuickFilter\(r\)/);
+  assert.match(source, /setQuickRecipeFilter\("Tutti"\)/);
+  assert.match(source, /setHealthyFilters\(\[\]\)/);
+  assert.match(source, /occasional-pizza-margherita/);
+});
+
+test("v1.19.85 announces a pending update without replacing saved work before hydration", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(source, /!profileHydrated \|\|/);
+  assert.match(source, /setAvailableRelease\(release\.version\)/);
+  assert.match(source, /className="release-pending"/);
+  assert.match(source, /writeStorageItem\(localStorage, "vivapiatto-v1", refreshSnapshotRef\.current\)/);
 });

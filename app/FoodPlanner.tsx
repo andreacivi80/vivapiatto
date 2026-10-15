@@ -10483,6 +10483,7 @@ export function FoodPlanner() {
   const [leftoverContainer, setLeftoverContainer] = useState("Contenitore chiuso o coperto");
   const [leftoverResult, setLeftoverResult] = useState<Recipe | null>(null);
   const [leftoverWarning, setLeftoverWarning] = useState("");
+  const [availableRelease, setAvailableRelease] = useState<string | null>(null);
   const updateBlockedRef = useRef(false);
   const userInteractionUntilRef = useRef(0);
   const refreshSnapshotRef = useRef("");
@@ -10534,7 +10535,8 @@ export function FoodPlanner() {
     builder,
   });
   updateBlockedRef.current = Boolean(
-    selected ||
+    !profileHydrated ||
+      selected ||
       partPicker ||
       swapTarget ||
       preferencesOpen ||
@@ -10575,6 +10577,7 @@ export function FoodPlanner() {
         if (release.version && isNewerRelease(release.version, VERSION)) {
           updateWaiting = true;
           pendingVersion = release.version;
+          setAvailableRelease(release.version);
           applyWhenSafe();
         }
       } catch {
@@ -11309,16 +11312,16 @@ export function FoodPlanner() {
         r.ingredients.every((item) => Boolean(foodSearchDatabase[item.food])) &&
         isAllowed(r) &&
         matchesFoodStyle(r) &&
-        recipeMatchesQuickFilter(r) &&
+        (cuisineFilter === "Sgarri" || recipeMatchesQuickFilter(r)) &&
         r.name.toLowerCase().includes(libraryQuery.toLowerCase()) &&
         (suppliedCatalogView || (
           (swapTarget || r.kind !== "combination") &&
-          (swapTarget || isSubstantialRecipe(r)) &&
-          matchesEquipment(r) &&
-          r.time <= maxPrepTime &&
-          (swapTarget || compatibleWithSlot(r)) &&
-          compatibleWithPlace(r) &&
-          healthyFilters.every((filter) => recipeMatchesHealthyFilter(r, filter)) &&
+          (cuisineFilter === "Sgarri" || swapTarget || isSubstantialRecipe(r)) &&
+          (cuisineFilter === "Sgarri" || matchesEquipment(r)) &&
+          (cuisineFilter === "Sgarri" || r.time <= maxPrepTime) &&
+          (cuisineFilter === "Sgarri" || swapTarget || compatibleWithSlot(r)) &&
+          (cuisineFilter === "Sgarri" || compatibleWithPlace(r)) &&
+          (cuisineFilter === "Sgarri" || healthyFilters.every((filter) => recipeMatchesHealthyFilter(r, filter))) &&
           (cuisineFilter === "Tutte" ||
             (cuisineFilter === "Sgarri"
               ? r.id.startsWith("occasional-")
@@ -13699,6 +13702,11 @@ export function FoodPlanner() {
         </div>
         <span className="version">v{VERSION}</span>
       </header>
+      {availableRelease && (
+        <div className="release-pending" role="status">
+          Nuova v{availableRelease} pronta · aggiornamento automatico appena termini la modifica.
+        </div>
+      )}
       <section className="content">
         {tab === "today" && (
           <>
@@ -14945,7 +14953,15 @@ export function FoodPlanner() {
                 <button
                   className={cuisineFilter === x ? "active" : ""}
                   key={x}
-                  onClick={() => setCuisineFilter(x)}
+                  onClick={() => {
+                    setCuisineFilter(x);
+                    if (x === "Sgarri") {
+                      setQuickRecipeFilter("Tutti");
+                      setHealthyFilters([]);
+                      setLibraryQuery("");
+                      setVisibleRecipeCount(10);
+                    }
+                  }}
                 >
                   {x}
                 </button>
@@ -15686,6 +15702,20 @@ export function FoodPlanner() {
                 ×
               </button>
             </header>
+            <div className="part-picker-shortcuts" aria-label="Vai alle scelte del pasto">
+              <button
+                type="button"
+                onClick={() => {
+                  const section = document.getElementById("part-picker-sgarri") as HTMLDetailsElement | null;
+                  if (section) {
+                    section.open = true;
+                    section.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }
+                }}
+              >
+                🍕 Sgarri · pizza, gelato, dolci
+              </button>
+            </div>
             <div className="part-picker-scroll">
               {!partPicker.adding && (
                 <button className="remove-part-choice" onClick={removeMealPart}>
@@ -15773,7 +15803,7 @@ export function FoodPlanner() {
                   })}
                 </div>
               </details>
-                <details className="picker-group cheat-picker-group">
+                <details className="picker-group cheat-picker-group" id="part-picker-sgarri">
                   <summary>Sgarri</summary>
                   <p>{partPicker.adding ? "Aggiungi una scelta occasionale al pasto." : "Scelte occasionali: restano conteggiate nel totale reale, senza punizioni."}</p>
                   <div className="complete-meal-grid">

@@ -356,6 +356,29 @@ try {
       };
     })()`));
   }
+  const occasionalLibrary = { skipped: Number(version.split('.').at(-1)) < 85 };
+  if (!occasionalLibrary.skipped) {
+    Object.assign(occasionalLibrary, await evaluate(`(() => {
+      const button = [...document.querySelectorAll('.cuisine-tabs button')]
+        .find((item) => item.innerText.trim() === 'Sgarri');
+      button?.click();
+      return { tabFound: Boolean(button) };
+    })()`));
+    await wait(350);
+    Object.assign(occasionalLibrary, await evaluate(`(() => ({
+      quickFilterReset: Boolean([...document.querySelectorAll('.quick-recipe-tabs button')]
+        .find((item) => item.innerText.trim() === 'Tutti' && item.classList.contains('active'))),
+      choicesVisible: document.querySelectorAll('.recipe-grid article').length > 0,
+    }))()`));
+    await evaluate(`(() => { const input = document.querySelector('.library-tools input'); input.focus(); input.select(); })()`);
+    await page.send("Input.insertText", { text: "Pizza margherita" });
+    await wait(350);
+    occasionalLibrary.pizzaVisible = await evaluate(`Boolean([...document.querySelectorAll('.recipe-grid article h3')].find((item) => item.innerText.includes('Pizza margherita')))`);
+    await evaluate(`(() => { const button = [...document.querySelectorAll('.cuisine-tabs button')].find((item) => item.innerText.trim() === 'Tutte'); button?.click(); })()`);
+    await evaluate(`(() => { const input = document.querySelector('.library-tools input'); input.focus(); input.select(); })()`);
+    await page.send("Input.dispatchKeyEvent", { type: "keyDown", key: "Backspace", code: "Backspace", windowsVirtualKeyCode: 8, nativeVirtualKeyCode: 8 });
+    await page.send("Input.dispatchKeyEvent", { type: "keyUp", key: "Backspace", code: "Backspace", windowsVirtualKeyCode: 8, nativeVirtualKeyCode: 8 });
+  }
   await evaluate(`window.scrollTo(0, Math.max(0, document.body.scrollHeight - window.innerHeight))`);
   const recipeScroll = await snapshot();
   await clickTab("Oggi");
@@ -766,12 +789,17 @@ try {
     await wait(400);
     Object.assign(occasionalAddition, await evaluate(`(() => {
       const picker = document.querySelector('.part-picker-sheet');
+      const shortcut = picker?.querySelector('.part-picker-shortcuts button');
+      const shortcutVisible = Boolean(shortcut && shortcut.getBoundingClientRect().height > 0);
+      shortcut?.click();
       const group = picker?.querySelector('.cheat-picker-group');
-      if (group) group.open = true;
+      if (group && !group.open && ${Number(version.split('.').at(-1)) < 85}) group.open = true;
       const pizza = [...(group?.querySelectorAll('.complete-meal-select') || [])]
         .find((button) => button.innerText.includes('Pizza margherita'));
       const result = {
         visibleWithPlus: Boolean(group),
+        shortcutVisible,
+        shortcutOpenedSgarri: Boolean(group?.open),
         pizzaAvailable: Boolean(pizza),
         freeChoiceAlsoAvailable: Boolean(picker?.querySelector('.part-choice-grid.free')),
       };
@@ -1475,6 +1503,7 @@ try {
     recipeCardFit,
     recipeCoverage,
     suppliedRecipeGroups,
+    occasionalLibrary,
     recipeScrollY: recipeScroll.scrollY,
     backToday,
     swap,
@@ -1538,6 +1567,7 @@ try {
     !recipeDetail.found || !recipeDetail.hasIngredients || !recipeDetail.hasPreparation || !recipeDetail.hasNutrition ||
     !recipeDetail.hasAllergens || !recipeDetail.photoLoaded || recipeDetail.horizontalOverflow || !recipeDetail.closed || !recipeCoverage ||
     (Number(version.split('.').at(-1)) >= 83 && (recipeCardFit.length !== 4 || recipeCardFit.some((card) => !card.found || !card.textInside || !card.noInternalOverflow || !card.noPageOverflow))) ||
+    (!occasionalLibrary.skipped && (!occasionalLibrary.tabFound || !occasionalLibrary.quickFilterReset || !occasionalLibrary.choicesVisible || !occasionalLibrary.pizzaVisible)) ||
     suppliedRecipeGroups.length !== 4 || suppliedRecipeGroups.some((group) =>
       !group.active || !group.countMatches || group.visibleCards === 0 || !group.firstPhotoLoaded || group.horizontalOverflow
     ) ||
@@ -1569,6 +1599,7 @@ try {
     mealPartAddition.horizontalOverflow || !mealPartAddition.added || !mealPartAddition.pickerClosed ||
     !mealPartAddition.hasDirectRemove || !mealPartAddition.removed ||
     (!occasionalAddition.skipped && (!occasionalAddition.addOpened || !occasionalAddition.visibleWithPlus ||
+      (Number(version.split('.').at(-1)) >= 85 && (!occasionalAddition.shortcutVisible || !occasionalAddition.shortcutOpenedSgarri)) ||
       !occasionalAddition.pizzaAvailable || !occasionalAddition.freeChoiceAlsoAvailable ||
       !occasionalAddition.appended || !occasionalAddition.pizzaPhoto || !occasionalAddition.pizzaEditable ||
       !occasionalAddition.pickerClosed || !occasionalAddition.originalPartsKept || !occasionalAddition.removedDirectly)) ||
