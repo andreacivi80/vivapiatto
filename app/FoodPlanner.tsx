@@ -6918,35 +6918,49 @@ const seasonalMonths: Record<string, number[]> = {
   "Catalogna fresca": [10, 11, 12, 1, 2, 3],
   "Verza fresca": [10, 11, 12, 1, 2, 3],
   "Cavolini di Bruxelles cotti": [10, 11, 12, 1, 2, 3],
-  "Cime di rapa cotte": [10, 11, 12, 1, 2, 3, 4],
+  "Cime di rapa cotte": [12, 1, 2],
   "Cipollotti freschi": [3, 4, 5, 6],
   "Mirtilli freschi": [6, 7, 8, 9],
   "Mandarini freschi": [11, 12, 1, 2, 3],
   "Melagrana fresca": [9, 10, 11, 12],
   More: [6, 7, 8, 9],
-  "Ravanelli crudi": [3, 4, 5, 6, 7, 8, 9, 10],
-  "Ciliegie fresche": [5, 6],
+  "Ravanelli crudi": [4, 5, 6, 7, 8, 9, 10],
+  "Ciliegie fresche": [5, 6, 7],
   "Albicocche fresche": [6, 7],
-  Anguria: [6, 7, 8],
-  "Melone estivo": [6, 7, 8],
-  Fragole: [4, 5, 6],
-  Pesca: [6, 7, 8],
+  Anguria: [7, 8, 9],
+  "Melone estivo": [7, 8, 9],
+  Fragole: [4, 5, 6, 7, 8],
+  Pesca: [6, 7, 8, 9, 10],
   "Nettarina fresca": [6, 7, 8, 9],
   Uva: [8, 9, 10],
-  Arancia: [11, 12, 1, 2, 3],
-  Kiwi: [11, 12, 1, 2, 3, 4],
-  Mela: [9, 10, 11, 12, 1, 2, 3],
-  Pera: [8, 9, 10, 11, 12, 1, 2],
+  Arancia: [11, 12, 1, 2, 3, 4, 5],
+  Kiwi: [11, 12, 1, 2, 3],
+  Mela: [8, 9, 10, 11, 12, 1, 2, 3, 4, 5],
+  Pera: [7, 8, 9, 10, 11, 12, 1, 2, 3, 4],
   "Asparagi crudi": [3, 4, 5, 6],
-  "Broccoli bolliti": [10, 11, 12, 1, 2, 3],
+  "Bietole cotte": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+  "Broccoli bolliti": [9, 10, 11, 12, 1, 2, 3],
+  "Carote crude": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+  "Carote cotte bollite": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+  "Cetrioli": [6, 7, 8, 9],
+  "Cetrioli crudi": [6, 7, 8, 9],
+  "Cicoria cotta": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
   "Rape crude": [10, 11, 12, 1, 2, 3],
   "Rape cotte bollite": [10, 11, 12, 1, 2, 3],
-  Cavolfiore: [10, 11, 12, 1, 2, 3],
+  Cavolfiore: [10, 11, 12, 1, 2, 3, 4],
+  "Peperoni crudi": [6, 7, 8, 9, 10],
+  "Peperoni cotti": [6, 7, 8, 9, 10],
+  "Peperoni cotti senza olio": [6, 7, 8, 9, 10],
+  "Porro cotto": [9, 10, 11, 12, 1, 2, 3, 4],
+  "Radicchio cotto": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
   "Finocchi crudi": [10, 11, 12, 1, 2, 3, 4, 5],
   "Sedano crudo": [9, 10, 11, 12, 1, 2, 3, 4, 5],
-  Zucca: [9, 10, 11, 12, 1, 2],
+  "Melanzane": [6, 7, 8, 9, 10, 11],
+  "Pomodorini": [6, 7, 8, 9, 10],
+  "Rucola": [4, 5, 6, 7, 8, 9, 10, 11],
+  "Spinaci": [9, 10, 11, 12, 1, 2, 3, 4, 5],
+  Zucca: [8, 9, 10, 11, 12, 1, 2, 3],
   Zucchine: [5, 6, 7, 8, 9],
-  Pomodorini: [5, 6, 7, 8, 9],
   Fagiolini: [5, 6, 7, 8, 9],
 };
 const seasonalFirst = (options: MealPart[]) => {
@@ -12221,6 +12235,32 @@ export function FoodPlanner() {
       .sort((a, b) => compatibilityScore(a) - compatibilityScore(b))
       .slice(0, 6);
   };
+  const appendOccasionalParts = (parts: MealPart[], label: string) => {
+    if (!partPicker) return;
+    const [dayText, slotText] = partPicker.key.split("-");
+    const day = Number(dayText);
+    const slot = Number(slotText);
+    const key = partPicker.key;
+    const currentRecipe = recipeMap[getDayIds(day)[slot]];
+    if (!currentRecipe || !parts.length) return;
+    const currentParts = activeMealParts(key, currentRecipe);
+    clearMealRegistration(key);
+    setMealView((current) => ({ ...current, [key]: "parts" }));
+    setPartSelections((current) => ({ ...current, [key]: [...currentParts, ...parts] }));
+    setReplanNote(`${label} aggiunto al pasto. Quantità e totali restano modificabili.`);
+    replanFollowingDays(day);
+    setGelatoComposerOpen(false);
+    setPartPicker(null);
+  };
+  const addOccasionalRecipe = (recipe: Recipe) => {
+    const parts = (recipe.parts || recipe.ingredients.map(additionAsPart))
+      .filter((part) => part.grams > 0)
+      .map((part) => ({
+        ...part,
+        image: recipe.ingredients.length === 1 ? recipe.image : part.image,
+      }));
+    appendOccasionalParts(parts, recipe.name);
+  };
   const chooseConfiguredGelato = () => {
     if (!partPicker) return;
     const [dayText] = partPicker.key.split("-");
@@ -12234,6 +12274,10 @@ export function FoodPlanner() {
       label: `Pallina ${index + 1} · ${food.replace("Gelato ", "")}`,
       image: gelatoFlavorPhoto(food),
     }));
+    if (partPicker.adding) {
+      appendOccasionalParts(scoops, "Gelato");
+      return;
+    }
     clearMealOverrides([key]);
     clearMealRegistration(key);
     setChoices((current) => ({ ...current, [key]: "occasional-gelato" }));
@@ -14973,6 +15017,7 @@ export function FoodPlanner() {
                 return (
                   <article
                     key={r.id}
+                    className={swapTarget ? "recipe-with-info" : undefined}
                     data-recipe-id={r.id}
                     onClick={() => chooseRecipe(r)}
                     aria-label={swapTarget ? `Applica ${r.name}` : undefined}
@@ -15682,13 +15727,15 @@ export function FoodPlanner() {
                   })}
                 </div>
               </details>
-              {!partPicker.adding && (
                 <details className="picker-group cheat-picker-group">
                   <summary>Sgarri</summary>
-                  <p>Scelte occasionali: restano conteggiate nel totale reale, senza punizioni.</p>
+                  <p>{partPicker.adding ? "Aggiungi una scelta occasionale al pasto." : "Scelte occasionali: restano conteggiate nel totale reale, senza punizioni."}</p>
                   <div className="complete-meal-grid">
-                    {occasionalRecipes
-                      .filter((recipe) => fitsSlot(recipe, Number(partPicker.key.split("-")[1])))
+                    {[...occasionalRecipes]
+                      .sort((a, b) =>
+                        Number(fitsSlot(b, Number(partPicker.key.split("-")[1]))) -
+                        Number(fitsSlot(a, Number(partPicker.key.split("-")[1]))),
+                      )
                       .map((recipe) => {
                         const macros = calc(recipe.ingredients);
                         return (
@@ -15701,7 +15748,8 @@ export function FoodPlanner() {
                                   return;
                                 }
                                 setGelatoComposerOpen(false);
-                                chooseCompleteMeal(recipe);
+                                if (partPicker.adding) addOccasionalRecipe(recipe);
+                                else chooseCompleteMeal(recipe);
                               }}
                             >
                               <RecipeVisual recipe={recipe} />
@@ -15724,7 +15772,7 @@ export function FoodPlanner() {
                         );
                       })}
                   </div>
-                  {gelatoComposerOpen && [1, 3].includes(Number(partPicker.key.split("-")[1])) && (
+                  {gelatoComposerOpen && (
                     <div className="gelato-builder">
                       <div className="gelato-builder-title">
                         <b>Componi il gelato</b>
@@ -15768,7 +15816,6 @@ export function FoodPlanner() {
                     </div>
                   )}
                 </details>
-              )}
               <details className="picker-group">
                 <summary>Scelta libera</summary>
                 <p>

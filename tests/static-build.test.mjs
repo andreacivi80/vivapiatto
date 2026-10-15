@@ -424,7 +424,9 @@ test("v1.16.17 keeps swap navigation visible and exposes occasional choices", as
   assert.match(app, /gelatoScoops === count/);
   assert.match(app, /Gusto pallina/);
   assert.match(css, /\.gelato-builder/);
-  assert.match(app, /gelatoComposerOpen && \[1, 3\]/);
+  assert.match(app, /gelatoComposerOpen && \(/);
+  assert.match(app, /const addOccasionalRecipe = /);
+  assert.match(app, /if \(partPicker\.adding\) addOccasionalRecipe\(recipe\)/);
   assert.match(app, /Chiudi composizione gelato/);
   assert.match(app, /↻ Cambia piatto/);
   assert.match(app, /swapFoodOptions/);
@@ -611,7 +613,7 @@ test("v1.16.69 extends the verified everyday pantry with independent photos", as
     await access(new URL('../dist/food/' + asset + '.png', import.meta.url));
   }
   assert.match(app, /"Pompelmo rosa fresco": \[11, 12, 1, 2, 3, 4\]/);
-  assert.match(app, /"Cime di rapa cotte": \[10, 11, 12, 1, 2, 3, 4\]/);
+  assert.match(app, /"Cime di rapa cotte": \[12, 1, 2\]/);
 });
 
 
@@ -2952,4 +2954,15 @@ test("v1.19.82 keeps work breakfasts familiar without restricting manual recipes
   assert.match(source, /familiarWorkMorning\.length \? familiarWorkMorning : workMorning/);
   assert.match(audit, /workBreakfastFamiliar/);
   assert.match(audit, /milkAndRicotta/);
+});
+
+test("v1.19.83 applies the CREA calendar to cooked and raw vegetable variants", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const season = source.split("const seasonalMonths: Record<string, number[]> = {")[1].split("};")[0];
+  for (const food of ["Carote crude", "Carote cotte bollite", "Peperoni crudi", "Peperoni cotti", "Peperoni cotti senza olio", "Cetrioli", "Cetrioli crudi", "Bietole cotte", "Cicoria cotta", "Melanzane", "Spinaci"]) {
+    assert.match(season, new RegExp(`"${food}": \\[.*?\\]`));
+  }
+  assert.match(season, /"Peperoni cotti": \[6, 7, 8, 9, 10\]/);
+  assert.match(season, /"Cetrioli": \[6, 7, 8, 9\]/);
+  assert.doesNotMatch(season, /"Passata di pomodoro":/);
 });

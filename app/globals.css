@@ -2095,14 +2095,16 @@ button {
   gap: 8px;
 }
 .recipe-grid article {
-  height: 92px;
+  min-height: 92px;
+  height: auto;
   background: var(--paper);
   border: 1px solid var(--line);
   border-radius: 16px;
   padding: 7px;
   display: grid;
-  grid-template-columns: 78px 1fr;
+  grid-template-columns: 78px minmax(0, 1fr);
   gap: 10px;
+  align-items: start;
   cursor: pointer;
 }
 .recipe-grid img {
@@ -3215,7 +3217,11 @@ button {
   padding-right: 0 !important;
 }
 .recipe-grid article > div:not(.recipe-visual-parts) {
-  padding-right: 52px;
+  padding-right: 0;
+  overflow-wrap: anywhere;
+}
+.recipe-grid article.recipe-with-info > div:not(.recipe-visual-parts) {
+  padding-right: 31px;
 }
 
 .healthy-filter-panel {
@@ -3527,6 +3533,7 @@ button {
 .recipe-card-quality {
   display: block;
   margin-top: 4px;
+  line-height: 1.25;
   color: #37715a;
   font-size: 0.67rem;
   font-weight: 850;

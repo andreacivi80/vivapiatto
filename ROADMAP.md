@@ -2,12 +2,23 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.82 — colazioni più pratiche al lavoro (in verifica)
+## v1.19.83 — calendario, card mobili e sgarri con “+” (in verifica)
+
+- [x] Allineati al calendario orientativo CREA i periodi di frutta e ortaggi già mappati; aggiunte carote, cetrioli, peperoni, bietole, cicoria, melanzane, spinaci, porri e radicchio anche nelle varianti cotte o crude usate nelle ricette.
+- [x] Le conserve come la passata non vengono confuse con pomodori freschi di stagione. Le scelte già salvate e la scelta libera non vengono bloccate.
+- [x] Le card di piatti lunghi crescono in altezza: varietà, stagione e costo rimangono dentro il bordo; il tasto info riserva spazio solo quando è presente.
+- [x] “Sgarri” è visibile anche quando si usa “+”: pizza e altri piatti occasionali si aggiungono al pasto senza sostituirlo; gelato componibile disponibile nello stesso percorso, scelta libera conservata.
+- [x] Le scelte occasionali sono ordinate per pertinenza al momento della giornata, ma restano tutte raggiungibili; il nuovo elemento ha foto, quantità modificabile e rimozione diretta.
+- [x] Collaudo specifico a 320 e 390 px delle due ricette segnalate: coscia di pollo/verza/polenta e petto di pollo/patate/catalogna, testo interamente dentro la card.
+- [x] Suite completa 210/210 e stress mobile locale: pizza raggiungibile da “+”, aggiunta senza cancellare il pasto, foto propria, quantità modificabile e rimozione diretta; gelato componibile invariato, zero errori JavaScript.
+- [ ] Pubblicazione e stress mobile pubblico della versione esatta.
+
+## v1.19.82 — pubblicata e verificata
 
 - [x] Quando il contesto è Lavoro o Mensa, le proposte automatiche del mattino privilegiano latte e biscotti, fette biscottate, yogurt o cracker con ricotta: preparazioni entro tre minuti. La scelta libera e il ricettario mantengono anche le altre colazioni.
 - [x] Se allergie o preferenze rendono incompatibili tutte le colazioni familiari, resta disponibile il paniere rapido compatibile invece di svuotare il menu.
 - [x] Suite completa 209/209, build e collaudo mobile locale: colazione Lavoro latte/biscotti/mela, nessun errore JavaScript, foto mancante o overflow; menu e grammature invariati allo scroll.
-- [ ] Pubblicazione e collaudo pubblico sullo stesso link.
+- [x] Pubblicazione e collaudo pubblico sullo stesso link: manifest 1.19.82, colazione Lavoro latte/biscotti/mela, nessun errore JavaScript, foto rotta o overflow globale.
 
 ## v1.19.81 — pubblicata e verificata
 

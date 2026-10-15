@@ -291,6 +291,36 @@ try {
   await evaluate(`document.querySelector('.recipe-sheet .close')?.click()`);
   await wait(300);
   recipeDetail.closed = await evaluate(`!document.querySelector('.recipe-sheet')`);
+  const recipeCardFit = [];
+  if (Number(version.split('.').at(-1)) >= 83) {
+    for (const width of [320, 390]) {
+      await page.send("Emulation.setDeviceMetricsOverride", { width, height: 844, deviceScaleFactor: 1, mobile: true });
+      for (const name of ["Coscia di pollo arrosto con verza e polenta", "Petto di pollo arrosto con patate e catalogna"]) {
+        await evaluate(`(() => { const input = document.querySelector('.library-tools input'); input.focus(); input.select(); })()`);
+        await page.send("Input.insertText", { text: name });
+        await wait(350);
+        recipeCardFit.push(await evaluate(`(() => {
+          const card = [...document.querySelectorAll('.recipe-grid article')].find((item) => item.querySelector('h3')?.textContent === ${JSON.stringify(name)});
+          if (!card) return { width: ${width}, name: ${JSON.stringify(name)}, found: false };
+          const quality = card.querySelector('.recipe-card-quality');
+          const cardRect = card.getBoundingClientRect();
+          const qualityRect = quality?.getBoundingClientRect();
+          return {
+            width: ${width}, name: ${JSON.stringify(name)}, found: true,
+            cardHeight: Math.round(cardRect.height),
+            textInside: Boolean(qualityRect && qualityRect.right <= cardRect.right + 1 && qualityRect.bottom <= cardRect.bottom + 1),
+            noInternalOverflow: card.scrollWidth <= card.clientWidth + 1 && card.scrollHeight <= card.clientHeight + 1,
+            noPageOverflow: document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
+          };
+        })()`));
+      }
+    }
+    await page.send("Emulation.setDeviceMetricsOverride", { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
+    await evaluate(`(() => { const input = document.querySelector('.library-tools input'); input.focus(); input.select(); })()`);
+    await page.send("Input.dispatchKeyEvent", { type: "keyDown", key: "Backspace", code: "Backspace", windowsVirtualKeyCode: 8, nativeVirtualKeyCode: 8 });
+    await page.send("Input.dispatchKeyEvent", { type: "keyUp", key: "Backspace", code: "Backspace", windowsVirtualKeyCode: 8, nativeVirtualKeyCode: 8 });
+    await wait(300);
+  }
   await clickTab("Le tue 214");
   const recipeCoverage = await evaluate(`document.body.innerText.includes('214/214 presenti')`);
   const suppliedRecipeGroups = [];
@@ -725,6 +755,49 @@ try {
       removed: afterRemove === ${mealPartAddition.afterAdd} - 1,
     };
   })()`));
+  const occasionalAddition = { skipped: Number(version.split('.').at(-1)) < 83 };
+  if (!occasionalAddition.skipped) {
+    Object.assign(occasionalAddition, await evaluate(`(() => {
+      const card = document.querySelectorAll('.meal-card')[2];
+      const before = card?.querySelectorAll('.meal-part').length ?? 0;
+      card?.querySelector('.add-part-compact')?.click();
+      return { before, addOpened: Boolean(card) };
+    })()`));
+    await wait(400);
+    Object.assign(occasionalAddition, await evaluate(`(() => {
+      const picker = document.querySelector('.part-picker-sheet');
+      const group = picker?.querySelector('.cheat-picker-group');
+      if (group) group.open = true;
+      const pizza = [...(group?.querySelectorAll('.complete-meal-select') || [])]
+        .find((button) => button.innerText.includes('Pizza margherita'));
+      const result = {
+        visibleWithPlus: Boolean(group),
+        pizzaAvailable: Boolean(pizza),
+        freeChoiceAlsoAvailable: Boolean(picker?.querySelector('.part-choice-grid.free')),
+      };
+      pizza?.click();
+      return result;
+    })()`));
+    await wait(800);
+    Object.assign(occasionalAddition, await evaluate(`(() => {
+      const card = document.querySelectorAll('.meal-card')[2];
+      const parts = [...(card?.querySelectorAll('.meal-part') || [])];
+      const pizza = parts.find((part) => part.innerText.includes('Pizza margherita'));
+      const result = {
+        appended: parts.length === ${occasionalAddition.before} + 1,
+        pizzaPhoto: Boolean(pizza?.querySelector('img[src*="pizza-margherita"]')),
+        pizzaEditable: Boolean(pizza?.querySelector('input')),
+        pickerClosed: !document.querySelector('.part-picker-sheet'),
+        originalPartsKept: parts.length > 1,
+      };
+      pizza?.querySelector('.part-remove')?.click();
+      return result;
+    })()`));
+    await wait(600);
+    Object.assign(occasionalAddition, await evaluate(`(() => ({
+      removedDirectly: document.querySelectorAll('.meal-card')[2]?.querySelectorAll('.meal-part').length === ${occasionalAddition.before}
+    }))()`));
+  }
   const readyDishFlow = await evaluate(`(() => {
     const card = document.querySelectorAll('.meal-card')[2];
     const changePart = card?.querySelector('.meal-part .part-change');
@@ -1334,6 +1407,7 @@ try {
     weeklyPrintPreview,
     recipes,
     recipeDetail,
+    recipeCardFit,
     recipeCoverage,
     suppliedRecipeGroups,
     recipeScrollY: recipeScroll.scrollY,
@@ -1353,6 +1427,7 @@ try {
     historyConsent,
     mealRegistration,
     mealPartAddition,
+    occasionalAddition,
     readyDishFlow,
     checkinAdaptation,
     profileAdaptation,
@@ -1378,7 +1453,7 @@ try {
       [scrollStability.beforeMenu[1], scrollStability.beforeMenu[3], profileAdaptation.lowMenu[1], profileAdaptation.lowMenu[3]]
         .some((heading) => /nettarina|anguria|pompelmo rosa|albicocc|ciliegie|melone estivo/i.test(heading || ''))) ||
     (Number(version.split('.').at(-1)) >= 81 && new Date().getMonth() === 9 &&
-      !/mela|pera|uva|melagrana|cachi/i.test(scrollStability.beforeMenu[1] || '')) ||
+      !/mela|pera|uva|melagrana|cachi|pesca/i.test(scrollStability.beforeMenu[1] || '')) ||
     (Number(version.split('.').at(-1)) >= 81 &&
       [scrollStability.beforeMenu[1], scrollStability.beforeMenu[3]]
         .some((heading) => /· (?:noci|mandorle|nocciole|pistacchi|arachidi|anacardi)$/i.test(heading || ''))) ||
@@ -1396,6 +1471,7 @@ try {
     recipes.recovery || recipes.horizontalOverflow || recipes.brokenViewportImages.length || recipes.pendingViewportImages.length ||
     !recipeDetail.found || !recipeDetail.hasIngredients || !recipeDetail.hasPreparation || !recipeDetail.hasNutrition ||
     !recipeDetail.hasAllergens || !recipeDetail.photoLoaded || recipeDetail.horizontalOverflow || !recipeDetail.closed || !recipeCoverage ||
+    (Number(version.split('.').at(-1)) >= 83 && (recipeCardFit.length !== 4 || recipeCardFit.some((card) => !card.found || !card.textInside || !card.noInternalOverflow || !card.noPageOverflow))) ||
     suppliedRecipeGroups.length !== 4 || suppliedRecipeGroups.some((group) =>
       !group.active || !group.countMatches || group.visibleCards === 0 || !group.firstPhotoLoaded || group.horizontalOverflow
     ) ||
@@ -1426,6 +1502,10 @@ try {
     !mealPartAddition.hasRecommendedChoices || !mealPartAddition.noBlankChoice || !mealPartAddition.closeVisible ||
     mealPartAddition.horizontalOverflow || !mealPartAddition.added || !mealPartAddition.pickerClosed ||
     !mealPartAddition.hasDirectRemove || !mealPartAddition.removed ||
+    (!occasionalAddition.skipped && (!occasionalAddition.addOpened || !occasionalAddition.visibleWithPlus ||
+      !occasionalAddition.pizzaAvailable || !occasionalAddition.freeChoiceAlsoAvailable ||
+      !occasionalAddition.appended || !occasionalAddition.pizzaPhoto || !occasionalAddition.pizzaEditable ||
+      !occasionalAddition.pickerClosed || !occasionalAddition.originalPartsKept || !occasionalAddition.removedDirectly)) ||
     !readyDishFlow.found || !readyDishFlow.completePickerFound || readyDishFlow.completeOptions < 2 ||
     !readyDishFlow.recipeInfoAvailableBeforeChoice || !readyDishFlow.fullDishApplied ||
     !readyDishFlow.hasRecipeDetail || !readyDishFlow.hasReadyDishChange || !readyDishFlow.hasSplit ||
