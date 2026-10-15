@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import "./app/globals.css";
 import packageFile from "./package.json";
 import { FoodPlanner } from "./app/FoodPlanner";
-import { isNewerRelease } from "./app/release";
+import { isNewerRelease, isReleaseReady } from "./app/release";
 import {
   browserLocalStorage,
   browserSessionStorage,
@@ -145,14 +145,22 @@ const startWithLatestRelease = async () => {
       signal: controller.signal,
     });
     if (response.ok) {
-      const release = (await response.json()) as { version?: string };
+      const release = (await response.json()) as { version?: string; script?: string };
       if (release.version && isNewerRelease(release.version, packageFile.version)) {
+        const ready = await isReleaseReady(
+          new URL(import.meta.env.BASE_URL, window.location.href).href,
+          release.script,
+          String(Date.now()),
+          controller.signal,
+        );
+        if (!ready) {
+          mountApp();
+          return;
+        }
         const session = browserSessionStorage();
         const attemptKey = `vivapiatto-start-refresh-${release.version}`;
-        if (
-          readSessionItem(session, attemptKey) !== packageFile.version &&
-          writeSessionItem(session, attemptKey, packageFile.version)
-        ) {
+        const attempts = Number(readSessionItem(session, attemptKey) || 0);
+        if (attempts < 3 && writeSessionItem(session, attemptKey, String(attempts + 1))) {
           const url = new URL(window.location.href);
           url.searchParams.set("_release", `${release.version}-${Date.now()}`);
           window.location.replace(url.toString());

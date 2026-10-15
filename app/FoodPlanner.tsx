@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import packageFile from "../package.json";
 import { portionOptions, STANDARD_SOURCES } from "./nutritionEngine";
-import { isNewerRelease } from "./release";
+import { isNewerRelease, isReleaseReady } from "./release";
 import { readSessionItem, removeSessionItem, writeStorageItem } from "./storageRecovery";
 
 type Macro = { kcal: number; protein: number; carbs: number; fat: number };
@@ -10533,6 +10533,7 @@ export function FoodPlanner() {
   const [leftoverResult, setLeftoverResult] = useState<Recipe | null>(null);
   const [leftoverWarning, setLeftoverWarning] = useState("");
   const [availableRelease, setAvailableRelease] = useState<string | null>(null);
+  const [releaseReady, setReleaseReady] = useState(false);
   const updateBlockedRef = useRef(false);
   const userInteractionUntilRef = useRef(0);
   const refreshSnapshotRef = useRef("");
@@ -10601,6 +10602,7 @@ export function FoodPlanner() {
     let disposed = false;
     let updateWaiting = false;
     let pendingVersion = "";
+    let checking = false;
     const applyWhenSafe = () => {
       if (
         !disposed &&
@@ -10617,20 +10619,33 @@ export function FoodPlanner() {
       }
     };
     const checkVersion = async () => {
+      if (checking || disposed) return;
+      checking = true;
       try {
         const response = await fetch(
           `${import.meta.env.BASE_URL}version.json?time=${Date.now()}`,
           { cache: "no-store" },
         );
-        const release = (await response.json()) as { version?: string };
+        if (!response.ok) return;
+        const release = (await response.json()) as { version?: string; script?: string };
         if (release.version && isNewerRelease(release.version, VERSION)) {
-          updateWaiting = true;
-          pendingVersion = release.version;
           setAvailableRelease(release.version);
-          applyWhenSafe();
+          const ready = await isReleaseReady(
+            new URL(import.meta.env.BASE_URL, window.location.href).href,
+            release.script,
+            String(Date.now()),
+          );
+          setReleaseReady(ready);
+          if (ready) {
+            updateWaiting = true;
+            pendingVersion = release.version;
+            applyWhenSafe();
+          }
         }
       } catch {
         // Offline: il controllo riprova senza modificare il lavoro salvato.
+      } finally {
+        checking = false;
       }
     };
     const onVisibility = () => {
@@ -10643,6 +10658,8 @@ export function FoodPlanner() {
     const versionTimer = window.setInterval(checkVersion, 5000);
     const safeTimer = window.setInterval(applyWhenSafe, 500);
     window.addEventListener("focus", checkVersion);
+    window.addEventListener("pageshow", checkVersion);
+    window.addEventListener("online", checkVersion);
     window.addEventListener("scroll", markInteraction, { passive: true });
     window.addEventListener("pointerdown", markInteraction, { passive: true });
     window.addEventListener("touchstart", markInteraction, { passive: true });
@@ -10652,6 +10669,8 @@ export function FoodPlanner() {
       window.clearInterval(versionTimer);
       window.clearInterval(safeTimer);
       window.removeEventListener("focus", checkVersion);
+      window.removeEventListener("pageshow", checkVersion);
+      window.removeEventListener("online", checkVersion);
       window.removeEventListener("scroll", markInteraction);
       window.removeEventListener("pointerdown", markInteraction);
       window.removeEventListener("touchstart", markInteraction);
@@ -13768,7 +13787,9 @@ export function FoodPlanner() {
       </header>
       {availableRelease && (
         <div className="release-pending" role="status">
-          Nuova v{availableRelease} pronta · aggiornamento automatico appena termini la modifica.
+          Questa schermata è la v{VERSION}; pubblicata v{availableRelease} · {releaseReady
+            ? "aggiornamento automatico appena termini la modifica."
+            : "attendo che tutti i file siano disponibili."}
         </div>
       )}
       <section className="content">

@@ -2994,6 +2994,22 @@ test("v1.19.85 announces a pending update without replacing saved work before hy
   assert.match(source, /writeStorageItem\(localStorage, "vivapiatto-v1", refreshSnapshotRef\.current\)/);
 });
 
+test("v1.19.92 waits for an aligned public release and shows current versus published version", async () => {
+  const [planner, boot, release] = await Promise.all([
+    readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../main.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/release.ts", import.meta.url), "utf8"),
+  ]);
+  assert.match(release, /index\.html\?release_check=/);
+  assert.match(release, /htmlScript.*new URL\(script, base\)/s);
+  assert.match(release, /method: "HEAD"/);
+  assert.match(boot, /attempts < 3/);
+  assert.match(boot, /isReleaseReady\(/);
+  assert.match(planner, /setReleaseReady\(ready\)/);
+  assert.match(planner, /window\.addEventListener\("pageshow", checkVersion\)/);
+  assert.match(planner, /Questa schermata è la v\{VERSION\}; pubblicata v\{availableRelease\}/);
+});
+
 test("v1.19.86 separates recipe provenance from ingredient nutrition data", async () => {
   const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(source, /const recipeSourceKind = \(recipe: Recipe\) => \{/);
