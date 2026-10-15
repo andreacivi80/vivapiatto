@@ -112,7 +112,7 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /asian-negima-nabe-authentic/);
   assert.match(app, /asian-japchae-authentic/);
   assert.match(app, /asian-phat-thai-authentic/);
-  assert.match(app, /Fonte verificata:/);
+  assert.match(app, /Dati nutrizionali degli ingredienti, non della ricetta/);
   assert.match(app, /sourceUrl/);
   assert.match(app, /Piatti completi consigliati/);
   assert.match(app, /chooseCompleteMeal/);
@@ -2991,4 +2991,16 @@ test("v1.19.85 announces a pending update without replacing saved work before hy
   assert.match(source, /setAvailableRelease\(release\.version\)/);
   assert.match(source, /className="release-pending"/);
   assert.match(source, /writeStorageItem\(localStorage, "vivapiatto-v1", refreshSnapshotRef\.current\)/);
+});
+
+test("v1.19.86 separates recipe provenance from ingredient nutrition data", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(source, /const recipeSourceKind = \(recipe: Recipe\) => \{/);
+  assert.match(source, /Piatto di riferimento · preparazione adattata/);
+  assert.match(source, /Modello di composizione, non ricetta specifica/);
+  assert.match(source, /Dati nutrizionali degli ingredienti, non della ricetta/);
+  assert.match(source, /Ispirazione asiatica: non è una ricetta regionale documentata/);
+  assert.match(source, /vcontsId=178062/);
+  assert.doesNotMatch(source, /vcontsId=224166/);
+  assert.doesNotMatch(source, /Fonte verificata: \{selected\.sourceLabel\}/);
 });

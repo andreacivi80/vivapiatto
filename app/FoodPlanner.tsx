@@ -115,6 +115,13 @@ const isNewerRelease = (candidate: string, current: string) => {
   }
   return false;
 };
+const recipeSourceKind = (recipe: Recipe) => {
+  const label = recipe.sourceLabel || "";
+  if (/^(MAFF|VisitKorea|Tourism Authority of Thailand)/.test(label)) return "dish";
+  if (label.startsWith("Harvard T.H. Chan")) return "model";
+  if (label.startsWith("USDA Food Safety")) return "safety";
+  return "nutrition";
+};
 const TODAY_LABEL = new Intl.DateTimeFormat("it-IT", {
   weekday: "long",
   day: "numeric",
@@ -4456,7 +4463,7 @@ const balancedDinnerRecipes: Recipe[] = [
   {
     id: "asian-oyakodon-authentic",
     name: "Oyakodon giapponese · pollo e uovo su riso",
-    kicker: "Ricetta giapponese verificata · MAFF", course: "Piatto unico", cuisine: "Asiatico",
+    kicker: "Piatto giapponese documentato · versione adattata", course: "Piatto unico", cuisine: "Asiatico",
     image: photo("recipe-asian-oyakodon-v11947"), time: 25,
     ingredients: [{ food: "Riso basmati cotto", grams: 150 }, { food: "Petto di pollo · peso a crudo", grams: 80 }, { food: "Uovo", grams: 100 }, { food: "Cipolle crude", grams: 40 }, { food: "Funghi", grams: 20 }, { food: "Salsa di soia", grams: 10 }, { food: "Mirin", grams: 10 }, { food: "Zucchero", grams: 5 }],
     parts: [
@@ -4474,7 +4481,7 @@ const balancedDinnerRecipes: Recipe[] = [
   {
     id: "asian-bibimbap-authentic",
     name: "Bibimbap coreano con manzo, verdure e uovo",
-    kicker: "Ricetta coreana verificata · VisitKorea", course: "Piatto unico", cuisine: "Asiatico",
+    kicker: "Piatto coreano documentato · versione adattata", course: "Piatto unico", cuisine: "Asiatico",
     image: photo("recipe-asian-bibimbap-v11946"), time: 35,
     ingredients: [{ food: "Riso basmati cotto", grams: 150 }, { food: "Bistecca di manzo · peso a crudo", grams: 70 }, { food: "Uovo", grams: 50 }, { food: "Spinaci", grams: 70 }, { food: "Carote crude", grams: 60 }, { food: "Zucchine", grams: 60 }, { food: "Germogli di soia", grams: 70 }, { food: "Funghi", grams: 60 }, { food: "Gochujang", grams: 15 }, { food: "Semi di sesamo", grams: 5 }, { food: "Olio extravergine", grams: 5 }],
     parts: [
@@ -4491,12 +4498,12 @@ const balancedDinnerRecipes: Recipe[] = [
     steps: ["Cuoci il riso e sistemalo sul fondo della ciotola.", "Sbollenta i germogli e cuoci separatamente spinaci, carote, zucchine e funghi con parte dei 5 g di olio complessivi. Cuoci completamente il manzo a striscioline.", "Cuoci l'uovo al tegamino fino a rendere l'albume completamente rappreso. Disponi tutto a settori sul riso e completa con gochujang e semi di sesamo pesati."],
     alternatives: ["Fonte ricetta: Korea Tourism Organization", "Contiene uova e soia", "Il piatto può essere diviso in componenti"],
     sourceLabel: "VisitKorea · Korea Tourism Organization",
-    sourceUrl: "https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=224166",
+    sourceUrl: "https://english.visitkorea.or.kr/svc/contents/contentsView.do?menuSn=181&vcontsId=178062",
   },
   {
     id: "asian-negima-nabe-authentic",
     name: "Negima-nabe giapponese con tonno, porro e riso",
-    kicker: "Pentola tradizionale di Tokyo · ricetta verificata MAFF",
+    kicker: "Pentola tradizionale di Tokyo · versione adattata MAFF",
     course: "Piatto unico",
     cuisine: "Asiatico",
     image: photo("recipe-asian-negima-v11950"),
@@ -4527,7 +4534,7 @@ const balancedDinnerRecipes: Recipe[] = [
   {
     id: "asian-japchae-authentic",
     name: "Japchae coreano con manzo e verdure",
-    kicker: "Noodles di patata dolce · ricetta verificata VisitKorea",
+    kicker: "Noodles di patata dolce · versione adattata VisitKorea",
     course: "Piatto unico",
     cuisine: "Asiatico",
     image: photo("recipe-asian-japchae-v11948"),
@@ -7612,7 +7619,7 @@ const verifiedWorldRecipeExpansion: Recipe[] = [
   {
     id: "catalog-verified-bulgogi-rice",
     name: "Bulgogi coreano con riso e verdure",
-    kicker: "Ricetta coreana verificata · VisitKorea",
+    kicker: "Piatto coreano documentato · versione adattata",
     course: "Piatto unico",
     cuisine: "Asiatico",
     image: photo("recipe-asian-bulgogi-v11953"),
@@ -7644,7 +7651,7 @@ const verifiedWorldRecipeExpansion: Recipe[] = [
   {
     id: "catalog-verified-keihan",
     name: "Keihan giapponese · riso, pollo, uovo e verdure",
-    kicker: "Ricetta regionale verificata · MAFF",
+    kicker: "Piatto regionale documentato · versione adattata",
     course: "Piatto unico",
     cuisine: "Asiatico",
     image: photo("recipe-asian-keihan-v11951"),
@@ -7675,7 +7682,7 @@ const verifiedWorldRecipeExpansion: Recipe[] = [
   {
     id: "catalog-verified-kashiwa-meshi",
     name: "Kashiwa-meshi · riso giapponese con pollo e funghi",
-    kicker: "Ricetta regionale verificata · MAFF",
+    kicker: "Piatto regionale documentato · versione adattata",
     course: "Piatto unico",
     cuisine: "Asiatico",
     image: photo("recipe-asian-kashiwa-meshi-v11952"),
@@ -13692,6 +13699,7 @@ export function FoodPlanner() {
         }))
     : [];
   const selectedMacros = calc(selectedIngredients);
+  const selectedSourceKind = selected ? recipeSourceKind(selected) : "nutrition";
   return (
     <main className="app-shell">
       <header className="topbar">
@@ -16114,14 +16122,25 @@ export function FoodPlanner() {
                 )}
               </div>
               {selected.sourceUrl && selected.sourceLabel && (
-                <a
-                  className="recipe-source"
-                  href={selected.sourceUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Fonte verificata: {selected.sourceLabel} ↗
-                </a>
+                <>
+                  {selected.cuisine === "Asiatico" && selectedSourceKind === "nutrition" && (
+                    <p className="recipe-provenance-note">Ispirazione asiatica: non è una ricetta regionale documentata.</p>
+                  )}
+                  <a
+                    className="recipe-source"
+                    href={selected.sourceUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {selectedSourceKind === "dish"
+                      ? "Piatto di riferimento · preparazione adattata"
+                      : selectedSourceKind === "model"
+                        ? "Modello di composizione, non ricetta specifica"
+                        : selectedSourceKind === "safety"
+                          ? "Indicazioni per conservazione degli avanzi"
+                          : "Dati nutrizionali degli ingredienti, non della ricetta"}: {selected.sourceLabel} ↗
+                  </a>
+                </>
               )}
             </div>
           </article>
