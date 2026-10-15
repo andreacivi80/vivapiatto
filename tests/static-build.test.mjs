@@ -876,7 +876,7 @@ test("v1.16.86 preserves the exact scroll position across automatic releases", a
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /writeStorageItem\(sessionStorage, "vivapiatto-release-scroll-y", String\(window\.scrollY\)\)/);
   assert.match(app, /readSessionItem\(sessionStorage, "vivapiatto-release-scroll-y"\)/);
-  assert.match(app, /window\.scrollTo\(\{ top: Math\.max\(0, savedScrollY - previousBannerHeight\), left: 0, behavior: "auto" \}\)/);
+  assert.match(app, /window\.scrollTo\(\{ top: savedScrollY, left: 0, behavior: "auto" \}\)/);
   assert.match(app, /writeStorageItem\(localStorage, "vivapiatto-v1", refreshSnapshotRef\.current\)/);
 });
 
@@ -3005,12 +3005,12 @@ test("v1.19.86 separates recipe provenance from ingredient nutrition data", asyn
   assert.doesNotMatch(source, /Fonte verificata: \{selected\.sourceLabel\}/);
 });
 
-test("v1.19.87 keeps update notice out of page flow and restores the old scroll offset", async () => {
+test("v1.19.88 keeps update notice out of page flow without a guessed scroll offset", async () => {
   const [source, css] = await Promise.all([
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
   assert.match(css, /\.release-pending \{\s*position: fixed;/);
-  assert.match(source, /previousBannerHeight = measure\.getBoundingClientRect\(\)\.height/);
-  assert.match(source, /savedScrollY - previousBannerHeight/);
+  assert.match(source, /window\.scrollTo\(\{ top: savedScrollY, left: 0, behavior: "auto" \}\)/);
+  assert.doesNotMatch(source, /previousBannerHeight/);
 });

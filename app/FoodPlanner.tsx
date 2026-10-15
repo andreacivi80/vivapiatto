@@ -10628,24 +10628,11 @@ export function FoodPlanner() {
       const savedScrollY = Number(
         readSessionItem(sessionStorage, "vivapiatto-release-scroll-y") || 0,
       );
-      // La 1.19.85–86 mostrava l'avviso nel flusso: il browser compensava
-      // lo scroll quando compariva. Nel passaggio alla 1.19.87 l'avviso è
-      // sovrapposto e va sottratta la sua altezza per ritrovare il contenuto.
-      let previousBannerHeight = 0;
-      if (VERSION === "1.19.87") {
-        const measure = document.createElement("div");
-        measure.className = "release-pending";
-        measure.textContent = `Nuova v${VERSION} pronta · aggiornamento automatico appena termini la modifica.`;
-        measure.style.visibility = "hidden";
-        document.body.appendChild(measure);
-        previousBannerHeight = measure.getBoundingClientRect().height;
-        measure.remove();
-      }
       removeSessionItem(sessionStorage, "vivapiatto-release-target");
       removeSessionItem(sessionStorage, "vivapiatto-release-scroll-y");
       window.requestAnimationFrame(() => {
         window.requestAnimationFrame(() => {
-          window.scrollTo({ top: Math.max(0, savedScrollY - previousBannerHeight), left: 0, behavior: "auto" });
+          window.scrollTo({ top: savedScrollY, left: 0, behavior: "auto" });
         });
       });
     }
