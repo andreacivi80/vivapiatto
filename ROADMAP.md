@@ -2,7 +2,16 @@
 
 Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggiornata senza perdere le richieste destinate alle versioni successive.
 
-## v1.19.83 — calendario, card mobili e sgarri con “+” (in verifica)
+## v1.19.84 — sgarri sostituibili senza perdere il pasto (in verifica)
+
+- [x] Gli sgarri aggiunti con “+” portano un identificatore di gruppo: riaprendo Alternative e scegliendo un altro sgarro si sostituisce solo quella scelta, anche se ha più componenti, senza cancellare il resto del pasto.
+- [x] Il gelato aggiunto con “+” conserva lo stesso comportamento: i gusti scelti vengono sostituiti insieme, non trasformano tutto il pasto in gelato.
+- [x] Anche i piatti occasionali a un solo componente, per esempio il tiramisù, offrono “Modifica porzione”: grammi, foto e alternative restano accessibili senza alterare il catalogo dei piani automatici.
+- [x] Il componente può recuperare la fotografia dedicata del piatto prima di ricadere sulla foto generica.
+- [x] Suite completa 210/210 e verifica mobile locale: “+ → Pizza → Alternative → Tiramisù” conserva le sei parti originali; “Sgarri → Tiramisù → Modifica porzione” mostra il componente modificabile con la sua foto, non il pane generico; zero errori JavaScript.
+- [ ] Pubblicazione e prova mobile della versione esatta sul link pubblico.
+
+## v1.19.83 — pubblicata e verificata
 
 - [x] Allineati al calendario orientativo CREA i periodi di frutta e ortaggi già mappati; aggiunte carote, cetrioli, peperoni, bietole, cicoria, melanzane, spinaci, porri e radicchio anche nelle varianti cotte o crude usate nelle ricette.
 - [x] Le conserve come la passata non vengono confuse con pomodori freschi di stagione. Le scelte già salvate e la scelta libera non vengono bloccate.
@@ -11,7 +20,7 @@ Questa lista raccoglie le richieste dell'utente. Dopo ogni rilascio viene aggior
 - [x] Le scelte occasionali sono ordinate per pertinenza al momento della giornata, ma restano tutte raggiungibili; il nuovo elemento ha foto, quantità modificabile e rimozione diretta.
 - [x] Collaudo specifico a 320 e 390 px delle due ricette segnalate: coscia di pollo/verza/polenta e petto di pollo/patate/catalogna, testo interamente dentro la card.
 - [x] Suite completa 210/210 e stress mobile locale: pizza raggiungibile da “+”, aggiunta senza cancellare il pasto, foto propria, quantità modificabile e rimozione diretta; gelato componibile invariato, zero errori JavaScript.
-- [ ] Pubblicazione e stress mobile pubblico della versione esatta.
+- [x] Pubblicazione e stress mobile pubblico della versione esatta: manifest 1.19.83, due card corrette a 320/390 px, pizza aggiunta da “+” e rimossa senza toccare gli altri componenti, zero errori JavaScript.
 
 ## v1.19.82 — pubblicata e verificata
 

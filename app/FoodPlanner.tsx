@@ -15,6 +15,7 @@ type MealPart = RecipeIngredient & {
   category:
     "Carboidrato" | "Proteina" | "Contorno" | "Latticino" | "Frutta" | "Extra";
   image: string;
+  occasionalGroupId?: string;
 };
 const partDisplayName = (part: Pick<RecipeIngredient, "food" | "label">) => {
   const label = (part.label || part.food).trim();
@@ -11679,13 +11680,16 @@ export function FoodPlanner() {
 
   const additionAsPart = (item: RecipeIngredient): MealPart => {
     const known = pantryPartByFood.get(item.food);
+    const occasionalPhoto = occasionalRecipes.find(
+      (recipe) => recipe.ingredients.length === 1 && recipe.ingredients[0].food === item.food,
+    )?.image;
     const category = known?.category || "Extra";
     return {
       category,
       food: item.food,
       grams: item.grams,
       label: item.label || known?.label || item.food,
-      image: known?.image || (GELATO_FLAVORS.includes(item.food as (typeof GELATO_FLAVORS)[number]) ? gelatoFlavorPhoto(item.food) : photo("part-bread-v7")),
+      image: known?.image || occasionalPhoto || (GELATO_FLAVORS.includes(item.food as (typeof GELATO_FLAVORS)[number]) ? gelatoFlavorPhoto(item.food) : photo("part-bread-v7")),
     };
   };
 
@@ -12244,22 +12248,57 @@ export function FoodPlanner() {
     const currentRecipe = recipeMap[getDayIds(day)[slot]];
     if (!currentRecipe || !parts.length) return;
     const currentParts = activeMealParts(key, currentRecipe);
+    const groupId = crypto.randomUUID();
     clearMealRegistration(key);
     setMealView((current) => ({ ...current, [key]: "parts" }));
-    setPartSelections((current) => ({ ...current, [key]: [...currentParts, ...parts] }));
+    setPartSelections((current) => ({
+      ...current,
+      [key]: [...currentParts, ...parts.map((part) => ({ ...part, occasionalGroupId: groupId }))],
+    }));
     setReplanNote(`${label} aggiunto al pasto. Quantità e totali restano modificabili.`);
     replanFollowingDays(day);
     setGelatoComposerOpen(false);
     setPartPicker(null);
   };
-  const addOccasionalRecipe = (recipe: Recipe) => {
-    const parts = (recipe.parts || recipe.ingredients.map(additionAsPart))
+  const occasionalRecipeParts = (recipe: Recipe) =>
+    (recipe.parts || recipe.ingredients.map(additionAsPart))
       .filter((part) => part.grams > 0)
       .map((part) => ({
         ...part,
         image: recipe.ingredients.length === 1 ? recipe.image : part.image,
       }));
-    appendOccasionalParts(parts, recipe.name);
+  const addOccasionalRecipe = (recipe: Recipe) => {
+    appendOccasionalParts(occasionalRecipeParts(recipe), recipe.name);
+  };
+  const replaceOccasionalParts = (parts: MealPart[], label: string) => {
+    if (!partPicker?.part.occasionalGroupId || !parts.length) return;
+    const [dayText, slotText] = partPicker.key.split("-");
+    const day = Number(dayText);
+    const slot = Number(slotText);
+    const key = partPicker.key;
+    const currentRecipe = recipeMap[getDayIds(day)[slot]];
+    if (!currentRecipe) return;
+    const currentParts = activeMealParts(key, currentRecipe);
+    const groupId = partPicker.part.occasionalGroupId;
+    const firstIndex = currentParts.findIndex((part) => part.occasionalGroupId === groupId);
+    const withoutGroup = currentParts.filter((part) => part.occasionalGroupId !== groupId);
+    const insertAt = firstIndex < 0 ? Math.min(partPicker.index, withoutGroup.length) : firstIndex;
+    const replacementId = crypto.randomUUID();
+    const nextParts = [
+      ...withoutGroup.slice(0, insertAt),
+      ...parts.map((part) => ({ ...part, occasionalGroupId: replacementId })),
+      ...withoutGroup.slice(insertAt),
+    ];
+    clearMealRegistration(key);
+    setMealView((current) => ({ ...current, [key]: "parts" }));
+    setPartSelections((current) => ({ ...current, [key]: nextParts }));
+    setReplanNote(`${label} sostituisce solo lo sgarro scelto. Il resto del pasto è invariato.`);
+    replanFollowingDays(day);
+    setGelatoComposerOpen(false);
+    setPartPicker(null);
+  };
+  const replaceOccasionalRecipe = (recipe: Recipe) => {
+    replaceOccasionalParts(occasionalRecipeParts(recipe), recipe.name);
   };
   const chooseConfiguredGelato = () => {
     if (!partPicker) return;
@@ -12276,6 +12315,10 @@ export function FoodPlanner() {
     }));
     if (partPicker.adding) {
       appendOccasionalParts(scoops, "Gelato");
+      return;
+    }
+    if (partPicker.part.occasionalGroupId) {
+      replaceOccasionalParts(scoops, "Gelato");
       return;
     }
     clearMealOverrides([key]);
@@ -14200,11 +14243,12 @@ export function FoodPlanner() {
                   const visibleIngredients = actualIngredients(key, r);
                   const m = calc(visibleIngredients);
                   const activeParts = activeMealParts(key, r);
+                   const editableOccasional = r.id.startsWith("occasional-");
                   const hasPartCards = Boolean(
-                    r.parts?.length || partSelections[key]?.length,
+                     r.parts?.length || partSelections[key]?.length || editableOccasional,
                   );
                   const fullDishView = Boolean(
-                    r.parts &&
+                     (r.parts || editableOccasional) &&
                       r.kind !== "combination" &&
                       (mealView[key] || "dish") === "dish",
                   );
@@ -14284,7 +14328,7 @@ export function FoodPlanner() {
                             </button>
                           </div>
                         )}
-                        {r.parts && r.kind !== "combination" && fullDishView ? (
+                         {(r.parts || editableOccasional) && r.kind !== "combination" && fullDishView ? (
                           <div className="dish-view-actions" onClick={(e) => e.stopPropagation()}>
                             <button onClick={() => { setSelectedMealKey(key); setSelected(r); }}>ⓘ Ricetta e preparazione</button>
                             <button
@@ -14299,7 +14343,9 @@ export function FoodPlanner() {
                             >
                               ↻ Cambia piatto pronto
                             </button>
-                            <button onClick={() => setMealView((current) => ({ ...current, [key]: "parts" }))}>Dividi in componenti</button>
+                             <button onClick={() => setMealView((current) => ({ ...current, [key]: "parts" }))}>
+                               {editableOccasional && !r.parts ? "Modifica porzione" : "Dividi in componenti"}
+                             </button>
                           </div>
                         ) : hasPartCards ? (
                           <>
@@ -15749,6 +15795,7 @@ export function FoodPlanner() {
                                 }
                                 setGelatoComposerOpen(false);
                                 if (partPicker.adding) addOccasionalRecipe(recipe);
+                                else if (partPicker.part.occasionalGroupId) replaceOccasionalRecipe(recipe);
                                 else chooseCompleteMeal(recipe);
                               }}
                             >

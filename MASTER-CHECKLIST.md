@@ -48,7 +48,7 @@ Questa checklist resta nel repository e viene aggiornata a ogni revisione. Una v
 ## Verifiche automatiche eseguite
 
 - [x] Riesaminare tutta la chat e tutti gli allegati confrontandoli con questa checklist. Verificati elenco generale, matrice iniziale, quattro addendum e obiettivo permanente; perimetro ricette `C01–C44`, `S01–S42`, `P01–P64`, `D01–D64`.
-- [x] Eseguire test statici, build, controllo fotografie e test mobile a ogni revisione. Ultima suite completa: 208/208; audit foto 569/569, 214/214 matrice e 258/258 ricette reali con file dedicato; stress mobile con persistenza dei grammi, sincronizzazione Oggi–Settimana, aggiornamento senza perdita di stato, contesto, check-in, ricette, immagini, spesa, extra, gelato, componenti, piatti pronti e scroll.
+- [x] Eseguire test statici, build, controllo fotografie e test mobile a ogni revisione. Ultima suite pubblicata: 210/210; audit foto 569/569, 214/214 matrice e 258/258 ricette reali con file dedicato; stress mobile con persistenza dei grammi, sincronizzazione Oggi–Settimana, aggiornamento senza perdita di stato, contesto, check-in, ricette, immagini, spesa, extra, gelato, componenti, piatti pronti, “+ → Sgarri” e scroll.
 - [x] Stress test finale da utilizzatore: sostituzioni, grammi, rimozioni, settimana, refresh, diario, extra, ricette e spesa. Prova pubblica a 390×844 su Oggi, cambio piatto a fondo pagina, ritorno, Settimana, barra fissa, Ricette, Progressi, spesa e refresh; nessun overflow, schermata bianca o errore console. Rimozione, grammi, extra e persistenza restano inoltre coperti dai test statici dedicati.
 - [x] Conservare le evidenze delle revisioni pubblicate in `FINAL-AUDIT.md`; il documento non sostituisce i controlli ancora aperti sotto.
 

@@ -790,9 +790,35 @@ try {
         pickerClosed: !document.querySelector('.part-picker-sheet'),
         originalPartsKept: parts.length > 1,
       };
-      pizza?.querySelector('.part-remove')?.click();
+      if (${Number(version.split('.').at(-1)) >= 84}) pizza?.querySelector('.part-change')?.click();
+      else pizza?.querySelector('.part-remove')?.click();
       return result;
     })()`));
+    if (Number(version.split('.').at(-1)) >= 84) {
+      await wait(350);
+      Object.assign(occasionalAddition, await evaluate(`(() => {
+        const group = document.querySelector('.part-picker-sheet .cheat-picker-group');
+        if (group) group.open = true;
+        const tiramisu = [...(group?.querySelectorAll('.complete-meal-select') || [])]
+          .find((button) => button.innerText.includes('Tiramisù'));
+        const result = { replacementAvailable: Boolean(tiramisu) };
+        tiramisu?.click();
+        return result;
+      })()`));
+      await wait(600);
+      Object.assign(occasionalAddition, await evaluate(`(() => {
+        const card = document.querySelectorAll('.meal-card')[2];
+        const parts = [...(card?.querySelectorAll('.meal-part') || [])];
+        const tiramisu = parts.find((part) => part.innerText.includes('Tiramisù'));
+        const result = {
+          replacementKeptMeal: parts.length === ${occasionalAddition.before} + 1,
+          oldPizzaGone: !parts.some((part) => part.innerText.includes('Pizza margherita')),
+          tiramisuPhoto: Boolean(tiramisu?.querySelector('img[src*="cheat-tiramisu"]')),
+        };
+        tiramisu?.querySelector('.part-remove')?.click();
+        return result;
+      })()`));
+    }
     await wait(600);
     Object.assign(occasionalAddition, await evaluate(`(() => ({
       removedDirectly: document.querySelectorAll('.meal-card')[2]?.querySelectorAll('.meal-part').length === ${occasionalAddition.before}
@@ -941,6 +967,45 @@ try {
       secondDishStillSplittable: buttons.some((button) => button.innerText.includes('Dividi in componenti')),
     };
   })()`));
+  const occasionalSplitPhoto = { skipped: Number(version.split('.').at(-1)) < 84 };
+  if (!occasionalSplitPhoto.skipped) {
+    await evaluate(`(() => {
+      const card = document.querySelectorAll('.meal-card')[2];
+      [...(card?.querySelectorAll('.dish-view-actions button') || [])]
+        .find((button) => button.innerText.includes('Dividi in componenti'))?.click();
+    })()`);
+    await wait(350);
+    await evaluate(`document.querySelectorAll('.meal-card')[2]?.querySelector('.meal-part .part-change')?.click()`);
+    await wait(350);
+    Object.assign(occasionalSplitPhoto, await evaluate(`(() => {
+      const group = document.querySelector('.part-picker-sheet .cheat-picker-group');
+      if (group) group.open = true;
+      const tiramisu = [...(group?.querySelectorAll('.complete-meal-select') || [])]
+        .find((button) => button.innerText.includes('Tiramisù'));
+      const result = { optionFound: Boolean(tiramisu) };
+      tiramisu?.click();
+      return result;
+    })()`));
+    await wait(500);
+    await evaluate(`(() => {
+      const card = document.querySelectorAll('.meal-card')[2];
+      [...(card?.querySelectorAll('.dish-view-actions button') || [])]
+        .find((button) => button.innerText.includes('Modifica porzione'))?.click();
+    })()`);
+    await wait(400);
+    Object.assign(occasionalSplitPhoto, await evaluate(`(() => {
+      const card = document.querySelectorAll('.meal-card')[2];
+      const part = [...(card?.querySelectorAll('.meal-part') || [])]
+        .find((item) => /tiramis/i.test(item.innerText));
+      const image = part?.querySelector('img');
+      return {
+        componentFound: Boolean(part),
+        dedicatedPhoto: Boolean(image?.src.includes('cheat-tiramisu')),
+        breadFallbackAbsent: Boolean(image && !image.src.includes('part-bread')),
+        editable: Boolean(part?.querySelector('input')),
+      };
+    })()`));
+  }
   const checkinAdaptation = await evaluate(`(() => {
     const toggle = document.querySelector('.checkin-toggle');
     const beforeMenu = [...document.querySelectorAll('.meal-card h3')].map((heading) => heading.innerText.trim());
@@ -1428,6 +1493,7 @@ try {
     mealRegistration,
     mealPartAddition,
     occasionalAddition,
+    occasionalSplitPhoto,
     readyDishFlow,
     checkinAdaptation,
     profileAdaptation,
@@ -1506,6 +1572,10 @@ try {
       !occasionalAddition.pizzaAvailable || !occasionalAddition.freeChoiceAlsoAvailable ||
       !occasionalAddition.appended || !occasionalAddition.pizzaPhoto || !occasionalAddition.pizzaEditable ||
       !occasionalAddition.pickerClosed || !occasionalAddition.originalPartsKept || !occasionalAddition.removedDirectly)) ||
+    (Number(version.split('.').at(-1)) >= 84 && (!occasionalAddition.replacementAvailable ||
+      !occasionalAddition.replacementKeptMeal || !occasionalAddition.oldPizzaGone || !occasionalAddition.tiramisuPhoto)) ||
+    (!occasionalSplitPhoto.skipped && (!occasionalSplitPhoto.optionFound || !occasionalSplitPhoto.componentFound ||
+      !occasionalSplitPhoto.dedicatedPhoto || !occasionalSplitPhoto.breadFallbackAbsent || !occasionalSplitPhoto.editable)) ||
     !readyDishFlow.found || !readyDishFlow.completePickerFound || readyDishFlow.completeOptions < 2 ||
     !readyDishFlow.recipeInfoAvailableBeforeChoice || !readyDishFlow.fullDishApplied ||
     !readyDishFlow.hasRecipeDetail || !readyDishFlow.hasReadyDishChange || !readyDishFlow.hasSplit ||

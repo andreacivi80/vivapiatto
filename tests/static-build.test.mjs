@@ -427,6 +427,13 @@ test("v1.16.17 keeps swap navigation visible and exposes occasional choices", as
   assert.match(app, /gelatoComposerOpen && \(/);
   assert.match(app, /const addOccasionalRecipe = /);
   assert.match(app, /if \(partPicker\.adding\) addOccasionalRecipe\(recipe\)/);
+  assert.match(app, /const occasionalPhoto = occasionalRecipes\.find\(/);
+  assert.match(app, /image: known\?\.image \|\| occasionalPhoto \|\|/);
+  assert.match(app, /occasionalGroupId\?: string/);
+  assert.match(app, /const replaceOccasionalParts = /);
+  assert.match(app, /partPicker\.part\.occasionalGroupId\) replaceOccasionalRecipe\(recipe\)/);
+  assert.match(app, /const editableOccasional = r\.id\.startsWith\("occasional-"\)/);
+  assert.match(app, /editableOccasional && !r\.parts \? "Modifica porzione"/);
   assert.match(app, /Chiudi composizione gelato/);
   assert.match(app, /↻ Cambia piatto/);
   assert.match(app, /swapFoodOptions/);
