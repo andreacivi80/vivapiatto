@@ -7975,7 +7975,7 @@ const attachmentBaseBreakfasts: Recipe[] = [
     course: "Colazione",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("recipe-c06-spinach-omelette-v11674"),
+    image: photo("recipe-c06-spinach-omelette-v1203"),
     time: 15,
     ingredients: [
       { food: "Uova strapazzate o in frittata", grams: 100 },

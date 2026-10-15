@@ -39,3 +39,10 @@
 Regola permanente: prima si definiscono ingredienti e preparazione, poi si crea o si seleziona la fotografia corrispondente. Un'immagine con ingredienti estranei viene scartata.
 
 Gli audit automatici garantiscono presenza, formato leggibile, collegamento e unicità dell'immagine, ma non certificano la corrispondenza visiva dei pixel. Il controllo manuale di tutto il catalogo resta aperto. Nella v1.19.79 sono stati controllati visivamente gli asset del prosciutto cotto e della fesa di tacchino (affettati separati dal pane), nonché la crema di mandorle, il gelato al cioccolato e il fiordilatte (immagini riconoscibili e distinte).
+
+## v1.20.3 — controllo visivo puntuale
+
+- [x] Controllate le foto complete C01-C04, C06 e C07 rispetto alla lista degli ingredienti.
+- [x] C06: la vecchia foto ometteva il kiwi; sostituita con una nuova immagine che mostra omelette agli spinaci, pane integrale e kiwi sullo stesso piatto.
+- [x] Verificate visivamente anche le immagini atomiche di broccoli, cavolfiori, carote cotte, olive, lattuga e zucchine cotte: il soggetto principale è riconoscibile.
+- [ ] Il controllo visivo dell'intero catalogo resta aperto: la verifica qui è limitata agli asset elencati.
