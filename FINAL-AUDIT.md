@@ -1,6 +1,6 @@
 # Tavola Mia — audit progressivo del perimetro ricevuto
 
-Data verifica: 15 ottobre 2026. Ultimo checkpoint pubblico verificato: `1.19.84`.
+Data verifica: 15 ottobre 2026. Ultimo checkpoint pubblico verificato: `1.19.91`.
 
 Questo audit registra copertura tecnica e prove eseguite; non certifica clinicamente un piano alimentare né sostituisce la revisione visiva completa delle fotografie. I controlli residui sono in `MASTER-CHECKLIST.md`.
 
@@ -16,14 +16,15 @@ Questo audit registra copertura tecnica e prove eseguite; non certifica clinicam
 - Copertura selezionabile: 282/282 voci nutrizionali e 265/265 ingredienti ricetta con componente e foto.
 - Paniere esplicito: 217/217 alimenti richiesti selezionabili, fotografati e utilizzati da almeno una ricetta reale.
 - Ricette: 214/214 elementi delle matrici completi e univoci; ingredienti, grammature e componenti allineati.
-- Fotografie: 569/569 asset validi; 214/214 foto matrice dedicate; 258/258 ricette reali con foto finale dedicata, semanticamente completa e non condivisa.
+- Fotografie: 570/570 asset validi; 214/214 foto matrice dedicate; 259/259 ricette reali con foto finale dedicata, semanticamente completa e non condivisa.
 - Extra/sgarri: 114 voci univoche con chilocalorie, proteine, carboidrati, grassi, fibre e fonte.
 - Alternative: 268 alimenti senza duplicati né card vuote nella stessa categoria.
 - Rotazione: 14/14 pasti principali nei range definiti, senza famiglie proteiche consecutive.
-- Suite pubblicabile: 217/217 test superati nella 1.19.90, controllo TypeScript senza errori, SSR superato e build GitHub Pages riuscita.
+- Suite pubblicabile: 218/218 test superati nella 1.19.91, controllo TypeScript senza errori, SSR superato e build GitHub Pages riuscita.
 - Aggiornamento automatico tra release verificato su mobile reale: versione nuova rilevata senza intervento, menu, grammatura modificata e posizione di scorrimento conservati.
 - Stress mobile pubblico ripetibile: viewport 390×844, target calorico verificato su profilo pulito e contesto Lavoro/Casa, check-in adattivo, conferma/rotazione/stampa settimanale, quattro famiglie delle 214 ricette, ritorno fisso, alternative del latte, modifica grammatura persistente, aggiunta/rimozione diretta di componenti, fotografie visibili realmente caricate e zero errori JavaScript.
-- Pubblicazione verificata sul link unico: manifest `1.19.90`, HTML e asset JavaScript allineati, workflow GitHub riuscito. Il secondo stress mobile pubblico della 1.19.90 è passato senza errori JavaScript, overflow globale, recupero, immagini rotte o immagini pendenti; un primo passaggio aveva segnalato un controllo fallito non riprodotto nella ripetizione. Le due card lunghe segnalate contengono tutto il testo a 320/390 px; con “+ → Sgarri” la pizza è visibile attraverso un accesso rapido fisso, si aggiunge al pasto senza cancellarne le parti, mostra la propria foto e si rimuove direttamente. Anche dopo un filtro ricette precedente, la categoria Sgarri ripropone pizza e altre scelte occasionali. Pizza → tiramisù sostituisce soltanto lo sgarro aggiunto; il tiramisù offre “Modifica porzione”, componente e foto propri.
+- Pubblicazione verificata sul link unico: manifest `1.19.91`, HTML e asset JavaScript allineati. Lo stress mobile pubblico della 1.19.91 è passato senza errori JavaScript, overflow globale, recupero, immagini rotte o immagini pendenti. Le due card lunghe segnalate contengono tutto il testo a 320/390 px; con “+ → Sgarri” la pizza è visibile attraverso un accesso rapido fisso, si aggiunge al pasto senza cancellarne le parti, mostra la propria foto e si rimuove direttamente. Anche dopo un filtro ricette precedente, la categoria Sgarri ripropone pizza e altre scelte occasionali. Pizza → tiramisù sostituisce soltanto lo sgarro aggiunto; il tiramisù offre “Modifica porzione”, componente e foto propri.
+- Collaudo stile e lavoro della 1.19.91 sulla versione pubblica: tutti i 14 pasti principali iniziali sono italiani, i cinque pranzi feriali sono trasportabili; anche dopo Asiatico → Italiano, i 14 pasti restano italiani/mediterranei e i cinque pranzi feriali restano pratici. Il nuovo panino caprese ha foto finale dedicata e istruzioni per mantenere al fresco la mozzarella, coerenti con le indicazioni di sicurezza alimentare della [FDA](https://www.fda.gov/food/buy-store-serve-safe-food/handling-food-safely-while-eating-outdoors) e del [Ministero della Salute](https://www.salute.gov.it/new/it/news-e-media/notizie/etichette-e-igiene-ecco-le-regole-la-sicurezza-alimentare/).
 - Il repository nella cartella `Scheda Alimenti` è stato allineato senza cancellare le modifiche locali preesistenti; lo script di audit fotografico usa un percorso filesystem corretto anche quando la cartella contiene spazi.
 - Su una settimana già confermata, il cambio dello stile alimentare a vegetariano ha riaperto il piano e ricalcolato 34 pasti non registrati senza carne o pesce, conservando il pasto già registrato.
 - Una scelta libera di piatto completo anche fuori dalla categoria automatica resta visibile dopo la ricarica; il riequilibrio dei giorni successivi non reintroduce ricette escluse. La settimana segnala i pasti incompatibili ancora da fare e ne impedisce la conferma finché non sono sostituiti.
