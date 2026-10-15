@@ -3042,6 +3042,21 @@ test("v1.19.94 adds Japanese egg dishes with matching photographs and cooked-ric
   assert.match(source, /MAFF · Tamagoyaki adattato in piatto completo/);
 });
 
+test("v1.19.95 adds two source-documented Asian legume lunches with distinct final photos", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  for (const id of ["asian-dondoroke-tofu-rice", "asian-chana-masala-brown-rice"]) {
+    assert.match(source, new RegExp(`id: "${id}"`));
+  }
+  for (const name of ["recipe-asian-dondoroke-tofu-rice", "recipe-asian-chana-masala-rice"]) {
+    const photo = await readFile(new URL(`../public/food/${name}-v11995.png`, import.meta.url));
+    assert.ok(photo.length > 100_000);
+    assert.match(source, new RegExp(`${name}-v11995`));
+  }
+  assert.match(source, /MAFF · Dondoroke-meshi adattato/);
+  assert.match(source, /NHS · Chana Masala adattato/);
+  assert.match(source, /\.\.\.verifiedAsianLegumeRecipes/);
+});
+
 test("v1.19.86 separates recipe provenance from ingredient nutrition data", async () => {
   const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(source, /const recipeSourceKind = \(recipe: Recipe\) => \{/);

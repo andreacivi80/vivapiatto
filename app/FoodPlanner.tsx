@@ -103,7 +103,7 @@ const SLOT_LABELS = [
 const VERSION = packageFile.version;
 const recipeSourceKind = (recipe: Recipe) => {
   const label = recipe.sourceLabel || "";
-  if (/^(FSSAI|MAFF|VisitKorea|Tourism Authority of Thailand)/.test(label)) return "dish";
+  if (/^(FSSAI|MAFF|NHS|VisitKorea|Tourism Authority of Thailand)/.test(label)) return "dish";
   if (label.startsWith("Harvard T.H. Chan")) return "model";
   if (label.startsWith("USDA Food Safety")) return "safety";
   return "nutrition";
@@ -795,6 +795,15 @@ const foods: Record<string, Food> = {
     carbs: 3.6,
     fat: 0.4,
     fiber: 2.2,
+    source: "CREA",
+  },
+  "Spinaci cotti": {
+    // CREA 005705: spinaci bolliti, scolati, senza condimenti.
+    kcal: 41,
+    protein: 4,
+    carbs: 3.5,
+    fat: 0.8,
+    fiber: 2.3,
     source: "CREA",
   },
   Fagiolini: {
@@ -6301,9 +6310,10 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       category: "Contorno",
       food: "Spinaci",
       grams: 200,
-      label: "Spinaci",
-      image: photo("part-spinach-v7"),
+      label: "Spinaci crudi",
+      image: photo("part-spinach-raw-v11995"),
     },
+    { category: "Contorno", food: "Spinaci cotti", grams: 150, label: "Spinaci cotti bolliti · 150 g", image: photo("part-spinach-cooked-v11995") },
     {
       category: "Contorno",
       food: "Fagiolini",
@@ -10170,6 +10180,78 @@ const verifiedJapaneseEggRecipes: Recipe[] = [
   },
 ];
 
+// Both source preparations are adapted for a one-person complete meal. NHS
+// explicitly suggests rice and vegetables with Chana Masala; MAFF describes
+// a rice/tofu/vegetable lunchbox. Nutrition is summed from our ingredient data.
+const verifiedAsianLegumeRecipes: Recipe[] = [
+  {
+    id: "asian-dondoroke-tofu-rice",
+    name: "Riso giapponese con tofu, funghi e carote",
+    kicker: "Ispirato al dondoroke-meshi di Tottori · piatto completo adattato",
+    course: "Piatto unico",
+    cuisine: "Asiatico",
+    image: photo("recipe-asian-dondoroke-tofu-rice-v11995"),
+    time: 30,
+    ingredients: [
+      { food: "Riso giapponese cotto", grams: 150 },
+      { food: "Tofu alla piastra", grams: 150 },
+      { food: "Funghi cotti", grams: 100 },
+      { food: "Carote cotte bollite", grams: 100 },
+      { food: "Cipollotti freschi", grams: 30 },
+      { food: "Salsa di soia", grams: 10 },
+      { food: "Olio extravergine", grams: 5 },
+    ],
+    steps: [
+      "Cuoci circa 55 g di riso giapponese secco secondo la confezione, lascialo riposare e pesa 150 g dopo la cottura.",
+      "Taglia le carote a listarelle e lessale 8-10 minuti; pesane 100 g cotte. Pulisci i funghi, affettali e cuocili in padella con poca acqua finché sono teneri; pesane 100 g cotti.",
+      "Scola e tampona il tofu. Taglialo a cubetti, scalda 5 g d'olio in padella e fallo dorare su più lati per 6-8 minuti. Pesa 150 g di tofu cotto per questa porzione.",
+      "Aggiungi funghi, carote e 10 g di salsa di soia al tofu e mescola per 2 minuti. Unisci il riso cotto, mescola senza schiacciarlo e completa con 30 g di cipollotto lavato e tritato.",
+    ],
+    alternatives: [
+      "Per il lavoro: prepara la sera, raffredda rapidamente e trasporta in borsa termica; conserva al freddo e riscalda bene prima del pasto.",
+      "La ricetta regionale usa anche radice di bardana, konjac e tofu fritto: questa è una versione semplificata, non la preparazione tradizionale completa.",
+    ],
+    sourceLabel: "MAFF · Dondoroke-meshi adattato con ingredienti comuni; nutrienti calcolati da CREA/USDA",
+    sourceUrl: "https://www.maff.go.jp/e/policies/market/k_ryouri/search_menu/2706/index.html",
+  },
+  {
+    id: "asian-chana-masala-brown-rice",
+    name: "Chana masala con riso integrale e spinaci",
+    kicker: "Curry di ceci pratico da preparare in anticipo · adattamento NHS",
+    course: "Piatto unico",
+    cuisine: "Asiatico",
+    image: photo("recipe-asian-chana-masala-rice-v11995"),
+    time: 35,
+    ingredients: [
+      { food: "Ceci cotti", grams: 150 },
+      { food: "Riso integrale secco", grams: 60, label: "Riso integrale · 60 g pesati secchi" },
+      { food: "Spinaci cotti", grams: 120 },
+      { food: "Passata di pomodoro", grams: 120 },
+      { food: "Cipolle crude", grams: 50 },
+      { food: "Aglio crudo", grams: 3 },
+      { food: "Zenzero fresco", grams: 5 },
+      { food: "Curry in polvere", grams: 2 },
+      { food: "Curcuma in polvere", grams: 1 },
+      { food: "Succo di limone", grams: 10 },
+      { food: "Coriandolo fresco", grams: 5 },
+      { food: "Olio extravergine", grams: 5 },
+    ],
+    steps: [
+      "Pesa 60 g di riso integrale secco, sciacqualo e cuocilo nel tempo indicato dalla confezione, in genere 25-35 minuti. Il conteggio nutrizionale usa i 60 g prima della cottura.",
+      "Risciacqua 150 g di ceci già cotti e sgocciolati. Trita 50 g di cipolla e 3 g d'aglio; grattugia 5 g di zenzero.",
+      "In una padella scalda 5 g d'olio, ammorbidisci cipolla, aglio e zenzero per 5 minuti. Unisci curry, curcuma e 120 g di passata, poi mescola.",
+      "Aggiungi i ceci e sobbolli 15-20 minuti a fuoco basso finché la salsa si addensa. Nel frattempo cuoci gli spinaci e pesane 120 g cotti.",
+      "Spegni, aggiungi 10 g di succo di limone e 5 g di coriandolo lavato. Servi il curry con il riso e gli spinaci, senza aggiungere olio non conteggiato.",
+    ],
+    alternatives: [
+      "Il NHS suggerisce di preparare il curry in anticipo: per il lavoro raffreddalo rapidamente, conservalo al freddo e riscaldalo completamente.",
+      "La miscela di spezie NHS usa cumino, coriandolo macinato e garam masala; qui il curry pronto li sostituisce in una versione semplificata dichiarata.",
+    ],
+    sourceLabel: "NHS · Chana Masala adattato con riso e spinaci; nutrienti calcolati da CREA/USDA",
+    sourceUrl: "https://www.dbth.nhs.uk/wp-content/uploads/2021/08/WPR48000-Chana-Masala-Chickpea-Curry.pdf",
+  },
+];
+
 const rawRecipes: Recipe[] = [
   ...everydayLegumeRecipes,
   ...pantryIntegrationRecipes,
@@ -10207,6 +10289,7 @@ const rawRecipes: Recipe[] = [
   ...verifiedWorldRecipeExpansion,
   ...verifiedIndianPaneerRecipes,
   ...verifiedJapaneseEggRecipes,
+  ...verifiedAsianLegumeRecipes,
   ...occasionalRecipes,
   ...recipes,
 ];
