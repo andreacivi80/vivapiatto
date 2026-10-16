@@ -3218,3 +3218,30 @@ test("v1.20.4 shows strawberries with the oat-and-banana pancakes", async () => 
   assert.match(source, /matrix-c05-oat-pancakes[\s\S]{0,800}food: "Fragole"/);
   assert.ok(asset.length > 100_000);
 });
+
+test("v1.20.5 shows the complete S27-S34 snacks, not a single ingredient", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const images = [
+    ["s27-apricot-almond", "recipe-s27-apricot-almond-v1205"],
+    ["s28-kefir-blackberries-flax", "recipe-s28-kefir-blackberries-flax-v1205"],
+    ["s29-ricotta-apple", "recipe-s29-ricotta-apple-v1205"],
+    ["s30-rice-cakes-hummus", "recipe-s30-rice-cakes-hummus-v1205"],
+    ["s31-orange-peanuts", "recipe-s31-orange-peanuts-v1205"],
+    ["s32-cottage-carrot-cucumber", "recipe-s32-cottage-carrot-cucumber-v1205"],
+    ["s33-yogurt-pineapple-sesame", "recipe-s33-yogurt-pineapple-sesame-v1205"],
+    ["s34-rye-ricotta-radish", "recipe-s34-rye-ricotta-radish-v1205"],
+  ];
+  for (const [recipe, image] of images) {
+    assert.match(source, new RegExp(`id: "matrix-${recipe}"[^\\n]*image: photo\\("${image}"\\)`));
+    const asset = await readFile(new URL(`../public/food/${image}.png`, import.meta.url));
+    assert.ok(asset.length > 100_000, image);
+  }
+});
+
+test("v1.20.5 waits for a complete new release before showing an old one", async () => {
+  const main = await readFile(new URL("../main.tsx", import.meta.url), "utf8");
+  assert.match(main, /controller\.abort\(\), 8000/);
+  assert.match(main, /attempt < 8 && !controller\.signal\.aborted/);
+  assert.match(main, /if \(ready\) break/);
+  assert.match(main, /window\.location\.replace\(url\.toString\(\)\)/);
+});

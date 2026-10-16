@@ -57,4 +57,11 @@ Gli audit automatici garantiscono presenza, formato leggibile, collegamento e un
 ## Spuntini: controllo visivo in corso
 
 - [x] Prima scansione delle foto S01–S19: soggetti principali riconoscibili (frutta, latticini, pane, verdure, frutta secca, cioccolato, hummus e frullato) senza omissioni evidenti rispetto ai nomi delle ricette.
-- [ ] Restano da esaminare S20–S42 e la corrispondenza fine di ogni ingrediente rispetto alla preparazione.
+- [x] Prima scansione delle foto S20–S42. S27–S34 usavano come foto finale un solo ingrediente: ora mostrano l'intero spuntino, lasciando foto singole ai componenti modificabili.
+- [ ] La corrispondenza fine di ogni ingrediente rispetto alla preparazione e il resto del catalogo richiedono ancora controllo visivo.
+
+## v1.20.5 — foto finali S27–S34
+
+- [x] Otto fotografie nuove e distinte, generate in modalità `photorealistic-natural` e ottimizzate a 512×512: albicocche e mandorle; kefir, more e semi di lino; ricotta, mela e cannella; gallette con hummus, rucola e pomodorini; arancia e arachidi; fiocchi di latte, carote e cetrioli; yogurt, ananas e sesamo; pane di segale, ricotta e ravanelli.
+- [x] Verifica visiva con tavola di contatto `outputs/s27-34-photo-contact.png`, limitata alla coerenza dei soggetti visibili.
+- Prompt comune delle otto immagini: `Use case: photorealistic-natural. Square mobile nutrition-app food photograph of the finished snack described, showing exactly the named ingredients and preparation, full centered plate or bowl in soft natural daylight; no extra food, text or watermark.` Il soggetto specifico di ciascun prompt è l'elenco degli ingredienti nella voce corrispondente sopra.

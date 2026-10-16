@@ -138,7 +138,10 @@ const mountApp = () => ReactDOM.createRoot(document.getElementById("root")!).ren
 
 const startWithLatestRelease = async () => {
   const controller = new AbortController();
-  const timeout = window.setTimeout(() => controller.abort(), 2500);
+  // A mobile connection can take longer than two seconds to expose the
+  // newly published HTML and asset at the same GitHub Pages edge. Keep the
+  // app behind this startup check briefly instead of showing an old build.
+  const timeout = window.setTimeout(() => controller.abort(), 8000);
   try {
     const response = await fetch(`${import.meta.env.BASE_URL}version.json?start=${Date.now()}`, {
       cache: "no-store",
@@ -147,12 +150,17 @@ const startWithLatestRelease = async () => {
     if (response.ok) {
       const release = (await response.json()) as { version?: string; script?: string };
       if (release.version && isNewerRelease(release.version, packageFile.version)) {
-        const ready = await isReleaseReady(
-          new URL(import.meta.env.BASE_URL, window.location.href).href,
-          release.script,
-          String(Date.now()),
-          controller.signal,
-        );
+        let ready = false;
+        for (let attempt = 0; attempt < 8 && !controller.signal.aborted; attempt += 1) {
+          ready = await isReleaseReady(
+            new URL(import.meta.env.BASE_URL, window.location.href).href,
+            release.script,
+            String(Date.now()),
+            controller.signal,
+          );
+          if (ready) break;
+          await new Promise<void>((resolve) => window.setTimeout(resolve, 500));
+        }
         if (!ready) {
           mountApp();
           return;
