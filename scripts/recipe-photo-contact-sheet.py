@@ -20,7 +20,7 @@ def main() -> None:
         raise SystemExit("invalid recipe range")
     cards = []
     for number in range(first, last + 1):
-        pattern = rf'id: "matrix-{family}{number:02d}-[^\"]+"[\s\S]{{0,700}}?image: photo\("([^\"]+)"\)'
+        pattern = rf'id:\s*"matrix-{family}{number:02d}-[^\"]+"[\s\S]{{0,700}}?image:\s*photo\("([^\"]+)"\)'
         match = re.search(pattern, SOURCE)
         if not match:
             raise SystemExit(f"no source photo for {family.upper()}{number:02d}")

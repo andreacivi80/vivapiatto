@@ -3245,3 +3245,18 @@ test("v1.20.5 waits for a complete new release before showing an old one", async
   assert.match(main, /if \(ready\) break/);
   assert.match(main, /window\.location\.replace\(url\.toString\(\)\)/);
 });
+
+test("v1.20.6 shows complete dinners D49-D52 instead of atomic ingredients", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const images = [
+    ["d49-burger-di-fagioli-rossi-con-cavolo-e-patate", "recipe-d49-bean-burger-v1206"],
+    ["d50-tacchino-con-funghi-spinaci-e-polenta", "recipe-d50-turkey-polenta-v1206"],
+    ["d51-sardine-con-cavolo-rosso-finocchi-e-pane-di-sega", "recipe-d51-sardines-cabbage-v1206"],
+    ["d52-tofu-con-melanzane-pomodori-e-cous-cous", "recipe-d52-tofu-eggplant-v1206"],
+  ];
+  for (const [recipe, image] of images) {
+    assert.match(source, new RegExp(`id: "matrix-${recipe}"[^\\n]*image: photo\\("${image}"\\)`));
+    const asset = await readFile(new URL(`../public/food/${image}.png`, import.meta.url));
+    assert.ok(asset.length > 100_000, image);
+  }
+});

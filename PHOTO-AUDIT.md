@@ -65,3 +65,10 @@ Gli audit automatici garantiscono presenza, formato leggibile, collegamento e un
 - [x] Otto fotografie nuove e distinte, generate in modalità `photorealistic-natural` e ottimizzate a 512×512: albicocche e mandorle; kefir, more e semi di lino; ricotta, mela e cannella; gallette con hummus, rucola e pomodorini; arancia e arachidi; fiocchi di latte, carote e cetrioli; yogurt, ananas e sesamo; pane di segale, ricotta e ravanelli.
 - [x] Verifica visiva con tavola di contatto `outputs/s27-34-photo-contact.png`, limitata alla coerenza dei soggetti visibili.
 - Prompt comune delle otto immagini: `Use case: photorealistic-natural. Square mobile nutrition-app food photograph of the finished snack described, showing exactly the named ingredients and preparation, full centered plate or bowl in soft natural daylight; no extra food, text or watermark.` Il soggetto specifico di ciascun prompt è l'elenco degli ingredienti nella voce corrispondente sopra.
+
+## v1.20.6 — prime scansioni di pranzi e cene
+
+- [x] Prima scansione visiva della matrice P01–P64 e D01–D64 su tavole di contatto. P01–P64 e D01–D48 mostrano il piatto completo senza omissioni evidenti a questa scala; non equivale a una certificazione nutrizionale o fotografica di dettaglio.
+- [x] D49–D64 mostravano come foto finale soltanto un ingrediente. Sostituite D49–D52 con quattro foto di piatti completi: burger di fagioli con cavolo e patate; tacchino con polenta, funghi e spinaci; sardine con cavolo rosso, finocchi e pane di segale; tofu con melanzane, pomodorini e cous cous.
+- [x] Nuove immagini generate in modalità `photorealistic-natural`, poi ottimizzate a 512×512; i componenti atomici rimangono separati e modificabili. Prompt: `Square high-quality editorial food photograph for a mobile nutrition app. Finished home-cooked dinner on one ceramic plate with exactly the recipe ingredients described above, each visible and recognizable; no other food, no text, no watermark, soft natural daylight.`
+- [ ] Completare le fotografie finali D53–D64, poi la verifica visiva di dettaglio del resto del catalogo e degli ingredienti atomici.
