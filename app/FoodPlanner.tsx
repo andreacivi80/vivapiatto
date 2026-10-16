@@ -10870,10 +10870,20 @@ export function FoodPlanner() {
       Boolean(extraName.trim()),
   );
 
+  const refreshToRelease = (nextVersion: string) => {
+    writeStorageItem(localStorage, "vivapiatto-v1", refreshSnapshotRef.current);
+    writeStorageItem(sessionStorage, "vivapiatto-release-target", nextVersion);
+    writeStorageItem(sessionStorage, "vivapiatto-release-scroll-y", String(window.scrollY));
+    const refreshUrl = new URL(window.location.href);
+    refreshUrl.searchParams.set("_release", `${nextVersion}-${Date.now()}`);
+    window.location.replace(refreshUrl.toString());
+  };
+
   useEffect(() => {
     let disposed = false;
     let updateWaiting = false;
     let pendingVersion = "";
+    let latestObservedVersion = VERSION;
     let checking = false;
     const applyWhenSafe = () => {
       if (
@@ -10882,12 +10892,7 @@ export function FoodPlanner() {
         !updateBlockedRef.current &&
         Date.now() >= userInteractionUntilRef.current
       ) {
-        writeStorageItem(localStorage, "vivapiatto-v1", refreshSnapshotRef.current);
-        writeStorageItem(sessionStorage, "vivapiatto-release-target", pendingVersion);
-        writeStorageItem(sessionStorage, "vivapiatto-release-scroll-y", String(window.scrollY));
-        const refreshUrl = new URL(window.location.href);
-        refreshUrl.searchParams.set("_release", `${pendingVersion}-${Date.now()}`);
-        window.location.replace(refreshUrl.toString());
+        refreshToRelease(pendingVersion);
       }
     };
     const checkVersion = async () => {
@@ -10901,6 +10906,10 @@ export function FoodPlanner() {
         if (!response.ok) return;
         const release = (await response.json()) as { version?: string; script?: string };
         if (release.version && isNewerRelease(release.version, VERSION)) {
+          // An older CDN response must not replace a newer version already
+          // seen by this tab while Pages is propagating a release.
+          if (isNewerRelease(latestObservedVersion, release.version)) return;
+          latestObservedVersion = release.version;
           setAvailableRelease(release.version);
           const ready = await isReleaseReady(
             new URL(import.meta.env.BASE_URL, window.location.href).href,
@@ -10912,6 +10921,10 @@ export function FoodPlanner() {
             updateWaiting = true;
             pendingVersion = release.version;
             applyWhenSafe();
+          } else {
+            // Never reload to an earlier release left pending by a prior poll.
+            updateWaiting = false;
+            pendingVersion = "";
           }
         }
       } catch {
@@ -14088,12 +14101,27 @@ export function FoodPlanner() {
           <strong>Tavola Mia</strong>
           <span>piano · ricette · diario</span>
         </div>
-        <span className="version">v{VERSION}</span>
+        {availableRelease ? (
+          <button
+            type="button"
+            className="version version-update"
+            disabled={!releaseReady}
+            aria-label={releaseReady
+              ? `Versione in uso ${VERSION}. Aggiorna ora alla versione ${availableRelease}`
+              : `Versione in uso ${VERSION}. Nuova versione ${availableRelease} in preparazione`}
+            onClick={() => refreshToRelease(availableRelease)}
+          >
+            <span>v{VERSION}</span>
+            <span>→ v{availableRelease}</span>
+          </button>
+        ) : (
+          <span className="version">v{VERSION}</span>
+        )}
       </header>
       {availableRelease && (
         <div className="release-pending" role="status">
           Questa schermata è la v{VERSION}; pubblicata v{availableRelease} · {releaseReady
-            ? "aggiornamento automatico appena termini la modifica."
+            ? "aggiornamento automatico appena termini la modifica. Oppure tocca la versione in alto."
             : "attendo che tutti i file siano disponibili."}
         </div>
       )}

@@ -24,7 +24,10 @@ export const isReleaseReady = async (
 ) => {
   if (!script) return false;
   const base = new URL(baseUrl);
-  const page = new URL(`index.html?release_check=${encodeURIComponent(nonce)}`, base);
+  // Check the exact entry URL used by the app. GitHub Pages can cache `/`
+  // and `/index.html` separately; a fresh index.html did not prove that a
+  // refresh of the public link would receive the new bundle.
+  const page = new URL(`?release_check=${encodeURIComponent(nonce)}`, base);
   const response = await fetch(page, { cache: "no-store", signal });
   if (!response.ok) return false;
   const html = await response.text();

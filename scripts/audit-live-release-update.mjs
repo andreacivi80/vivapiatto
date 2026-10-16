@@ -134,7 +134,9 @@ try {
 
   let finalState = null;
   let releaseNavigation = false;
-  for (let attempt = 0; attempt < 120; attempt += 1) {
+  // Pages deployment can take longer than ten minutes; distinguish a slow
+  // publication from a broken refresh in the real browser.
+  for (let attempt = 0; attempt < 240; attempt += 1) {
     await wait(5_000);
     try {
       finalState = await evaluate(`(() => ({

@@ -87,6 +87,26 @@ button {
   color: var(--ink);
   font-weight: 800;
 }
+.topbar .version-update {
+  border: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  font: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.topbar .version-update span {
+  margin: 0;
+  color: inherit;
+  font-size: 10px;
+  line-height: 1.1;
+}
+.topbar .version-update:disabled {
+  cursor: wait;
+  opacity: .7;
+}
 .release-pending {
   position: fixed;
   top: 66px;
