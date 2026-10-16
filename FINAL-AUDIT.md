@@ -118,3 +118,9 @@ Il link resta unico: https://andreacivi80.github.io/vivapiatto/
 - Foto di cipolle crude, cracker integrali e tre risi rese coerenti con le rispettive descrizioni e con lo stato crudo/cotto. Nessun alimento aggiunto o quantità nutrizionale cambiata.
 - `npm test` 237/237; audit foto 609/609; 266/266 ricette con foto finale distinta. Manifest pubblico `1.20.9`, script `index-C9GMoHXq.js` e cinque nuove foto verificati sul link esistente; stress test mobile pubblico superato, incluso «+ → Sgarri», senza overflow o errori JavaScript.
 - Il test di transizione su scheda già aperta `1.20.8 → 1.20.9` è scaduto prima di osservare il cambio di versione: ha conservato menù, grammatura 54 g e scroll 900 px, ma non prova il refresh automatico di questo passaggio. Il manifest pubblico risulta poi allineato; ripetere la verifica live alla prossima pubblicazione avviando l'osservazione immediatamente prima del push.
+
+## Checkpoint pubblico 1.20.10
+
+- Corretto il controllo di disponibilità della release: verifica la stessa URL principale `/vivapiatto/` che verrà ricaricata, non `/vivapiatto/index.html` che GitHub Pages può tenere in una cache diversa. La testata distingue la versione attiva da quella nuova e permette di aggiornare subito; l'aggiornamento automatico resta rinviato se una modifica è ancora aperta.
+- `npm test` 237/237. Manifest pubblico `1.20.10` e script `index-BYFG0R5v.js` allineati sullo stesso link. Test mobile pubblico riuscito, senza overflow o errori JavaScript.
+- Test di transizione live `1.20.9 → 1.20.10` riuscito su una scheda lasciata aperta: refresh automatico osservato, grammatura 54 g, menù e scroll 900 px preservati; nessun errore JavaScript. Questo prova il passaggio osservato, non garantisce assenza di futuri ritardi di rete o cache.
