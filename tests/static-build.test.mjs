@@ -139,7 +139,7 @@ test("sorgente mobile con versione e fonti", async () => {
     "part-cola-zero-v11673",
     "part-zero-soda-v11673",
     "part-sugary-soda-v11673",
-    "part-white-wine-v11673",
+    "part-white-wine-v1208",
     "part-red-wine-v11673"
 ]) {
     assert.match(app, new RegExp(asset));
@@ -259,7 +259,7 @@ test("sorgente mobile con versione e fonti", async () => {
     const recipeId = `matrix-c${String(code).padStart(2, "0")}`;
     assert.match(app, new RegExp(recipeId), `ricetta colazione mancante: ${recipeId}`);
   }
-  assert.match(app, /part-pumpkin-seeds-v11641/);
+  assert.match(app, /part-pumpkin-seeds-v1208/);
   assert.match(app, /part-egg-white-v11641/);
   assert.match(app, /part-almond-butter-v11671/);
   assert.match(app, /part-dark-chocolate-v11641/);
@@ -285,7 +285,7 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /matrix-c22-yogurt-apple-oats-sunflower/);
   assert.match(app, /matrix-c28-ricotta-pineapple-rye-sesame/);
   assert.match(app, /Semi di girasole/);
-  assert.match(app, /part-sunflower-seeds-v11640/);
+  assert.match(app, /part-sunflower-seeds-v1208/);
   assert.match(app, /Uovo in camicia/);
   assert.match(app, /part-poached-egg-v11639/);
   assert.match(app, /matrix-c21-porridge-banana-peanut/);
@@ -324,7 +324,7 @@ test("sorgente mobile con versione e fonti", async () => {
   await access(new URL("../dist/food/recipe-d48-cuttlefish-chard-v11520.png", import.meta.url));
   await access(new URL("../dist/food/recipe-asian-oyakodon-v11947.png", import.meta.url));
   await access(new URL("../dist/food/recipe-asian-bibimbap-v11946.png", import.meta.url));
-  await access(new URL("../dist/food/part-sunflower-seeds-v11640.png", import.meta.url));
+  await access(new URL("../dist/food/part-sunflower-seeds-v1208.png", import.meta.url));
   await access(new URL("../dist/food/part-trout-v11645.png", import.meta.url));
   await access(new URL("../dist/food/part-octopus-v11645.png", import.meta.url));
   await access(new URL("../dist/food/part-spelt-pasta-v11643.png", import.meta.url));
@@ -332,7 +332,7 @@ test("sorgente mobile con versione e fonti", async () => {
   await access(new URL("../dist/food/part-red-beans-v11643.png", import.meta.url));
   await access(new URL("../dist/food/part-plums-v11642.png", import.meta.url));
   await access(new URL("../dist/food/part-raspberries-v11642.png", import.meta.url));
-  await access(new URL("../dist/food/part-pumpkin-seeds-v11641.png", import.meta.url));
+  await access(new URL("../dist/food/part-pumpkin-seeds-v1208.png", import.meta.url));
   await access(new URL("../dist/food/part-egg-white-v11641.png", import.meta.url));
   await access(new URL("../dist/food/part-almond-butter-v11671.png", import.meta.url));
   await access(new URL("../dist/food/part-dark-chocolate-v11641.png", import.meta.url));
@@ -611,7 +611,7 @@ test("v1.16.69 extends the verified everyday pantry with independent photos", as
     ["Verza fresca", "part-savoy-cabbage-v11668"],
     ["Cavolini di Bruxelles cotti", "part-brussels-sprouts-v11668"],
     ["Cime di rapa cotte", "part-turnip-greens-v11668"],
-    ["Cipollotti freschi", "part-spring-onions-v11668"],
+    ["Cipollotti freschi", "part-spring-onions-v1208"],
   ];
   for (const [food, asset] of foods) {
     assert.match(app, new RegExp('foods\\["' + food + '"\\]'));
@@ -3276,4 +3276,20 @@ test("v1.20.7 shows complete dinners D53-D64 instead of atomic ingredients", asy
     const asset = await readFile(new URL(`../public/food/${image}.png`, import.meta.url));
     assert.ok(asset.length > 100_000, image);
   }
+});
+test("v1.20.8 maps the repaired atomic photos to their own foods", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  for (const asset of [
+    "part-spring-onions-v1208",
+    "part-white-wine-v1208",
+    "part-farro-plain-v1208",
+    "part-walnuts-v1208",
+    "part-sunflower-seeds-v1208",
+    "part-pumpkin-seeds-v1208",
+  ]) {
+    assert.match(app, new RegExp(`photo\\("${asset}"\\)`));
+    await access(new URL(`../dist/food/${asset}.png`, import.meta.url));
+  }
+  assert.doesNotMatch(app, /photo\("part-spring-onions-v11668"\)/);
+  assert.doesNotMatch(app, /photo\("part-white-wine-v11673"\)/);
 });

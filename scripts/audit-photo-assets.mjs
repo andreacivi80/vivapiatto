@@ -2,6 +2,7 @@ import { readFile, stat } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { inflateSync } from "node:zlib";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const source = await readFile(path.join(root, "app", "FoodPlanner.tsx"), "utf8");
@@ -10,6 +11,42 @@ const uniqueNames = [...new Set(names)];
 const failures = [];
 const recipeHashes = new Map();
 const assetHashes = new Map();
+const pngDimensionsAndIntegrity = (buffer) => {
+  let offset = 8;
+  let width = 0;
+  let height = 0;
+  let bitDepth = 0;
+  let colorType = 0;
+  let interlace = 0;
+  let ended = false;
+  const chunks = [];
+  while (offset + 12 <= buffer.length) {
+    const length = buffer.readUInt32BE(offset);
+    const type = buffer.toString("ascii", offset + 4, offset + 8);
+    const end = offset + 12 + length;
+    if (end > buffer.length) throw new Error("blocco PNG troncato");
+    if (type === "IHDR") {
+      if (length !== 13) throw new Error("intestazione PNG non valida");
+      width = buffer.readUInt32BE(offset + 8);
+      height = buffer.readUInt32BE(offset + 12);
+      bitDepth = buffer[offset + 16];
+      colorType = buffer[offset + 17];
+      interlace = buffer[offset + 20];
+    }
+    if (type === "IDAT") chunks.push(buffer.subarray(offset + 8, offset + 8 + length));
+    offset = end;
+    if (type === "IEND") { ended = true; break; }
+  }
+  if (!ended || !chunks.length || !width || !height) throw new Error("struttura PNG incompleta");
+  const decoded = inflateSync(Buffer.concat(chunks));
+  const channels = { 0: 1, 2: 3, 3: 1, 4: 2, 6: 4 }[colorType];
+  if (!channels) throw new Error("tipo colore PNG non supportato");
+  if (interlace === 0) {
+    const expected = height * (1 + Math.ceil(width * channels * bitDepth / 8));
+    if (decoded.length !== expected) throw new Error("pixel PNG incompleti");
+  }
+  return { width, height };
+};
 const jpegDimensions = (buffer) => {
   let offset = 2;
   while (offset + 9 < buffer.length) {
@@ -44,14 +81,15 @@ for (const name of uniqueNames) {
     );
     const jpegSignature = buffer[0] === 0xff && buffer[1] === 0xd8;
     const jpegSize = jpegSignature ? jpegDimensions(buffer) : { width: 0, height: 0 };
-    const width = pngSignature && buffer.length >= 24 ? buffer.readUInt32BE(16) : jpegSize.width;
-    const height = pngSignature && buffer.length >= 24 ? buffer.readUInt32BE(20) : jpegSize.height;
+    const pngSize = pngSignature ? pngDimensionsAndIntegrity(buffer) : { width: 0, height: 0 };
+    const width = pngSignature ? pngSize.width : jpegSize.width;
+    const height = pngSignature ? pngSize.height : jpegSize.height;
     if (!pngSignature && !jpegSignature) failures.push(name + ": formato immagine non valido");
     else if (info.size < 10_000) failures.push(name + ": file troppo piccolo (" + info.size + " byte)");
     else if (width < 200 || height < 200)
       failures.push(name + ": risoluzione insufficiente (" + width + "×" + height + ")");
-  } catch {
-    failures.push(name + ": file mancante");
+  } catch (error) {
+    failures.push(name + ": file mancante o danneggiato (" + error.message + ")");
   }
 }
 

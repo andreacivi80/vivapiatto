@@ -38,6 +38,15 @@
 
 Regola permanente: prima si definiscono ingredienti e preparazione, poi si crea o si seleziona la fotografia corrispondente. Un'immagine con ingredienti estranei viene scartata.
 
+## v1.20.8 — integrità e foto atomiche
+
+- [x] Il controllo automatico ora decomprime tutti i PNG referenziati e verifica che i pixel siano completi, invece di leggere soltanto firma e dimensioni. Ha individuato due file troncati prima non segnalati.
+- [x] Sostituite le foto danneggiate di cipollotti freschi e vino bianco con due nuove immagini distinte.
+- [x] Scansione visiva delle voci atomiche in otto tavole di contatto: corretti farro cotto (prima mostrava un'insalata), noci (prima compariva una bilancia), semi di girasole e semi di zucca (prima poco rappresentativi).
+- [ ] Resta aperto il controllo visivo approfondito di tutte le altre foto; integrità dei file e correttezza del soggetto sono verifiche diverse.
+
+Le sei nuove immagini sono state generate come foto realistiche di un solo alimento/bevanda, con piatto o bicchiere interamente visibile, luce naturale e senza ingredienti estranei; ottimizzate a 512×512. Prompt specifici: `ONLY fresh spring onions with white bulbs and green leaves`; `single glass of pale white wine`; `ONLY plain cooked farro grains`; `ONLY shelled walnut halves`; `ONLY edible hulled sunflower seeds`; `ONLY edible hulled pumpkin seeds`. Modalità: generazione fotorealistica naturale, non modifica di fotografie di terzi.
+
 Gli audit automatici garantiscono presenza, formato leggibile, collegamento e unicità dell'immagine, ma non certificano la corrispondenza visiva dei pixel. Il controllo manuale di tutto il catalogo resta aperto. Nella v1.19.79 sono stati controllati visivamente gli asset del prosciutto cotto e della fesa di tacchino (affettati separati dal pane), nonché la crema di mandorle, il gelato al cioccolato e il fiordilatte (immagini riconoscibili e distinte).
 
 ## v1.20.3 — controllo visivo puntuale

@@ -138,7 +138,7 @@ const drinkOptions: LogItem[] = [
   { label: "Coca-Cola Zero", kcal: 0, amount: "330 ml", image: photo("part-cola-zero-v11673") },
   { label: "Gassata zero", kcal: 0, amount: "330 ml", image: photo("part-zero-soda-v11673") },
   { label: "Bibita zuccherata", kcal: 140, amount: "330 ml", image: photo("part-sugary-soda-v11673") },
-  { label: "Vino bianco", kcal: 102, amount: "1 bicchiere · 125 ml", image: photo("part-white-wine-v11673") },
+  { label: "Vino bianco", kcal: 102, amount: "1 bicchiere · 125 ml", image: photo("part-white-wine-v1208") },
   { label: "Vino rosso", kcal: 106, amount: "1 bicchiere · 125 ml", image: photo("part-red-wine-v11673") },
 ];
 
@@ -2511,7 +2511,7 @@ const generatedRecipes: Recipe[] = Array.from({ length: 284 }, (_, index) => {
               ? photo("chicken-bowl")
               : protein[0] === "Uova strapazzate o in frittata"
                 ? photo("eggs-quinoa-v3")
-                : photo("farro");
+                : photo("part-farro-plain-v1208");
   const title =
     course === "Primo"
       ? `${base[1]} con ${veg[2]}`
@@ -2867,7 +2867,7 @@ const simpleBreakfasts: Recipe[] = [
     parts: [
       { category: "Latticino", food: "Yogurt greco 2%", grams: 170, label: "Yogurt greco", image: photo("part-greek-yogurt-2-v11663") },
       { category: "Frutta", food: "Banana", grams: 150, label: "Banana", image: photo("part-banana-v7") },
-      { category: "Extra", food: "Noci", grams: 25, label: "Noci", image: photo("walnuts-20g-v5") },
+      { category: "Extra", food: "Noci", grams: 25, label: "Noci", image: photo("part-walnuts-v1208") },
       { category: "Extra", food: "Miele", grams: 10, label: "Miele", image: photo("part-honey-v7") },
     ],
     steps: [
@@ -3396,7 +3396,7 @@ const attachmentMissingSnacks: Recipe[] = [
     ingredients: [{ food: "Mandarini freschi", grams: 150 }, { food: "Noci", grams: 15 }],
     parts: [
       { category: "Frutta", food: "Mandarini freschi", grams: 150, label: "Mandarini · parte edibile", image: photo("part-mandarins-v1160") },
-      { category: "Extra", food: "Noci", grams: 15, label: "Noci non salate · 15 g", image: photo("walnuts-20g-v5") },
+      { category: "Extra", food: "Noci", grams: 15, label: "Noci non salate · 15 g", image: photo("part-walnuts-v1208") },
     ],
     steps: ["Sbuccia i mandarini e pesa 150 g di parte edibile.", "Abbinali a 15 g di noci già porzionate."],
     alternatives: ["Trasportabile al lavoro", "Contiene frutta a guscio"],
@@ -3481,7 +3481,7 @@ const matrixMainRecipes: Recipe[] = [
         food: "Farro cotto",
         grams: 175,
         label: "Farro cotto · da circa 70 g secco",
-        image: photo("farro"),
+        image: photo("part-farro-plain-v1208"),
       },
       {
         category: "Proteina",
@@ -3556,7 +3556,7 @@ const quickSnacks: Recipe[] = [
     kicker: "Da tenere in borsa",
     course: "Spuntino",
     cuisine: "Italiano",
-    image: photo("walnuts-20g-v5"),
+    image: photo("part-walnuts-v1208"),
     time: 1,
     ingredients: [{ food: "Noci", grams: 20 }],
     parts: [
@@ -3565,7 +3565,7 @@ const quickSnacks: Recipe[] = [
         food: "Noci",
         grams: 20,
         label: "Noci",
-        image: photo("walnuts-20g-v5"),
+        image: photo("part-walnuts-v1208"),
       },
     ],
     steps: ["Pesa le noci una volta e mettile in un contenitore piccolo."],
@@ -5356,7 +5356,7 @@ const attachmentBreakfastsC37C44: Recipe[] = [
       { category: "Latticino", food: "Kefir bianco magro", grams: 170, label: "Kefir bianco · 170 g", image: photo("part-kefir-v1152") },
       { category: "Frutta", food: "Banana", grams: 150, label: "Banana · 150 g edibili", image: photo("part-banana-v7") },
       { category: "Carboidrato", food: "Muesli", grams: 30, label: "Muesli senza zuccheri aggiunti · 30 g", image: photo("part-muesli-v1152") },
-      { category: "Extra", food: "Noci", grams: 10, label: "Noci · 10 g", image: photo("walnuts-20g-v5") },
+      { category: "Extra", food: "Noci", grams: 10, label: "Noci · 10 g", image: photo("part-walnuts-v1208") },
       { category: "Extra", food: "Semi di lino macinati", grams: 5, label: "Semi di lino macinati · 5 g", image: photo("part-flaxseed-v113") },
     ],
     steps: ["Taglia la banana a rondelle.", "Unisci kefir, muesli, banana, noci spezzettate e semi di lino macinati."],
@@ -5396,7 +5396,7 @@ const attachmentBreakfastsC37C44: Recipe[] = [
     parts: [
       { category: "Latticino", food: "Yogurt greco 2%", grams: 170, label: "Yogurt greco bianco · 170 g", image: photo("part-greek-yogurt-2-v11663") },
       { category: "Frutta", food: "Pera", grams: 150, label: "Pera · 150 g edibili", image: photo("part-pear-v7") },
-      { category: "Extra", food: "Semi di zucca", grams: 10, label: "Semi di zucca · 10 g", image: photo("part-pumpkin-seeds-v11641") },
+      { category: "Extra", food: "Semi di zucca", grams: 10, label: "Semi di zucca · 10 g", image: photo("part-pumpkin-seeds-v1208") },
       { category: "Carboidrato", food: "Pane integrale", grams: 40, label: "Pane integrale tostato · 40 g", image: photo("part-bread-v7") },
     ],
     steps: ["Lava e affetta la pera.", "Servi yogurt con pera e semi di zucca; accompagna con pane tostato."],
@@ -5502,7 +5502,7 @@ const attachmentSnacksS35S42: Recipe[] = [
     parts: [
       { category: "Latticino", food: "Yogurt bianco", grams: 125, label: "Yogurt bianco · 125 g", image: photo("part-yogurt-v7") },
       { category: "Frutta", food: "Pesca", grams: 150, label: "Pesca · 150 g edibili", image: photo("part-peach-v113") },
-      { category: "Extra", food: "Semi di girasole", grams: 10, label: "Semi di girasole · 10 g", image: photo("part-sunflower-seeds-v11640") },
+      { category: "Extra", food: "Semi di girasole", grams: 10, label: "Semi di girasole · 10 g", image: photo("part-sunflower-seeds-v1208") },
     ],
     steps: ["Lava e affetta la pesca.","Aggiungila allo yogurt con i semi di girasole pesati."], alternatives: ["Contiene latte","Skyr al posto dello yogurt"],
   },
@@ -5643,7 +5643,7 @@ const attachmentMainsP53P64: Recipe[] = [
       { food: "Olio extravergine", grams: 10 },
     ],
     parts: [
-      { category: "Carboidrato", food: "Farro cotto", grams: 170, label: "Farro cotto · da circa 60 g secco", image: photo("farro") },
+      { category: "Carboidrato", food: "Farro cotto", grams: 170, label: "Farro cotto · da circa 60 g secco", image: photo("part-farro-plain-v1208") },
       { category: "Proteina", food: "Ceci cotti", grams: 150, label: "Ceci cotti e sgocciolati · 150 g", image: photo("part-chickpeas-v8") },
       { category: "Contorno", food: "Barbabietole cotte", grams: 125, label: "Barbabietole · 125 g", image: photo("part-beetroot-v11513") },
       { category: "Contorno", food: "Finocchi crudi", grams: 125, label: "Finocchi · 125 g", image: photo("part-fennel-v113") },
@@ -5993,7 +5993,7 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     { category: "Carboidrato", food: "Orzo perlato cotto", grams: 180, label: "Orzo cotto · da circa 70 g secco", image: photo("part-barley-v11514") },
     { category: "Carboidrato", food: "Pasta di farro secca", grams: 80, label: "Pasta di farro · peso a crudo", image: photo("part-spelt-pasta-v11643") },
     { category: "Carboidrato", food: "Cous cous integrale cotto", grams: 180, label: "Cous cous integrale cotto · da circa 60 g secco", image: photo("part-couscous-v11514") },
-    { category: "Carboidrato", food: "Farro cotto", grams: 175, label: "Farro cotto · da circa 70 g secco", image: photo("farro") },
+    { category: "Carboidrato", food: "Farro cotto", grams: 175, label: "Farro cotto · da circa 70 g secco", image: photo("part-farro-plain-v1208") },
   ],
   Proteina: [
     { category: "Proteina", food: "Vongole cotte", grams: 150, label: "Vongole cotte · 150 g", image: photo("part-clams-v11668") },
@@ -6276,7 +6276,7 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     { category: "Contorno", food: "Verza fresca", grams: 150, label: "Verza fresca · 150 g", image: photo("part-savoy-cabbage-v11668") },
     { category: "Contorno", food: "Cavolini di Bruxelles cotti", grams: 180, label: "Cavolini di Bruxelles cotti · 180 g", image: photo("part-brussels-sprouts-v11668") },
     { category: "Contorno", food: "Cime di rapa cotte", grams: 180, label: "Cime di rapa cotte · 180 g", image: photo("part-turnip-greens-v11668") },
-    { category: "Contorno", food: "Cipollotti freschi", grams: 100, label: "Cipollotti freschi · 100 g", image: photo("part-spring-onions-v11668") },
+    { category: "Contorno", food: "Cipollotti freschi", grams: 100, label: "Cipollotti freschi · 100 g", image: photo("part-spring-onions-v1208") },
     { category: "Contorno", food: "Cavolo cappuccio cotto", grams: 200, label: "Cavolo cappuccio cotto · 200 g", image: photo("part-green-cabbage-cooked-v11657") },
     { category: "Contorno", food: "Cicoria cotta", grams: 250, label: "Cicoria lessa · 250 g", image: photo("part-cicoria-cooked-v11655") },
     {
@@ -6764,7 +6764,7 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       food: "Noci",
       grams: 20,
       label: "Noci",
-      image: photo("walnuts-20g-v5"),
+      image: photo("part-walnuts-v1208"),
     },
     {
       category: "Extra",
@@ -6813,7 +6813,7 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       food: "Semi di zucca",
       grams: 10,
       label: "Semi di zucca non salati · 10 g",
-      image: photo("part-pumpkin-seeds-v11641"),
+      image: photo("part-pumpkin-seeds-v1208"),
     },
     {
       category: "Extra",
@@ -6869,7 +6869,7 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       food: "Semi di girasole",
       grams: 10,
       label: "Semi di girasole non salati",
-      image: photo("part-sunflower-seeds-v11640"),
+      image: photo("part-sunflower-seeds-v1208"),
     },
     {
       category: "Extra",
@@ -9652,7 +9652,7 @@ const everydayLegumeRecipes: Recipe[] = [
     time: 25,
     ingredients: [{ food: "Farro cotto", grams: 175 }, { food: "Ceci cotti", grams: 120 }, { food: "Pomodorini", grams: 125 }, { food: "Cetrioli", grams: 125 }, { food: "Olio extravergine", grams: 10 }],
     parts: [
-      { category: "Carboidrato", food: "Farro cotto", grams: 175, label: "Farro cotto · da circa 70 g secco", image: photo("farro") },
+      { category: "Carboidrato", food: "Farro cotto", grams: 175, label: "Farro cotto · da circa 70 g secco", image: photo("part-farro-plain-v1208") },
       { category: "Proteina", food: "Ceci cotti", grams: 120, label: "Ceci cotti e sgocciolati · 120 g", image: photo("part-chickpeas-v8") },
       { category: "Contorno", food: "Pomodorini", grams: 125, label: "Pomodorini · 125 g", image: photo("part-tomatoes-v8") },
       { category: "Contorno", food: "Cetrioli", grams: 125, label: "Cetriolo · 125 g", image: photo("part-cucumber-v8") },
