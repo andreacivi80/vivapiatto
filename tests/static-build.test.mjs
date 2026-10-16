@@ -3201,6 +3201,17 @@ test("v1.20.11 keeps canteen lunches separate from work lunches across cuisine a
   assert.match(audit, /row\.context === "Mensa"/);
 });
 
+test("public release checks the direct link and the version actually rendered in the header", async () => {
+  const [releaseAudit, mobileAudit] = await Promise.all([
+    readFile(new URL("../scripts/verify-public-release.mjs", import.meta.url), "utf8"),
+    readFile(new URL("../scripts/audit-public-mobile.mjs", import.meta.url), "utf8"),
+  ]);
+  assert.match(releaseAudit, /const directResponse = await request\(new URL\(baseUrl\)\)/);
+  assert.match(releaseAudit, /directScript !== manifest\.script/);
+  assert.match(mobileAudit, /document\.querySelector\('header\.topbar \.version'\)\?\.innerText\.trim\(\)/);
+  assert.doesNotMatch(mobileAudit, /version: document\.body\.innerText\.includes/);
+});
+
 test("v1.19.90 verifies the public manifest and HTML asset after deployment", async () => {
   const [workflow, config, verifier] = await Promise.all([
     readFile(new URL("../.github/workflows/deploy-pages.yml", import.meta.url), "utf8"),

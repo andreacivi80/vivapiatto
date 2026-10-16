@@ -54,6 +54,7 @@ Questa checklist resta nel repository e viene aggiornata a ogni revisione. Una v
 - [x] Conservare le evidenze delle revisioni pubblicate in `FINAL-AUDIT.md`; il documento non sostituisce i controlli ancora aperti sotto.
 - [x] v1.20.8–1.20.9: 237/237 test nella revisione più recente; pubblicazione verificata sullo stesso link GitHub Pages; test mobile pubblico senza overflow né errori JavaScript e percorso «+ → Sgarri» funzionante. Undici foto atomiche corrette con nomi nuovi; tutte le nuove immagini servite dal sito pubblico.
 - [x] v1.20.10: corretta la verifica del refresh sullo stesso percorso pubblico aperto dall'utente; la testata mostra versione in uso e nuova versione in attesa, con aggiornamento manuale facoltativo. Transizione automatica live 1.20.9 → 1.20.10 riuscita senza perdere menù, grammi o scroll; 237/237 test e stress mobile pubblico superati.
+- [x] v1.20.11: i pranzi automatici in Mensa usano un paniere distinto di preparazioni semplici confrontabili con il menù reale; lo stile Asiatico resta applicato agli altri pasti. Matrice locale e pubblica di 24 combinazioni (2 stili × 3 contesti × 4 obiettivi), 238/238 test e stress mobile pubblico superati. Transizione automatica live 1.20.10 → 1.20.11 riuscita, conservando menù, grammatura e posizione. Il controllo di rilascio verifica anche il link diretto senza parametri; lo stress mobile confronta la versione realmente mostrata nella testata, non una scritta presente altrove nella pagina.
 
 ## Controlli ancora aperti
 

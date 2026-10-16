@@ -30,6 +30,13 @@ for (let attempt = 1; attempt <= attempts; attempt += 1) {
     if (htmlScript !== manifest.script) {
       throw new Error(`HTML ${htmlScript || "senza asset"}, manifest ${manifest.script}`);
     }
+    const directResponse = await request(new URL(baseUrl));
+    if (!directResponse.ok) throw new Error(`link pubblico HTTP ${directResponse.status}`);
+    const directHtml = await directResponse.text();
+    const directScript = directHtml.match(/<script\b[^>]*\bsrc="([^"]+)"/i)?.[1];
+    if (directScript !== manifest.script) {
+      throw new Error(`link diretto ${directScript || "senza asset"}, manifest ${manifest.script}`);
+    }
     const assetResponse = await request(new URL(manifest.script, baseUrl), { method: "HEAD" });
     if (!assetResponse.ok) throw new Error(`asset HTTP ${assetResponse.status}`);
     console.log(`Release pubblica verificata: ${manifest.version} · ${manifest.script}`);

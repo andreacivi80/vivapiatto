@@ -138,7 +138,7 @@ try {
   const snapshot = async () => {
     await settleViewportImages();
     return evaluate(`(() => ({
-    version: document.body.innerText.includes(${JSON.stringify(`v${version}`)}),
+    version: document.querySelector('header.topbar .version')?.innerText.trim() === ${JSON.stringify(`v${version}`)},
     recovery: document.body.innerText.includes('La pagina ha incontrato un errore'),
     horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
     textLength: document.body.innerText.length,
@@ -183,7 +183,7 @@ try {
 
   let appReady = false;
   for (let attempt = 0; attempt < 50; attempt += 1) {
-    appReady = await evaluate(`document.body.innerText.includes('Settimana') && document.body.innerText.includes(${JSON.stringify(`v${version}`)})`);
+    appReady = await evaluate(`document.body.innerText.includes('Settimana') && document.querySelector('header.topbar .version')?.innerText.trim() === ${JSON.stringify(`v${version}`)}`);
     if (appReady) break;
     await wait(400);
   }
