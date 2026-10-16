@@ -3260,3 +3260,20 @@ test("v1.20.6 shows complete dinners D49-D52 instead of atomic ingredients", asy
     assert.ok(asset.length > 100_000, image);
   }
 });
+
+test("v1.20.7 shows complete dinners D53-D64 instead of atomic ingredients", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const names = [
+    "plaice-red-rice", "turkey-sweet-potato", "black-bean-pumpkin-soup",
+    "poached-eggs-quinoa", "tofu-broccoli-potatoes", "trout-fennel-orange",
+    "ricotta-artichokes", "octopus-cannellini", "chickpea-meatballs",
+    "rabbit-polenta", "mackerel-beetroot", "tempeh-millet",
+  ];
+  for (let index = 0; index < names.length; index += 1) {
+    const number = index + 53;
+    const image = `recipe-d${number}-${names[index]}-v1207`;
+    assert.match(source, new RegExp(`id:\\s*"matrix-d${number}-[^\\n]*image:\\s*photo\\("${image}"\\)`));
+    const asset = await readFile(new URL(`../public/food/${image}.png`, import.meta.url));
+    assert.ok(asset.length > 100_000, image);
+  }
+});

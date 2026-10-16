@@ -92,3 +92,10 @@ Il link resta unico: https://andreacivi80.github.io/vivapiatto/
 - GitHub Actions completato; manifest pubblico `1.20.5` e script `index-s8nreN6l.js` allineati sullo stesso link.
 - Stress test pubblico mobile 390×844 superato: versione corretta, nessun overflow orizzontale, scelte e grammature conservate dopo ricarica, nessun errore JavaScript.
 - Il test dell'aggiornamento dal client già aperto `1.20.4 → 1.20.5` è partito prima che Pages distribuisse i nuovi file: ha confermato conservazione di menu, 54 g e scroll a 900 px, ma non la transizione di versione in quella finestra. La transizione reale resta da riprovare al prossimo deploy.
+
+## Checkpoint pubblico 1.20.6
+
+- Quattro foto finali D49–D52 sostituite con il piatto completo, non più l'ingrediente singolo. Identificato il medesimo difetto su D53–D64, ora in lavorazione.
+- `npm test`: 234/234 test passati; 597/597 foto disponibili; 266/266 ricette con foto finale distinta.
+- Manifest e script pubblici allineati: `1.20.6` e `index-B_Sg4NGI.js` sul link GitHub Pages unico. Stress test mobile 390×844 superato senza errori JavaScript o overflow.
+- Aggiornamento automatico reale `1.20.5 → 1.20.6` superato: versione visibile aggiornata senza comando dell'utente, menu e grammatura a 54 g conservati, scroll a 900 px ripristinato, nessun errore JavaScript.
