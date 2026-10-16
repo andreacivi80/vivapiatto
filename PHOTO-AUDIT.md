@@ -52,9 +52,9 @@ Le sei nuove immagini sono state generate come foto realistiche di un solo alime
 - [x] Sostituite le fotografie di cipolle crude e cracker integrali: ora mostrano soltanto l'alimento, senza cipolle cotte o bilancia.
 - [x] Differenziate le immagini del riso parboiled cotto, del riso integrale secco e del riso Venere secco. La descrizione della card e la fotografia indicano lo stesso stato dell'alimento.
 
-## Prima passata visiva della matrice pranzo e cena
+## Prima passata visiva della matrice completa
 
-- Lo script `scripts/recipe-photo-contact-sheet.py FAMILY START END --ingredients` affianca fotografia, titolo e primi ingredienti dichiarati. Esaminate le tavole P01–P64 e D01–D64: alla scala della card non sono emerse omissioni evidenti dei componenti principali.
+- Lo script `scripts/recipe-photo-contact-sheet.py FAMILY START END --ingredients` affianca fotografia, titolo e primi ingredienti dichiarati. Esaminate le tavole C01–C44, S01–S42, P01–P64 e D01–D64: alla scala della card non sono emerse omissioni evidenti dei componenti principali.
 - È una scansione visiva preliminare, non una certificazione di corrispondenza di ogni ingrediente o tecnica. Il testo sulla tavola è abbreviato a 96 caratteri e i dettagli piccoli delle fotografie richiedono ancora revisione individuale.
 - [ ] Prosegue il controllo visivo delle altre voci: una foto pertinente non prova da sola la correttezza delle quantità nutrizionali.
 
