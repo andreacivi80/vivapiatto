@@ -3187,6 +3187,20 @@ test("v1.19.89 keeps work and canteen fallback lunches practical", async () => {
   assert.match(source, /slot !== 2 \|\| dayContext !== "Mensa" \|\| isMensaFriendly\(recipe\)/);
 });
 
+test("v1.20.11 keeps canteen lunches separate from work lunches across cuisine and calorie changes", async () => {
+  const [source, audit] = await Promise.all([
+    readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../scripts/audit-cuisine-plan.mjs", import.meta.url), "utf8"),
+  ]);
+  assert.match(source, /const mensaRecipeIds = new Set\(/);
+  assert.match(source, /const mensaMainsFrom = \(\) => allRecipes\.filter/);
+  assert.match(source, /dayContext === "Mensa"\s*\? mensaMainsFrom\(\)/);
+  assert.match(source, /const mensaMains = mensaMainsFrom\(\)/);
+  assert.doesNotMatch(source, /return \/pasta\|riso\|farro\|orzo/);
+  assert.match(audit, /VIVAPIATTO_MATRIX_AUDIT/);
+  assert.match(audit, /row\.context === "Mensa"/);
+});
+
 test("v1.19.90 verifies the public manifest and HTML asset after deployment", async () => {
   const [workflow, config, verifier] = await Promise.all([
     readFile(new URL("../.github/workflows/deploy-pages.yml", import.meta.url), "utf8"),

@@ -117,6 +117,44 @@ try {
   };
   const asian = await setStyle("Asiatico");
   const italian = await setStyle("Italiano");
+  const contextTargetMatrix = [];
+  if (process.env.VIVAPIATTO_MATRIX_AUDIT === "1") {
+    const changeSelect = async (selector, index, value) => {
+      const changed = await evaluate(`(() => {
+        const select = document.querySelectorAll(${JSON.stringify(selector)})[${index}];
+        if (!select) return false;
+        select.value = ${JSON.stringify(value)};
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+        return select.value === ${JSON.stringify(value)};
+      })()`);
+      if (!changed) throw new Error(`Selettore ${selector}[${index}] non disponibile: ${value}`);
+      await wait(550);
+    };
+    for (const style of ["Italiano", "Asiatico"]) {
+      await changeSelect(".cuisine-picker select", 0, style);
+      for (const context of ["Lavoro", "Casa", "Mensa"]) {
+        await changeSelect(".cuisine-picker select", 1, context);
+        for (const target of [1400, 2000, 2600, 3000]) {
+          await changeSelect(".compact-config select", 1, String(target));
+          const today = await evaluate(`(() => ({
+            plan: document.querySelector('.today-strip b')?.innerText.trim() || '',
+            meals: [...document.querySelectorAll('.meal-card h3')].map((heading) => heading.innerText.trim()),
+            horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+          }))()`);
+          const week = await readVisibleWeek();
+          contextTargetMatrix.push({
+            style, context, target, ...today,
+            weekdayLunches: week.filter(([key]) => key.endsWith("-2") && Number(key.split("-")[0]) < 5)
+              .map(([, id]) => id),
+            mainMealCount: week.length,
+            distinctMainMeals: new Set(week.map(([, id]) => id)).size,
+            weekendLunches: week.filter(([key]) => key.endsWith("-2") && Number(key.split("-")[0]) >= 5)
+              .map(([, id]) => id),
+          });
+        }
+      }
+    }
+  }
   const documented = new Set([
     "asian-oyakodon-authentic", "asian-bibimbap-authentic", "asian-negima-nabe-authentic",
     "asian-japchae-authentic", "asian-phat-thai-authentic", "catalog-verified-bulgogi-rice",
@@ -140,8 +178,37 @@ try {
       id === "asian-dondoroke-tofu-rice" || id === "asian-chana-masala-brown-rice").length,
     asianDistinct: new Set(asian.mainMeals.map(([, id]) => id)).size,
     unsafeWorkLunches: asian.mainMeals.filter(([key, id]) => key.endsWith("-2") && id === "sweet-ricotta"),
+    contextTargetMatrix,
   };
-  console.log(JSON.stringify(report));
+  console.log(JSON.stringify(process.env.VIVAPIATTO_MATRIX_AUDIT === "1"
+    ? { contextTargetMatrix, asianDocumentedCount: report.asianDocumentedCount }
+    : report));
+  if (process.env.VIVAPIATTO_MATRIX_AUDIT === "1") {
+    const mensaIds = new Set([
+      "simple-pasta-white", "simple-pasta-tomato", "simple-eggs",
+      "simple-steak-potatoes", "everyday-pasta-e-fagioli",
+      "matrix-d02-orata-al-cartoccio-con-verdure-e-pane",
+      "matrix-d15-branzino-al-vapore-con-orzo-e-bietole",
+      "matrix-d17-trota-al-forno-con-zucca-e-patate",
+      "matrix-d31-zuppa-di-fagioli-borlotti-e-orzo",
+      "matrix-d32-frittata-al-forno-con-broccoli-e-patate",
+      "matrix-d41-sole-potatoes-fennel", "matrix-d42-chicken-brown-rice-peppers",
+      "matrix-p09-barley-cannellini-black-kale",
+      "matrix-p56-farro-con-ceci-barbabietole-e-finocchi",
+      "catalog-main-1", "catalog-main-16", "catalog-main-50",
+    ]);
+    const invalid = contextTargetMatrix.filter((row) => {
+      const planKcal = Number(row.plan.match(/piano (\d+)/)?.[1] || 0);
+      return row.mainMealCount !== 14 || row.distinctMainMeals < 12 || row.horizontalOverflow ||
+        row.meals.length !== 5 || !planKcal || Math.abs(planKcal - row.target) > 300 ||
+        (row.context === "Mensa" &&
+          (row.weekdayLunches.length !== 5 || row.weekdayLunches.some((id) => !mensaIds.has(id))));
+    });
+    if (contextTargetMatrix.length !== 24 || invalid.length) {
+      console.error(`Matrice contesto/target non coerente: ${JSON.stringify(invalid)}`);
+      process.exitCode = 1;
+    }
+  }
   const italianCuisine = ([, , cuisine]) => cuisine === "Italiano" || cuisine === "Mediterraneo";
   const practicalWorkLunch = ([key, , , workFriendly]) =>
     !key.endsWith("-2") || Number(key.split("-")[0]) >= 5 || workFriendly === "true";

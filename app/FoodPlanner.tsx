@@ -11618,10 +11618,29 @@ export function FoodPlanner() {
       ...catalogWorkMains,
     ]).filter(isProfileEligible);
   };
-  const isMensaFriendly = (recipe: Recipe) => {
-    const text = `${recipe.name} ${recipe.ingredients.map((item) => item.food).join(" ")}`.toLowerCase();
-    return /pasta|riso|farro|orzo|\bpollo\b|tacchino|bistecca|merluzzo|uov|frittata|patate|verdure|insalata|minestrone/.test(text);
-  };
+  // A single word such as "riso" once marked elaborate regional dishes as
+  // ordinary canteen food. Keep this deliberately conservative: these are
+  // simple menu patterns, not a claim that a particular canteen serves them.
+  const mensaRecipeIds = new Set([
+    "simple-pasta-white", "simple-pasta-tomato", "simple-eggs",
+    "simple-steak-potatoes", "everyday-pasta-e-fagioli",
+    "matrix-d02-orata-al-cartoccio-con-verdure-e-pane",
+    "matrix-d15-branzino-al-vapore-con-orzo-e-bietole",
+    "matrix-d17-trota-al-forno-con-zucca-e-patate",
+    "matrix-d31-zuppa-di-fagioli-borlotti-e-orzo",
+    "matrix-d32-frittata-al-forno-con-broccoli-e-patate",
+    "matrix-d41-sole-potatoes-fennel",
+    "matrix-d42-chicken-brown-rice-peppers",
+    "matrix-p09-barley-cannellini-black-kale",
+    "matrix-p56-farro-con-ceci-barbabietole-e-finocchi",
+    "catalog-main-1", "catalog-main-16", "catalog-main-50",
+  ]);
+  const isMensaFriendly = (recipe: Recipe) => mensaRecipeIds.has(recipe.id);
+  const mensaMainsFrom = () => allRecipes.filter((recipe) =>
+    isMensaFriendly(recipe) &&
+    isProfileEligible(recipe) &&
+    ["Piatto unico", "Piatto completo", "Primo", "Secondo"].includes(recipeCourse(recipe)),
+  );
   const isRestaurantFriendly = (recipe: Recipe) =>
     recipe.ingredients.length >= 3 &&
     ["Piatto unico", "Piatto completo", "Primo", "Secondo"].includes(recipeCourse(recipe));
@@ -11758,7 +11777,7 @@ export function FoodPlanner() {
     if (Math.abs(candidateNutrition.protein - activeNutrition.protein) <= 8) reasons.push("proteine simili");
     if (recipeCuisine(recipe) === cuisineChoice) reasons.push(`stile ${cuisineChoice.toLowerCase()}`);
     if (dayContext === "Lavoro" && isWorkFriendly(recipe)) reasons.push("pratica al lavoro");
-    if (dayContext === "Mensa" && isMensaFriendly(recipe)) reasons.push("comune in mensa");
+    if (dayContext === "Mensa" && isMensaFriendly(recipe)) reasons.push("semplice per la mensa");
     if (dayContext === "Ristorante" && isRestaurantFriendly(recipe)) reasons.push("piatto completo da ristorante");
     return `Compatibile: ${reasons.slice(0, 2).join(" · ") || "stesso momento del pasto e filtri rispettati"}`;
   };
@@ -11875,9 +11894,10 @@ export function FoodPlanner() {
         recipeCuisine(r) === cuisineChoice &&
         ["Piatto unico", "Piatto completo", "Primo", "Secondo"].includes(recipeCourse(r)),
     );
-    const lunches =
-      ["Lavoro", "Mensa"].includes(dayContext)
-        ? workLunchesFrom(mains)
+    const lunches = dayContext === "Lavoro"
+      ? workLunchesFrom(mains)
+      : dayContext === "Mensa"
+        ? mensaMainsFrom()
         : mains;
     const dinners = mains;
     if (!breakfasts.length || !snacks.length || !lunches.length || !dinners.length)
@@ -12246,9 +12266,11 @@ export function FoodPlanner() {
   const automaticHomeMains = automaticMains.filter((recipe) =>
     recipe.time >= 20 && !portableRecipes.some((portable) => portable.id === recipe.id),
   );
-  const automaticLunches = ["Lavoro", "Mensa"].includes(dayContext)
+  const automaticLunches = dayContext === "Lavoro"
     ? workLunchesFrom(automaticMains)
-    : automaticHomeMains.length ? automaticHomeMains : automaticMains;
+    : dayContext === "Mensa"
+      ? mensaMainsFrom()
+      : automaticHomeMains.length ? automaticHomeMains : automaticMains;
   const automaticDinners = (automaticHomeMains.length ? automaticHomeMains : automaticMains)
     .filter((recipe) => recipe.id !== "sweet-ricotta");
   const automaticPlanGap = ageGroup === "Minore"
@@ -12856,12 +12878,11 @@ export function FoodPlanner() {
         r.time >= 20 &&
         !portableRecipes.some((portable) => portable.id === r.id),
     );
-    const lunches =
-      ["Lavoro", "Mensa"].includes(dayContext)
-        ? workLunchesFrom(mains)
-        : homeMains.length
-          ? homeMains
-          : mains;
+    const lunches = dayContext === "Lavoro"
+      ? workLunchesFrom(mains)
+      : dayContext === "Mensa"
+        ? mensaMainsFrom()
+        : homeMains.length ? homeMains : mains;
     const dinners = (homeMains.length ? homeMains : mains).filter(
       (recipe) => recipe.id !== "sweet-ricotta",
     );
@@ -13157,7 +13178,7 @@ export function FoodPlanner() {
         r.time >= 20 &&
         !portableRecipes.some((portable) => portable.id === r.id),
     );
-    const mensaMains = mains.filter(isMensaFriendly);
+    const mensaMains = mensaMainsFrom();
     const restaurantMains = mains.filter(isRestaurantFriendly);
     const lunches =
       selectedContext === "Lavoro"
@@ -14466,7 +14487,7 @@ export function FoodPlanner() {
             {(dayContext === "Mensa" || dayContext === "Ristorante") && (
               <p className="outside-context-note">
                 {dayContext === "Mensa"
-                  ? "Prima proposte comuni da mensa: primo semplice, secondo alla piastra o lessato, verdura e frutta."
+                  ? "Prima piatti semplici da confrontare con il menu reale della mensa; puoi sempre cambiare ogni elemento."
                   : "Prima piatti completi e riconoscibili; condimenti e quantità reali restano modificabili dopo il pasto."}
                 {" "}
                 <a href="https://www.salute.gov.it/new/it/tema/nutrizione/ristorazione-collettiva/" target="_blank" rel="noreferrer">Ministero della Salute ↗</a>
