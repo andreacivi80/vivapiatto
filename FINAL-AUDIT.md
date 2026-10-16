@@ -99,3 +99,10 @@ Il link resta unico: https://andreacivi80.github.io/vivapiatto/
 - `npm test`: 234/234 test passati; 597/597 foto disponibili; 266/266 ricette con foto finale distinta.
 - Manifest e script pubblici allineati: `1.20.6` e `index-B_Sg4NGI.js` sul link GitHub Pages unico. Stress test mobile 390×844 superato senza errori JavaScript o overflow.
 - Aggiornamento automatico reale `1.20.5 → 1.20.6` superato: versione visibile aggiornata senza comando dell'utente, menu e grammatura a 54 g conservati, scroll a 900 px ripristinato, nessun errore JavaScript.
+
+## Checkpoint pubblico 1.20.7
+
+- D53–D64 completate con dodici fotografie distinte dei piatti interi; la prima scansione visiva delle matrici di pranzo e cena è registrata in `PHOTO-AUDIT.md`.
+- `npm test`: 235/235 test passati; 609/609 foto disponibili; 266/266 ricette con fotografia finale distinta.
+- Manifest e script pubblici allineati: `1.20.7` e `index-BucyxBBI.js` sul link GitHub Pages unico. Test pubblico mobile 390×844 superato senza overflow o errori JavaScript.
+- Aggiornamento reale `1.20.6 → 1.20.7` automatico e riuscito: versione visibile corretta, menù e grammatura a 54 g conservati, scroll a 900 px ripristinato.
