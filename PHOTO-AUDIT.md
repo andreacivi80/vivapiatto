@@ -47,6 +47,14 @@ Regola permanente: prima si definiscono ingredienti e preparazione, poi si crea 
 
 Le sei nuove immagini sono state generate come foto realistiche di un solo alimento/bevanda, con piatto o bicchiere interamente visibile, luce naturale e senza ingredienti estranei; ottimizzate a 512×512. Prompt specifici: `ONLY fresh spring onions with white bulbs and green leaves`; `single glass of pale white wine`; `ONLY plain cooked farro grains`; `ONLY shelled walnut halves`; `ONLY edible hulled sunflower seeds`; `ONLY edible hulled pumpkin seeds`. Modalità: generazione fotorealistica naturale, non modifica di fotografie di terzi.
 
+## v1.20.9 — fotografie atomiche e stato di cottura
+
+- [x] Sostituite le fotografie di cipolle crude e cracker integrali: ora mostrano soltanto l'alimento, senza cipolle cotte o bilancia.
+- [x] Differenziate le immagini del riso parboiled cotto, del riso integrale secco e del riso Venere secco. La descrizione della card e la fotografia indicano lo stesso stato dell'alimento.
+- [ ] Prosegue il controllo visivo delle altre voci: una foto pertinente non prova da sola la correttezza delle quantità nutrizionali.
+
+Cinque immagini nuove generate come fotografie realistiche naturali, ottimizzate a 512×512. Prompt: `ONLY raw onions, whole and raw rings, no cooked food`; `ONLY plain whole-wheat crackers, no scale`; `ONLY plain cooked parboiled rice, pale grains, no sauce`; `ONLY uncooked dry whole-grain brown rice`; `ONLY uncooked dry black Riso Venere`. Nessuna immagine di terzi è stata modificata.
+
 Gli audit automatici garantiscono presenza, formato leggibile, collegamento e unicità dell'immagine, ma non certificano la corrispondenza visiva dei pixel. Il controllo manuale di tutto il catalogo resta aperto. Nella v1.19.79 sono stati controllati visivamente gli asset del prosciutto cotto e della fesa di tacchino (affettati separati dal pane), nonché la crema di mandorle, il gelato al cioccolato e il fiordilatte (immagini riconoscibili e distinte).
 
 ## v1.20.3 — controllo visivo puntuale

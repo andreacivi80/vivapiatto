@@ -347,10 +347,10 @@ test("sorgente mobile con versione e fonti", async () => {
   await access(new URL("../dist/food/part-greek-yogurt-zero-v11522.png", import.meta.url));
   await access(new URL("../dist/food/recipe-minestrone-v11522.png", import.meta.url));
   await access(new URL("../dist/food/part-sole-baked-v11519.png", import.meta.url));
-  await access(new URL("../dist/food/part-brown-rice-v11519.png", import.meta.url));
+  await access(new URL("../dist/food/part-brown-rice-dry-v1209.png", import.meta.url));
   await access(new URL("../dist/food/part-grass-peas-v11519.png", import.meta.url));
   await access(new URL("../dist/food/part-artichokes-v11519.png", import.meta.url));
-  await access(new URL("../dist/food/part-onions-v11519.png", import.meta.url));
+  await access(new URL("../dist/food/part-onions-raw-v1209.png", import.meta.url));
   await access(new URL("../dist/food/part-crescenza-v11518.png", import.meta.url));
   await access(new URL("../dist/food/part-primo-sale-v11518.png", import.meta.url));
   await access(new URL("../dist/food/part-scamorza-v11518.png", import.meta.url));
@@ -603,7 +603,7 @@ test("v1.16.69 extends the verified everyday pantry with independent photos", as
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   const foods = [
     ["Pompelmo rosa fresco", "part-grapefruit-v11668"],
-    ["Riso parboiled cotto", "part-parboiled-rice-v11668"],
+    ["Riso parboiled cotto", "part-parboiled-rice-cooked-v1209"],
     ["Vongole cotte", "part-clams-v11668"],
     ["Lattuga fresca", "part-lettuce-v11668"],
     ["Songino fresco", "part-lambs-lettuce-v11668"],
@@ -3292,4 +3292,19 @@ test("v1.20.8 maps the repaired atomic photos to their own foods", async () => {
   }
   assert.doesNotMatch(app, /photo\("part-spring-onions-v11668"\)/);
   assert.doesNotMatch(app, /photo\("part-white-wine-v11673"\)/);
+});
+test("v1.20.9 keeps raw and cooked food photos visibly distinct", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  for (const asset of [
+    "part-onions-raw-v1209",
+    "part-wholegrain-crackers-v1209",
+    "part-parboiled-rice-cooked-v1209",
+    "part-brown-rice-dry-v1209",
+    "part-venere-rice-dry-v1209",
+  ]) {
+    assert.match(app, new RegExp(`photo\\("${asset}"\\)`));
+    await access(new URL(`../dist/food/${asset}.png`, import.meta.url));
+  }
+  assert.doesNotMatch(app, /photo\("part-parboiled-rice-v11668"\)/);
+  assert.doesNotMatch(app, /photo\("part-brown-rice-v11519"\)/);
 });
