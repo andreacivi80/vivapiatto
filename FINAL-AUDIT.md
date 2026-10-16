@@ -83,3 +83,12 @@ Il link resta unico: https://andreacivi80.github.io/vivapiatto/
 - Manifest e script pubblici allineati: `1.20.4` e `index-gg4WG46A.js` sul link GitHub Pages unico.
 - Aggiornamento automatico reale `1.20.3 → 1.20.4`: menu, grammatura 54 g e scroll a 900 px conservati; nessun errore JavaScript.
 - Stress test pubblico mobile 390×844 superato, compresi ricettario, sgarri, settimana e modifiche dei pasti.
+
+## Checkpoint pubblico 1.20.5
+
+- Controllo iniziale della revisione esteso a 8 secondi con più verifiche dell'allineamento fra manifest, HTML e script: su rete lenta si evita di mostrare prematuramente la vecchia schermata. Se la rete non risponde, l'app apre i dati salvati e continua a controllare ogni 5 secondi; una modifica in corso non viene interrotta.
+- Otto foto finali S27–S34 corrette: ogni card rappresenta lo spuntino completo, mentre i componenti conservano le proprie immagini singole.
+- `npm test`: 233/233 test passati; foto 593/593, ricette finali 266/266, paniere richiesto 217/217.
+- GitHub Actions completato; manifest pubblico `1.20.5` e script `index-s8nreN6l.js` allineati sullo stesso link.
+- Stress test pubblico mobile 390×844 superato: versione corretta, nessun overflow orizzontale, scelte e grammature conservate dopo ricarica, nessun errore JavaScript.
+- Il test dell'aggiornamento dal client già aperto `1.20.4 → 1.20.5` è partito prima che Pages distribuisse i nuovi file: ha confermato conservazione di menu, 54 g e scroll a 900 px, ma non la transizione di versione in quella finestra. La transizione reale resta da riprovare al prossimo deploy.
