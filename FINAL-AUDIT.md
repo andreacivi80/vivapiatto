@@ -106,3 +106,15 @@ Il link resta unico: https://andreacivi80.github.io/vivapiatto/
 - `npm test`: 235/235 test passati; 609/609 foto disponibili; 266/266 ricette con fotografia finale distinta.
 - Manifest e script pubblici allineati: `1.20.7` e `index-BucyxBBI.js` sul link GitHub Pages unico. Test pubblico mobile 390×844 superato senza overflow o errori JavaScript.
 - Aggiornamento reale `1.20.6 → 1.20.7` automatico e riuscito: versione visibile corretta, menù e grammatura a 54 g conservati, scroll a 900 px ripristinato.
+
+## Checkpoint pubblico 1.20.8
+
+- Corrette due foto PNG troncate (cipollotti e vino bianco) e quattro foto atomiche non rappresentative (farro cotto, noci, semi di girasole e di zucca).
+- L'audit fotografico ora decomprime i dati PNG e controlla che il numero di pixel sia completo: 609/609 asset referenziati superano il controllo; `npm test` 235/235 prima dell'ultima asserzione fotografica, poi test statici mirati superati.
+- Manifest e script pubblici allineati: `1.20.8` e `index-BFKscQ-B.js`; tutte le sei nuove immagini rispondono `200 image/png` sullo stesso link. Stress test mobile pubblico superato, senza overflow, schermata bianca o errori JavaScript.
+
+## Checkpoint pubblico 1.20.9
+
+- Foto di cipolle crude, cracker integrali e tre risi rese coerenti con le rispettive descrizioni e con lo stato crudo/cotto. Nessun alimento aggiunto o quantità nutrizionale cambiata.
+- `npm test` 237/237; audit foto 609/609; 266/266 ricette con foto finale distinta. Manifest pubblico `1.20.9`, script `index-C9GMoHXq.js` e cinque nuove foto verificati sul link esistente; stress test mobile pubblico superato, incluso «+ → Sgarri», senza overflow o errori JavaScript.
+- Il test di transizione su scheda già aperta `1.20.8 → 1.20.9` è scaduto prima di osservare il cambio di versione: ha conservato menù, grammatura 54 g e scroll 900 px, ma non prova il refresh automatico di questo passaggio. Il manifest pubblico risulta poi allineato; ripetere la verifica live alla prossima pubblicazione avviando l'osservazione immediatamente prima del push.
