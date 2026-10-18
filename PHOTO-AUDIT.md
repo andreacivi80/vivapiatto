@@ -1,5 +1,11 @@
 # Tavola Mia — controllo fotografie
 
+## v1.20.15 — controllo P17–P48
+
+- [x] Scansione visiva su tavole di contatto delle foto P17–P48, con nomi e ingredienti principali affiancati. I soggetti sono plausibili alla scala della card, salvo P38: il pesce della vecchia foto non era riconoscibile come salmone.
+- [x] P38 ora usa una nuova immagine dedicata con salmone rosa grigliato, bulgur, finocchi e arancia visibili. Il nome dell'asset cambia con la revisione per evitare di riutilizzare la foto precedente dalla cache.
+- [ ] Resta aperta la verifica individuale di ogni foto e delle quantità nutrizionali: la tavola di contatto non prova la corrispondenza esatta di tutti gli ingredienti.
+
 ## v1.5.0 completato
 
 - [x] Pasta in bianco: immagine dedicata, senza condimenti estranei.

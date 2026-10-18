@@ -9446,7 +9446,7 @@ const attachmentMainsP35P40: Recipe[] = [
     kicker: "Piatto unico di pesce",
     course: "Piatto unico",
     cuisine: "Mediterraneo",
-    image: photo("recipe-p38-bulgur-salmon-fennel-orange-v11685"),
+    image: photo("recipe-p38-bulgur-salmon-fennel-orange-v12015"),
     time: 25,
     ingredients: [
       { food: "Bulgur cotto", grams: 190 },

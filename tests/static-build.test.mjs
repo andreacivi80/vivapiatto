@@ -863,7 +863,7 @@ test("v1.16.85 completes faithful photos for the main-meal matrix", async () => 
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   const assets = [
     ["matrix-p37-polenta-lentils-black-kale", "recipe-p37-polenta-lentils-black-kale-v11685"],
-    ["matrix-p38-bulgur-salmon-fennel-orange", "recipe-p38-bulgur-salmon-fennel-orange-v11685"],
+    ["matrix-p38-bulgur-salmon-fennel-orange", "recipe-p38-bulgur-salmon-fennel-orange-v12015"],
     ["matrix-p39-millet-black-beans-pumpkin-cabbage", "recipe-p39-millet-black-beans-pumpkin-cabbage-v11685"],
     ["matrix-p40-brown-rice-eggs-peas-vegetables", "recipe-p40-brown-rice-eggs-peas-vegetables-v11685"],
   ];
