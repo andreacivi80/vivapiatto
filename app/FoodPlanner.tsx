@@ -12128,8 +12128,11 @@ export function FoodPlanner() {
     };
   };
 
-  const activeMealParts = (key: string, recipe: Recipe): MealPart[] => {
-    if (partSelections[key]) return partSelections[key].map(normalizeMealPart);
+  const activeMealParts = (
+    key: string, recipe: Recipe, projectReplacement = false,
+  ): MealPart[] => {
+    if (partSelections[key] && !projectReplacement)
+      return partSelections[key].map(normalizeMealPart);
     const [dayText, slotText] = key.split("-");
     const day = Number(dayText);
     const slot = Number(slotText);
@@ -12140,15 +12143,16 @@ export function FoodPlanner() {
       if (existing) existing.grams += item.grams;
       else merged.push(additionAsPart(item));
     });
-    return calibratePlannedIngredients(key, merged.map(lowEnergyAdjusted))
+    return calibratePlannedIngredients(key, merged.map(lowEnergyAdjusted), projectReplacement)
       .map(normalizeMealPart);
   };
 
   const calibratePlannedIngredients = <T extends RecipeIngredient>(
     key: string,
     items: T[],
+    projectReplacement = false,
   ): T[] => {
-    if (partSelections[key]) return items;
+    if (partSelections[key] && !projectReplacement) return items;
     const [dayText, slotText] = key.split("-");
     const day = Number(dayText);
     const slot = Number(slotText);
@@ -12222,21 +12226,24 @@ export function FoodPlanner() {
         : item,
     );
   };
-  const plannedIngredients = (key: string, recipe: Recipe) => {
+  const plannedIngredients = (
+    key: string, recipe: Recipe, projectReplacement = false,
+  ) => {
     const [dayText, slotText] = key.split("-");
     const day = Number(dayText);
     const slot = Number(slotText);
     const targetAdditions = targetAdditionsFor(
       slot, targetForDay(day), recipe.parts || recipe.ingredients,
     );
-    if (!recipe.parts && !partSelections[key])
+    if (!recipe.parts && (projectReplacement || !partSelections[key]))
       return calibratePlannedIngredients(
         key,
         mergeTargetAdditions(recipe.ingredients, targetAdditions).map(
           lowEnergyAdjusted,
         ),
+        projectReplacement,
       );
-    const activeParts = activeMealParts(key, recipe);
+    const activeParts = activeMealParts(key, recipe, projectReplacement);
     const pastaSelected = activeParts.some((x) => x.food.includes("Pasta"));
     const sourceParts = recipe.parts || recipe.ingredients.map(additionAsPart);
     const extras = recipe.ingredients.filter(
@@ -12619,11 +12626,7 @@ export function FoodPlanner() {
     const currentMacros = calc(plannedIngredients(key, current));
     const currentRoles = new Set(activeMealParts(key, current).map((part) => part.category));
     const compatibilityScore = (recipe: Recipe) => {
-      const candidateItems = mergeTargetAdditions(
-        recipe.parts || recipe.ingredients,
-        targetAdditionsFor(slot, targetForDay(day), recipe.parts || recipe.ingredients),
-      ).map(lowEnergyAdjusted);
-      const candidateMacros = calc(candidateItems);
+      const candidateMacros = calc(plannedIngredients(key, recipe, true));
       const candidateRoles = new Set(
         (recipe.parts || []).map((part) => part.category),
       );
@@ -12673,7 +12676,7 @@ export function FoodPlanner() {
           recipe.kind !== "combination" &&
           Boolean(recipe.parts?.length) &&
           fitsSlot(recipe, slot) &&
-          isAllowed(recipe),
+          isProfileEligible(recipe),
       )
       .sort((a, b) => compatibilityScore(a) - compatibilityScore(b))
       .slice(0, 6);
@@ -16203,7 +16206,7 @@ export function FoodPlanner() {
                 <p>Sostituisci l'intero pasto. Dopo puoi tenerlo unico o dividerlo nei suoi componenti.</p>
                 <div className="complete-meal-grid">
                   {completeMealOptions(partPicker.key).map((recipe, optionIndex) => {
-                    const macros = calc(recipe.ingredients);
+                    const macros = calc(plannedIngredients(partPicker.key, recipe, true));
                     return (
                       <article key={recipe.id}>
                         <button

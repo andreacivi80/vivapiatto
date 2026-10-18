@@ -164,7 +164,7 @@ test("sorgente mobile con versione e fonti", async () => {
   assert.match(app, /Yogurt greco 0%/);
   assert.match(app, /food: "Quinoa cotta"/);
   assert.match(app, /recipe\.parts \|\| recipe\.ingredients\.map\(additionAsPart\)/);
-  assert.match(app, /!recipe\.parts && !partSelections\[key\]/);
+  assert.match(app, /!recipe\.parts && \(projectReplacement \|\| !partSelections\[key\]\)/);
   assert.match(app, /cleanKicker/);
   assert.match(app, /matrice\\s\+\[cspd\]/);
   assert.match(app, /Ricetta e preparazione/);
@@ -3234,10 +3234,23 @@ test("low-energy plans keep automatic snacks near their meal allocation", async 
 
 test("displayed component grams and meal calories use one calibrated portion", async () => {
   const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
-  assert.match(source, /return calibratePlannedIngredients\(key, merged\.map\(lowEnergyAdjusted\)\)/);
+  assert.match(source, /return calibratePlannedIngredients\(key, merged\.map\(lowEnergyAdjusted\), projectReplacement\)/);
   assert.match(source, /if \(\/hummus\/\.test\(food\)\) return roundWithin\(20, 120, 5\)/);
   assert.match(source, /return \[\.\.\.activeParts, \.\.\.extras\]/);
   assert.doesNotMatch(source, /return calibratePlannedIngredients\(key, \[\.\.\.activeParts, \.\.\.extras\]\)/);
+});
+
+test("complete-meal alternatives show the calories of their projected portion", async () => {
+  const [source, audit] = await Promise.all([
+    readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../scripts/audit-cuisine-plan.mjs", import.meta.url), "utf8"),
+  ]);
+  const options = source.split("const completeMealOptions =")[1]?.split("const appendOccasionalParts")[0] || "";
+  assert.match(options, /calc\(plannedIngredients\(key, recipe, true\)\)/);
+  assert.match(options, /fitsSlot\(recipe, slot\) &&\s+isProfileEligible\(recipe\)/);
+  assert.match(source, /const macros = calc\(plannedIngredients\(partPicker\.key, recipe, true\)\)/);
+  assert.match(source, /if \(partSelections\[key\] && !projectReplacement\) return items/);
+  assert.match(audit, /completeMealProjection\.projected\.kcal !== completeMealProjection\.applied\.kcal/);
 });
 
 test("v1.19.90 verifies the public manifest and HTML asset after deployment", async () => {

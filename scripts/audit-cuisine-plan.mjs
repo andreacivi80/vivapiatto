@@ -214,6 +214,50 @@ try {
       mainMeals: week.length,
     };
   }
+  let completeMealProjection = null;
+  if (process.env.VIVAPIATTO_MATRIX_AUDIT === "1" && !matrixFocus) {
+    await evaluate(`([...document.querySelectorAll('button')]
+      .find((item) => item.textContent?.includes('Oggi')))?.click()`);
+    await wait(400);
+    const partEdit = await evaluate(`(() => {
+      const input = document.querySelectorAll('.meal-card')[0]?.querySelector('.meal-part input[type="number"]');
+      if (!input) return null;
+      const before = Number(input.value);
+      const after = before + 20;
+      const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
+      input._valueTracker?.setValue(String(before));
+      setter.call(input, String(after));
+      input.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertText', data: String(after) }));
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+      return { before, after };
+    })()`);
+    await wait(350);
+    const editedGrams = await evaluate(`Number(document.querySelectorAll('.meal-card')[0]?.querySelector('.meal-part input[type="number"]')?.value || 0)`);
+    const pickerOpened = await evaluate(`(() => {
+      const button = document.querySelectorAll('.meal-card')[0]?.querySelector('.part-change');
+      button?.click();
+      return Boolean(button);
+    })()`);
+    if (!pickerOpened) throw new Error("Alternative componenti colazione non disponibili");
+    await wait(450);
+    const projected = await evaluate(`(() => {
+      const button = document.querySelector('.complete-meals .complete-meal-select');
+      const kcal = Number(button?.querySelector('b')?.textContent?.match(/(\\d+) kcal/)?.[1] || 0);
+      const name = button?.querySelector('span')?.textContent?.trim() || '';
+      button?.click();
+      return { name, kcal };
+    })()`);
+    await wait(650);
+    const applied = await evaluate(`(() => {
+      const card = document.querySelectorAll('.meal-card')[0];
+      const lines = [...card?.querySelectorAll('.meal-body p') || []];
+      return {
+        name: card?.querySelector('h3')?.textContent?.trim() || '',
+        kcal: Number(lines.at(-1)?.textContent?.match(/(\\d+) kcal/)?.[1] || 0),
+      };
+    })()`);
+    completeMealProjection = { partEdit, editedGrams, projected, applied };
+  }
   const documented = new Set([
     "asian-oyakodon-authentic", "asian-bibimbap-authentic", "asian-negima-nabe-authentic",
     "asian-japchae-authentic", "asian-phat-thai-authentic", "catalog-verified-bulgogi-rice",
@@ -239,9 +283,10 @@ try {
     unsafeWorkLunches: asian.mainMeals.filter(([key, id]) => key.endsWith("-2") && id === "sweet-ricotta"),
     contextTargetMatrix,
     followUpAfterSwap,
+    completeMealProjection,
   };
   console.log(JSON.stringify(process.env.VIVAPIATTO_MATRIX_AUDIT === "1" || matrixFocus
-    ? { contextTargetMatrix, followUpAfterSwap, asianDocumentedCount: report.asianDocumentedCount }
+    ? { contextTargetMatrix, followUpAfterSwap, completeMealProjection, asianDocumentedCount: report.asianDocumentedCount }
     : report));
   if (process.env.VIVAPIATTO_MATRIX_AUDIT === "1" && !matrixFocus) {
     const mensaIds = new Set([
@@ -269,8 +314,12 @@ try {
     if (contextTargetMatrix.length !== 24 || invalid.length ||
         !followUpAfterSwap || followUpAfterSwap.chosenId !== followUpAfterSwap.lunchIdAfter ||
         followUpAfterSwap.tomorrow.length !== 5 || followUpAfterSwap.mainMeals !== 14 ||
-        Math.abs(followUpAfterSwap.tomorrowKcal - 2000) > 350) {
-      console.error(`Matrice contesto/target non coerente: ${JSON.stringify(invalid)}`);
+        Math.abs(followUpAfterSwap.tomorrowKcal - 2000) > 350 ||
+        !completeMealProjection?.partEdit ||
+        completeMealProjection.editedGrams !== completeMealProjection.partEdit.after ||
+        !completeMealProjection?.projected.kcal ||
+        completeMealProjection.projected.kcal !== completeMealProjection.applied.kcal) {
+      console.error(`Matrice contesto/target non coerente: ${JSON.stringify({ invalid, completeMealProjection })}`);
       process.exitCode = 1;
     }
   }
