@@ -5680,6 +5680,9 @@ const attachmentMainsP53P64: Recipe[] = [
       { food: "Edamame cotti", grams: 120 },
       { food: "Funghi cotti", grams: 125 },
       { food: "Cavolo rosso crudo", grams: 125 },
+      { food: "Zenzero fresco", grams: 5 },
+      { food: "Aglio crudo", grams: 3 },
+      { food: "Succo di limone", grams: 10 },
       { food: "Olio extravergine", grams: 10 },
     ],
     parts: [
@@ -5687,9 +5690,12 @@ const attachmentMainsP53P64: Recipe[] = [
       { category: "Proteina", food: "Edamame cotti", grams: 120, label: "Edamame cotti · 120 g", image: photo("part-edamame-v11634") },
       { category: "Contorno", food: "Funghi cotti", grams: 125, label: "Funghi cotti · 125 g", image: photo("part-mushrooms-cooked-ready-v1201") },
       { category: "Contorno", food: "Cavolo rosso crudo", grams: 125, label: "Cavolo rosso · 125 g", image: photo("part-red-cabbage-v11515") },
+      { category: "Extra", food: "Zenzero fresco", grams: 5, label: "Zenzero fresco", image: photo("part-ginger-v11866") },
+      { category: "Extra", food: "Aglio crudo", grams: 3, label: "Aglio · 1 spicchio piccolo", image: photo("part-garlic-v11866") },
+      { category: "Extra", food: "Succo di limone", grams: 10, label: "Succo di limone", image: photo("part-lemon-juice-v1181") },
       { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") },
     ],
-    steps: ["Cuoci l'orzo secondo confezione.","Cuoci funghi e cavolo rosso in padella antiaderente con zenzero e aglio.","Aggiungi edamame e orzo e completa con limone e 10 g di olio."], alternatives: ["Vegano","Contiene glutine e soia"],
+    steps: ["Cuoci l'orzo secondo confezione.", "Cuoci i funghi in padella antiaderente con 5 g di zenzero fresco e 3 g di aglio. Affetta sottilmente 125 g di cavolo rosso e lascialo crudo, come indicato nella lista e nella foto.", "Unisci orzo, edamame, funghi e cavolo; completa con 10 g di succo di limone e 10 g di olio misurato."], alternatives: ["Vegano", "Contiene glutine e soia"],
   },
   {
     id: "matrix-p59-riso-venere-con-orata-e-asparagi", name: "Riso Venere con orata e asparagi", kicker: "Pranzo completo · matrice P59",

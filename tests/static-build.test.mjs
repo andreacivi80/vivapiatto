@@ -874,6 +874,21 @@ test("v1.16.85 completes faithful photos for the main-meal matrix", async () => 
   assert.doesNotMatch(app, /image: photo\("moment-(?:lunch|dinner)-v1121"\)/);
 });
 
+test("v1.20.16 counts every P58 seasoning and keeps photographed red cabbage raw", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const start = app.indexOf('id: "matrix-p58-orzo-con-edamame-funghi-e-cavolo-rosso"');
+  const end = app.indexOf('id: "matrix-p59-riso-venere-con-orata-e-asparagi"', start);
+  assert.ok(start >= 0 && end > start);
+  const recipe = app.slice(start, end);
+  const ingredients = recipe.split("parts: [")[0];
+  for (const food of ["Zenzero fresco", "Aglio crudo", "Succo di limone", "Cavolo rosso crudo"]) {
+    assert.ok(ingredients.includes(`food: "${food}"`), `${food} missing from P58 ingredients`);
+    assert.ok(recipe.includes(`category: "${food === "Cavolo rosso crudo" ? "Contorno" : "Extra"}", food: "${food}"`), `${food} missing from editable P58 parts`);
+  }
+  assert.match(recipe, /Affetta sottilmente 125 g di cavolo rosso e lascialo crudo/);
+  assert.doesNotMatch(recipe, /Cuoci funghi e cavolo rosso/);
+});
+
 test("v1.16.86 preserves the exact scroll position across automatic releases", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /writeStorageItem\(sessionStorage, "vivapiatto-release-scroll-y", String\(window\.scrollY\)\)/);

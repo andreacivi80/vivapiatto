@@ -6,6 +6,12 @@
 - [x] P38 ora usa una nuova immagine dedicata con salmone rosa grigliato, bulgur, finocchi e arancia visibili. Il nome dell'asset cambia con la revisione per evitare di riutilizzare la foto precedente dalla cache.
 - [ ] Resta aperta la verifica individuale di ogni foto e delle quantità nutrizionali: la tavola di contatto non prova la corrispondenza esatta di tutti gli ingredienti.
 
+## v1.20.16 — controllo P49–P64
+
+- [x] Scansione visiva delle fotografie P49–P64 con titolo e ingredienti principali affiancati: piatti completi plausibili alla scala mobile, senza una seconda foto chiaramente sbagliata.
+- [x] P58: la foto mostra cavolo rosso crudo e le voci nutrizionali usano lo stato crudo; la preparazione ora lascia il cavolo crudo e cuoce solo i funghi. I tre condimenti già presenti nel testo fornito — zenzero, aglio e limone — sono ora esplicitati con grammi, valori energetici e foto atomiche, senza ingredienti nascosti nel calcolo.
+- [ ] Il controllo individuale di ogni dettaglio della famiglia P49–P64 rimane aperto; la scansione non certifica i valori nutrizionali per semplice confronto fotografico.
+
 ## v1.5.0 completato
 
 - [x] Pasta in bianco: immagine dedicata, senza condimenti estranei.
