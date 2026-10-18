@@ -118,7 +118,8 @@ try {
   const asian = await setStyle("Asiatico");
   const italian = await setStyle("Italiano");
   const contextTargetMatrix = [];
-  if (process.env.VIVAPIATTO_MATRIX_AUDIT === "1") {
+  const matrixFocus = process.env.VIVAPIATTO_MATRIX_FOCUS === "1";
+  if (process.env.VIVAPIATTO_MATRIX_AUDIT === "1" || matrixFocus) {
     const changeSelect = async (selector, index, value) => {
       const changed = await evaluate(`(() => {
         const select = document.querySelectorAll(${JSON.stringify(selector)})[${index}];
@@ -130,15 +131,28 @@ try {
       if (!changed) throw new Error(`Selettore ${selector}[${index}] non disponibile: ${value}`);
       await wait(550);
     };
-    for (const style of ["Italiano", "Asiatico"]) {
+    for (const style of matrixFocus ? ["Italiano"] : ["Italiano", "Asiatico"]) {
       await changeSelect(".cuisine-picker select", 0, style);
-      for (const context of ["Lavoro", "Casa", "Mensa"]) {
+      for (const context of matrixFocus ? ["Casa"] : ["Lavoro", "Casa", "Mensa"]) {
         await changeSelect(".cuisine-picker select", 1, context);
-        for (const target of [1400, 2000, 2600, 3000]) {
+        for (const target of matrixFocus ? [1400] : [1400, 2000, 2600, 3000]) {
           await changeSelect(".compact-config select", 1, String(target));
           const today = await evaluate(`(() => ({
             plan: document.querySelector('.today-strip b')?.innerText.trim() || '',
             meals: [...document.querySelectorAll('.meal-card h3')].map((heading) => heading.innerText.trim()),
+            mealIds: [...document.querySelectorAll('.meal-card')].map((card) => card.dataset.recipeId || ''),
+            mealParts: [...document.querySelectorAll('.meal-card')].map((card) =>
+              [...card.querySelectorAll('.meal-part')].map((part) => ({
+                name: part.querySelector('.part-change')?.textContent?.trim() || '',
+                grams: Number(part.querySelector('input')?.value || 0),
+                kcal: Number(part.querySelector('.part-nutrients')?.textContent?.match(/(\\d+) kcal/)?.[1] || 0),
+              }))),
+            mealUnrepresentedExtras: [...document.querySelectorAll('.meal-card')].map((card) =>
+              card.querySelectorAll('.part-extras span').length),
+            mealKcal: [...document.querySelectorAll('.meal-card')].map((card) => {
+              const lines = [...card.querySelectorAll('.meal-body p')];
+              return Number(lines.at(-1)?.textContent?.match(/(\\d+) kcal/)?.[1] || 0);
+            }),
             horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
           }))()`);
           const week = await readVisibleWeek();
@@ -154,6 +168,51 @@ try {
         }
       }
     }
+    if (!matrixFocus) {
+      await changeSelect(".cuisine-picker select", 0, "Italiano");
+      await changeSelect(".cuisine-picker select", 1, "Casa");
+      await changeSelect(".compact-config select", 1, "2000");
+    }
+  }
+  let followUpAfterSwap = null;
+  if (process.env.VIVAPIATTO_MATRIX_AUDIT === "1" && !matrixFocus) {
+    const before = await evaluate(`(() => ({
+      lunchId: document.querySelectorAll('.meal-card')[2]?.dataset.recipeId || '',
+    }))()`);
+    const opened = await evaluate(`(() => {
+      const lunch = document.querySelectorAll('.meal-card')[2];
+      const button = [...lunch?.querySelectorAll('button') || []]
+        .find((item) => item.textContent?.includes('Cambia piatto'));
+      button?.click();
+      return Boolean(button);
+    })()`);
+    if (!opened) throw new Error("Cambio pranzo non disponibile");
+    await wait(500);
+    const chosenId = await evaluate(`(() => {
+      const card = [...document.querySelectorAll('.recipe-grid article[data-recipe-id]')]
+        .find((item) => item.dataset.recipeId !== ${JSON.stringify(before.lunchId)});
+      card?.click();
+      return card?.dataset.recipeId || '';
+    })()`);
+    if (!chosenId) throw new Error("Alternativa pranzo non disponibile");
+    await wait(700);
+    const lunchIdAfter = await evaluate(`document.querySelectorAll('.meal-card')[2]?.dataset.recipeId || ''`);
+    const week = await readVisibleWeek();
+    await evaluate(`([...document.querySelectorAll('button')]
+      .find((item) => item.textContent?.includes('Settimana')))?.click()`);
+    await wait(400);
+    const tomorrow = await evaluate(`(() => {
+      const rows = [...document.querySelectorAll('.week-day')[1]?.querySelectorAll('.week-meal-row') || []];
+      return rows.map((row) => ({
+        id: row.dataset.recipeId || '',
+        kcal: Number(row.querySelector('em')?.textContent?.match(/(\\d+) kcal/)?.[1] || 0),
+      }));
+    })()`);
+    followUpAfterSwap = {
+      chosenId, lunchIdAfter, tomorrow,
+      tomorrowKcal: tomorrow.reduce((total, meal) => total + meal.kcal, 0),
+      mainMeals: week.length,
+    };
   }
   const documented = new Set([
     "asian-oyakodon-authentic", "asian-bibimbap-authentic", "asian-negima-nabe-authentic",
@@ -179,11 +238,12 @@ try {
     asianDistinct: new Set(asian.mainMeals.map(([, id]) => id)).size,
     unsafeWorkLunches: asian.mainMeals.filter(([key, id]) => key.endsWith("-2") && id === "sweet-ricotta"),
     contextTargetMatrix,
+    followUpAfterSwap,
   };
-  console.log(JSON.stringify(process.env.VIVAPIATTO_MATRIX_AUDIT === "1"
-    ? { contextTargetMatrix, asianDocumentedCount: report.asianDocumentedCount }
+  console.log(JSON.stringify(process.env.VIVAPIATTO_MATRIX_AUDIT === "1" || matrixFocus
+    ? { contextTargetMatrix, followUpAfterSwap, asianDocumentedCount: report.asianDocumentedCount }
     : report));
-  if (process.env.VIVAPIATTO_MATRIX_AUDIT === "1") {
+  if (process.env.VIVAPIATTO_MATRIX_AUDIT === "1" && !matrixFocus) {
     const mensaIds = new Set([
       "simple-pasta-white", "simple-pasta-tomato", "simple-eggs",
       "simple-steak-potatoes", "everyday-pasta-e-fagioli",
@@ -201,10 +261,15 @@ try {
       const planKcal = Number(row.plan.match(/piano (\d+)/)?.[1] || 0);
       return row.mainMealCount !== 14 || row.distinctMainMeals < 12 || row.horizontalOverflow ||
         row.meals.length !== 5 || !planKcal || Math.abs(planKcal - row.target) > 300 ||
+        row.mealParts.some((parts, index) => parts.length > 0 && !row.mealUnrepresentedExtras[index] &&
+          Math.abs(parts.reduce((total, part) => total + part.kcal, 0) - row.mealKcal[index]) > 10) ||
         (row.context === "Mensa" &&
           (row.weekdayLunches.length !== 5 || row.weekdayLunches.some((id) => !mensaIds.has(id))));
     });
-    if (contextTargetMatrix.length !== 24 || invalid.length) {
+    if (contextTargetMatrix.length !== 24 || invalid.length ||
+        !followUpAfterSwap || followUpAfterSwap.chosenId !== followUpAfterSwap.lunchIdAfter ||
+        followUpAfterSwap.tomorrow.length !== 5 || followUpAfterSwap.mainMeals !== 14 ||
+        Math.abs(followUpAfterSwap.tomorrowKcal - 2000) > 350) {
       console.error(`Matrice contesto/target non coerente: ${JSON.stringify(invalid)}`);
       process.exitCode = 1;
     }

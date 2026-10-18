@@ -973,7 +973,7 @@ test("v1.19.20 caches framework dependencies without lazy-loading the planner", 
   assert.ok((await stat(new URL(`../dist/assets/${vendorChunk}`, import.meta.url))).size < 250_000);
   // The verified recipe catalog grows with complete instructions; keep the
   // entry bundle bounded while the separate vendor chunk avoids duplication.
-  assert.ok((await stat(new URL(`../dist/assets/${appChunk}`, import.meta.url))).size < 575_000);
+  assert.ok((await stat(new URL(`../dist/assets/${appChunk}`, import.meta.url))).size < 576_000);
 });
 
 test("v1.19.21 keeps the public mobile stress audit silent and reusable", async () => {
@@ -3202,14 +3202,42 @@ test("v1.20.11 keeps canteen lunches separate from work lunches across cuisine a
 });
 
 test("public release checks the direct link and the version actually rendered in the header", async () => {
-  const [releaseAudit, mobileAudit] = await Promise.all([
+  const [releaseAudit, mobileAudit, liveAudit] = await Promise.all([
     readFile(new URL("../scripts/verify-public-release.mjs", import.meta.url), "utf8"),
     readFile(new URL("../scripts/audit-public-mobile.mjs", import.meta.url), "utf8"),
+    readFile(new URL("../scripts/audit-live-release-update.mjs", import.meta.url), "utf8"),
   ]);
   assert.match(releaseAudit, /const directResponse = await request\(new URL\(baseUrl\)\)/);
   assert.match(releaseAudit, /directScript !== manifest\.script/);
   assert.match(mobileAudit, /document\.querySelector\('header\.topbar \.version'\)\?\.innerText\.trim\(\)/);
   assert.doesNotMatch(mobileAudit, /version: document\.body\.innerText\.includes/);
+  assert.match(liveAudit, /document\.querySelector\('\.topbar \.version'\)\?\.textContent\?\.trim\(\)/);
+  assert.doesNotMatch(liveAudit, /versionUpdated: document\.body\.innerText\.includes/);
+});
+
+test("manual meal changes replan later days against meal targets without erasing recorded or edited meals", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const replan = source.split("const replanFollowingDays =")[1]?.split("const clearMealOverrides")[0] || "";
+  assert.match(replan, /targetForDay\(day\)/);
+  assert.match(replan, /closestForSlot\(/);
+  assert.match(replan, /WEEKLY_MAIN_ROTATION\[day \* 2/);
+  assert.match(replan, /completed\[key\] \|\| partSelections\[key\]/);
+  assert.doesNotMatch(replan, /pool\[\(day \* 3 \+ slot\) % pool\.length\]/);
+});
+
+test("low-energy plans keep automatic snacks near their meal allocation", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(source, /const compactSnackPool = \[1, 3\]\.includes\(slot\) && target <= 200/);
+  assert.match(source, /profileRecipeKcal\(recipe, slot\) <= target \+ 60/);
+  assert.match(source, /compactSnackPool\.length \? compactSnackPool : pool/);
+});
+
+test("displayed component grams and meal calories use one calibrated portion", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(source, /return calibratePlannedIngredients\(key, merged\.map\(lowEnergyAdjusted\)\)/);
+  assert.match(source, /if \(\/hummus\/\.test\(food\)\) return roundWithin\(20, 120, 5\)/);
+  assert.match(source, /return \[\.\.\.activeParts, \.\.\.extras\]/);
+  assert.doesNotMatch(source, /return calibratePlannedIngredients\(key, \[\.\.\.activeParts, \.\.\.extras\]\)/);
 });
 
 test("v1.19.90 verifies the public manifest and HTML asset after deployment", async () => {

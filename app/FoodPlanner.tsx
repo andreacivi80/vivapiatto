@@ -11899,29 +11899,59 @@ export function FoodPlanner() {
       : dayContext === "Mensa"
         ? mensaMainsFrom()
         : mains;
-    const dinners = mains;
+    const homeMains = mains.filter((recipe) =>
+      recipe.time >= 20 && !portableRecipes.some((portable) => portable.id === recipe.id),
+    );
+    const dinners = (homeMains.length ? homeMains : mains)
+      .filter((recipe) => recipe.id !== "sweet-ricotta");
     if (!breakfasts.length || !snacks.length || !lunches.length || !dinners.length)
       return;
     setChoices((current) => {
       const next = { ...current };
+      const used = new Set<string>();
+      days.forEach((_, day) => {
+        [0, 1, 2, 3, 4].forEach((slot) => {
+          const key = `${day}-${slot}`;
+          if (day <= changedDay || completed[key] || partSelections[key]) {
+            used.add(completedRecipes[key] || next[key] || days[day].recipes[slot]);
+          }
+        });
+      });
       for (let day = changedDay + 1; day < days.length; day += 1) {
-        const pools = [breakfasts, snacks, lunches, snacks, dinners];
+        const dayLunches = day >= 5 && ["Lavoro", "Mensa"].includes(dayContext)
+          ? homeMains.length ? homeMains : mains
+          : lunches;
+        const pools = [breakfasts, snacks, dayLunches, snacks, dinners];
+        const dayTarget = targetForDay(day);
         pools.forEach((pool, slot) => {
           const key = `${day}-${slot}`;
-          if (completed[key]) return;
-          const balancedItalianId = days[day].recipes[slot];
-          next[key] =
-            cuisineChoice === "Italiano" && dayContext === "Lavoro" &&
-            pool.some((recipe) => recipe.id === balancedItalianId)
-              ? balancedItalianId
-              : pool[(day * 3 + slot) % pool.length].id;
+          if (completed[key] || partSelections[key]) return;
+          let candidates = pool.filter((recipe) => !used.has(recipe.id));
+          if (!candidates.length) candidates = pool;
+          if (slot === 2 || slot === 4) {
+            const family = WEEKLY_MAIN_ROTATION[day * 2 + Number(slot === 4)];
+            const byFamily = candidates.filter((recipe) => recipeProteinFamily(recipe) === family);
+            if (byFamily.length) candidates = byFamily;
+          }
+          if (slot === 3) {
+            const morning = recipeMap[next[`${day}-1`] || days[day].recipes[1]];
+            const differentFruit = candidates.filter((recipe) =>
+              recipe.id !== morning.id && !sharesFruit(morning, recipe),
+            );
+            if (differentFruit.length) candidates = differentFruit;
+          }
+          const chosen = closestForSlot(
+            candidates, slot, dayTarget * mealCalorieShares[slot], day + slot,
+          );
+          next[key] = chosen.id;
+          used.add(chosen.id);
         });
       }
       return next;
     });
     clearMealOverrides(days.flatMap((_, day) =>
       day > changedDay
-        ? [0, 1, 2, 3, 4].map((slot) => `${day}-${slot}`).filter((key) => !completed[key])
+        ? [0, 1, 2, 3, 4].map((slot) => `${day}-${slot}`).filter((key) => !completed[key] && !partSelections[key])
         : [],
     ));
   };
@@ -12110,13 +12140,14 @@ export function FoodPlanner() {
       if (existing) existing.grams += item.grams;
       else merged.push(additionAsPart(item));
     });
-    return merged.map(lowEnergyAdjusted).map(normalizeMealPart);
+    return calibratePlannedIngredients(key, merged.map(lowEnergyAdjusted))
+      .map(normalizeMealPart);
   };
 
-  const calibratePlannedIngredients = (
+  const calibratePlannedIngredients = <T extends RecipeIngredient>(
     key: string,
-    items: RecipeIngredient[],
-  ): RecipeIngredient[] => {
+    items: T[],
+  ): T[] => {
     if (partSelections[key]) return items;
     const [dayText, slotText] = key.split("-");
     const day = Number(dayText);
@@ -12174,6 +12205,7 @@ export function FoodPlanner() {
         );
       }
       if (/uovo|uova|albume/.test(food)) return roundWithin(50, 150, 50);
+      if (/hummus/.test(food)) return roundWithin(20, 120, 5);
       if (/ceci|lenticchie|fagioli(?!ni)|piselli|fave|edamame|lupini|tofu|tempeh|burger vegetale/.test(food))
         return roundWithin(100, 200, 25);
       if (/bresaola|prosciutto|fesa|speck|salame|mortadella/.test(food))
@@ -12213,7 +12245,7 @@ export function FoodPlanner() {
         (x.food === "Olio extravergine" ||
           (pastaSelected && x.food === "Passata di pomodoro")),
     );
-    return calibratePlannedIngredients(key, [...activeParts, ...extras]);
+    return [...activeParts, ...extras];
   };
   const actualIngredients = (key: string, recipe: Recipe) => {
     const saved = actualWeights[key];
@@ -12835,7 +12867,11 @@ export function FoodPlanner() {
         varietyBonus
       );
     };
-    const ranked = [...pool].sort((a, b) => rankingScore(a) - rankingScore(b));
+    const compactSnackPool = [1, 3].includes(slot) && target <= 200
+      ? pool.filter((recipe) => profileRecipeKcal(recipe, slot) <= target + 60)
+      : pool;
+    const ranked = [...(compactSnackPool.length ? compactSnackPool : pool)]
+      .sort((a, b) => rankingScore(a) - rankingScore(b));
     return ranked[offset % Math.min(5, ranked.length)];
   };
   const sharesFruit = (left: Recipe, right: Recipe) => {

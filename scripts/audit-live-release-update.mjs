@@ -100,7 +100,7 @@ try {
     input.dispatchEvent(new Event('change', { bubbles: true }));
     input.blur();
     return {
-      ready: document.body.innerText.includes(${JSON.stringify(`v${fromVersion}`)}),
+      ready: document.querySelector('.topbar .version')?.textContent?.trim() === ${JSON.stringify(`v${fromVersion}`)},
       before,
       expected,
       label: input.getAttribute('aria-label'),
@@ -140,7 +140,7 @@ try {
     await wait(5_000);
     try {
       finalState = await evaluate(`(() => ({
-        versionUpdated: document.body.innerText.includes(${JSON.stringify(`v${toVersion}`)}),
+        versionUpdated: document.querySelector('.topbar .version')?.textContent?.trim() === ${JSON.stringify(`v${toVersion}`)},
         scrollY: Math.round(window.scrollY),
         libraryVisible: document.body.innerText.includes('Le tue 214'),
         recovery: document.body.innerText.includes('La pagina ha incontrato un errore'),
@@ -159,7 +159,7 @@ try {
           if (Math.abs(finalState.scrollY - initial.scrollY) <= 20) break;
           await wait(100);
           finalState = await evaluate(`(() => ({
-            versionUpdated: document.body.innerText.includes(${JSON.stringify(`v${toVersion}`)}),
+            versionUpdated: document.querySelector('.topbar .version')?.textContent?.trim() === ${JSON.stringify(`v${toVersion}`)},
             scrollY: Math.round(window.scrollY),
             libraryVisible: document.body.innerText.includes('Le tue 214'),
             recovery: document.body.innerText.includes('La pagina ha incontrato un errore'),
