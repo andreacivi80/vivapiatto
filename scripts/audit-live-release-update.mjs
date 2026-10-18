@@ -4,8 +4,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-const fromVersion = process.env.VIVAPIATTO_FROM_VERSION;
-const toVersion = process.env.VIVAPIATTO_TO_VERSION;
+const fromVersion = process.argv[2] || process.env.VIVAPIATTO_FROM_VERSION;
+const toVersion = process.argv[3] || process.env.VIVAPIATTO_TO_VERSION;
 const baseUrl = "https://andreacivi80.github.io/vivapiatto/";
 if (!fromVersion || !toVersion) throw new Error("Impostare VIVAPIATTO_FROM_VERSION e VIVAPIATTO_TO_VERSION");
 
@@ -130,6 +130,7 @@ try {
   };
   const initial = { ...initialMeal, ...initialView };
   if (!initial.libraryVisible || initial.scrollY <= 0) throw new Error(`Vista lunga di prova non disponibile: ${JSON.stringify(initial)}`);
+  console.log(`Transizione reale pronta: v${fromVersion} aperta nel browser isolato`);
   await wait(7_000);
 
   let finalState = null;

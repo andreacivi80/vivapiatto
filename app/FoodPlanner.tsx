@@ -14171,8 +14171,8 @@ export function FoodPlanner() {
               : `Versione in uso ${VERSION}. Nuova versione ${availableRelease} in preparazione`}
             onClick={() => refreshToRelease(availableRelease)}
           >
-            <span>v{VERSION}</span>
-            <span>→ v{availableRelease}</span>
+            <span className="version-latest">v{availableRelease}</span>
+            <span className="version-current">in uso v{VERSION}</span>
           </button>
         ) : (
           <span className="version">v{VERSION}</span>
@@ -14180,7 +14180,7 @@ export function FoodPlanner() {
       </header>
       {availableRelease && (
         <div className="release-pending" role="status">
-          Questa schermata è la v{VERSION}; pubblicata v{availableRelease} · {releaseReady
+          Ultima revisione pubblicata: v{availableRelease}; questa schermata usa v{VERSION} · {releaseReady
             ? "aggiornamento automatico appena termini la modifica. Oppure tocca la versione in alto."
             : "attendo che tutti i file siano disponibili."}
         </div>

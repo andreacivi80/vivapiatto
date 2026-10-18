@@ -3012,7 +3012,7 @@ test("v1.19.92 waits for an aligned public release and shows current versus publ
   assert.match(planner, /setReleaseReady\(ready\)/);
   assert.match(planner, /onClick=\{\(\) => refreshToRelease\(availableRelease\)\}/);
   assert.match(planner, /window\.addEventListener\("pageshow", checkVersion\)/);
-  assert.match(planner, /Questa schermata è la v\{VERSION\}; pubblicata v\{availableRelease\}/);
+  assert.match(planner, /Ultima revisione pubblicata: v\{availableRelease\}; questa schermata usa v\{VERSION\}/);
 });
 
 test("v1.19.93 calculates documented Indian paneer dishes from distinct photographed ingredients", async () => {
@@ -3213,6 +3213,17 @@ test("public release checks the direct link and the version actually rendered in
   assert.doesNotMatch(mobileAudit, /version: document\.body\.innerText\.includes/);
   assert.match(liveAudit, /document\.querySelector\('\.topbar \.version'\)\?\.textContent\?\.trim\(\)/);
   assert.doesNotMatch(liveAudit, /versionUpdated: document\.body\.innerText\.includes/);
+});
+
+test("header distinguishes the latest published revision from the older screen still in use", async () => {
+  const [app, css] = await Promise.all([
+    readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+  assert.match(app, /className="version-latest">v\{availableRelease\}/);
+  assert.match(app, /className="version-current">in uso v\{VERSION\}/);
+  assert.match(app, /Ultima revisione pubblicata: v\{availableRelease\}/);
+  assert.match(css, /\.topbar \.version-update \.version-latest/);
 });
 
 test("manual meal changes replan later days against meal targets without erasing recorded or edited meals", async () => {

@@ -103,6 +103,13 @@ button {
   font-size: 10px;
   line-height: 1.1;
 }
+.topbar .version-update .version-latest {
+  font-size: 12px;
+}
+.topbar .version-update .version-current {
+  font-size: 9px;
+  font-weight: 600;
+}
 .topbar .version-update:disabled {
   cursor: wait;
   opacity: .7;
