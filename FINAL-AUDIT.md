@@ -155,3 +155,9 @@ Il link resta unico: https://andreacivi80.github.io/vivapiatto/
 - Nuova foto per P38 «Bulgur con salmone, finocchi e arancia»: il salmone grigliato è visibile e distinto dal bulgur; asset dal nome nuovo per non recuperare dalla cache l'immagine precedente. Le altre immagini P17–P48 sono state esaminate su tavole di contatto, non certificate singolarmente.
 - `npm test` 244/244, typecheck e build riusciti; manifesto pubblico `1.20.15`, HTML e asset `index-DvelAzhW.js` allineati. Stress mobile sulla pagina pubblica superato: versione visibile nella testata, immagini in vista caricate, nessun overflow orizzontale e zero errori JavaScript nei flussi provati.
 - La sonda avviata sulla 1.20.14 prima del push ha osservato la navigazione automatica reale alla 1.20.15: stesso menù, stessa modifica a 49 g, stessa posizione di scroll a 900 px, nessun errore JavaScript. Questo verifica la transizione attuale; non riclassifica retroattivamente gli 11 eventi non descritti del passaggio precedente.
+
+## Checkpoint pubblico 1.20.16
+
+- Confrontate le foto dei pranzi P49–P64 con nomi e ingredienti principali. P58 espone ora 5 g di zenzero, 3 g di aglio e 10 g di succo di limone che erano richiesti dal testo della ricetta ma mancavano dal calcolo; il cavolo rosso resta crudo come indicano foto e voce nutrizionale, mentre i funghi vengono cotti.
+- `npm test` 245/245, typecheck e build riusciti. Release pubblica `1.20.16` e asset `index-CtqLG7Fh.js` verificati; stress mobile pubblico superato, senza errori JavaScript, immagini mancanti in vista o overflow nei percorsi provati.
+- Una scheda isolata sulla 1.20.15 è passata automaticamente alla 1.20.16 senza perdere menù, modifica a 49 g o posizione di scroll a 900 px. Zero errori JavaScript registrati nella transizione.
