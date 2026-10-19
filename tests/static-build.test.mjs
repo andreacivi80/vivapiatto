@@ -967,6 +967,29 @@ test("v1.20.21 weighs D33 quinoa dry and includes its measured seasonings", asyn
   await access(new URL("../dist/food/part-quinoa-dry-v12021.png", import.meta.url));
 });
 
+test("v1.20.22 uses one shared copy of repeated recipe notes on mobile", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(app, /const standardComponentAlternatives = \[[^\]]+\]/);
+  assert.ok((app.match(/alternatives: standardComponentAlternatives/g) || []).length >= 45);
+  assert.equal((app.match(/"Porzioni orientative per un adulto sano"/g) || []).length, 1);
+});
+
+test("v1.20.22 weighs D36 polenta dry and counts its listed seasonings", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const start = app.indexOf('id: "matrix-d36-vitello-magro-con-asparagi-e-polenta"');
+  const end = app.indexOf('id: "matrix-d37-cozze-al-pomodoro-con-pane-e-verdure-grigliate"', start);
+  assert.ok(start >= 0 && end > start);
+  const recipe = app.slice(start, end);
+  assert.match(recipe, /food: "Polenta secca precotta", grams: 60/);
+  assert.match(recipe, /part-polenta-dry-v12022/);
+  assert.doesNotMatch(recipe, /food: "Polenta cotta", grams: 300/);
+  for (const food of ["Salvia fresca", "Succo di limone", "Pepe nero"]) {
+    assert.ok(recipe.includes(`category: "Extra", food: "${food}"`));
+  }
+  assert.match(app, /foods\["Polenta secca precotta"\] = \{ kcal: 323, protein: 8, carbs: 72\.7, fat: 0\.7, fiber: 6\.2, source: "CREA" \}/);
+  await access(new URL("../dist/food/part-polenta-dry-v12022.png", import.meta.url));
+});
+
 test("v1.16.86 preserves the exact scroll position across automatic releases", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /writeStorageItem\(sessionStorage, "vivapiatto-release-scroll-y", String\(window\.scrollY\)\)/);

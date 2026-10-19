@@ -60,7 +60,9 @@ const incomplete = expected.flatMap((id) => {
   if (!/time:\s*[1-9]\d*/.test(recipe)) issues.push("tempo");
   if (!/ingredients:\s*\[[\s\S]*?food:[\s\S]*?grams:\s*[1-9]/.test(recipe)) issues.push("ingredienti e grammi");
   if (!/steps:\s*\[[\s\S]*?["`][^"`]+["`]/.test(recipe)) issues.push("preparazione");
-  if (!/alternatives:\s*\[[\s\S]*?["`][^"`]+["`]/.test(recipe)) issues.push("alternative");
+  if (!/alternatives:\s*\[[\s\S]*?["`][^"`]+["`]/.test(recipe) &&
+      !(/alternatives:\s*standardComponentAlternatives/.test(recipe) &&
+        /const standardComponentAlternatives = \[[^\]]+["`]/.test(source))) issues.push("alternative");
   return issues.length ? [`${id}: ${issues.join(", ")}`] : [];
 });
 
