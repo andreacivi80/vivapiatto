@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { access, readFile, readdir, stat } from "node:fs/promises";
 import test from "node:test";
+import { gzipSync } from "node:zlib";
 
 test("audit fotografie compatibile con cartelle che contengono spazi", async () => {
   const audit = await readFile(new URL("../scripts/audit-photo-assets.mjs", import.meta.url), "utf8");
@@ -905,6 +906,21 @@ test("v1.20.17 depicts D14 roasted cabbage and counts its seasonings", async () 
   await access(new URL("../dist/food/part-red-cabbage-roasted-v12017.png", import.meta.url));
 });
 
+test("v1.20.18 shows cooked cabbage in D24 and declares the salmon weighing state", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const start = app.indexOf('id: "matrix-d24-salmone-con-cavolo-rosso-e-patata-dolce"');
+  const end = app.indexOf('id: "matrix-d25-tofu-al-curry-con-zucca-e-riso-basmati"', start);
+  assert.ok(start >= 0 && end > start);
+  const recipe = app.slice(start, end);
+  const ingredients = recipe.split("parts: [")[0];
+  for (const food of ["Aceto di mele", "Pepe nero", "Erba cipollina fresca"]) {
+    assert.ok(ingredients.includes(`food: "${food}"`), `${food} missing from D24 ingredients`);
+    assert.ok(recipe.includes(`category: "Extra", food: "${food}"`), `${food} missing from editable D24 parts`);
+  }
+  assert.match(recipe, /Cavolo rosso al forno · pesa crudo.*part-red-cabbage-roasted-v12017/);
+  assert.match(recipe, /Salmone cotto · pesa dopo cottura/);
+});
+
 test("v1.16.86 preserves the exact scroll position across automatic releases", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /writeStorageItem\(sessionStorage, "vivapiatto-release-scroll-y", String\(window\.scrollY\)\)/);
@@ -1004,7 +1020,9 @@ test("v1.19.20 caches framework dependencies without lazy-loading the planner", 
   assert.ok((await stat(new URL(`../dist/assets/${vendorChunk}`, import.meta.url))).size < 250_000);
   // The verified recipe catalog grows with complete instructions; keep the
   // entry bundle bounded while the separate vendor chunk avoids duplication.
-  assert.ok((await stat(new URL(`../dist/assets/${appChunk}`, import.meta.url))).size < 576_000);
+  const appBundle = await readFile(new URL(`../dist/assets/${appChunk}`, import.meta.url));
+  assert.ok(appBundle.length < 580_000);
+  assert.ok(gzipSync(appBundle).length < 130_000);
 });
 
 test("v1.19.21 keeps the public mobile stress audit silent and reusable", async () => {

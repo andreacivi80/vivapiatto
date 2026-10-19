@@ -18,6 +18,12 @@
 - [x] D14 ora usa un'immagine distinta del cavolo rosso arrostito. La ricetta dichiara che i 250 g sono pesati prima della cottura e usa la voce nutrizionale cruda per quella quantità; zenzero, paprika e aceto di mele, già presenti nell'elenco fornito, hanno grammi, valori e foto atomiche.
 - [ ] Resta il riesame individuale di ingredienti secondari, metodi di cottura e valori delle altre cene; la tavola non equivale a una certificazione completa.
 
+## v1.20.18 — controllo D17–D32
+
+- [x] Scansione visiva D17–D32: le foto finali mostrano i piatti completi; D24 mostrava però il cavolo crudo nella card della componente cotta.
+- [x] D24 riusa la foto dedicata al cavolo rosso arrostito; la ricetta ora distingue cavolo pesato crudo e salmone pesato cotto, ed esplicita aceto di mele, pepe ed erba cipollina con quantità e foto.
+- [ ] L'allegato originale D24 indica 150 g di salmone **a crudo**, mentre il motore attuale usa 150 g **cotti**. Sono quantità diverse: questa revisione rende lo stato visibile ma non le dichiara equivalenti. Resta da riallineare il dato nutrizionale alla grammatura originale usando una voce cruda documentata o una resa di cottura verificata; non convertire per supposizione.
+
 ## v1.5.0 completato
 
 - [x] Pasta in bianco: immagine dedicata, senza condimenti estranei.

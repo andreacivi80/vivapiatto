@@ -5173,12 +5173,12 @@ const attachmentDinnersB: Recipe[] = [
   },
   {
     id: "matrix-d24-salmone-con-cavolo-rosso-e-patata-dolce",
-    name: "Salmone con cavolo rosso e patata dolce", kicker: "Cena completa · matrice D24", course: "Piatto unico", cuisine: "Mediterraneo", kind: "combination",
+    name: "Salmone con cavolo rosso e patata dolce", kicker: "Cena di pesce", course: "Piatto unico", cuisine: "Mediterraneo", kind: "combination",
     image: photo("recipe-d24-salmon-red-cabbage-sweet-potato-v11872"), time: 35,
-    ingredients: [{ food: "Salmone cotto", grams: 150 }, { food: "Patata dolce cotta", grams: 200 }, { food: "Cavolo rosso crudo", grams: 250 }, { food: "Olio extravergine", grams: 5 }],
-    parts: [{ category: "Proteina", food: "Salmone cotto", grams: 150, label: "Salmone al forno o piastra · 150 g", image: photo("part-salmon-baked-v7") }, { category: "Carboidrato", food: "Patata dolce cotta", grams: 200, label: "Patata dolce · 200 g", image: photo("part-sweet-potato-v8") }, { category: "Contorno", food: "Cavolo rosso crudo", grams: 250, label: "Cavolo rosso cotto · 250 g", image: photo("part-red-cabbage-v11515") }, { category: "Extra", food: "Olio extravergine", grams: 5, label: "Olio EVO · 5 g", image: photo("part-olive-oil-v8") }],
-    steps: ["Taglia patata dolce e cavolo e cuocili al forno a 200 °C finché teneri.","Cuoci il salmone alla piastra o al forno fino a completa cottura.","Condisci con aceto di mele, pepe, erba cipollina e 5 g di olio."],
-    alternatives: ["Ogni componente può essere sostituito separatamente", "Porzioni orientative per un adulto sano", "Pesi e stato di cottura sono indicati in ogni componente"],
+    ingredients: [{ food: "Salmone cotto", grams: 150 }, { food: "Patata dolce cotta", grams: 200 }, { food: "Cavolo rosso crudo", grams: 250 }, { food: "Aceto di mele", grams: 10 }, { food: "Pepe nero", grams: 1 }, { food: "Erba cipollina fresca", grams: 5 }, { food: "Olio extravergine", grams: 5 }],
+    parts: [{ category: "Proteina", food: "Salmone cotto", grams: 150, label: "Salmone cotto · pesa dopo cottura", image: photo("part-salmon-baked-v7") }, { category: "Carboidrato", food: "Patata dolce cotta", grams: 200, label: "Patata dolce · 200 g", image: photo("part-sweet-potato-v8") }, { category: "Contorno", food: "Cavolo rosso crudo", grams: 250, label: "Cavolo rosso al forno · pesa crudo", image: photo("part-red-cabbage-roasted-v12017") }, { category: "Extra", food: "Aceto di mele", grams: 10, label: "Aceto di mele", image: photo("part-apple-cider-vinegar-v11850") }, { category: "Extra", food: "Pepe nero", grams: 1, label: "Pepe nero", image: photo("part-black-pepper-v11866") }, { category: "Extra", food: "Erba cipollina fresca", grams: 5, label: "Erba cipollina", image: photo("part-garlic-chives-v1163") }, { category: "Extra", food: "Olio extravergine", grams: 5, label: "Olio EVO · 5 g", image: photo("part-olive-oil-v8") }],
+    steps: ["Pesa 250 g di cavolo crudo; taglialo con la patata dolce e arrostisci a 200 °C per 20-25 min.", "Cuoci il salmone alla piastra o al forno finché è opaco al centro. Per questa versione pesa 150 g dopo la cottura.", "Condisci con 10 g di aceto di mele, 1 g di pepe, 5 g di erba cipollina e 5 g di olio."],
+    alternatives: ["Orata al posto del salmone", "Patate al posto della patata dolce"],
   },
   {
     id: "matrix-d25-tofu-al-curry-con-zucca-e-riso-basmati",
