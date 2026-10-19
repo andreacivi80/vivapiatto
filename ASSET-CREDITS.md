@@ -13,6 +13,14 @@ Le immagini di bowl pollo e quinoa, salmone con patata dolce, insalata di farro 
 
 - `part-salmon-raw-v12019.png`: filetto crudo di salmone atlantico, da solo su piatto neutro; distinta dalla foto del salmone cotto. Immagine generata, non fotografia documentaria di un prodotto specifico.
 
+### Nuove immagini v1.20.20
+
+- `part-sea-bream-raw-v12020.png`: filetto crudo di orata, da solo.
+- `part-potatoes-raw-v12020.png`: patate comuni crude intere, non patate dolci né patate cotte.
+- `part-artichokes-raw-v12020.png`: carciofo e cuori puliti crudi, distinti dai carciofi già bolliti.
+
+Sono immagini originali generate per rendere riconoscibile la materia prima; non identificano una confezione o una varietà commerciale precisa. La foto della ricetta D34 continua a rappresentare il piatto cotto.
+
 ### Nuova immagine v1.20.15
 
 - `recipe-p38-bulgur-salmon-fennel-orange-v12015.png`: immagine generata dalla ricetta P38 con bulgur cotto, filetto di salmone grigliato, finocchio crudo affettato e spicchi d'arancia. Richiesti soltanto questi ingredienti e la finitura con olio; nessun testo o marchio. La fotografia precedente, con pesce troppo pallido per riconoscere il salmone, resta nell'archivio ma non è più collegata alla ricetta.

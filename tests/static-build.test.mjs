@@ -927,6 +927,30 @@ test("v1.20.19 shows cooked cabbage in D24 and counts 150 g of raw edible salmon
   await access(new URL("../dist/food/part-salmon-raw-v12019.png", import.meta.url));
 });
 
+test("v1.20.20 aligns D34 raw weights, sources and photographs", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const start = app.indexOf('id: "matrix-d34-orata-al-forno-con-carciofi-e-patate"');
+  const end = app.indexOf('id: "matrix-d35-tofu-con-cavolo-nero-funghi-e-riso-basmati"', start);
+  assert.ok(start >= 0 && end > start);
+  const recipe = app.slice(start, end);
+  for (const [food, grams, image] of [
+    ["Orata, filetto crudo", 150, "part-sea-bream-raw-v12020"],
+    ["Patate crude · parte edibile", 200, "part-potatoes-raw-v12020"],
+    ["Carciofi crudi · parte edibile", 200, "part-artichokes-raw-v12020"],
+  ]) {
+    assert.match(recipe, new RegExp(`food: "${food}", grams: ${grams}`));
+    assert.match(recipe, new RegExp(`photo\\("${image}"\\)`));
+    await access(new URL(`../dist/food/${image}.png`, import.meta.url));
+  }
+  for (const food of ["Aglio crudo", "Prezzemolo fresco", "Succo di limone"]) {
+    assert.ok(recipe.includes(`category: "Extra", food: "${food}"`));
+  }
+  assert.doesNotMatch(recipe, /food: "Patate lesse"|food: "Carciofi cotti bolliti"|food: "Orata cotta"/);
+  assert.match(app, /foods\["Orata, filetto crudo"\] = \{ kcal: 121, protein: 20\.7, carbs: 1, fat: 3\.8, fiber: 0, source: "CREA" \}/);
+  assert.match(app, /foods\["Patate crude · parte edibile"\] = \{ kcal: 72, protein: 2, carbs: 16, fat: 0\.1, fiber: 1\.8, source: "CREA" \}/);
+  assert.match(app, /foods\["Carciofi crudi · parte edibile"\] = \{ kcal: 33, protein: 2\.7, carbs: 2\.5, fat: 0\.2, fiber: 5\.5, source: "CREA" \}/);
+});
+
 test("v1.16.86 preserves the exact scroll position across automatic releases", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /writeStorageItem\(sessionStorage, "vivapiatto-release-scroll-y", String\(window\.scrollY\)\)/);
