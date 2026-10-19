@@ -597,6 +597,14 @@ const foods: Record<string, Food> = {
     fiber: 0,
     source: "CREA",
   },
+  "Salmone crudo · parte edibile": {
+    kcal: 185,
+    protein: 18.4,
+    carbs: 1,
+    fat: 12,
+    fiber: 0,
+    source: "CREA",
+  },
   "Salmone cotto": {
     kcal: 208,
     protein: 20.4,
@@ -5175,9 +5183,9 @@ const attachmentDinnersB: Recipe[] = [
     id: "matrix-d24-salmone-con-cavolo-rosso-e-patata-dolce",
     name: "Salmone con cavolo rosso e patata dolce", kicker: "Cena di pesce", course: "Piatto unico", cuisine: "Mediterraneo", kind: "combination",
     image: photo("recipe-d24-salmon-red-cabbage-sweet-potato-v11872"), time: 35,
-    ingredients: [{ food: "Salmone cotto", grams: 150 }, { food: "Patata dolce cotta", grams: 200 }, { food: "Cavolo rosso crudo", grams: 250 }, { food: "Aceto di mele", grams: 10 }, { food: "Pepe nero", grams: 1 }, { food: "Erba cipollina fresca", grams: 5 }, { food: "Olio extravergine", grams: 5 }],
-    parts: [{ category: "Proteina", food: "Salmone cotto", grams: 150, label: "Salmone cotto · pesa dopo cottura", image: photo("part-salmon-baked-v7") }, { category: "Carboidrato", food: "Patata dolce cotta", grams: 200, label: "Patata dolce · 200 g", image: photo("part-sweet-potato-v8") }, { category: "Contorno", food: "Cavolo rosso crudo", grams: 250, label: "Cavolo rosso al forno · pesa crudo", image: photo("part-red-cabbage-roasted-v12017") }, { category: "Extra", food: "Aceto di mele", grams: 10, label: "Aceto di mele", image: photo("part-apple-cider-vinegar-v11850") }, { category: "Extra", food: "Pepe nero", grams: 1, label: "Pepe nero", image: photo("part-black-pepper-v11866") }, { category: "Extra", food: "Erba cipollina fresca", grams: 5, label: "Erba cipollina", image: photo("part-garlic-chives-v1163") }, { category: "Extra", food: "Olio extravergine", grams: 5, label: "Olio EVO · 5 g", image: photo("part-olive-oil-v8") }],
-    steps: ["Pesa 250 g di cavolo crudo; taglialo con la patata dolce e arrostisci a 200 °C per 20-25 min.", "Cuoci il salmone alla piastra o al forno finché è opaco al centro. Per questa versione pesa 150 g dopo la cottura.", "Condisci con 10 g di aceto di mele, 1 g di pepe, 5 g di erba cipollina e 5 g di olio."],
+    ingredients: [{ food: "Salmone crudo · parte edibile", grams: 150 }, { food: "Patata dolce cotta", grams: 200 }, { food: "Cavolo rosso crudo", grams: 250 }, { food: "Aceto di mele", grams: 10 }, { food: "Pepe nero", grams: 1 }, { food: "Erba cipollina fresca", grams: 5 }, { food: "Olio extravergine", grams: 5 }],
+    parts: [{ category: "Proteina", food: "Salmone crudo · parte edibile", grams: 150, label: "Salmone alla piastra · pesa 150 g a crudo", image: photo("part-salmon-raw-v12019") }, { category: "Carboidrato", food: "Patata dolce cotta", grams: 200, label: "Patata dolce · 200 g", image: photo("part-sweet-potato-v8") }, { category: "Contorno", food: "Cavolo rosso crudo", grams: 250, label: "Cavolo rosso al forno · pesa crudo", image: photo("part-red-cabbage-roasted-v12017") }, { category: "Extra", food: "Aceto di mele", grams: 10, label: "Aceto di mele", image: photo("part-apple-cider-vinegar-v11850") }, { category: "Extra", food: "Pepe nero", grams: 1, label: "Pepe nero", image: photo("part-black-pepper-v11866") }, { category: "Extra", food: "Erba cipollina fresca", grams: 5, label: "Erba cipollina", image: photo("part-garlic-chives-v1163") }, { category: "Extra", food: "Olio extravergine", grams: 5, label: "Olio EVO · 5 g", image: photo("part-olive-oil-v8") }],
+    steps: ["Pesa 250 g di cavolo crudo; taglialo con la patata dolce e arrostisci a 200 °C per 20-25 min.", "Pesa 150 g della parte edibile del filetto crudo. Cuoci il salmone alla piastra o al forno finché è opaco al centro.", "Condisci con 10 g di aceto di mele, 1 g di pepe, 5 g di erba cipollina e 5 g di olio."],
     alternatives: ["Orata al posto del salmone", "Patate al posto della patata dolce"],
   },
   {
@@ -6135,6 +6143,13 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       grams: 150,
       label: "Salmone",
       image: photo("part-salmon-baked-v7"),
+    },
+    {
+      category: "Proteina",
+      food: "Salmone crudo · parte edibile",
+      grams: 150,
+      label: "Filetto di salmone · peso a crudo",
+      image: photo("part-salmon-raw-v12019"),
     },
     {
       category: "Proteina",
@@ -11345,7 +11360,7 @@ export function FoodPlanner() {
   const groupFoods: Record<string, string[]> = {
     Latte: ["Yogurt greco 2%", "Yogurt greco 0%", "Mozzarella vaccina", "Mozzarella light", "Ricotta vaccina", "Crescenza", "Primo sale", "Scamorza", "Provolone Dolce Auricchio", "Feta"],
     Uova: ["Uovo", "Uova sode", "Uova strapazzate o in frittata"],
-    Pesce: ["Salmone cotto", "Tonno al naturale sgocciolato", "Sogliola · peso a crudo", "Rombo · peso a crudo", "Seppia · peso a crudo"],
+    Pesce: ["Salmone cotto", "Salmone crudo · parte edibile", "Tonno al naturale sgocciolato", "Sogliola · peso a crudo", "Rombo · peso a crudo", "Seppia · peso a crudo"],
     Glutine: [
       "Pane integrale",
       "Pane bianco tipo 0",

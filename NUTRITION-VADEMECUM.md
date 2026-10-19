@@ -48,6 +48,7 @@ Questo documento è la base funzionale dell’app. Le fotografie e la grafica de
 
 ## Fonti principali
 
+- CREA, salmone crudo (Salmo salar), per 100 g di parte edibile: 185 kcal, 18,4 g proteine, 1 g carboidrati disponibili, 12 g grassi; usato per i 150 g crudi della ricetta D24 senza conversione di resa in cottura: https://www.alimentinutrizione.it/tabelle-nutrizionali/122400
 - CREA, Linee guida per una sana alimentazione: https://www.salute.gov.it/new/it/pubblicazione/linee-guida-una-sana-alimentazione/
 - CREA, Tabelle di composizione degli alimenti: https://www.alimentinutrizione.it/
 - SINU, standard quantitativi delle porzioni: https://sinu.it/wp-content/uploads/2025/01/Standard-Quantitativi-delle-Porzioni.pdf

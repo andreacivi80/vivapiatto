@@ -906,7 +906,7 @@ test("v1.20.17 depicts D14 roasted cabbage and counts its seasonings", async () 
   await access(new URL("../dist/food/part-red-cabbage-roasted-v12017.png", import.meta.url));
 });
 
-test("v1.20.18 shows cooked cabbage in D24 and declares the salmon weighing state", async () => {
+test("v1.20.19 shows cooked cabbage in D24 and counts 150 g of raw edible salmon", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   const start = app.indexOf('id: "matrix-d24-salmone-con-cavolo-rosso-e-patata-dolce"');
   const end = app.indexOf('id: "matrix-d25-tofu-al-curry-con-zucca-e-riso-basmati"', start);
@@ -918,7 +918,13 @@ test("v1.20.18 shows cooked cabbage in D24 and declares the salmon weighing stat
     assert.ok(recipe.includes(`category: "Extra", food: "${food}"`), `${food} missing from editable D24 parts`);
   }
   assert.match(recipe, /Cavolo rosso al forno · pesa crudo.*part-red-cabbage-roasted-v12017/);
-  assert.match(recipe, /Salmone cotto · pesa dopo cottura/);
+  assert.match(recipe, /Salmone alla piastra · pesa 150 g a crudo/);
+  assert.match(recipe, /food: "Salmone crudo · parte edibile", grams: 150/);
+  assert.match(recipe, /Pesa 150 g della parte edibile del filetto crudo/);
+  assert.doesNotMatch(recipe, /Salmone cotto · pesa dopo cottura/);
+  assert.match(app, /"Salmone crudo · parte edibile": \{\s*kcal: 185,\s*protein: 18\.4,\s*carbs: 1,\s*fat: 12,\s*fiber: 0,\s*source: "CREA"/);
+  assert.match(app, /food: "Salmone crudo · parte edibile",\s*grams: 150,\s*label: "Filetto di salmone · peso a crudo",\s*image: photo\("part-salmon-raw-v12019"\)/);
+  await access(new URL("../dist/food/part-salmon-raw-v12019.png", import.meta.url));
 });
 
 test("v1.16.86 preserves the exact scroll position across automatic releases", async () => {
