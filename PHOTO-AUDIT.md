@@ -12,6 +12,12 @@
 - [x] P58: la foto mostra cavolo rosso crudo e le voci nutrizionali usano lo stato crudo; la preparazione ora lascia il cavolo crudo e cuoce solo i funghi. I tre condimenti già presenti nel testo fornito — zenzero, aglio e limone — sono ora esplicitati con grammi, valori energetici e foto atomiche, senza ingredienti nascosti nel calcolo.
 - [ ] Il controllo individuale di ogni dettaglio della famiglia P49–P64 rimane aperto; la scansione non certifica i valori nutrizionali per semplice confronto fotografico.
 
+## v1.20.17 — controllo D01–D16
+
+- [x] Scansione visiva delle foto D01–D16 con i principali ingredienti affiancati. In D14 la componente di cavolo rosso cotto mostrava erroneamente la foto di quello crudo.
+- [x] D14 ora usa un'immagine distinta del cavolo rosso arrostito. La ricetta dichiara che i 250 g sono pesati prima della cottura e usa la voce nutrizionale cruda per quella quantità; zenzero, paprika e aceto di mele, già presenti nell'elenco fornito, hanno grammi, valori e foto atomiche.
+- [ ] Resta il riesame individuale di ingredienti secondari, metodi di cottura e valori delle altre cene; la tavola non equivale a una certificazione completa.
+
 ## v1.5.0 completato
 
 - [x] Pasta in bianco: immagine dedicata, senza condimenti estranei.

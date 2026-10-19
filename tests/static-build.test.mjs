@@ -889,6 +889,22 @@ test("v1.20.16 counts every P58 seasoning and keeps photographed red cabbage raw
   assert.doesNotMatch(recipe, /Cuoci funghi e cavolo rosso/);
 });
 
+test("v1.20.17 depicts D14 roasted cabbage and counts its seasonings", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const start = app.indexOf('id: "matrix-d14-tempeh-al-forno-con-cavolo-rosso-e-patata-dolce"');
+  const end = app.indexOf('id: "matrix-d15-branzino-al-vapore-con-orzo-e-bietole"', start);
+  assert.ok(start >= 0 && end > start);
+  const recipe = app.slice(start, end);
+  const ingredients = recipe.split("parts: [")[0];
+  for (const food of ["Zenzero fresco", "Paprika dolce", "Aceto di mele"]) {
+    assert.ok(ingredients.includes(`food: "${food}"`), `${food} missing from D14 ingredients`);
+    assert.ok(recipe.includes(`category: "Extra", food: "${food}"`), `${food} missing from editable D14 parts`);
+  }
+  assert.match(recipe, /part-red-cabbage-roasted-v12017/);
+  assert.match(recipe, /Pesa 250 g di cavolo rosso prima di cuocerlo/);
+  await access(new URL("../dist/food/part-red-cabbage-roasted-v12017.png", import.meta.url));
+});
+
 test("v1.16.86 preserves the exact scroll position across automatic releases", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /writeStorageItem\(sessionStorage, "vivapiatto-release-scroll-y", String\(window\.scrollY\)\)/);

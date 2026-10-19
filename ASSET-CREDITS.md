@@ -13,6 +13,10 @@ Le immagini di bowl pollo e quinoa, salmone con patata dolce, insalata di farro 
 
 - `recipe-p38-bulgur-salmon-fennel-orange-v12015.png`: immagine generata dalla ricetta P38 con bulgur cotto, filetto di salmone grigliato, finocchio crudo affettato e spicchi d'arancia. Richiesti soltanto questi ingredienti e la finitura con olio; nessun testo o marchio. La fotografia precedente, con pesce troppo pallido per riconoscere il salmone, resta nell'archivio ma non è più collegata alla ricetta.
 
+### Nuova immagine v1.20.17
+
+- `part-red-cabbage-roasted-v12017.png`: immagine originale generata per la singola componente di cavolo rosso arrostito al forno, senza altri alimenti né testo. Usata nella ricetta D14; la foto del cavolo crudo resta distinta nel paniere.
+
 ### Nuove immagini v1.2.0
 
 - `toast-tuna-v2.png`: toast con tonno, ricotta, pomodorini e rucola.

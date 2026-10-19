@@ -5027,7 +5027,7 @@ const attachmentDinnersA: Recipe[] = [
   {
     id: "matrix-d14-tempeh-al-forno-con-cavolo-rosso-e-patata-dolce",
     name: "Tempeh al forno con cavolo rosso e patata dolce",
-    kicker: "Cena completa · matrice D14",
+    kicker: "Cena vegetale",
     course: "Piatto unico",
     cuisine: "Vegetale",
     kind: "combination",
@@ -5037,16 +5037,22 @@ const attachmentDinnersA: Recipe[] = [
       { food: "Tempeh", grams: 100 },
       { food: "Patata dolce cotta", grams: 200 },
       { food: "Cavolo rosso crudo", grams: 250 },
+      { food: "Zenzero fresco", grams: 5 },
+      { food: "Paprika dolce", grams: 2 },
+      { food: "Aceto di mele", grams: 10 },
       { food: "Olio extravergine", grams: 10 },
     ],
     parts: [
       { category: "Proteina", food: "Tempeh", grams: 100, label: "Tempeh al forno · 100 g", image: photo("part-tempeh-v11520") },
       { category: "Carboidrato", food: "Patata dolce cotta", grams: 200, label: "Patata dolce al forno · 200 g", image: photo("part-sweet-potato-v8") },
-      { category: "Contorno", food: "Cavolo rosso crudo", grams: 250, label: "Cavolo rosso cotto · 250 g", image: photo("part-red-cabbage-v11515") },
+      { category: "Contorno", food: "Cavolo rosso crudo", grams: 250, label: "Cavolo rosso al forno · pesa crudo", image: photo("part-red-cabbage-roasted-v12017") },
+      { category: "Extra", food: "Zenzero fresco", grams: 5, label: "Zenzero fresco", image: photo("part-ginger-v11866") },
+      { category: "Extra", food: "Paprika dolce", grams: 2, label: "Paprika dolce", image: photo("part-paprika-v11866") },
+      { category: "Extra", food: "Aceto di mele", grams: 10, label: "Aceto di mele", image: photo("part-apple-cider-vinegar-v11850") },
       { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") },
     ],
-    steps: ["Taglia patata dolce e cavolo e cuocili a 200 °C con zenzero, paprika e aceto di mele.","Aggiungi il tempeh a fette negli ultimi 15 minuti e giralo una volta.","Usa complessivamente i 10 g di olio misurati."],
-    alternatives: ["Ogni componente può essere sostituito separatamente", "Porzioni orientative per un adulto sano", "Pesi e stato di cottura sono indicati in ogni componente"],
+    steps: ["Pesa 250 g di cavolo rosso prima di cuocerlo. Taglia con la patata; usa 5 g zenzero, 2 g paprika e 5 g olio.", "Inforna a 200 °C per 25 min; unisci il tempeh dopo 10 min, poi gira.", "Condisci con 10 g di aceto di mele e 5 g olio. Foto cotta; peso a crudo."],
+    alternatives: ["Tofu per tempeh", "Zucca per patata dolce"],
   },
   {
     id: "matrix-d15-branzino-al-vapore-con-orzo-e-bietole",
@@ -5673,7 +5679,7 @@ const attachmentMainsP53P64: Recipe[] = [
     steps: ["Reidrata il cous cous integrale secondo confezione.","Cuoci il merluzzo al vapore fino a completa cottura.","Cuoci le verdure con poca acqua, curry, curcuma e zenzero; unisci tutto e completa con 10 g di olio."], alternatives: ["Contiene pesce e glutine","Verificare la miscela di curry"],
   },
   {
-    id: "matrix-p58-orzo-con-edamame-funghi-e-cavolo-rosso", name: "Orzo con edamame, funghi e cavolo rosso", kicker: "Pranzo completo · matrice P58",
+    id: "matrix-p58-orzo-con-edamame-funghi-e-cavolo-rosso", name: "Orzo con edamame, funghi e cavolo rosso", kicker: "Pranzo vegetale",
     course: "Piatto completo", cuisine: "Italiano", kind: "combination", image: photo("recipe-p58-barley-edamame-cabbage-v11661"), time: 30,
     ingredients: [
       { food: "Orzo perlato cotto", grams: 195 },
@@ -5695,7 +5701,7 @@ const attachmentMainsP53P64: Recipe[] = [
       { category: "Extra", food: "Succo di limone", grams: 10, label: "Succo di limone", image: photo("part-lemon-juice-v1181") },
       { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g", image: photo("part-olive-oil-v8") },
     ],
-    steps: ["Cuoci l'orzo secondo confezione.", "Cuoci i funghi in padella antiaderente con 5 g di zenzero fresco e 3 g di aglio. Affetta sottilmente 125 g di cavolo rosso e lascialo crudo, come indicato nella lista e nella foto.", "Unisci orzo, edamame, funghi e cavolo; completa con 10 g di succo di limone e 10 g di olio misurato."], alternatives: ["Vegano", "Contiene glutine e soia"],
+    steps: ["Cuoci l'orzo secondo confezione.", "Cuoci i funghi con 5 g di zenzero e 3 g di aglio. Affetta sottilmente 125 g di cavolo rosso e lascialo crudo.", "Unisci tutto con 10 g di succo di limone e 10 g di olio."], alternatives: ["Vegano", "Contiene glutine e soia"],
   },
   {
     id: "matrix-p59-riso-venere-con-orata-e-asparagi", name: "Riso Venere con orata e asparagi", kicker: "Pranzo completo · matrice P59",
