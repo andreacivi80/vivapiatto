@@ -4071,12 +4071,18 @@ button {
   grid-template-columns: minmax(95px, 1fr) 30px 36px 44px 52px 36px;
   gap: 3px;
   align-items: center;
+  font-variant-numeric: tabular-nums;
 }
 .print-food-head {
   padding: 3px 0;
   color: var(--muted);
   font-size: 7px;
   font-weight: 800;
+}
+.print-food-head span:not(:first-child) {
+  min-width: 0;
+  text-align: right;
+  overflow-wrap: anywhere;
 }
 .print-food-row {
   padding: 4px 0;
@@ -4090,6 +4096,7 @@ button {
 }
 .print-food-row b,
 .print-food-row i {
+  min-width: 0;
   text-align: right;
   font-style: normal;
 }

@@ -1853,6 +1853,13 @@ foods["Rape crude"] = { kcal: 24, protein: 1, carbs: 4, fat: 0, fiber: 2.6, sour
 foods["Rape cotte bollite"] = { kcal: 26, protein: 1.1, carbs: 4.3, fat: 0, fiber: 2.8, source: "CREA 005665" };
 foods["Patate cotte arrosto"] = { kcal: 152, protein: 2.9, carbs: 25.7, fat: 4.5, fiber: 1.8, source: "CREA 006511" };
 foods["Aceto di mele"] = { kcal: 21, protein: 0, carbs: 0.9, fat: 0, fiber: 0, source: "USDA FoodData Central" };
+// CREA PC0001: pizza margherita STG pronta, usata come base misurabile delle varianti farcite.
+foods["Pizza Napoletana Margherita STG"] = { kcal: 235, protein: 10.7, carbs: 27.4, fat: 9.3, fiber: 2.7, source: "CREA" };
+foods["Gorgonzola"] = { kcal: 324, protein: 19.1, carbs: 1, fat: 27.1, fiber: 0, source: "CREA" };
+// Etichetta Levoni Schiacciata Piccante: la pizza diavola resta una stima, non il valore di qualsiasi pizzeria.
+foods["Schiacciata piccante Levoni"] = { kcal: 329, protein: 26, carbs: 0, fat: 25, fiber: 0, source: "ETICHETTA" };
+// Etichetta Decathlon Whey Protein vaniglia: fibra non dichiarata, conteggiata come 0 solo per il riepilogo.
+foods["Proteine whey vaniglia Decathlon"] = { kcal: 366, protein: 70, carbs: 15, fat: 3.6, fiber: 0, source: "ETICHETTA" };
 
 // Build the searchable database only after every verified alias has been added.
 // Creating this snapshot earlier made valid aliases look missing and crashed the
@@ -6992,6 +6999,10 @@ const ingredientPartCatalog: Record<string, MealPart> = {
   "Patatine fritte": { category: "Carboidrato", food: "Patatine fritte", grams: 120, label: "Patatine fritte", image: photo("cheat-fries-v11619") },
   "Peperoni cotti": { category: "Contorno", food: "Peperoni cotti", grams: 150, label: "Peperoni cotti", image: photo("part-peppers-cooked-v11819") },
   "Pizza margherita": { category: "Carboidrato", food: "Pizza margherita", grams: 300, label: "Pizza margherita", image: photo("pizza-margherita-v7") },
+  "Pizza Napoletana Margherita STG": { category: "Carboidrato", food: "Pizza Napoletana Margherita STG", grams: 300, label: "Base margherita pronta · 300 g", image: photo("pizza-margherita-stg-v12023") },
+  "Gorgonzola": { category: "Latticino", food: "Gorgonzola", grams: 30, label: "Gorgonzola · 30 g", image: photo("part-gorgonzola-v12023") },
+  "Schiacciata piccante Levoni": { category: "Proteina", food: "Schiacciata piccante Levoni", grams: 50, label: "Salame piccante · 50 g", image: photo("part-spicy-salami-v12023") },
+  "Proteine whey vaniglia Decathlon": { category: "Proteina", food: "Proteine whey vaniglia Decathlon", grams: 30, label: "Whey vaniglia · 30 g", image: photo("part-whey-powder-v12023") },
   "Riso basmati cotto": { category: "Carboidrato", food: "Riso basmati cotto", grams: 180, label: "Riso basmati cotto", image: photo("part-basmati-cooked-v11650") },
   "Salsa di soia": { category: "Extra", food: "Salsa di soia", grams: 10, label: "Salsa di soia", image: photo("part-soy-sauce-v11819") },
   Tiramisu: { category: "Extra", food: "Tiramisu", grams: 120, label: "Tiramisù", image: photo("cheat-tiramisu-v11619") },
@@ -7523,6 +7534,78 @@ const occasionalRecipes: Recipe[] = [
     ],
   },
   {
+    id: "occasional-pizza-bresaola-rucola-grana",
+    name: "Pizza con bresaola, rucola e grana",
+    kicker: "Pizza farcita · grammi modificabili",
+    course: "Piatto unico", cuisine: "Italiano", time: 18,
+    image: photo("cheat-pizza-bresaola-rucola-grana-v12023"),
+    sourceLabel: "CREA: base margherita STG; farcitura calcolata separatamente",
+    sourceUrl: "https://www.alimentinutrizione.it/tabelle-nutrizionali/PC0001",
+    ingredients: [
+      { food: "Pizza Napoletana Margherita STG", grams: 300 },
+      { food: "Bresaola", grams: 50 }, { food: "Rucola", grams: 30 },
+      { food: "Parmigiano Reggiano DOP", grams: 20, label: "Grana in scaglie" },
+    ],
+    parts: [
+      { category: "Carboidrato", food: "Pizza Napoletana Margherita STG", grams: 300, label: "Base margherita pronta", image: photo("pizza-margherita-stg-v12023") },
+      { category: "Proteina", food: "Bresaola", grams: 50, image: photo("part-bresaola-v7") },
+      { category: "Contorno", food: "Rucola", grams: 30, image: photo("part-rucola-v7") },
+      { category: "Latticino", food: "Parmigiano Reggiano DOP", grams: 20, label: "Grana in scaglie", image: photo("part-parmigiano-v11850") },
+    ],
+    steps: ["Pesa la pizza margherita già cotta; il riferimento di 300 g può essere cambiato in base alla pizza reale.", "Lava e asciuga la rucola. A cottura terminata disponi bresaola, rucola e scaglie di grana sulla pizza calda.", "Registra separatamente olio o altre aggiunte non presenti qui. Il valore finale è una stima dalla base CREA più la farcitura pesata."],
+    alternatives: ["Margherita semplice", "Bresaola e rucola senza grana", "Porzione di pizza personalizzata"],
+    allergens: ["Glutine", "Latte"],
+  },
+  {
+    id: "occasional-pizza-quattro-formaggi",
+    name: "Pizza ai quattro formaggi",
+    kicker: "Pizza ricca · formaggi distinti",
+    course: "Piatto unico", cuisine: "Italiano", time: 18,
+    image: photo("cheat-pizza-quattro-formaggi-v12023"),
+    ingredients: [{ food: "Pizza Napoletana Margherita STG", grams: 300 }, { food: "Gorgonzola", grams: 30 }, { food: "Stracchino", grams: 30 }],
+    parts: [
+      { category: "Carboidrato", food: "Pizza Napoletana Margherita STG", grams: 300, label: "Base con mozzarella e grana", image: photo("pizza-margherita-stg-v12023") },
+      { category: "Latticino", food: "Gorgonzola", grams: 30, image: photo("part-gorgonzola-v12023") },
+      { category: "Latticino", food: "Stracchino", grams: 30, image: photo("part-stracchino-v11849") },
+    ],
+    steps: ["Parti da una base margherita pesata: contiene già mozzarella e una piccola quantità di grana nel riferimento CREA.", "Distribuisci gorgonzola e stracchino pesati; completa la cottura finché i formaggi fondono.", "È una stima di una variante farcita, non il valore certificato di ogni quattro formaggi. Modifica i grammi effettivi."],
+    alternatives: ["Margherita semplice", "Metà gorgonzola", "Pizza con bresaola e rucola"],
+    allergens: ["Glutine", "Latte"],
+  },
+  {
+    id: "occasional-pizza-diavola",
+    name: "Pizza alla diavola",
+    kicker: "Pizza con salame piccante pesato",
+    course: "Piatto unico", cuisine: "Italiano", time: 18,
+    image: photo("cheat-pizza-diavola-v12023"),
+    ingredients: [{ food: "Pizza Napoletana Margherita STG", grams: 300 }, { food: "Schiacciata piccante Levoni", grams: 50, label: "Salame piccante" }],
+    parts: [
+      { category: "Carboidrato", food: "Pizza Napoletana Margherita STG", grams: 300, label: "Base margherita pronta", image: photo("pizza-margherita-stg-v12023") },
+      { category: "Proteina", food: "Schiacciata piccante Levoni", grams: 50, label: "Salame piccante", image: photo("part-spicy-salami-v12023") },
+    ],
+    steps: ["Pesa la pizza margherita già pronta e distribuisci il salame piccante a fettine.", "Scalda brevemente finché il salame è caldo e il bordo è croccante.", "Il salame usa un'etichetta di riferimento Levoni: se usi un altro prodotto, controlla la sua confezione."],
+    alternatives: ["Margherita semplice", "Meno salame piccante", "Pizza capricciosa"],
+    allergens: ["Glutine", "Latte"],
+  },
+  {
+    id: "occasional-pizza-capricciosa",
+    name: "Pizza capricciosa",
+    kicker: "Pizza farcita · ingredienti separati",
+    course: "Piatto unico", cuisine: "Italiano", time: 20,
+    image: photo("cheat-pizza-capricciosa-v12023"),
+    ingredients: [{ food: "Pizza Napoletana Margherita STG", grams: 300 }, { food: "Prosciutto cotto", grams: 40 }, { food: "Funghi", grams: 50 }, { food: "Carciofi crudi · parte edibile", grams: 40 }, { food: "Olive", grams: 20 }],
+    parts: [
+      { category: "Carboidrato", food: "Pizza Napoletana Margherita STG", grams: 300, label: "Base margherita pronta", image: photo("pizza-margherita-stg-v12023") },
+      { category: "Proteina", food: "Prosciutto cotto", grams: 40, image: photo("part-prosciutto-cotto-v114") },
+      { category: "Contorno", food: "Funghi", grams: 50, label: "Funghi pesati crudi", image: photo("part-mushrooms-cooked-v1201") },
+      { category: "Contorno", food: "Carciofi crudi · parte edibile", grams: 40, label: "Cuori di carciofo pesati crudi", image: photo("part-artichokes-raw-v12020") },
+      { category: "Extra", food: "Olive", grams: 20, image: photo("part-olives-v111") },
+    ],
+    steps: ["Pesa la base margherita pronta. Pulisci e pesa funghi e cuori di carciofo prima della cottura.", "Aggiungi funghi, carciofi e prosciutto; termina la cottura e completa con le olive pesate.", "Le pizzerie variano ingredienti e porzioni: registra i grammi reali quando li conosci."],
+    alternatives: ["Margherita semplice", "Senza olive", "Pizza con bresaola e rucola"],
+    allergens: ["Glutine", "Latte"],
+  },
+  {
     id: "occasional-hamburger",
     name: "Hamburger semplice fatto in casa",
     kicker: "Pane, carne e verdure con quantità chiare",
@@ -7738,6 +7821,23 @@ const occasionalRecipes: Recipe[] = [
     alternatives: ["Supplì al telefono", "Panzerotto fritto", "Pizza margherita"],
   },
 ];
+const proteinShakeRecipes: Recipe[] = [{
+  id: "snack-whey-vaniglia-latte",
+  name: "Shaker whey alla vaniglia con latte",
+  kicker: "Spuntino facoltativo · etichetta controllabile",
+  course: "Spuntino", cuisine: "Italiano", time: 3,
+  image: photo("recipe-whey-milk-shaker-v12023"),
+  sourceLabel: "Etichetta Decathlon Whey Protein vaniglia; latte da banca dati CREA",
+  sourceUrl: "https://www.decathlon.it/p/proteina-whey-vaniglia-30-g/_/R-p-347401/",
+  ingredients: [{ food: "Proteine whey vaniglia Decathlon", grams: 30, label: "Whey vaniglia · 30 g" }, { food: "Latte parzialmente scremato", grams: 200, label: "Latte · circa 200 ml" }],
+  parts: [
+    { category: "Proteina", food: "Proteine whey vaniglia Decathlon", grams: 30, label: "Whey vaniglia · 30 g", image: photo("part-whey-powder-v12023") },
+    { category: "Latticino", food: "Latte parzialmente scremato", grams: 200, label: "Latte · circa 200 ml", image: photo("part-milk-v7") },
+  ],
+  steps: ["Versa circa 200 ml di latte freddo nello shaker pulito.", "Aggiungi 30 g di polvere misurati con bilancia, chiudi bene e agita per 20-30 secondi finché non restano grumi.", "Bevi subito o conserva in frigorifero seguendo le indicazioni della confezione. Se usi un'altra marca o gusto, controlla allergeni e nutrienti sull'etichetta reale."],
+  alternatives: ["Latte senza lattosio se compatibile con la tua confezione", "Acqua al posto del latte con nuovo conteggio", "Yogurt proteico pronto"],
+  allergens: ["Latte"],
+}];
 const verifiedWorldRecipeExpansion: Recipe[] = [
   {
     id: "catalog-verified-bulgogi-rice",
@@ -9589,8 +9689,8 @@ const attachmentMainsP35P40: Recipe[] = [
 const inferTextAllergens = (textValue: string) => {
   const text = textValue.toLowerCase();
   const rules: Array<[string, RegExp]> = [
-    ["Glutine", /pasta|pane|farro|orzo|bulgur|cous cous|cracker|fette biscottate|biscott|wafer|muesli|frumento|segale|grissini|avena/],
-    ["Latte", /latte|yogurt|skyr|kefir|ricotta|feta|mozzarella|crescenza|scamorza|provolone|grana|parmigiano|burro|paneer/],
+    ["Glutine", /pasta|pane|pizza|farro|orzo|bulgur|cous cous|cracker|fette biscottate|biscott|wafer|muesli|frumento|segale|grissini|avena/],
+    ["Latte", /latte|whey|gorgonzola|margherita|schiacciata piccante levoni|yogurt|skyr|kefir|ricotta|feta|mozzarella|crescenza|scamorza|provolone|grana|parmigiano|burro|paneer/],
     ["Uova", /uov|albume/],
     ["Pesce", /salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|rombo/],
     ["Crostacei", /gamber|scamp|aragost|granchio/],
@@ -10353,6 +10453,7 @@ const rawRecipes: Recipe[] = [
   ...matrixBreakfasts,
   ...catalogBreakfasts,
   ...quickSnacks,
+  ...proteinShakeRecipes,
   ...attachmentSnacksS35S42,
   ...attachmentBaseSnacks,
   ...attachmentSnacksS14S26,

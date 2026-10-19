@@ -28,6 +28,9 @@ Sono immagini originali generate per rendere riconoscibile la materia prima; non
 ### Nuova immagine v1.20.22
 
 - `part-polenta-dry-v12022.png`: immagine originale generata della polenta gialla secca precotta, prima di aggiungere acqua. La fotografia della ricetta D36 continua a mostrare il piatto pronto.
+- `cheat-pizza-bresaola-rucola-grana-v12023.png`, `cheat-pizza-quattro-formaggi-v12023.png`, `cheat-pizza-diavola-v12023.png`, `cheat-pizza-capricciosa-v12023.png`: immagini originali generate separatamente dai rispettivi ingredienti e della pizza completa, non riuso di una foto generica. Prompt in stile `photorealistic-natural`: pizza intera centrata con base e topping nominati riconoscibili, nessun ingrediente extra, testo o watermark. Sono rappresentazioni visive, non fotografie delle porzioni realmente pesate.
+- `pizza-margherita-stg-v12023.png`: fotografia generata separatamente della sola base napoletana con pomodoro, mozzarella e basilico; evita di attribuire alla voce CREA la fotografia generica già usata da un'altra voce del catalogo.
+- `recipe-whey-milk-shaker-v12023.png`, `part-whey-powder-v12023.png`, `part-spicy-salami-v12023.png`, `part-gorgonzola-v12023.png`: immagini originali generate per shaker completo e singoli ingredienti, oggetti centrati e distinti da altri alimenti. `cheat-pizza-marinara-v12023.png` e `part-flour-00-v12023.png` sono già preparate per la successiva ricetta marinara, non ancora proposta nella 1.20.23.
 
 ### Nuova immagine v1.20.15
 

@@ -245,12 +245,18 @@ try {
     const close = sheet?.querySelector('[aria-label="Chiudi anteprima stampa"]');
     const text = sheet?.innerText || '';
     const rect = close?.getBoundingClientRect();
+    const headings = [...(sheet?.querySelectorAll('.print-food-head span') || [])].slice(1);
+    const values = [...(sheet?.querySelector('.print-food-row')?.children || [])].slice(1);
+    const columnsAligned = headings.length === 5 && values.length === 5 && headings.every((heading, index) =>
+      getComputedStyle(heading).textAlign === 'right' &&
+      Math.abs(heading.getBoundingClientRect().right - values[index].getBoundingClientRect().right) <= 1);
     return {
       found: Boolean(sheet),
       hasUpdatedAverage: text.includes('Media aggiornata'),
       dayCount: sheet?.querySelectorAll('.print-day').length || 0,
       mealCount: sheet?.querySelectorAll('.print-meal').length || 0,
       foodRows: sheet?.querySelectorAll('.print-food-row').length || 0,
+      columnsAligned,
       hasAllMacros: ['kcal', 'Proteine', 'Carboidrati', 'Grassi'].every((label) => text.includes(label)),
       hasExports: ['Copia tutto', 'TXT', 'CSV', 'Word', 'Stampa'].every((label) => text.includes(label)),
       closeVisible: Boolean(rect && rect.top >= 0 && rect.bottom <= window.innerHeight),
@@ -800,11 +806,15 @@ try {
       if (group && !group.open && ${releasePatch < 85}) group.open = true;
       const pizza = [...(group?.querySelectorAll('.complete-meal-select') || [])]
         .find((button) => button.innerText.includes('Pizza margherita'));
+      const variantNames = ['Pizza con bresaola, rucola e grana', 'Pizza ai quattro formaggi', 'Pizza alla diavola', 'Pizza capricciosa'];
+      const pizzaVariants = variantNames.every((name) => [...(group?.querySelectorAll('.complete-meal-select') || [])]
+        .some((button) => button.innerText.includes(name) && button.querySelector('img')?.src.includes('v12023')));
       const result = {
         visibleWithPlus: Boolean(group),
         shortcutVisible,
         shortcutOpenedSgarri: Boolean(group?.open),
         pizzaAvailable: Boolean(pizza),
+        pizzaVariants,
         freeChoiceAlsoAvailable: Boolean(picker?.querySelector('.part-choice-grid.free')),
       };
       pizza?.click();
@@ -1575,7 +1585,7 @@ try {
        Number(weeklyConfirmation.varietyHeader.match(/(\d+) basi/)?.[1] || 0) < 2 ||
        Number(weeklyConfirmation.varietyHeader.match(/(\d+) ortaggi/)?.[1] || 0) < 2)) ||
     !weeklyConfirmation.hasPrintPreview || !weeklyConfirmation.reopened ||
-    !weeklyPrintPreview.found || !weeklyPrintPreview.hasUpdatedAverage || weeklyPrintPreview.dayCount !== 7 ||
+    !weeklyPrintPreview.found || !weeklyPrintPreview.hasUpdatedAverage || !weeklyPrintPreview.columnsAligned || weeklyPrintPreview.dayCount !== 7 ||
     weeklyPrintPreview.mealCount < 21 || weeklyPrintPreview.foodRows === 0 || !weeklyPrintPreview.hasAllMacros ||
     !weeklyPrintPreview.hasExports || !weeklyPrintPreview.closeVisible || weeklyPrintPreview.horizontalOverflow || !weeklyPrintPreview.closed ||
     recipes.recovery || recipes.horizontalOverflow || recipes.brokenViewportImages.length || recipes.pendingViewportImages.length ||
@@ -1615,7 +1625,7 @@ try {
     !mealPartAddition.hasDirectRemove || !mealPartAddition.removed ||
     (!occasionalAddition.skipped && (!occasionalAddition.addOpened || !occasionalAddition.visibleWithPlus ||
       (releasePatch >= 85 && (!occasionalAddition.shortcutVisible || !occasionalAddition.shortcutOpenedSgarri)) ||
-      !occasionalAddition.pizzaAvailable || !occasionalAddition.freeChoiceAlsoAvailable ||
+      !occasionalAddition.pizzaAvailable || !occasionalAddition.pizzaVariants || !occasionalAddition.freeChoiceAlsoAvailable ||
       !occasionalAddition.appended || !occasionalAddition.pizzaPhoto || !occasionalAddition.pizzaEditable ||
       !occasionalAddition.pickerClosed || !occasionalAddition.originalPartsKept || !occasionalAddition.removedDirectly)) ||
     (releasePatch >= 84 && (!occasionalAddition.replacementAvailable ||

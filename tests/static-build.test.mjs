@@ -990,6 +990,34 @@ test("v1.20.22 weighs D36 polenta dry and counts its listed seasonings", async (
   await access(new URL("../dist/food/part-polenta-dry-v12022.png", import.meta.url));
 });
 
+test("v1.20.23 offers distinct occasional pizzas as whole-meal replacements and a measured whey shake", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  for (const [id, image] of [
+    ["occasional-pizza-bresaola-rucola-grana", "cheat-pizza-bresaola-rucola-grana-v12023"],
+    ["occasional-pizza-quattro-formaggi", "cheat-pizza-quattro-formaggi-v12023"],
+    ["occasional-pizza-diavola", "cheat-pizza-diavola-v12023"],
+    ["occasional-pizza-capricciosa", "cheat-pizza-capricciosa-v12023"],
+    ["snack-whey-vaniglia-latte", "recipe-whey-milk-shaker-v12023"],
+  ]) {
+    assert.match(app, new RegExp(`id: "${id}"`));
+    assert.match(app, new RegExp(`photo\\("${image}"\\)`));
+    await access(new URL(`../dist/food/${image}.png`, import.meta.url));
+  }
+  assert.match(app, /food: "Pizza Napoletana Margherita STG", grams: 300/);
+  assert.match(app, /food: "Bresaola", grams: 50/);
+  assert.match(app, /food: "Rucola", grams: 30/);
+  assert.match(app, /food: "Proteine whey vaniglia Decathlon", grams: 30/);
+  assert.match(app, /food: "Latte parzialmente scremato", grams: 200/);
+  assert.match(app, /else chooseCompleteMeal\(recipe\)/);
+});
+
+test("v1.20.23 aligns print-preview nutrient headings and values on the same grid", async () => {
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  assert.match(css, /\.print-food-head,\s*\.print-food-row\s*\{[^}]*grid-template-columns:/);
+  assert.match(css, /\.print-food-head span:not\(:first-child\)\s*\{[^}]*text-align: right;/);
+  assert.match(css, /\.print-food-row b,\s*\.print-food-row i\s*\{[^}]*text-align: right;/);
+});
+
 test("v1.16.86 preserves the exact scroll position across automatic releases", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /writeStorageItem\(sessionStorage, "vivapiatto-release-scroll-y", String\(window\.scrollY\)\)/);
