@@ -161,3 +161,9 @@ Il link resta unico: https://andreacivi80.github.io/vivapiatto/
 - Confrontate le foto dei pranzi P49–P64 con nomi e ingredienti principali. P58 espone ora 5 g di zenzero, 3 g di aglio e 10 g di succo di limone che erano richiesti dal testo della ricetta ma mancavano dal calcolo; il cavolo rosso resta crudo come indicano foto e voce nutrizionale, mentre i funghi vengono cotti.
 - `npm test` 245/245, typecheck e build riusciti. Release pubblica `1.20.16` e asset `index-CtqLG7Fh.js` verificati; stress mobile pubblico superato, senza errori JavaScript, immagini mancanti in vista o overflow nei percorsi provati.
 - Una scheda isolata sulla 1.20.15 è passata automaticamente alla 1.20.16 senza perdere menù, modifica a 49 g o posizione di scroll a 900 px. Zero errori JavaScript registrati nella transizione.
+
+## Checkpoint pubblico 1.20.17
+
+- Scansione D01–D16: D14 mostrava il cavolo rosso crudo come componente ma lo cuoceva al forno. Nuova foto atomica del cavolo arrostito, con istruzione di pesare 250 g prima della cottura e stima nutrizionale riferita a quel peso. Zenzero, paprika e aceto di mele richiesti dall'elenco originale ora figurano con grammi, valori e immagini.
+- `npm test` 246/246, typecheck e build riusciti. Lo script mobile resta sotto il limite statico di 576 kB, pur con un avviso di Vite per chunk superiori a 575 kB: ulteriore alleggerimento resta opportuno. Manifest, HTML e asset `index-BlWj72sr.js` pubblici allineati; stress mobile pubblico senza errori JavaScript né overflow nei percorsi provati.
+- La navigazione automatica reale 1.20.16 → 1.20.17 ha conservato lo stesso menù, i 49 g modificati e lo scroll a 900 px; zero errori JavaScript.
