@@ -33,6 +33,12 @@
 - [x] Nel primo controllo D33–D40, D34 mostrava patate al forno con fotografia e valori delle patate lesse, carciofi al forno con valori dei carciofi bolliti e 150 g di orata cotta dove l'allegato indicava orata cruda. D34 ora pesa a crudo filetto, patate al netto degli scarti e cuori di carciofo; tre foto nuove distinguono gli ingredienti crudi dalle versioni cotte. Aglio, prezzemolo e limone compaiono con quantità esplicite nel calcolo.
 - [ ] La scansione D33–D40 non certifica ancora ogni altro piatto o ingrediente secondario. Restano D41–D64 e il controllo dettagliato delle fotografie del catalogo.
 
+## v1.20.21–1.20.22 — D33 e D36
+
+- [x] D33 usa 60 g di quinoa secca, come nell'allegato, con valori CREA e foto atomica distinta dalla quinoa cotta; paprika, zenzero e limone sono misurati.
+- [x] D36 usa 60 g di polenta secca precotta, non 300 g di polenta cotta, con valori CREA e fotografia dedicata della farina di mais; salvia, limone e pepe sono misurati. La preparazione chiarisce che il peso è prima dell'idratazione.
+- [ ] Restano da controllare individualmente D35, D37–D64 e i dettagli fotografici e nutrizionali del resto del catalogo.
+
 ## v1.5.0 completato
 
 - [x] Pasta in bianco: immagine dedicata, senza condimenti estranei.
