@@ -1469,8 +1469,19 @@ try {
     };
   })()`));
   await page.send('Page.reload', { ignoreCache: false });
-  await wait(5_000);
-  severeProfile.warningSurvivesReload = await evaluate(`Boolean(document.querySelector('.week-plan-gap')?.innerText.includes('Nessuna proposta automatica'))`);
+  // Profile hydration and weekly recalculation are asynchronous after reload.
+  // Require the real warning to reappear within a bounded window instead of
+  // treating a single early read as a data-loss regression.
+  severeProfile.warningSurvivesReload = false;
+  for (let attempt = 0; attempt < 30; attempt += 1) {
+    await wait(500);
+    try {
+      severeProfile.warningSurvivesReload = await evaluate(`Boolean(document.querySelector('.week-plan-gap')?.innerText.includes('Nessuna proposta automatica'))`);
+      if (severeProfile.warningSurvivesReload) break;
+    } catch {
+      // The previous JavaScript context may still be closing during reload.
+    }
+  }
   const rawExceptions = page.events.filter((event) =>
     event.method === "Runtime.exceptionThrown" ||
     (event.method === "Log.entryAdded" && event.params?.entry?.level === "error")
