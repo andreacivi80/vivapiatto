@@ -173,3 +173,13 @@ Il link resta unico: https://andreacivi80.github.io/vivapiatto/
 - D24 ora mostra il cavolo rosso arrostito nel componente al posto della foto cruda. Aceto di mele 10 g, pepe nero 1 g ed erba cipollina fresca 5 g, già nel testo originale senza grammi, partecipano al calcolo e hanno foto separate. La card specifica 150 g di salmone **cotto**, mentre l'allegato ne indicava 150 g **crudi**: la differenza rimane un lavoro aperto, non una conversione certificata.
 - `npm test` 247/247, typecheck e build riusciti. L'asset mobile è sotto i limiti automatici di 580 kB non compressi e 130 kB gzip; la soglia gzip aggiunge un controllo utile al precedente limite del solo file grezzo. Manifest pubblico `1.20.18`, HTML e `index-m9_LUwGE.js` allineati.
 - Transizione reale 1.20.17 → 1.20.18: menù, 49 g modificati e scroll a 900 px conservati, zero errori JavaScript. Uno stress pubblico ha inizialmente letto come assente l'avviso allergie 5 secondi dopo un reload; la ripetizione è passata. La sonda ora aspetta fino a 15 secondi il ripristino effettivo e un'ulteriore esecuzione ha superato il percorso senza errori o overflow. Questo migliora il test, non prova da solo che ogni caricamento utente abbia la stessa durata.
+
+## Checkpoint pubblico 1.20.19
+
+- D24 riporta i 150 g di salmone pesati crudi previsti nell'allegato e ne calcola kcal, proteine, carboidrati, grassi e fibre da CREA (Salmo salar crudo, codice 122400). La foto atomica del crudo è distinta da quella del cotto. La fonte è riportata nel vademecum; non si afferma equivalenza tra 150 g crudi e cotti.
+- 247/247 test, typecheck e build riusciti. Manifest pubblico 1.20.19 e asset `index-BLrOHKtZ.js` verificati. Transizione reale 1.20.18 → 1.20.19: menù, 49 g e scroll 900 px conservati, zero errori JavaScript. Stress mobile pubblico riuscito.
+
+## Checkpoint pubblico 1.20.20
+
+- D34: l'allegato prescriveva 150 g di orata a crudo e 200 g ciascuno di patate e carciofi prima del forno; l'app conteggiava invece orata cotta, patate lesse e carciofi bolliti. Ora usa tre voci CREA per la parte edibile cruda, con foto atomiche separate e preparazione che chiarisce quando pesare. Aglio 3 g, prezzemolo 5 g e succo di limone 10 g sono componenti conteggiati. Sono stime da alimento crudo, non una misura delle perdite di cottura né un piano clinico individuale.
+- 248/248 test, typecheck e build riusciti. Manifest pubblico 1.20.20, HTML e asset `index-vkt0R4Wu.js` verificati. Transizione reale 1.20.19 → 1.20.20: menù, 49 g e scroll 900 px conservati, zero errori JavaScript. Il primo stress pubblico ha dato exit 1 pur mostrando nei dati visibili nessun errore JavaScript o overflow; la ripetizione è passata con i flussi completi. Il primo esito va classificato, non nascosto.

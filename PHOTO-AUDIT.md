@@ -24,6 +24,15 @@
 - [x] D24 riusa la foto dedicata al cavolo rosso arrostito; la ricetta ora distingue cavolo pesato crudo e salmone pesato cotto, ed esplicita aceto di mele, pepe ed erba cipollina con quantità e foto.
 - [ ] L'allegato originale D24 indica 150 g di salmone **a crudo**, mentre il motore attuale usa 150 g **cotti**. Sono quantità diverse: questa revisione rende lo stato visibile ma non le dichiara equivalenti. Resta da riallineare il dato nutrizionale alla grammatura originale usando una voce cruda documentata o una resa di cottura verificata; non convertire per supposizione.
 
+## v1.20.19 — D24, grammi di salmone a crudo
+
+- [x] Il punto rimasto aperto nella 1.20.18 è risolto: D24 usa 150 g di parte edibile cruda e la tabella CREA per Salmo salar crudo; non è stata applicata una resa di cottura presunta. La card atomica ha una fotografia dedicata del filetto crudo, mentre la foto del piatto finito resta cotta.
+
+## v1.20.20 — D33–D40, controllo D34
+
+- [x] Nel primo controllo D33–D40, D34 mostrava patate al forno con fotografia e valori delle patate lesse, carciofi al forno con valori dei carciofi bolliti e 150 g di orata cotta dove l'allegato indicava orata cruda. D34 ora pesa a crudo filetto, patate al netto degli scarti e cuori di carciofo; tre foto nuove distinguono gli ingredienti crudi dalle versioni cotte. Aglio, prezzemolo e limone compaiono con quantità esplicite nel calcolo.
+- [ ] La scansione D33–D40 non certifica ancora ogni altro piatto o ingrediente secondario. Restano D41–D64 e il controllo dettagliato delle fotografie del catalogo.
+
 ## v1.5.0 completato
 
 - [x] Pasta in bianco: immagine dedicata, senza condimenti estranei.
