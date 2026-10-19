@@ -21,6 +21,10 @@ Le immagini di bowl pollo e quinoa, salmone con patata dolce, insalata di farro 
 
 Sono immagini originali generate per rendere riconoscibile la materia prima; non identificano una confezione o una varietà commerciale precisa. La foto della ricetta D34 continua a rappresentare il piatto cotto.
 
+### Nuova immagine v1.20.21
+
+- `part-quinoa-dry-v12021.png`: immagine originale generata per mostrare il seme di quinoa secco e non la quinoa dopo bollitura. La foto del piatto D33 resta quella della preparazione completa.
+
 ### Nuova immagine v1.20.15
 
 - `recipe-p38-bulgur-salmon-fennel-orange-v12015.png`: immagine generata dalla ricetta P38 con bulgur cotto, filetto di salmone grigliato, finocchio crudo affettato e spicchi d'arancia. Richiesti soltanto questi ingredienti e la finitura con olio; nessun testo o marchio. La fotografia precedente, con pesce troppo pallido per riconoscere il salmone, resta nell'archivio ma non è più collegata alla ricetta.

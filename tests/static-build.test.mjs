@@ -951,6 +951,22 @@ test("v1.20.20 aligns D34 raw weights, sources and photographs", async () => {
   assert.match(app, /foods\["Carciofi crudi · parte edibile"\] = \{ kcal: 33, protein: 2\.7, carbs: 2\.5, fat: 0\.2, fiber: 5\.5, source: "CREA" \}/);
 });
 
+test("v1.20.21 weighs D33 quinoa dry and includes its measured seasonings", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const start = app.indexOf('id: "matrix-d33-tempeh-con-peperoni-e-quinoa"');
+  const end = app.indexOf('id: "matrix-d34-orata-al-forno-con-carciofi-e-patate"', start);
+  assert.ok(start >= 0 && end > start);
+  const recipe = app.slice(start, end);
+  assert.match(recipe, /food: "Quinoa cruda", grams: 60/);
+  assert.match(recipe, /part-quinoa-dry-v12021/);
+  assert.doesNotMatch(recipe, /food: "Quinoa cotta", grams: 160/);
+  for (const food of ["Paprika dolce", "Zenzero fresco", "Succo di limone"]) {
+    assert.ok(recipe.includes(`category: "Extra", food: "${food}"`));
+  }
+  assert.match(app, /foods\["Quinoa cruda"\] = \{ kcal: 376, protein: 15\.4, carbs: 57\.8, fat: 8\.1, fiber: 12\.2, source: "CREA" \}/);
+  await access(new URL("../dist/food/part-quinoa-dry-v12021.png", import.meta.url));
+});
+
 test("v1.16.86 preserves the exact scroll position across automatic releases", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /writeStorageItem\(sessionStorage, "vivapiatto-release-scroll-y", String\(window\.scrollY\)\)/);
