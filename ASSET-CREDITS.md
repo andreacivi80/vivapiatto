@@ -48,6 +48,10 @@ Sono immagini originali generate per rendere riconoscibile la materia prima; non
 - `part-fresh-yeast-v12027.png`: immagine originale generata di lievito di birra fresco compresso, distinto da burro e formaggio.
 - La foto già preparata `cheat-pizza-marinara-v12023.png` viene ora associata alla ricetta completa marinara; `part-flour-00-v12023.png` alla farina dell'impasto. Le immagini sono illustrative, non attestano la grammatura reale.
 
+### Nuova immagine v1.20.29
+
+- `cheat-pizza-ortolana-v12029.png`: fotografia illustrativa originale generata con `image_gen` dal piatto completo documentato: pizza integrale con passata, mozzarella, melanzane, zucchine, peperoni rossi e gialli, origano e olio. Prompt `photorealistic-natural`, pizza intera visibile, nessun altro topping o testo. È una rappresentazione della ricetta, non la fotografia di una porzione pesata o una certificazione nutrizionale.
+
 ### Nuova immagine v1.20.15
 
 - `recipe-p38-bulgur-salmon-fennel-orange-v12015.png`: immagine generata dalla ricetta P38 con bulgur cotto, filetto di salmone grigliato, finocchio crudo affettato e spicchi d'arancia. Richiesti soltanto questi ingredienti e la finitura con olio; nessun testo o marchio. La fotografia precedente, con pesce troppo pallido per riconoscere il salmone, resta nell'archivio ma non è più collegata alla ricetta.

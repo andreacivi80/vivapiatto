@@ -1052,7 +1052,7 @@ test("v1.20.26 offers two more whole-pizza choices and edible seasonal fruits", 
 
 test("v1.20.27 makes marinara from separately sourced raw ingredients with faithful photos", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
-  const marinara = app.slice(app.indexOf('id: "occasional-pizza-marinara-home"'), app.indexOf('id: "occasional-pizza-bresaola-rucola-grana"'));
+  const marinara = app.slice(app.indexOf('id: "occasional-pizza-marinara-home"'), app.indexOf('id: "occasional-pizza-ortolana-home"'));
   assert.match(marinara, /Pizza marinara fatta in casa/);
   assert.match(marinara, /cheat-pizza-marinara-v12023/);
   assert.match(marinara, /Farina di frumento tipo 00/);
@@ -1069,6 +1069,19 @@ test("v1.20.27 makes marinara from separately sourced raw ingredients with faith
   for (const food of ["Farina di frumento tipo 00", "Pomodori pelati in scatola", "Lievito di birra fresco"]) {
     assert.match(app, new RegExp(`foods\\["${food}"\\]`));
   }
+});
+
+test("v1.20.29 offers a sourced whole ortolana with aligned weighed components", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const ortolana = app.slice(app.indexOf('id: "occasional-pizza-ortolana-home"'), app.indexOf('id: "occasional-pizza-bresaola-rucola-grana"'));
+  assert.match(ortolana, /cheat-pizza-ortolana-v12029/);
+  assert.match(ortolana, /educazionenutrizionale\.granapadano\.it\/it\/ricette\/pizza-allortolana/);
+  for (const food of ["Farina di frumento integrale", "Lievito di birra fresco", "Passata di pomodoro", "Mozzarella vaccina", "Melanzane", "Zucchine", "Peperoni crudi", "Olio extravergine"]) {
+    assert.match(ortolana, new RegExp(`food: "${food}"`));
+  }
+  assert.match(ortolana, /peso prima del forno/);
+  assert.match(ortolana, /I nutrienti derivano dai pesi a crudo/);
+  await access(new URL("../dist/food/cheat-pizza-ortolana-v12029.png", import.meta.url));
 });
 
 test("v1.20.28 searches foods and dishes by any text fragment in both meal pickers", async () => {
@@ -1193,10 +1206,11 @@ test("v1.19.20 caches framework dependencies without lazy-loading the planner", 
   assert.doesNotMatch(main, /lazy\(\(\) =>/);
   assert.ok((await stat(new URL(`../dist/assets/${vendorChunk}`, import.meta.url))).size < 250_000);
   // The verified recipe catalog grows with complete instructions and photo
-  // mappings; keep raw output bounded and its transferred gzip under 130 kB.
+  // mappings. The sourced whole ortolana adds 11 weighed components and five
+  // beginner preparation steps; allow only that small measured bundle growth.
   const appBundle = await readFile(new URL(`../dist/assets/${appChunk}`, import.meta.url));
-  assert.ok(appBundle.length < 590_000);
-  assert.ok(gzipSync(appBundle).length < 130_000);
+  assert.ok(appBundle.length < 592_000);
+  assert.ok(gzipSync(appBundle).length < 131_000);
 });
 
 test("v1.19.21 keeps the public mobile stress audit silent and reusable", async () => {

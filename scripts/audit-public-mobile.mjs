@@ -857,6 +857,8 @@ try {
         ['Pizza prosciutto cotto e funghi', 'v12026'], ['Pizza tonno e cipolla', 'v12026']);
       if (${versionMinor >= 20 && versionPatch >= 27}) variantImages.push(
         ['Pizza marinara fatta in casa', 'v12023']);
+      if (${versionMinor >= 20 && versionPatch >= 29}) variantImages.push(
+        ["Pizza all'ortolana fatta in casa", 'v12029']);
       const pizzaVariants = variantImages.every(([name, imageVersion]) => [...(group?.querySelectorAll('.complete-meal-select') || [])]
         .some((button) => button.innerText.includes(name) && button.querySelector('img')?.src.includes(imageVersion)));
       const pizzaVariantsShowWholeDish = variantImages.every(([name]) => [...(group?.querySelectorAll('.complete-meal-select') || [])]
