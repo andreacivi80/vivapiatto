@@ -6246,13 +6246,6 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     },
     {
       category: "Proteina",
-      food: "Acciughe sotto sale",
-      grams: 15,
-      label: "Acciughe sciacquate e diliscate · 15 g edibili",
-      image: photo("part-salted-anchovy-v12030"),
-    },
-    {
-      category: "Proteina",
       food: "Uova sode",
       grams: 100,
       label: "Due uova sode",
@@ -6902,6 +6895,13 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
       grams: 10,
       label: "Pinoli sgusciati · 10 g",
       image: photo("part-pine-nuts-v12030"),
+    },
+    {
+      category: "Extra",
+      food: "Acciughe sotto sale",
+      grams: 15,
+      label: "Acciughe sciacquate e diliscate · 15 g edibili",
+      image: photo("part-salted-anchovy-v12030"),
     },
     {
       category: "Extra",
@@ -7691,7 +7691,7 @@ const occasionalRecipes: Recipe[] = [
       { category: "Extra", food: "Zucchero", grams: 1, image: photo("part-sugar-v11819") },
       { category: "Extra", food: "Sale iodato", grams: 2, image: photo("part-iodized-salt-v1181") },
       { category: "Contorno", food: "Broccoli bolliti", grams: 120, label: "Broccoletti · 120 g cotti e scolati", image: photo("part-broccoli-v1154") },
-      { category: "Proteina", food: "Acciughe sotto sale", grams: 15, label: "Acciughe · 15 g edibili", image: photo("part-salted-anchovy-v12030") },
+      { category: "Extra", food: "Acciughe sotto sale", grams: 15, label: "Acciughe · 15 g edibili", image: photo("part-salted-anchovy-v12030") },
       { category: "Extra", food: "Pinoli", grams: 10, image: photo("part-pine-nuts-v12030") },
       { category: "Extra", food: "Aglio crudo", grams: 3, image: photo("part-garlic-v11866") },
       { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g totali", image: photo("part-olive-oil-v8") },

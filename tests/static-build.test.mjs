@@ -1117,6 +1117,15 @@ test("v1.20.31 offers a measured whole potato-rosemary pizza and handles anchovy
   await access(new URL("../dist/food/cheat-pizza-potato-rosemary-v12031.png", import.meta.url));
 });
 
+test("v1.20.32 treats a small salted anchovy serving as a topping, not a fish-main replacement", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const option = app.match(/\{\s*category: "Extra",\s*food: "Acciughe sotto sale",\s*grams: 15,[\s\S]*?part-salted-anchovy-v12030/);
+  assert.ok(option);
+  assert.doesNotMatch(app, /category: "Proteina",\s*food: "Acciughe sotto sale"/);
+  const pizza = app.slice(app.indexOf('id: "occasional-pizza-broccoli-anchovy-pine-home"'), app.indexOf('id: "occasional-pizza-potato-rosemary-home"'));
+  assert.match(pizza, /category: "Extra", food: "Acciughe sotto sale", grams: 15/);
+});
+
 test("v1.20.28 searches foods and dishes by any text fragment in both meal pickers", async () => {
   const [app, css, audit] = await Promise.all([
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
