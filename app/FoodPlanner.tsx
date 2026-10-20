@@ -1544,6 +1544,9 @@ foods["Prugne fresche"] = {
   source: "USDA",
 };
 
+foods["Fichi freschi"] = { kcal: 63, protein: 0.9, carbs: 14.2, fat: 0.2, fiber: 2, source: "CREA" };
+foods["Ribes freschi"] = { kcal: 52, protein: 0.9, carbs: 9.7, fat: 0, fiber: 5.8, source: "CREA" };
+
 foods["Lamponi"] = {
   kcal: 52,
   protein: 1.2,
@@ -6788,6 +6791,8 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     },
     { category: "Frutta", food: "More", grams: 150, label: "More fresche", image: photo("part-blackberries-v11512") },
     { category: "Frutta", food: "Prugne fresche", grams: 150, label: "Prugne fresche", image: photo("part-plums-v11642") },
+    { category: "Frutta", food: "Fichi freschi", grams: 150, label: "Fichi · 150 g edibili", image: photo("part-figs-v12026") },
+    { category: "Frutta", food: "Ribes freschi", grams: 150, label: "Ribes · 150 g edibili", image: photo("part-red-currants-v12026") },
     { category: "Frutta", food: "Lamponi", grams: 150, label: "Lamponi freschi", image: photo("part-raspberries-v11642") },
     { category: "Frutta", food: "Ananas", grams: 150, label: "Ananas fresco", image: photo("part-pineapple-v11513") },
     { category: "Frutta", food: "Mirtilli freschi", grams: 150, label: "Mirtilli freschi", image: photo("part-blueberries-v1160") },
@@ -7066,6 +7071,8 @@ const seasonalMonths: Record<string, number[]> = {
   "Mirtilli freschi": [6, 7, 8, 9],
   "Mandarini freschi": [11, 12, 1, 2, 3],
   "Melagrana fresca": [9, 10, 11, 12],
+  "Fichi freschi": [7, 8, 9, 10],
+  "Ribes freschi": [6, 7, 8],
   More: [6, 7, 8, 9],
   "Ravanelli crudi": [4, 5, 6, 7, 8, 9, 10],
   "Ciliegie fresche": [5, 6, 7],
@@ -7369,7 +7376,13 @@ const portableSnackDairy = mealPartOptions.Latticino.filter(
       "Fiocchi di latte",
     ].includes(part.food),
 );
-const practicalSnackFruits = mealPartOptions.Frutta.filter(
+// Keep the contents behind existing catalog-breakfast/snack IDs stable when
+// new fruit enters the alternative picker; a saved meal must not silently turn
+// into a different recipe after a release.
+const stableCatalogFruits = mealPartOptions.Frutta.filter(
+  (part) => !["Fichi freschi", "Ribes freschi"].includes(part.food),
+);
+const practicalSnackFruits = stableCatalogFruits.filter(
   (part) => part.food !== "Lime",
 );
 const practicalSnackNuts = mealPartOptions.Extra.filter((part) =>
@@ -7382,7 +7395,7 @@ const catalogBreakfasts: Recipe[] = Array.from({ length: 36 }, (_, index) => {
   const parts = [
     rotationBreakfastCarbs[index % rotationBreakfastCarbs.length],
     mealPartOptions.Latticino[index % mealPartOptions.Latticino.length],
-    mealPartOptions.Frutta[index % mealPartOptions.Frutta.length],
+    stableCatalogFruits[index % stableCatalogFruits.length],
     rotationBreakfastExtras[index % rotationBreakfastExtras.length],
   ].map((part) => ({ ...part }));
   return {
@@ -7608,6 +7621,58 @@ const occasionalRecipes: Recipe[] = [
     allergens: ["Glutine", "Latte"],
   },
   {
+    id: "occasional-pizza-prosciutto-funghi",
+    name: "Pizza prosciutto cotto e funghi",
+    kicker: "Pizza farcita · quantità modificabili",
+    course: "Piatto unico", cuisine: "Italiano", time: 20,
+    image: photo("cheat-pizza-prosciutto-funghi-v12026"),
+    sourceLabel: "Stima: base margherita STG CREA più farcitura pesata",
+    sourceUrl: "https://www.alimentinutrizione.it/tabelle-nutrizionali/PC0001",
+    ingredients: [
+      { food: "Pizza Napoletana Margherita STG", grams: 300 },
+      { food: "Prosciutto cotto", grams: 60 },
+      { food: "Funghi", grams: 80 },
+    ],
+    parts: [
+      { category: "Carboidrato", food: "Pizza Napoletana Margherita STG", grams: 300, label: "Base margherita pronta", image: photo("pizza-margherita-stg-v12023") },
+      { category: "Proteina", food: "Prosciutto cotto", grams: 60, image: photo("part-prosciutto-cotto-v114") },
+      { category: "Contorno", food: "Funghi", grams: 80, label: "Funghi pesati crudi", image: photo("part-mushrooms-raw-v11663") },
+    ],
+    steps: [
+      "Pesa la pizza margherita già cotta. Pulisci e affetta 80 g di funghi crudi e cuocili in padella antiaderente senza olio aggiunto.",
+      "Distribuisci sulla pizza i funghi cotti e 60 g di prosciutto cotto a fette; scalda finché la farcitura è calda.",
+      "Se pizza o farcitura hanno pesi diversi, modifica i grammi. È una stima dagli ingredienti, non il valore certificato della tua pizzeria.",
+    ],
+    alternatives: ["Margherita semplice", "Senza prosciutto", "Pizza tonno e cipolla"],
+    allergens: ["Glutine", "Latte"],
+  },
+  {
+    id: "occasional-pizza-tonno-cipolla",
+    name: "Pizza tonno e cipolla",
+    kicker: "Pizza farcita · tonno sgocciolato",
+    course: "Piatto unico", cuisine: "Italiano", time: 20,
+    image: photo("cheat-pizza-tonno-cipolla-v12026"),
+    sourceLabel: "Stima: base margherita STG CREA più farcitura pesata",
+    sourceUrl: "https://www.alimentinutrizione.it/tabelle-nutrizionali/PC0001",
+    ingredients: [
+      { food: "Pizza Napoletana Margherita STG", grams: 300 },
+      { food: "Tonno al naturale sgocciolato", grams: 80 },
+      { food: "Cipolle crude", grams: 50 },
+    ],
+    parts: [
+      { category: "Carboidrato", food: "Pizza Napoletana Margherita STG", grams: 300, label: "Base margherita pronta", image: photo("pizza-margherita-stg-v12023") },
+      { category: "Proteina", food: "Tonno al naturale sgocciolato", grams: 80, label: "Tonno sgocciolato", image: photo("part-tuna-canned-v11650") },
+      { category: "Contorno", food: "Cipolle crude", grams: 50, label: "Cipolla pesata cruda", image: photo("part-onions-raw-v1209") },
+    ],
+    steps: [
+      "Pesa la pizza margherita cotta. Sgocciola 80 g di tonno al naturale e affetta sottilmente 50 g di cipolla cruda.",
+      "Ammorbidisci la cipolla in padella antiaderente con poca acqua, senza olio non conteggiato.",
+      "Distribuisci tonno e cipolla sulla pizza e scalda brevemente. Modifica i grammi se la porzione reale è diversa; l'olio eventualmente aggiunto va registrato.",
+    ],
+    alternatives: ["Margherita semplice", "Senza cipolla", "Pizza prosciutto cotto e funghi"],
+    allergens: ["Glutine", "Latte", "Pesce"],
+  },
+  {
     id: "occasional-hamburger",
     name: "Hamburger semplice fatto in casa",
     kicker: "Pane, carne e verdure con quantità chiare",
@@ -7640,11 +7705,12 @@ const occasionalRecipes: Recipe[] = [
         label: "Hamburger di manzo",
         image: photo("part-steak-beef-v114"),
       },
+      { category: "Contorno", food: "Pomodorini", grams: 100, label: "Pomodoro", image: photo("part-tomatoes-v8") },
       {
         category: "Contorno",
         food: "Rucola",
         grams: 30,
-        label: "Rucola e pomodoro",
+        label: "Rucola",
         image: photo("part-rucola-v7"),
       },
     ],

@@ -1027,6 +1027,29 @@ test("v1.20.25 shows the whole homemade hamburger before optional component edit
   assert.ok(photo.length > 100_000);
 });
 
+test("v1.20.26 offers two more whole-pizza choices and edible seasonal fruits", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  for (const [id, image] of [
+    ["occasional-pizza-prosciutto-funghi", "cheat-pizza-prosciutto-funghi-v12026"],
+    ["occasional-pizza-tonno-cipolla", "cheat-pizza-tonno-cipolla-v12026"],
+  ]) {
+    assert.match(app, new RegExp(`id: "${id}"`));
+    assert.match(app, new RegExp(`photo\\("${image}"\\)`));
+    await access(new URL(`../dist/food/${image}.png`, import.meta.url));
+  }
+  for (const [name, image] of [["Fichi freschi", "part-figs-v12026"], ["Ribes freschi", "part-red-currants-v12026"]]) {
+    assert.match(app, new RegExp(`foods\\["${name}"\\]`));
+    assert.match(app, new RegExp(`food: "${name}"[^\\n]*photo\\("${image}"\\)`));
+    await access(new URL(`../dist/food/${image}.png`, import.meta.url));
+  }
+  assert.match(app, /"Fichi freschi": \[7, 8, 9, 10\]/);
+  assert.match(app, /"Ribes freschi": \[6, 7, 8\]/);
+  assert.match(app, /const stableCatalogFruits = mealPartOptions\.Frutta\.filter/);
+  assert.match(app, /stableCatalogFruits\[index % stableCatalogFruits\.length\]/);
+  const burger = app.slice(app.indexOf('id: "occasional-hamburger"'), app.indexOf('id: "occasional-carbonara"'));
+  assert.match(burger, /category: "Contorno", food: "Pomodorini", grams: 100/);
+});
+
 test("v1.20.23 aligns print-preview nutrient headings and values on the same grid", async () => {
   const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
   assert.match(css, /\.print-food-head,\s*\.print-food-row\s*\{[^}]*grid-template-columns:/);
@@ -1131,10 +1154,10 @@ test("v1.19.20 caches framework dependencies without lazy-loading the planner", 
   assert.match(config, /codeSplitting:[\s\S]*name: "vendor"[\s\S]*test: \/node_modules\//);
   assert.doesNotMatch(main, /lazy\(\(\) =>/);
   assert.ok((await stat(new URL(`../dist/assets/${vendorChunk}`, import.meta.url))).size < 250_000);
-  // The verified recipe catalog grows with complete instructions; keep the
-  // entry bundle bounded while the separate vendor chunk avoids duplication.
+  // The verified recipe catalog grows with complete instructions and photo
+  // mappings; keep raw output bounded and its transferred gzip under 130 kB.
   const appBundle = await readFile(new URL(`../dist/assets/${appChunk}`, import.meta.url));
-  assert.ok(appBundle.length < 580_000);
+  assert.ok(appBundle.length < 590_000);
   assert.ok(gzipSync(appBundle).length < 130_000);
 });
 

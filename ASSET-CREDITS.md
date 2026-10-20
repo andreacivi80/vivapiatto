@@ -36,6 +36,12 @@ Sono immagini originali generate per rendere riconoscibile la materia prima; non
 
 - `hamburger-homemade-wholegrain-v12025.png`: immagine originale generata con lo strumento integrato `image_gen`, da prompt per un hamburger casalingo completo con panino integrale, carne di manzo, pomodoro e rucola, senza formaggio, salse, patatine o altri ingredienti. La foto rappresenta il panino assemblato e non sostituisce la misura reale delle porzioni.
 
+### Nuove immagini v1.20.26
+
+- `cheat-pizza-prosciutto-funghi-v12026.png`: immagine originale generata con lo strumento integrato `image_gen` da prompt per una pizza intera con base pomodoro-mozzarella, prosciutto cotto e funghi, senza altri topping.
+- `cheat-pizza-tonno-cipolla-v12026.png`: immagine originale generata con lo strumento integrato `image_gen` da prompt per una pizza intera con base pomodoro-mozzarella, tonno sgocciolato e cipolla, senza altri topping.
+- `part-figs-v12026.png` e `part-red-currants-v12026.png`: immagini originali generate separatamente con lo strumento integrato `image_gen`; solo fichi freschi o ribes rosso fresco, nessun altro alimento, testo o marchio. Le immagini rappresentano il cibo, non ne certificano il peso.
+
 ### Nuova immagine v1.20.15
 
 - `recipe-p38-bulgur-salmon-fennel-orange-v12015.png`: immagine generata dalla ricetta P38 con bulgur cotto, filetto di salmone grigliato, finocchio crudo affettato e spicchi d'arancia. Richiesti soltanto questi ingredienti e la finitura con olio; nessun testo o marchio. La fotografia precedente, con pesce troppo pallido per riconoscere il salmone, resta nell'archivio ma non è più collegata alla ricetta.

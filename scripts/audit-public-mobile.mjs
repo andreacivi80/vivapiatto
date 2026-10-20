@@ -806,10 +806,15 @@ try {
       if (group && !group.open && ${releasePatch < 85}) group.open = true;
       const pizza = [...(group?.querySelectorAll('.complete-meal-select') || [])]
         .find((button) => button.innerText.includes('Pizza margherita'));
-      const variantNames = ['Pizza con bresaola, rucola e grana', 'Pizza ai quattro formaggi', 'Pizza alla diavola', 'Pizza capricciosa'];
-      const pizzaVariants = variantNames.every((name) => [...(group?.querySelectorAll('.complete-meal-select') || [])]
-        .some((button) => button.innerText.includes(name) && button.querySelector('img')?.src.includes('v12023')));
-      const pizzaVariantsShowWholeDish = variantNames.every((name) => [...(group?.querySelectorAll('.complete-meal-select') || [])]
+      const variantImages = [
+        ['Pizza con bresaola, rucola e grana', 'v12023'], ['Pizza ai quattro formaggi', 'v12023'],
+        ['Pizza alla diavola', 'v12023'], ['Pizza capricciosa', 'v12023'],
+      ];
+      if (${versionMinor >= 20 && versionPatch >= 26}) variantImages.push(
+        ['Pizza prosciutto cotto e funghi', 'v12026'], ['Pizza tonno e cipolla', 'v12026']);
+      const pizzaVariants = variantImages.every(([name, imageVersion]) => [...(group?.querySelectorAll('.complete-meal-select') || [])]
+        .some((button) => button.innerText.includes(name) && button.querySelector('img')?.src.includes(imageVersion)));
+      const pizzaVariantsShowWholeDish = variantImages.every(([name]) => [...(group?.querySelectorAll('.complete-meal-select') || [])]
         .some((button) => button.innerText.includes(name) &&
           button.querySelector('.recipe-visual-single img, img.recipe-visual-single')?.src.includes('cheat-pizza-') &&
           !button.querySelector('.recipe-visual-parts')));
