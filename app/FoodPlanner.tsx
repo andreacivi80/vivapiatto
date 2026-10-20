@@ -55,9 +55,9 @@ const RecipeVisual = ({ recipe }: { recipe: Recipe }) => {
   const componentPhotos = (recipe.parts || [])
     .filter((part) => part.grams > 0)
     .slice(0, 4);
-  // A prepared pizza has its own photo; show its toppings together until the
-  // person explicitly switches to the editable component view.
-  const hasDedicatedDishPhoto = /\/food\/(?:recipe-|cheat-pizza-)/.test(recipe.image);
+  // Prepared recipes and occasional complete meals have one finished-dish
+  // photograph; components are shown only after explicitly splitting them.
+  const hasDedicatedDishPhoto = /\/food\/recipe-/.test(recipe.image) || recipe.id.startsWith("occasional-");
   if (hasDedicatedDishPhoto || componentPhotos.length < 2) {
     return <img className="recipe-visual-single" src={recipe.image} alt={recipe.name} loading="lazy" decoding="async" />;
   }
@@ -7613,7 +7613,7 @@ const occasionalRecipes: Recipe[] = [
     kicker: "Pane, carne e verdure con quantità chiare",
     course: "Piatto unico",
     cuisine: "Italiano",
-    image: photo("hamburger-simple-v7"),
+    image: photo("hamburger-homemade-wholegrain-v12025"),
     time: 15,
     ingredients: [
       { food: "Pane integrale", grams: 100 },

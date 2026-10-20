@@ -1014,9 +1014,17 @@ test("v1.20.23 offers distinct occasional pizzas as whole-meal replacements and 
 test("v1.20.24 displays the complete pizza photo before splitting its editable toppings", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   const visual = app.slice(app.indexOf("const RecipeVisual"), app.indexOf("type Tab ="));
-  assert.match(visual, /cheat-pizza-/);
+  assert.match(visual, /recipe\.id\.startsWith\("occasional-"\)/);
   assert.match(visual, /hasDedicatedDishPhoto \|\| componentPhotos\.length < 2/);
   assert.match(app, /setMealView\(\(current\) => \(\{ \.\.\.current, \[key\]: "parts" \}\)\)/);
+});
+
+test("v1.20.25 shows the whole homemade hamburger before optional component editing", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const photo = await readFile(new URL("../public/food/hamburger-homemade-wholegrain-v12025.png", import.meta.url));
+  assert.match(app, /id: "occasional-hamburger"[\s\S]{0,350}image: photo\("hamburger-homemade-wholegrain-v12025"\)/);
+  assert.match(app, /recipe\.id\.startsWith\("occasional-"\)/);
+  assert.ok(photo.length > 100_000);
 });
 
 test("v1.20.23 aligns print-preview nutrient headings and values on the same grid", async () => {
@@ -2823,7 +2831,7 @@ test("v1.18.76 permanently audits recipe ingredients against visible components"
 
 test("v1.18.78 uses each faithful full-dish recipe photo instead of an ingredient collage", async () => {
   const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
-  assert.match(source, /const hasDedicatedDishPhoto = .*recipe-.*cheat-pizza-.*[.]test\(recipe[.]image\)/);
+  assert.match(source, /const hasDedicatedDishPhoto = .*recipe-.*[.]test\(recipe[.]image\).*recipe[.]id[.]startsWith\("occasional-"\)/);
   assert.match(source, /if \(hasDedicatedDishPhoto \|\| componentPhotos[.]length < 2\)/);
   assert.match(source, /className="recipe-visual-single" src=\{recipe[.]image\}/);
 });

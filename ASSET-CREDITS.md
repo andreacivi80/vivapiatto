@@ -32,6 +32,10 @@ Sono immagini originali generate per rendere riconoscibile la materia prima; non
 - `pizza-margherita-stg-v12023.png`: fotografia generata separatamente della sola base napoletana con pomodoro, mozzarella e basilico; evita di attribuire alla voce CREA la fotografia generica già usata da un'altra voce del catalogo.
 - `recipe-whey-milk-shaker-v12023.png`, `part-whey-powder-v12023.png`, `part-spicy-salami-v12023.png`, `part-gorgonzola-v12023.png`: immagini originali generate per shaker completo e singoli ingredienti, oggetti centrati e distinti da altri alimenti. `cheat-pizza-marinara-v12023.png` e `part-flour-00-v12023.png` sono già preparate per la successiva ricetta marinara, non ancora proposta nella 1.20.23.
 
+### Nuova immagine v1.20.25
+
+- `hamburger-homemade-wholegrain-v12025.png`: immagine originale generata con lo strumento integrato `image_gen`, da prompt per un hamburger casalingo completo con panino integrale, carne di manzo, pomodoro e rucola, senza formaggio, salse, patatine o altri ingredienti. La foto rappresenta il panino assemblato e non sostituisce la misura reale delle porzioni.
+
 ### Nuova immagine v1.20.15
 
 - `recipe-p38-bulgur-salmon-fennel-orange-v12015.png`: immagine generata dalla ricetta P38 con bulgur cotto, filetto di salmone grigliato, finocchio crudo affettato e spicchi d'arancia. Richiesti soltanto questi ingredienti e la finitura con olio; nessun testo o marchio. La fotografia precedente, con pesce troppo pallido per riconoscere il salmone, resta nell'archivio ma non è più collegata alla ricetta.

@@ -245,7 +245,7 @@ try {
     const close = sheet?.querySelector('[aria-label="Chiudi anteprima stampa"]');
     const text = sheet?.innerText || '';
     const rect = close?.getBoundingClientRect();
-    const headings = [...(sheet?.querySelectorAll('.print-food-head span') || [])].slice(1);
+    const headings = [...(sheet?.querySelector('.print-food-head')?.children || [])].slice(1);
     const values = [...(sheet?.querySelector('.print-food-row')?.children || [])].slice(1);
     const columnsAligned = headings.length === 5 && values.length === 5 && headings.every((heading, index) =>
       getComputedStyle(heading).textAlign === 'right' &&
@@ -809,12 +809,21 @@ try {
       const variantNames = ['Pizza con bresaola, rucola e grana', 'Pizza ai quattro formaggi', 'Pizza alla diavola', 'Pizza capricciosa'];
       const pizzaVariants = variantNames.every((name) => [...(group?.querySelectorAll('.complete-meal-select') || [])]
         .some((button) => button.innerText.includes(name) && button.querySelector('img')?.src.includes('v12023')));
+      const pizzaVariantsShowWholeDish = variantNames.every((name) => [...(group?.querySelectorAll('.complete-meal-select') || [])]
+        .some((button) => button.innerText.includes(name) &&
+          button.querySelector('.recipe-visual-single img, img.recipe-visual-single')?.src.includes('cheat-pizza-') &&
+          !button.querySelector('.recipe-visual-parts')));
+      const hamburger = [...(group?.querySelectorAll('.complete-meal-select') || [])]
+        .find((button) => button.innerText.includes('Hamburger semplice fatto in casa'));
       const result = {
         visibleWithPlus: Boolean(group),
         shortcutVisible,
         shortcutOpenedSgarri: Boolean(group?.open),
         pizzaAvailable: Boolean(pizza),
         pizzaVariants,
+        pizzaVariantsShowWholeDish,
+        hamburgerWholeDish: Boolean(hamburger?.querySelector('img.recipe-visual-single')?.src.includes('hamburger-homemade-wholegrain-v12025') &&
+          !hamburger?.querySelector('.recipe-visual-parts')),
         freeChoiceAlsoAvailable: Boolean(picker?.querySelector('.part-choice-grid.free')),
       };
       pizza?.click();
@@ -1625,7 +1634,9 @@ try {
     !mealPartAddition.hasDirectRemove || !mealPartAddition.removed ||
     (!occasionalAddition.skipped && (!occasionalAddition.addOpened || !occasionalAddition.visibleWithPlus ||
       (releasePatch >= 85 && (!occasionalAddition.shortcutVisible || !occasionalAddition.shortcutOpenedSgarri)) ||
-      !occasionalAddition.pizzaAvailable || !occasionalAddition.pizzaVariants || !occasionalAddition.freeChoiceAlsoAvailable ||
+      !occasionalAddition.pizzaAvailable || !occasionalAddition.pizzaVariants ||
+      (releasePatch >= 86 && !occasionalAddition.pizzaVariantsShowWholeDish) || !occasionalAddition.freeChoiceAlsoAvailable ||
+      (versionMinor >= 20 && versionPatch >= 25 && !occasionalAddition.hamburgerWholeDish) ||
       !occasionalAddition.appended || !occasionalAddition.pizzaPhoto || !occasionalAddition.pizzaEditable ||
       !occasionalAddition.pickerClosed || !occasionalAddition.originalPartsKept || !occasionalAddition.removedDirectly)) ||
     (releasePatch >= 84 && (!occasionalAddition.replacementAvailable ||
