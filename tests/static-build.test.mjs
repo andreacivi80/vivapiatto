@@ -1050,6 +1050,27 @@ test("v1.20.26 offers two more whole-pizza choices and edible seasonal fruits", 
   assert.match(burger, /category: "Contorno", food: "Pomodorini", grams: 100/);
 });
 
+test("v1.20.27 makes marinara from separately sourced raw ingredients with faithful photos", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const marinara = app.slice(app.indexOf('id: "occasional-pizza-marinara-home"'), app.indexOf('id: "occasional-pizza-bresaola-rucola-grana"'));
+  assert.match(marinara, /Pizza marinara fatta in casa/);
+  assert.match(marinara, /cheat-pizza-marinara-v12023/);
+  assert.match(marinara, /Farina di frumento tipo 00/);
+  assert.match(marinara, /Pomodori pelati in scatola/);
+  assert.match(marinara, /Lievito di birra fresco/);
+  assert.match(marinara, /Olio extravergine/);
+  assert.match(marinara, /3-4 ore/);
+  assert.match(marinara, /non certificazione AVPN/);
+  assert.doesNotMatch(marinara, /Pizza Napoletana Margherita STG/);
+  for (const name of ["part-peeled-tomatoes-v12027", "part-fresh-yeast-v12027", "part-flour-00-v12023", "cheat-pizza-marinara-v12023"]) {
+    assert.match(marinara, new RegExp(name));
+    await access(new URL(`../dist/food/${name}.png`, import.meta.url));
+  }
+  for (const food of ["Farina di frumento tipo 00", "Pomodori pelati in scatola", "Lievito di birra fresco"]) {
+    assert.match(app, new RegExp(`foods\\["${food}"\\]`));
+  }
+});
+
 test("v1.20.23 aligns print-preview nutrient headings and values on the same grid", async () => {
   const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
   assert.match(css, /\.print-food-head,\s*\.print-food-row\s*\{[^}]*grid-template-columns:/);

@@ -42,6 +42,12 @@ Sono immagini originali generate per rendere riconoscibile la materia prima; non
 - `cheat-pizza-tonno-cipolla-v12026.png`: immagine originale generata con lo strumento integrato `image_gen` da prompt per una pizza intera con base pomodoro-mozzarella, tonno sgocciolato e cipolla, senza altri topping.
 - `part-figs-v12026.png` e `part-red-currants-v12026.png`: immagini originali generate separatamente con lo strumento integrato `image_gen`; solo fichi freschi o ribes rosso fresco, nessun altro alimento, testo o marchio. Le immagini rappresentano il cibo, non ne certificano il peso.
 
+### Nuove immagini v1.20.27
+
+- `part-peeled-tomatoes-v12027.png`: immagine originale generata di pomodori pelati nel loro succo, senza pelle o ingredienti estranei; distingue la conserva dal pomodoro fresco.
+- `part-fresh-yeast-v12027.png`: immagine originale generata di lievito di birra fresco compresso, distinto da burro e formaggio.
+- La foto già preparata `cheat-pizza-marinara-v12023.png` viene ora associata alla ricetta completa marinara; `part-flour-00-v12023.png` alla farina dell'impasto. Le immagini sono illustrative, non attestano la grammatura reale.
+
 ### Nuova immagine v1.20.15
 
 - `recipe-p38-bulgur-salmon-fennel-orange-v12015.png`: immagine generata dalla ricetta P38 con bulgur cotto, filetto di salmone grigliato, finocchio crudo affettato e spicchi d'arancia. Richiesti soltanto questi ingredienti e la finitura con olio; nessun testo o marchio. La fotografia precedente, con pesce troppo pallido per riconoscere il salmone, resta nell'archivio ma non è più collegata alla ricetta.

@@ -1860,6 +1860,10 @@ foods["Patate cotte arrosto"] = { kcal: 152, protein: 2.9, carbs: 25.7, fat: 4.5
 foods["Aceto di mele"] = { kcal: 21, protein: 0, carbs: 0.9, fat: 0, fiber: 0, source: "USDA FoodData Central" };
 // CREA PC0001: pizza margherita STG pronta, usata come base misurabile delle varianti farcite.
 foods["Pizza Napoletana Margherita STG"] = { kcal: 235, protein: 10.7, carbs: 27.4, fat: 9.3, fiber: 2.7, source: "CREA" };
+// Ingredienti pesati a crudo per la marinara domestica: il totale del piatto è una stima, non un'analisi della pizza cotta.
+foods["Farina di frumento tipo 00"] = { kcal: 323, protein: 11, carbs: 71.6, fat: 0.7, fiber: 2.2, source: "CREA 000220" };
+foods["Pomodori pelati in scatola"] = { kcal: 22, protein: 1.2, carbs: 3, fat: 0.5, fiber: 0.9, source: "CREA 006680" };
+foods["Lievito di birra fresco"] = { kcal: 70, protein: 12.1, carbs: 1.1, fat: 0.4, fiber: 6.9, source: "CREA 503100" };
 foods["Gorgonzola"] = { kcal: 324, protein: 19.1, carbs: 1, fat: 27.1, fiber: 0, source: "CREA" };
 // Etichetta Levoni Schiacciata Piccante: la pizza diavola resta una stima, non il valore di qualsiasi pizzeria.
 foods["Schiacciata piccante Levoni"] = { kcal: 329, protein: 26, carbs: 0, fat: 25, fiber: 0, source: "ETICHETTA" };
@@ -7007,6 +7011,9 @@ const ingredientPartCatalog: Record<string, MealPart> = {
   "Peperoni cotti": { category: "Contorno", food: "Peperoni cotti", grams: 150, label: "Peperoni cotti", image: photo("part-peppers-cooked-v11819") },
   "Pizza margherita": { category: "Carboidrato", food: "Pizza margherita", grams: 300, label: "Pizza margherita", image: photo("pizza-margherita-v7") },
   "Pizza Napoletana Margherita STG": { category: "Carboidrato", food: "Pizza Napoletana Margherita STG", grams: 300, label: "Base margherita pronta · 300 g", image: photo("pizza-margherita-stg-v12023") },
+  "Farina di frumento tipo 00": { category: "Carboidrato", food: "Farina di frumento tipo 00", grams: 160, label: "Farina 00 · peso a crudo", image: photo("part-flour-00-v12023") },
+  "Pomodori pelati in scatola": { category: "Contorno", food: "Pomodori pelati in scatola", grams: 80, label: "Pelati con succo · peso sgocciolato", image: photo("part-peeled-tomatoes-v12027") },
+  "Lievito di birra fresco": { category: "Extra", food: "Lievito di birra fresco", grams: 1, label: "Lievito fresco · 1 g", image: photo("part-fresh-yeast-v12027") },
   "Gorgonzola": { category: "Latticino", food: "Gorgonzola", grams: 30, label: "Gorgonzola · 30 g", image: photo("part-gorgonzola-v12023") },
   "Schiacciata piccante Levoni": { category: "Proteina", food: "Schiacciata piccante Levoni", grams: 50, label: "Salame piccante · 50 g", image: photo("part-spicy-salami-v12023") },
   "Proteine whey vaniglia Decathlon": { category: "Proteina", food: "Proteine whey vaniglia Decathlon", grams: 30, label: "Whey vaniglia · 30 g", image: photo("part-whey-powder-v12023") },
@@ -7547,6 +7554,42 @@ const occasionalRecipes: Recipe[] = [
       "Pizza marinara",
       "Porzione più piccola con un contorno di verdure",
     ],
+  },
+  {
+    id: "occasional-pizza-marinara-home",
+    name: "Pizza marinara fatta in casa",
+    kicker: "Impasto da zero · versione domestica, non certificazione AVPN",
+    course: "Piatto unico", cuisine: "Italiano", time: 240,
+    image: photo("cheat-pizza-marinara-v12023"),
+    sourceLabel: "Condimento ispirato al disciplinare AVPN; valori stimati dagli ingredienti CREA",
+    sourceUrl: "https://www.pizzanapoletana.org/public/pdf/Disciplinare_AVPN_2022.pdf",
+    ingredients: [
+      { food: "Farina di frumento tipo 00", grams: 160 },
+      { food: "Lievito di birra fresco", grams: 1 },
+      { food: "Sale iodato", grams: 4 },
+      { food: "Pomodori pelati in scatola", grams: 80 },
+      { food: "Aglio crudo", grams: 3 },
+      { food: "Origano secco", grams: 1 },
+      { food: "Olio extravergine", grams: 7 },
+    ],
+    parts: [
+      { category: "Carboidrato", food: "Farina di frumento tipo 00", grams: 160, label: "Farina 00 · peso a crudo", image: photo("part-flour-00-v12023") },
+      { category: "Extra", food: "Lievito di birra fresco", grams: 1, label: "Lievito fresco", image: photo("part-fresh-yeast-v12027") },
+      { category: "Extra", food: "Sale iodato", grams: 4, image: photo("part-iodized-salt-v1181") },
+      { category: "Contorno", food: "Pomodori pelati in scatola", grams: 80, label: "Pelati", image: photo("part-peeled-tomatoes-v12027") },
+      { category: "Extra", food: "Aglio crudo", grams: 3, image: photo("part-garlic-v11866") },
+      { category: "Extra", food: "Origano secco", grams: 1, image: photo("part-oregano-v11866") },
+      { category: "Extra", food: "Olio extravergine", grams: 7, image: photo("part-olive-oil-v8") },
+    ],
+    steps: [
+      "Versa 95 ml d'acqua a temperatura ambiente in una ciotola, sciogli 1 g di lievito fresco e incorpora gradualmente 160 g di farina 00; unisci 4 g di sale e impasta finché il panetto è liscio. L'acqua non apporta calorie.",
+      "Copri e lascia lievitare circa 3-4 ore a temperatura ambiente, finché il panetto è visibilmente gonfio. È una versione domestica più rapida: non chiamarla vera pizza napoletana certificata.",
+      "Scalda il forno domestico alla temperatura massima con teglia già dentro. Stendi il panetto con le dita, senza schiacciare tutto il bordo.",
+      "Schiaccia 80 g di pelati, distribuiscili sulla base; aggiungi 3 g d'aglio a fettine, 1 g d'origano e 7 g d'olio extravergine misurato.",
+      "Cuoci sulla teglia rovente per circa 8-12 minuti, controllando il fondo e i bordi: il tempo dipende dal forno. I nutrienti sono sommati dagli ingredienti pesati a crudo; il peso cotto cambia per perdita d'acqua.",
+    ],
+    alternatives: ["Pizza margherita pronta", "Meno aglio", "Porzione ridotta registrando gli ingredienti reali"],
+    allergens: ["Glutine"],
   },
   {
     id: "occasional-pizza-bresaola-rucola-grana",
