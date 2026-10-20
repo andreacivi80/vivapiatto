@@ -55,7 +55,9 @@ const RecipeVisual = ({ recipe }: { recipe: Recipe }) => {
   const componentPhotos = (recipe.parts || [])
     .filter((part) => part.grams > 0)
     .slice(0, 4);
-  const hasDedicatedDishPhoto = /\/food\/recipe-/.test(recipe.image);
+  // A prepared pizza has its own photo; show its toppings together until the
+  // person explicitly switches to the editable component view.
+  const hasDedicatedDishPhoto = /\/food\/(?:recipe-|cheat-pizza-)/.test(recipe.image);
   if (hasDedicatedDishPhoto || componentPhotos.length < 2) {
     return <img className="recipe-visual-single" src={recipe.image} alt={recipe.name} loading="lazy" decoding="async" />;
   }

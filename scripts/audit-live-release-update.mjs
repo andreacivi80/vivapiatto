@@ -88,6 +88,14 @@ try {
   };
 
   await wait(6_000);
+  await evaluate(`(() => {
+    if (document.querySelector('.meal-part input[type="number"]')) return true;
+    const split = [...document.querySelectorAll('.meal-card button')]
+      .find((button) => button.textContent?.includes('Dividi in componenti'));
+    split?.click();
+    return Boolean(split);
+  })()`);
+  await wait(400);
   const initialMeal = await evaluate(`(() => {
     const input = document.querySelector('.meal-part input[type="number"]');
     if (!input) return { ready: false };
