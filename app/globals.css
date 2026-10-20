@@ -622,6 +622,38 @@ button {
   background: var(--cream);
   border-bottom: 1px solid var(--line);
 }
+.part-picker-search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  padding: 6px 16px;
+  background: var(--cream);
+  border-bottom: 1px solid var(--line);
+}
+.part-picker-search input {
+  min-width: 0;
+  flex: 1;
+  height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0 10px;
+  background: white;
+  color: var(--ink);
+  font-size: 14px;
+}
+.part-picker-search button {
+  flex: 0 0 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--ink);
+  color: white;
+  font-size: 19px;
+}
+.part-picker-scroll.searching .picker-group { display: none; }
+.picker-search-results > p { margin: 4px 0 8px; color: var(--muted); font-size: 11px; }
+.picker-search-results h3 { margin: 12px 0 7px; }
 .part-picker-scroll {
   flex: 1 1 auto;
   min-height: 0;

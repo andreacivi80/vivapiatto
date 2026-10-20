@@ -1071,6 +1071,23 @@ test("v1.20.27 makes marinara from separately sourced raw ingredients with faith
   }
 });
 
+test("v1.20.28 searches foods and dishes by any text fragment in both meal pickers", async () => {
+  const [app, css, audit] = await Promise.all([
+    readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+    readFile(new URL("../scripts/audit-public-mobile.mjs", import.meta.url), "utf8"),
+  ]);
+  assert.match(app, /const openPartPicker = \(next:/);
+  assert.match(app, /setPickerSearch\(""\)/);
+  assert.match(app, /aria-label="Cerca alimento o piatto"/);
+  assert.match(app, /\.includes\(query\)/);
+  assert.match(app, /\[\.\.\.mealPartOptions\[partPicker\.role\], \.\.\.orderedFreePartOptions\(partPicker\.role, partPicker\.key\)\]/);
+  assert.match(app, /completeMealOptions\(partPicker\.key\)/);
+  assert.match(app, /occasionalRecipes\.filter/);
+  assert.match(css, /\.part-picker-search input/);
+  assert.match(audit, /searchTodayAlternative.*searchWeekAlternative.*searchTodayAdd.*searchWeekAdd/);
+});
+
 test("v1.20.23 aligns print-preview nutrient headings and values on the same grid", async () => {
   const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
   assert.match(css, /\.print-food-head,\s*\.print-food-row\s*\{[^}]*grid-template-columns:/);

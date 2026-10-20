@@ -109,6 +109,37 @@ try {
     if (result.exceptionDetails) throw new Error(result.exceptionDetails.text);
     return result.result.value;
   };
+  const searchPicker = async (query, expected) => {
+    const focused = await evaluate(`(() => {
+      const input = document.querySelector('.part-picker-sheet [aria-label="Cerca alimento o piatto"]');
+      input?.focus();
+      return Boolean(input);
+    })()`);
+    if (!focused) return { found: false };
+    await page.send('Input.insertText', { text: query });
+    await wait(300);
+    const result = await evaluate(`(() => {
+      const sheet = document.querySelector('.part-picker-sheet');
+      const results = sheet?.querySelector('.picker-search-results');
+      const names = [...(results?.querySelectorAll('.part-choice-grid button span, .complete-meal-select span') || [])]
+        .map((node) => node.innerText.trim());
+      return {
+        found: Boolean(results),
+        query: sheet?.querySelector('[aria-label="Cerca alimento o piatto"]')?.value,
+        expectedFound: names.some((name) => name.toLocaleLowerCase('it').includes(${JSON.stringify(expected.toLocaleLowerCase('it'))})),
+        count: names.length,
+        horizontalOverflow: Boolean(sheet && sheet.scrollWidth > sheet.clientWidth + 1),
+      };
+    })()`);
+    await evaluate(`document.querySelector('.part-picker-sheet [aria-label="Cancella ricerca"]')?.click()`);
+    await wait(150);
+    result.cleared = await evaluate(`(() => {
+      const sheet = document.querySelector('.part-picker-sheet');
+      return Boolean(sheet && !sheet.querySelector('.picker-search-results') &&
+        sheet.querySelector('[aria-label="Cerca alimento o piatto"]')?.value === '');
+    })()`);
+    return result;
+  };
   const settleViewportImages = async () => {
     // React can replace an image node while the previous node is loading (for
     // example when returning from the full-dish picker). Re-scan the viewport
@@ -447,6 +478,7 @@ try {
       horizontalOverflow: sheet.scrollWidth > sheet.clientWidth + 1,
     };
   })()`);
+  const searchTodayAlternative = await searchPicker('el', 'mela');
   await evaluate(`document.querySelector('[aria-label="Chiudi alternative"]')?.click()`);
   await wait(500);
   const pickerClosed = await evaluate(`!document.querySelector('.part-picker-sheet')`);
@@ -521,6 +553,15 @@ try {
   })()`);
   if (!openedWeekDay) throw new Error("Modifica giorno settimanale non trovata");
   await wait(700);
+  const openedWeekAdd = await evaluate(`(() => {
+    const button = document.querySelector('.meal-card .add-part-compact, .week-part-add, .week-empty-add');
+    button?.click();
+    return Boolean(button);
+  })()`);
+  await wait(300);
+  const searchWeekAdd = openedWeekAdd ? await searchPicker('wi', 'kiwi') : { found: false };
+  await evaluate(`document.querySelector('.part-picker-sheet [aria-label="Chiudi alternative"]')?.click()`);
+  await wait(300);
   const todayWeekSync = await evaluate(`(() => {
     const card = document.querySelector('.meal-card');
     const part = card?.querySelector('.meal-part .part-change');
@@ -530,6 +571,7 @@ try {
     return { found: true, before };
   })()`);
   await wait(500);
+  const searchWeekAlternative = await searchPicker('el', 'mela');
   Object.assign(todayWeekSync, await evaluate(`(() => {
     const picker = document.querySelector('.part-picker-sheet');
     const choices = [...(picker?.querySelectorAll('.part-choice-grid button') || [])];
@@ -743,6 +785,7 @@ try {
     return { found: true, before };
   })()`);
   await wait(500);
+  const searchTodayAdd = await searchPicker('wi', 'kiwi');
   Object.assign(mealPartAddition, await evaluate(`(() => {
     const sheet = document.querySelector('.part-picker-sheet');
     const close = sheet?.querySelector('[aria-label="Chiudi alternative"]');
@@ -1551,6 +1594,7 @@ try {
     swapBottom,
     afterSwapReturn,
     milkAlternatives,
+    pickerSearch: { searchTodayAlternative, searchWeekAlternative, searchTodayAdd, searchWeekAdd },
     pickerClosed,
     gramsEdit,
     afterReload,
@@ -1620,6 +1664,9 @@ try {
     !milkAlternatives.found || !milkAlternatives.hasNone || !milkAlternatives.hasSoy ||
     !milkAlternatives.hasOat || !milkAlternatives.hasSkimmed ||
     !milkAlternatives.closeVisible || milkAlternatives.horizontalOverflow || !pickerClosed ||
+    (versionMinor >= 20 && versionPatch >= 28 &&
+      [searchTodayAlternative, searchWeekAlternative, searchTodayAdd, searchWeekAdd]
+        .some((search) => !search.found || !search.expectedFound || !search.cleared || search.horizontalOverflow)) ||
     !gramsEdit.persisted || afterReload.recovery || afterReload.horizontalOverflow || afterReload.brokenViewportImages.length || afterReload.pendingViewportImages.length ||
     !shopping.found || shopping.itemCount === 0 || !shopping.hasSelectAll || !shopping.hasDeselectAll ||
     shopping.horizontalOverflow || !shopping.allSelected || !shopping.allDeselected || !shopping.closed ||

@@ -28,6 +28,7 @@ const partDisplayName = (part: Pick<RecipeIngredient, "food" | "label">) => {
     .replace(/\s*·\s*(?:1\s+)?(?:porzione|vasetto)\b.*$/i, "")
     .trim();
 };
+const foldPickerSearch = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("it").trim();
 type Recipe = {
   id: string;
   name: string;
@@ -11010,6 +11011,11 @@ export function FoodPlanner() {
     role: MealPart["category"];
     adding?: boolean;
   } | null>(null);
+  const [pickerSearch, setPickerSearch] = useState("");
+  const openPartPicker = (next: NonNullable<typeof partPicker>) => {
+    setPickerSearch("");
+    setPartPicker(next);
+  };
   const [preferencesOpen, setPreferencesOpen] = useState(false);
   const [checkinOpen, setCheckinOpen] = useState(false);
   const [excludedGroups, setExcludedGroups] = useState<string[]>([]);
@@ -13770,7 +13776,7 @@ export function FoodPlanner() {
     const seed = seasonalFirst(mealPartOptions[role])[0] || mealPartOptions[role][0];
     if (!seed) return;
     setMealView((current) => ({ ...current, [key]: "parts" }));
-    setPartPicker({
+    openPartPicker({
       key,
       index: activeMealParts(key, recipe).length,
       part: { ...seed },
@@ -15179,7 +15185,7 @@ export function FoodPlanner() {
                                     className="part-change"
                                     aria-label={`Cambia ${part.category}`}
                                     onClick={() => {
-                                      setPartPicker({
+                                      openPartPicker({
                                         key,
                                         index: partIndex,
                                         part,
@@ -15644,7 +15650,7 @@ export function FoodPlanner() {
                               <button
                                 key={`${part.category}-${partIndex}`}
                                 onClick={() =>
-                                  setPartPicker({
+                                  openPartPicker({
                                     key,
                                     index: part.originalIndex,
                                     part,
@@ -16480,7 +16486,17 @@ export function FoodPlanner() {
                 ×
               </button>
             </header>
-            <div className="part-picker-shortcuts" aria-label="Vai alle scelte del pasto">
+            <div className="part-picker-search">
+              <input
+                type="search"
+                aria-label="Cerca alimento o piatto"
+                placeholder="Cerca alimento o piatto…"
+                value={pickerSearch}
+                onChange={(event) => setPickerSearch(event.target.value)}
+              />
+              {pickerSearch && <button type="button" aria-label="Cancella ricerca" onClick={() => setPickerSearch("")}>×</button>}
+            </div>
+            {!pickerSearch.trim() && <div className="part-picker-shortcuts" aria-label="Vai alle scelte del pasto">
               <button
                 type="button"
                 onClick={() => {
@@ -16493,13 +16509,71 @@ export function FoodPlanner() {
               >
                 🍕 Sgarri · pizza, gelato, dolci
               </button>
-            </div>
-            <div className="part-picker-scroll">
+            </div>}
+            <div className={`part-picker-scroll${pickerSearch.trim() ? " searching" : ""}`}>
               {!partPicker.adding && (
                 <button className="remove-part-choice" onClick={removeMealPart}>
                   − Nessuno · togli questo elemento
                 </button>
               )}
+              {pickerSearch.trim() && (() => {
+                const query = foldPickerSearch(pickerSearch);
+                const foodsFound = [...mealPartOptions[partPicker.role], ...orderedFreePartOptions(partPicker.role, partPicker.key)]
+                  .filter((option, index, all) => all.findIndex((candidate) => candidate.food === option.food) === index)
+                  .filter((option) => foldPickerSearch(`${option.food} ${partDisplayName(option)}`).includes(query));
+                const mealsFound = partPicker.adding ? [] : completeMealOptions(partPicker.key).filter((recipe) =>
+                  foldPickerSearch(recipe.name).includes(query));
+                const occasionalFound = occasionalRecipes.filter((recipe) =>
+                  foldPickerSearch(recipe.name).includes(query));
+                return <section className="picker-search-results" aria-label="Risultati ricerca">
+                  <p role="status">{foodsFound.length + mealsFound.length + occasionalFound.length} risultati per “{pickerSearch.trim()}”</p>
+                  {!foodsFound.length && !mealsFound.length && !occasionalFound.length && <p>Nessun risultato. Prova un altro termine.</p>}
+                  {foodsFound.length > 0 && <>
+                    <h3>Alimenti</h3>
+                    <div className="part-choice-grid free">
+                      {foodsFound.map((option) => {
+                        const adjusted = equivalentPart(option, partPicker.part, partPicker.role);
+                        return <button key={option.food} onClick={() => chooseMealPart(adjusted, false)}>
+                          <img src={option.image} alt={partDisplayName(option)} loading="lazy" decoding="async" />
+                          <span>{partDisplayName(option)}</span>
+                          <b>{adjusted.grams} g · {round(calc([adjusted]).kcal)} kcal</b>
+                        </button>;
+                      })}
+                    </div>
+                  </>}
+                  {(mealsFound.length > 0 || occasionalFound.length > 0) && <>
+                    <h3>Piatti</h3>
+                    <div className="complete-meal-grid">
+                      {[...mealsFound, ...occasionalFound].map((recipe) => <article key={recipe.id}>
+                        <button className="complete-meal-select" onClick={() => {
+                          if (recipe.id === "occasional-gelato") {
+                            setGelatoComposerOpen(true);
+                            setPickerSearch("");
+                            window.setTimeout(() => {
+                              const group = document.getElementById("part-picker-sgarri") as HTMLDetailsElement | null;
+                              if (group) {
+                                group.open = true;
+                                group.scrollIntoView({ behavior: "smooth", block: "start" });
+                              }
+                            }, 50);
+                            return;
+                          }
+                          if (recipe.id.startsWith("occasional-")) {
+                            if (partPicker.adding) addOccasionalRecipe(recipe);
+                            else if (partPicker.part.occasionalGroupId) replaceOccasionalRecipe(recipe);
+                            else chooseCompleteMeal(recipe);
+                          } else chooseCompleteMeal(recipe);
+                        }}>
+                          <RecipeVisual recipe={recipe} />
+                          <span>{recipe.name}</span>
+                          <b>{round(calc(recipe.ingredients).kcal)} kcal · {recipe.time} min</b>
+                        </button>
+                        <button className="complete-meal-info" aria-label={`Vedi ricetta ${recipe.name}`} onClick={() => { setSelectedMealKey(null); setSelected(recipe); }}>i</button>
+                      </article>)}
+                    </div>
+                  </>}
+                </section>;
+              })()}
               {!partPicker.adding && (
                 <details className="picker-group complete-meals" open>
                 <summary>Piatti completi consigliati</summary>
