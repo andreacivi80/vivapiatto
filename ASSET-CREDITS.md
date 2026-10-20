@@ -52,6 +52,12 @@ Sono immagini originali generate per rendere riconoscibile la materia prima; non
 
 - `cheat-pizza-ortolana-v12029.png`: fotografia illustrativa originale generata con `image_gen` dal piatto completo documentato: pizza integrale con passata, mozzarella, melanzane, zucchine, peperoni rossi e gialli, origano e olio. Prompt `photorealistic-natural`, pizza intera visibile, nessun altro topping o testo. È una rappresentazione della ricetta, non la fotografia di una porzione pesata o una certificazione nutrizionale.
 
+### Nuove immagini v1.20.30
+
+- `part-salted-anchovy-v12030.png`: immagine originale generata con `image_gen` di filetti di acciuga sotto sale sciacquati e diliscati, isolati su piatto, senza pane né altri ingredienti.
+- `part-pine-nuts-v12030.png`: immagine originale generata con `image_gen` di soli pinoli sgusciati, distinguibili dalla frutta secca diversa.
+- `cheat-pizza-broccoli-anchovy-pine-v12030.png`: immagine originale generata con `image_gen` dalla ricetta completa, pizza bianca intera con broccoletti, filetti d'acciuga e pinoli, senza pomodoro o formaggio. Le foto rappresentano gli alimenti, non misurano porzioni o nutrienti.
+
 ### Nuova immagine v1.20.15
 
 - `recipe-p38-bulgur-salmon-fennel-orange-v12015.png`: immagine generata dalla ricetta P38 con bulgur cotto, filetto di salmone grigliato, finocchio crudo affettato e spicchi d'arancia. Richiesti soltanto questi ingredienti e la finitura con olio; nessun testo o marchio. La fotografia precedente, con pesce troppo pallido per riconoscere il salmone, resta nell'archivio ma non è più collegata alla ricetta.

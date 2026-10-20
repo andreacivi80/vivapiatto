@@ -1084,6 +1084,25 @@ test("v1.20.29 offers a sourced whole ortolana with aligned weighed components",
   await access(new URL("../dist/food/cheat-pizza-ortolana-v12029.png", import.meta.url));
 });
 
+test("v1.20.30 offers a sourced broccoli-anchovy-pine pizza with separate verified ingredients", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const pizza = app.slice(app.indexOf('id: "occasional-pizza-broccoli-anchovy-pine-home"'), app.indexOf('id: "occasional-pizza-bresaola-rucola-grana"'));
+  assert.match(pizza, /cheat-pizza-broccoli-anchovy-pine-v12030/);
+  assert.match(pizza, /educazionenutrizionale\.granapadano\.it\/it\/ricette\/pizza-con-acciughe-broccoletti-e-pinoli/);
+  for (const food of ["Farina di frumento tipo 00", "Broccoli bolliti", "Acciughe sotto sale", "Pinoli", "Aglio crudo", "Olio extravergine"]) {
+    assert.match(pizza, new RegExp(`food: "${food}"`));
+  }
+  assert.match(pizza, /120 g già cotti e scolati/);
+  assert.match(pizza, /15 g della parte edibile/);
+  assert.match(pizza, /Non aggiungere altro sale al condimento/);
+  assert.match(pizza, /allergens: \["Glutine", "Pesce", "Frutta a guscio"\]/);
+  assert.match(app, /Pinoli: \{\s*kcal: 604,\s*protein: 31\.9/);
+  assert.match(app, /"Acciughe sotto sale": \{\s*kcal: 137,\s*protein: 25/);
+  for (const image of ["part-salted-anchovy-v12030", "part-pine-nuts-v12030", "cheat-pizza-broccoli-anchovy-pine-v12030"]) {
+    await access(new URL(`../dist/food/${image}.png`, import.meta.url));
+  }
+});
+
 test("v1.20.28 searches foods and dishes by any text fragment in both meal pickers", async () => {
   const [app, css, audit] = await Promise.all([
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
@@ -1209,8 +1228,8 @@ test("v1.19.20 caches framework dependencies without lazy-loading the planner", 
   // mappings. The sourced whole ortolana adds 11 weighed components and five
   // beginner preparation steps; allow only that small measured bundle growth.
   const appBundle = await readFile(new URL(`../dist/assets/${appChunk}`, import.meta.url));
-  assert.ok(appBundle.length < 592_000);
-  assert.ok(gzipSync(appBundle).length < 131_000);
+  assert.ok(appBundle.length < 596_000);
+  assert.ok(gzipSync(appBundle).length < 132_000);
 });
 
 test("v1.19.21 keeps the public mobile stress audit silent and reusable", async () => {
