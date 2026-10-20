@@ -7703,8 +7703,50 @@ const occasionalRecipes: Recipe[] = [
       "Stendi l'impasto con le mani su carta forno senza usare altra farina non conteggiata. Distribuisci broccoli e acciughe con tutto l'olio già misurato, poi 10 g di pinoli sgusciati.",
       "Cuoci nel forno preriscaldato a 220 °C per circa 25-30 minuti, controllando che il fondo sia cotto e i pinoli non brucino. Servi la pizza bianca; il peso finale cambia per l'acqua persa in cottura, mentre i nutrienti derivano dagli ingredienti pesati.",
     ],
-    alternatives: ["Senza pinoli se non li desideri: ricalcola la porzione", "Broccoli senza acciughe: il piatto cambia e va riequilibrato", "Porzione realmente mangiata modificabile"],
-    allergens: ["Glutine", "Pesce", "Frutta a guscio"],
+    alternatives: ["Senza pinoli se non li desideri: ricalcola la porzione", "Broccoli senza acciughe: il piatto cambia e va riequilibrato", "Pinoli: verifica anche l'eventuale allergia specifica e l'etichetta"],
+    allergens: ["Glutine", "Pesce", "Pinoli"],
+  },
+  {
+    id: "occasional-pizza-potato-rosemary-home",
+    name: "Pizza bianca con patate e rosmarino",
+    kicker: "Impasto con patata lessa · pizza completa da forno",
+    course: "Piatto unico", cuisine: "Italiano", time: 135,
+    image: photo("cheat-pizza-potato-rosemary-v12031"),
+    sourceLabel: "Ispirata alla pizza con patate del Cucchiaio d'Argento; quantità domestiche ricalcolate dagli alimenti CREA e USDA",
+    sourceUrl: "https://www.cucchiaio.it/ricetta/pizza-con-le-patate/",
+    ingredients: [
+      { food: "Farina di frumento tipo 00", grams: 125 },
+      { food: "Patate lesse", grams: 80, label: "Patata nell'impasto · 80 g già lessati" },
+      { food: "Patate crude · parte edibile", grams: 120, label: "Patata a fettine · 120 g sbucciati a crudo" },
+      { food: "Mozzarella vaccina", grams: 50 },
+      { food: "Lievito di birra fresco", grams: 4 },
+      { food: "Zucchero", grams: 1 },
+      { food: "Sale iodato", grams: 2 },
+      { food: "Olio extravergine", grams: 10 },
+      { food: "Rosmarino fresco", grams: 2 },
+      { food: "Peperoncino rosso fresco", grams: 1 },
+    ],
+    parts: [
+      { category: "Carboidrato", food: "Farina di frumento tipo 00", grams: 125, image: photo("part-flour-00-v12023") },
+      { category: "Carboidrato", food: "Patate lesse", grams: 80, label: "Patata nell'impasto · peso da cotta", image: photo("part-potatoes-boiled-v7") },
+      { category: "Carboidrato", food: "Patate crude · parte edibile", grams: 120, label: "Patata a fettine · peso a crudo", image: photo("part-potatoes-raw-v12020") },
+      { category: "Latticino", food: "Mozzarella vaccina", grams: 50, image: photo("part-mozzarella-v11522") },
+      { category: "Extra", food: "Lievito di birra fresco", grams: 4, image: photo("part-fresh-yeast-v12027") },
+      { category: "Extra", food: "Zucchero", grams: 1, image: photo("part-sugar-v11819") },
+      { category: "Extra", food: "Sale iodato", grams: 2, image: photo("part-iodized-salt-v1181") },
+      { category: "Extra", food: "Olio extravergine", grams: 10, label: "Olio EVO · 10 g totali", image: photo("part-olive-oil-v8") },
+      { category: "Extra", food: "Rosmarino fresco", grams: 2, image: photo("part-rosemary-v11866") },
+      { category: "Extra", food: "Peperoncino rosso fresco", grams: 1, image: photo("part-chili-v11866") },
+    ],
+    steps: [
+      "Lessa una patata, scolala, schiacciala e pesa 80 g già cotti per l'impasto. Sciogli 4 g di lievito e 1 g di zucchero in circa 65 ml d'acqua tiepida.",
+      "Unisci 125 g di farina 00, la patata schiacciata, 5 g dei 10 g di olio e 2 g di sale. Impasta 10-15 minuti finché è liscio; copri e fai lievitare circa un'ora fino al raddoppio.",
+      "Sbuccia e pesa altri 120 g di patata cruda. Tagliala a fettine sottilissime, immergila per 10 minuti in acqua fredda, poi scolala e asciugala accuratamente. Scola e pesa 50 g di mozzarella.",
+      "Stendi il panetto in una piccola teglia su carta forno; distribuisci la mozzarella, le fettine di patata, 2 g di rosmarino e 1 g di peperoncino. Versa sopra i restanti 5 g di olio misurato.",
+      "Cuoci nel forno preriscaldato a 220-240 °C per circa 18-25 minuti, finché fondo e patate sono cotti e dorati. Le due quantità di patata sono conteggiate separatamente: 80 g lessati nell'impasto e 120 g crudi sulla pizza.",
+    ],
+    alternatives: ["Senza peperoncino, se preferisci", "Mozzarella light con grammi e nutrienti aggiornati", "Mezza pizza come porzione, registrando quanto mangi davvero"],
+    allergens: ["Glutine", "Latte"],
   },
   {
     id: "occasional-pizza-bresaola-rucola-grana",
@@ -9923,7 +9965,7 @@ const inferTextAllergens = (textValue: string) => {
     ["Molluschi", /cozze|vongole|seppia|calamar|polpo|ostric/],
     ["Soia", /soia|tofu|tempeh|edamame/],
     ["Arachidi", /arachid/],
-    ["Frutta a guscio", /noci|mandorle|nocciole|pistacchi|anacardi|pecan|pinoli/],
+    ["Frutta a guscio", /noci|mandorle|nocciole|pistacchi|anacardi|pecan/],
     ["Sesamo", /sesamo/],
     ["Sedano", /sedano/],
     ["Senape", /senape/],
@@ -11805,7 +11847,7 @@ export function FoodPlanner() {
   const textMatchesFoodStyle = (textValue: string) => {
     const text = textValue.toLowerCase();
     const meat = /\bpollo\b|tacchino|coniglio|manzo|vitello|maiale|cavallo|bresaola|prosciutto|mortadella|salame|salsiccia|porchetta|pancetta/.test(text);
-    const fish = /salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|gamber|polpo|cozze|calamari|rombo|seppia/.test(text);
+    const fish = /salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|acciugh|gamber|polpo|cozze|calamari|rombo|seppia/.test(text);
     const animal = meat || fish || /uov|albume|latte|yogurt|skyr|kefir|ricotta|feta|mozzarella|crescenza|scamorza|provolone|burro/.test(text);
     if (foodStyle === "Vegano") return !animal;
     if (foodStyle === "Vegetariano") return !meat && !fish;
@@ -11834,7 +11876,7 @@ export function FoodPlanner() {
     recipe.time <= maxPrepTime;
   const proteinSignatureForItems = (items: RecipeIngredient[]) => {
     const protein = items.find((ingredient) =>
-      /\bpollo\b|tacchino|coniglio|manzo|vitello|maiale|cavallo|roast beef|carpaccio|bresaola|prosciutto|salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|gamber|polpo|cozze|calamari|rombo|seppia|uov|ceci|lenticchie|fagioli(?!ni)|piselli|tofu|tempeh|ricotta|feta|mozzarella|crescenza|scamorza|provolone/i.test(ingredient.food),
+      /\bpollo\b|tacchino|coniglio|manzo|vitello|maiale|cavallo|roast beef|carpaccio|bresaola|prosciutto|salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|acciugh|gamber|polpo|cozze|calamari|rombo|seppia|uov|ceci|lenticchie|fagioli(?!ni)|piselli|tofu|tempeh|ricotta|feta|mozzarella|crescenza|scamorza|provolone/i.test(ingredient.food),
     );
     return protein?.food || proteinFamilyForItems(items);
   };
@@ -12072,7 +12114,7 @@ export function FoodPlanner() {
     const vegetableGrams = recipe.ingredients
       .filter((item) => vegetablePattern.test(item.food.toLowerCase()))
       .reduce((sum, item) => sum + item.grams, 0);
-    const fish = /salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|gamber|polpo|cozze|calamari|rombo|seppia/.test(foodsText);
+    const fish = /salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|acciugh|gamber|polpo|cozze|calamari|rombo|seppia/.test(foodsText);
     const meat = /\bpollo\b|tacchino|coniglio|manzo|vitello|maiale|cavallo|bresaola|prosciutto|mortadella|salame|salsiccia|porchetta|pancetta/.test(foodsText);
     const eggs = /\buov|albume/.test(foodsText);
     const dairy = /latte|yogurt|skyr|kefir|ricotta|feta|mozzarella|crescenza|scamorza|provolone|fiocchi di latte|burro/.test(foodsText);
@@ -12118,12 +12160,12 @@ export function FoodPlanner() {
     }
     const foodsText = recipe.ingredients.map((item) => item.food).join(" ").toLowerCase();
     if (quickRecipeFilter === "Pesce")
-      return /salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|gamber|polpo|cozze|calamari|rombo|seppia/.test(foodsText);
+      return /salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|acciugh|gamber|polpo|cozze|calamari|rombo|seppia/.test(foodsText);
     if (quickRecipeFilter === "Carne")
       return /\bpollo\b|tacchino|coniglio|manzo|vitello|maiale|cavallo|bresaola|prosciutto|lonza|hamburger/.test(foodsText);
     if (quickRecipeFilter === "Uova") return /\buov|albume/.test(foodsText);
     if (quickRecipeFilter === "Vegetale")
-      return !/\bpollo\b|tacchino|coniglio|manzo|vitello|maiale|cavallo|bresaola|prosciutto|salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|gamber|polpo|cozze|calamari/.test(foodsText);
+      return !/\bpollo\b|tacchino|coniglio|manzo|vitello|maiale|cavallo|bresaola|prosciutto|salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|acciugh|gamber|polpo|cozze|calamari/.test(foodsText);
     return recipeCourse(recipe) === quickRecipeFilter;
   };
   const suppliedCatalogView = quickRecipeFilter === "Le tue 214" && !swapTarget;

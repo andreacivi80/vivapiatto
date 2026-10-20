@@ -58,6 +58,10 @@ Sono immagini originali generate per rendere riconoscibile la materia prima; non
 - `part-pine-nuts-v12030.png`: immagine originale generata con `image_gen` di soli pinoli sgusciati, distinguibili dalla frutta secca diversa.
 - `cheat-pizza-broccoli-anchovy-pine-v12030.png`: immagine originale generata con `image_gen` dalla ricetta completa, pizza bianca intera con broccoletti, filetti d'acciuga e pinoli, senza pomodoro o formaggio. Le foto rappresentano gli alimenti, non misurano porzioni o nutrienti.
 
+### Nuova immagine v1.20.31
+
+- `cheat-pizza-potato-rosemary-v12031.png`: immagine originale generata con `image_gen` dalla ricetta completa: una pizza bianca intera da forno con fettine sottili di patata, poca mozzarella fusa, rosmarino, olio e peperoncino discreto. Nessun pomodoro o altro topping. Rappresentazione illustrativa, non una porzione pesata.
+
 ### Nuova immagine v1.20.15
 
 - `recipe-p38-bulgur-salmon-fennel-orange-v12015.png`: immagine generata dalla ricetta P38 con bulgur cotto, filetto di salmone grigliato, finocchio crudo affettato e spicchi d'arancia. Richiesti soltanto questi ingredienti e la finitura con olio; nessun testo o marchio. La fotografia precedente, con pesce troppo pallido per riconoscere il salmone, resta nell'archivio ma non è più collegata alla ricetta.

@@ -861,6 +861,8 @@ try {
         ["Pizza all'ortolana fatta in casa", 'v12029']);
       if (${versionMinor >= 20 && versionPatch >= 30}) variantImages.push(
         ['Pizza con acciughe, broccoletti e pinoli', 'v12030']);
+      if (${versionMinor >= 20 && versionPatch >= 31}) variantImages.push(
+        ['Pizza bianca con patate e rosmarino', 'v12031']);
       const pizzaVariants = variantImages.every(([name, imageVersion]) => [...(group?.querySelectorAll('.complete-meal-select') || [])]
         .some((button) => button.innerText.includes(name) && button.querySelector('img')?.src.includes(imageVersion)));
       const pizzaVariantsShowWholeDish = variantImages.every(([name]) => [...(group?.querySelectorAll('.complete-meal-select') || [])]
