@@ -1186,6 +1186,47 @@ test("v1.20.37 keeps first-choice main meals complete and all fresh ingredients 
   assert.ok(app.includes('const coherentPool = completeMains.length ? completeMains : pool'));
 });
 
+test("v1.20.38 photographs four whey flavors with distinct label values and practical scoops", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const flavors = [
+    ["vaniglia", 366, 70, 15, 3.6, "part-whey-vanilla-v12038"],
+    ["cioccolato", 378, 70, 17, 3.1, "part-whey-chocolate-v12038"],
+    ["fragola", 366, 69, 18, 3.7, "part-whey-strawberry-v12038"],
+    ["cookie cream", 361, 70, 14, 3.7, "part-whey-cookie-v12038"],
+  ];
+  for (const [flavor, kcal, protein, carbs, fat, asset] of flavors) {
+    const food = `Proteine whey ${flavor} Decathlon`;
+    assert.ok(app.includes(`foods["${food}"] = { kcal: ${kcal}, protein: ${protein}, carbs: ${carbs}, fat: ${fat}, fiber: 0, source: "ETICHETTA" }`));
+    assert.ok(app.includes(`"${food}": { category: "Proteina", food: "${food}", grams: 30`));
+    const image = await readFile(new URL(`../public/food/${asset}.png`, import.meta.url));
+    assert.ok(image.length > 100_000);
+    assert.equal(image.subarray(1, 4).toString(), "PNG");
+    assert.ok(image.readUInt32BE(16) >= 300 && image.readUInt32BE(20) >= 300);
+  }
+  assert.ok(app.includes('if (part.food.startsWith("Proteine whey "))'));
+  assert.ok(app.includes('nearestPack([20, 25, 30, 35, 40])'));
+  const audit = await readFile(new URL("../scripts/audit-public-mobile.mjs", import.meta.url), "utf8");
+  assert.ok(audit.includes("search.wheyImages.length !== 4"));
+  assert.ok(audit.includes("!image.loaded || !image.visible"));
+  assert.ok(app.includes('fetchPriority={option.food.startsWith("Proteine whey") ? "high" : "auto"}'));
+});
+
+test("v1.20.38 keeps weekly print and Word meal blocks together", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  const word = app.slice(app.indexOf("const exportWeeklyWord ="), app.indexOf("const selectedIngredients ="));
+  assert.ok(word.includes("const daySections = days.map"));
+  assert.ok(word.includes("const meals = SLOT_LABELS.map"));
+  assert.ok(word.includes('class="meal"'));
+  assert.ok(word.includes("page-break-inside:avoid;mso-row-split:avoid"));
+  assert.match(css, /\.print-day\s*\{\s*break-inside:\s*avoid;\s*page-break-inside:\s*avoid;/);
+  assert.match(css, /\.print-meal,\s*\.print-food-head,\s*\.print-food-row/);
+  assert.ok(css.includes(".modal-backdrop:has(.print-preview-sheet)"));
+  const audit = await readFile(new URL("../scripts/audit-public-mobile.mjs", import.meta.url), "utf8");
+  assert.ok(audit.includes("Page.printToPDF"));
+  assert.ok(audit.includes("printFlow.pdfPages < 2"));
+});
+
 test("v1.20.28 searches foods and dishes by any text fragment in both meal pickers", async () => {
   const [app, css, audit] = await Promise.all([
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
@@ -1312,10 +1353,10 @@ test("v1.19.20 caches framework dependencies without lazy-loading the planner", 
   // mappings. The sourced whole ortolana adds 11 weighed components and five
   // beginner preparation steps; allow only that small measured bundle growth.
   const appBundle = await readFile(new URL(`../dist/assets/${appChunk}`, import.meta.url));
-  // Three source-backed carbonara ingredients and their editable recipe add
-  // useful catalog data; keep a bounded margin while the planner is monolithic.
-  assert.ok(appBundle.length < 605_000);
-  assert.ok(gzipSync(appBundle).length < 134_000);
+  // Four verified whey flavors and a structured Word week add a small bounded
+  // amount of UI/export code; keep a margin while the planner is monolithic.
+  assert.ok(appBundle.length < 610_000);
+  assert.ok(gzipSync(appBundle).length < 136_000);
 });
 
 test("v1.19.21 keeps the public mobile stress audit silent and reusable", async () => {
@@ -3056,12 +3097,12 @@ test("v1.18.82 immediately replans cuisine and place with distinct practical poo
   assert.match(source, /workLunchesFrom\(mains, selectedCuisine\)/);
 });
 
-test("v1.18.83 defers every heavy food photograph on mobile", async () => {
+test("v1.18.83 defers heavy food photographs except actively searched small result sets", async () => {
   const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   const imageTags = [...source.matchAll(/<img\b[\s\S]*?\/>/g)].map((match) => match[0]);
   assert.ok(imageTags.length >= 10);
   imageTags.forEach((tag) => {
-    assert.match(tag, /loading="lazy"/);
+    assert.match(tag, /loading="lazy"|loading=\{[^}]*"eager"[^}]*"lazy"[^}]*\}/);
     assert.match(tag, /decoding="async"/);
   });
 });

@@ -1884,8 +1884,12 @@ foods["Lievito di birra fresco"] = { kcal: 70, protein: 12.1, carbs: 1.1, fat: 0
 foods["Gorgonzola"] = { kcal: 324, protein: 19.1, carbs: 1, fat: 27.1, fiber: 0, source: "CREA" };
 // Etichetta Levoni Schiacciata Piccante: la pizza diavola resta una stima, non il valore di qualsiasi pizzeria.
 foods["Schiacciata piccante Levoni"] = { kcal: 329, protein: 26, carbs: 0, fat: 25, fiber: 0, source: "ETICHETTA" };
-// Etichetta Decathlon Whey Protein vaniglia: fibra non dichiarata, conteggiata come 0 solo per il riepilogo.
+// Etichette Decathlon Whey Protein specifiche per gusto: la fibra non è dichiarata,
+// conteggiata come 0 solo per il riepilogo (non è una dichiarazione "senza fibre").
 foods["Proteine whey vaniglia Decathlon"] = { kcal: 366, protein: 70, carbs: 15, fat: 3.6, fiber: 0, source: "ETICHETTA" };
+foods["Proteine whey cioccolato Decathlon"] = { kcal: 378, protein: 70, carbs: 17, fat: 3.1, fiber: 0, source: "ETICHETTA" };
+foods["Proteine whey fragola Decathlon"] = { kcal: 366, protein: 69, carbs: 18, fat: 3.7, fiber: 0, source: "ETICHETTA" };
+foods["Proteine whey cookie cream Decathlon"] = { kcal: 361, protein: 70, carbs: 14, fat: 3.7, fiber: 0, source: "ETICHETTA" };
 // La carbonara è calcolata dai pesi degli ingredienti prima della cottura.
 // Il guanciale è intenzionalmente legato a una specifica etichetta: altre marche
 // possono differire. La fibra 0 non è dichiarata sulla confezione, solo tecnica.
@@ -7058,7 +7062,10 @@ const ingredientPartCatalog: Record<string, MealPart> = {
   "Lievito di birra fresco": { category: "Extra", food: "Lievito di birra fresco", grams: 1, label: "Lievito fresco · 1 g", image: photo("part-fresh-yeast-v12027") },
   "Gorgonzola": { category: "Latticino", food: "Gorgonzola", grams: 30, label: "Gorgonzola · 30 g", image: photo("part-gorgonzola-v12023") },
   "Schiacciata piccante Levoni": { category: "Proteina", food: "Schiacciata piccante Levoni", grams: 50, label: "Salame piccante · 50 g", image: photo("part-spicy-salami-v12023") },
-  "Proteine whey vaniglia Decathlon": { category: "Proteina", food: "Proteine whey vaniglia Decathlon", grams: 30, label: "Proteine whey vaniglia · 30 g", image: photo("part-whey-powder-v12023") },
+  "Proteine whey vaniglia Decathlon": { category: "Proteina", food: "Proteine whey vaniglia Decathlon", grams: 30, label: "Proteine whey vaniglia · 30 g", image: photo("part-whey-vanilla-v12038") },
+  "Proteine whey cioccolato Decathlon": { category: "Proteina", food: "Proteine whey cioccolato Decathlon", grams: 30, label: "Proteine whey cioccolato · 30 g", image: photo("part-whey-chocolate-v12038") },
+  "Proteine whey fragola Decathlon": { category: "Proteina", food: "Proteine whey fragola Decathlon", grams: 30, label: "Proteine whey fragola · 30 g", image: photo("part-whey-strawberry-v12038") },
+  "Proteine whey cookie cream Decathlon": { category: "Proteina", food: "Proteine whey cookie cream Decathlon", grams: 30, label: "Proteine whey cookie & cream · 30 g", image: photo("part-whey-cookie-v12038") },
   "Riso basmati cotto": { category: "Carboidrato", food: "Riso basmati cotto", grams: 180, label: "Riso basmati cotto", image: photo("part-basmati-cooked-v11650") },
   "Salsa di soia": { category: "Extra", food: "Salsa di soia", grams: 10, label: "Salsa di soia", image: photo("part-soy-sauce-v11819") },
   Tiramisu: { category: "Extra", food: "Tiramisu", grams: 120, label: "Tiramisù", image: photo("cheat-tiramisu-v11619") },
@@ -7190,6 +7197,13 @@ const recommendedPartOptions = (part: MealPart, key: string) => {
     "Farina di frumento integrale",
     "Farina di grano saraceno",
   ];
+  if (part.food.startsWith("Proteine whey "))
+    return [
+      "Proteine whey vaniglia Decathlon",
+      "Proteine whey cioccolato Decathlon",
+      "Proteine whey fragola Decathlon",
+      "Proteine whey cookie cream Decathlon",
+    ].map((food) => ingredientPartCatalog[food]);
   if (
     slot === 0 &&
     part.category === "Latticino" &&
@@ -7348,6 +7362,8 @@ const equivalentPart = (option: MealPart, current: MealPart, role: MealPart["cat
     return { ...option, grams: nearestPack([125, 150, 170, 200, 250]) };
   if (/latte|bevanda di soia|bevanda d.avena|bevanda di mandorla/i.test(option.food))
     return { ...option, grams: nearestPack([150, 200, 250, 300]) };
+  if (option.food.startsWith("Proteine whey "))
+    return { ...option, grams: nearestPack([20, 25, 30, 35, 40]) };
   const practicalRange = (() => {
     if (
       /pasta|riso|farro|quinoa|orzo|bulgur|cous cous|miglio/i.test(option.food) &&
@@ -8145,7 +8161,7 @@ const proteinShakeRecipes: Recipe[] = [{
   sourceUrl: "https://www.decathlon.it/p/proteina-whey-vaniglia-30-g/_/R-p-347401/",
   ingredients: [{ food: "Proteine whey vaniglia Decathlon", grams: 30, label: "Whey vaniglia · 30 g" }, { food: "Latte parzialmente scremato", grams: 200, label: "Latte · circa 200 ml" }],
   parts: [
-    { category: "Proteina", food: "Proteine whey vaniglia Decathlon", grams: 30, label: "Whey vaniglia · 30 g", image: photo("part-whey-powder-v12023") },
+    { category: "Proteina", food: "Proteine whey vaniglia Decathlon", grams: 30, label: "Whey vaniglia · 30 g", image: photo("part-whey-vanilla-v12038") },
     { category: "Latticino", food: "Latte parzialmente scremato", grams: 200, label: "Latte · circa 200 ml", image: photo("part-milk-v7") },
   ],
   steps: ["Versa circa 200 ml di latte freddo nello shaker pulito.", "Aggiungi 30 g di polvere misurati con bilancia, chiudi bene e agita per 20-30 secondi finché non restano grumi.", "Bevi subito o conserva in frigorifero seguendo le indicazioni della confezione. Se usi un'altra marca o gusto, controlla allergeni e nutrienti sull'etichetta reale."],
@@ -14664,7 +14680,21 @@ export function FoodPlanner() {
     downloadWeeklyFile(`\uFEFF${weeklyPlanText()}`, "text/plain;charset=utf-8", "txt");
   };
   const exportWeeklyWord = () => {
-    const html = `<html><head><meta charset="utf-8"><title>Tavola Mia</title></head><body><pre style="font-family:Arial;white-space:pre-wrap">${weeklyPlanText().replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")}</pre></body></html>`;
+    const escapeHtml = (value: string | number) => String(value)
+      .replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;");
+    const rows = weeklyExportRows();
+    const daySections = days.map((day) => {
+      const dayRows = rows.filter((row) => row.day === day.label);
+      const meals = SLOT_LABELS.map((meal) => {
+        const mealRows = dayRows.filter((row) => row.meal === meal);
+        if (!mealRows.length) return "";
+        const ingredientRows = mealRows.map((row) => `<tr style="page-break-inside:avoid;mso-row-split:avoid"><td>${escapeHtml(row.food)}</td><td>${escapeHtml(row.grams)} g</td><td>${escapeHtml(row.kcal)}</td><td>${escapeHtml(row.protein)}</td><td>${escapeHtml(row.carbs)}</td><td>${escapeHtml(row.fat)}</td></tr>`).join("");
+        return `<table class="meal" style="width:100%;border-collapse:collapse;page-break-inside:avoid"><tr style="page-break-inside:avoid;mso-row-split:avoid"><td><h3>${escapeHtml(meal)} · ${escapeHtml(mealRows[0].recipe)}</h3><p>${escapeHtml(mealRows[0].status)}</p><table class="foods" style="width:100%;border-collapse:collapse"><thead><tr><th>Alimento</th><th>Quantità</th><th>kcal</th><th>Proteine</th><th>Carboidrati</th><th>Grassi</th></tr></thead><tbody>${ingredientRows}</tbody></table></td></tr></table>`;
+      }).join("");
+      return `<div class="day"><h2>${escapeHtml(day.label)}</h2>${meals}</div>`;
+    }).join("");
+    const html = `<html><head><meta charset="utf-8"><title>Tavola Mia · settimana</title><style>@page{size:A4;margin:14mm}body{font-family:Arial,sans-serif;color:#26372d;font-size:9pt}h1{font-size:16pt;margin:0 0 6mm}h2{font-size:12pt;background:#edf4e5;padding:5px;margin:7mm 0 2mm;page-break-after:avoid}h3{font-size:10pt;margin:0 0 2mm}p{margin:0 0 2mm}.day{page-break-inside:avoid}.meal,.meal>tbody>tr{page-break-inside:avoid;mso-row-split:avoid}.meal{margin:0 0 3mm}.meal>tbody>tr>td{border:1px solid #dbe4d9;padding:3mm}.foods th,.foods td{padding:1.5mm;border-bottom:1px solid #e8eee7;text-align:right}.foods th:first-child,.foods td:first-child{text-align:left;width:38%}.foods th{background:#f5f8f2;font-size:8pt}</style></head><body><h1>Settimana · media ${weeklySnapshotAverageKcal} kcal/giorno</h1>${daySections}</body></html>`;
     downloadWeeklyFile(html, "application/msword", "doc");
   };
   const selectedIngredients = selected
@@ -15817,7 +15847,7 @@ export function FoodPlanner() {
                     const excludedForCurrentProfile = mealContainsExcludedFood(key, r);
                     const outsideCurrentProfile = !excludedForCurrentProfile && !mealMatchesProfile(key, r);
                     return (
-                      <div className={`week-meal-row ${excludedForCurrentProfile ? "excluded" : outsideCurrentProfile ? "profile-mismatch" : ""}`} key={key} data-recipe-id={r.id} data-cuisine={recipeCuisine(r)} data-work-friendly={isWorkFriendly(r) ? "true" : "false"} data-completed={completed[key] ? "true" : "false"}>
+                      <div className={`week-meal-row ${excludedForCurrentProfile ? "excluded" : outsideCurrentProfile ? "profile-mismatch" : ""}`} key={key} data-recipe-id={r.id} data-cuisine={recipeCuisine(r)} data-work-friendly={isWorkFriendly(r) ? "true" : "false"} data-completed={completed[key] ? "true" : "false"} data-season-mismatches={recipeOutOfSeasonProduceCount(r)}>
                         <button
                           className="week-meal"
                           onClick={() => {
@@ -15867,6 +15897,7 @@ export function FoodPlanner() {
                             {weekParts.map((part, partIndex) => (
                               <button
                                 key={`${part.category}-${partIndex}`}
+                                aria-label={`Cambia ${part.category}: ${partDisplayName(part)}`}
                                 onClick={() =>
                                   openPartPicker({
                                     key,
@@ -16768,7 +16799,7 @@ export function FoodPlanner() {
                       {foodsFound.map((option) => {
                         const adjusted = equivalentPart(option, partPicker.part, partPicker.role);
                         return <button key={option.food} onClick={() => chooseMealPart(adjusted, false)}>
-                          <img src={option.image} alt={partDisplayName(option)} loading="lazy" decoding="async" />
+                          <img src={option.image} alt={partDisplayName(option)} loading={option.food.startsWith("Proteine whey") || foodsFound.length <= 24 ? "eager" : "lazy"} fetchPriority={option.food.startsWith("Proteine whey") ? "high" : "auto"} decoding="async" />
                           <span>{partDisplayName(option)}</span>
                           <b>{adjusted.grams} g · {round(calc([adjusted]).kcal)} kcal</b>
                         </button>;
@@ -16879,7 +16910,7 @@ export function FoodPlanner() {
                         key={option.food}
                         onClick={() => chooseMealPart(adjusted, true)}
                       >
-                        <img src={option.image} alt={partDisplayName(option)} loading="lazy" decoding="async" />
+                        <img src={option.image} alt={partDisplayName(option)} loading={option.food.startsWith("Proteine whey") ? "eager" : "lazy"} fetchPriority={option.food.startsWith("Proteine whey") ? "high" : "auto"} decoding="async" />
                         <span>{partDisplayName(option)}</span>
                         <b>
                           {adjusted.grams} g · {round(calc([adjusted]).kcal)} kcal

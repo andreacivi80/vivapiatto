@@ -120,16 +120,36 @@ try {
     if (!focused) return { found: false };
     await page.send('Input.insertText', { text: query });
     await wait(300);
+    if (expected.includes('proteine whey')) {
+      await evaluate(`Promise.race([
+        Promise.all([...document.querySelectorAll('.picker-search-results .part-choice-grid button')]
+          .filter((button) => button.innerText.toLocaleLowerCase('it').includes('proteine whey'))
+          .map((button) => button.querySelector('img')?.decode().catch(() => {}))),
+        new Promise((resolve) => setTimeout(resolve, 2500)),
+      ])`);
+    }
     const result = await evaluate(`(() => {
       const sheet = document.querySelector('.part-picker-sheet');
       const results = sheet?.querySelector('.picker-search-results');
       const scroller = sheet?.querySelector('.part-picker-scroll');
       const names = [...(results?.querySelectorAll('.part-choice-grid button span, .complete-meal-select span') || [])]
         .map((node) => node.innerText.trim());
+      const wheyImages = [...(results?.querySelectorAll('.part-choice-grid button') || [])]
+        .filter((button) => button.innerText.toLocaleLowerCase('it').includes('proteine whey'))
+        .map((button) => {
+          const image = button.querySelector('img');
+          const rect = image?.getBoundingClientRect();
+          return { name: button.querySelector('span')?.innerText || '', src: image?.getAttribute('src') || '',
+            loaded: Boolean(image?.complete && image.naturalWidth > 0 && image.naturalHeight > 0),
+            visible: Boolean(rect && rect.width > 16 && rect.height > 16),
+            complete: image?.complete, naturalWidth: image?.naturalWidth, currentSrc: image?.currentSrc,
+            loading: image?.loading, fetchPriority: image?.fetchPriority };
+        });
       return {
         found: Boolean(results),
         query: sheet?.querySelector('[aria-label="Cerca alimento o piatto"]')?.value,
         expectedFound: names.some((name) => name.toLocaleLowerCase('it').includes(${JSON.stringify(expected.toLocaleLowerCase('it'))})),
+        wheyImages,
         count: names.length,
         resultsAtTop: Boolean(scroller && scroller.scrollTop < 2),
         horizontalOverflow: Boolean(sheet && sheet.scrollWidth > sheet.clientWidth + 1),
@@ -276,6 +296,27 @@ try {
   })()`));
   await clickTab("Settimana");
   const week = await snapshot();
+  const weeklySeasonality = await evaluate(`(() => [...document.querySelectorAll('.week-day .week-meal-row')].map((row) => ({
+    name: row.querySelector('.week-meal b')?.innerText || '',
+    mismatches: Number(row.dataset.seasonMismatches),
+  })))()`);
+  const weeklyMainBalance = await evaluate(`(() => [...document.querySelectorAll('.week-day')].flatMap((day, dayIndex) => {
+    const rows = [...day.querySelectorAll('.week-meal-row')];
+    return [2, 4].map((slot) => {
+      const row = rows[slot];
+      const roles = [...(row?.querySelectorAll('.week-part-strip button[aria-label^="Cambia "]') || [])]
+        .map((button) => button.getAttribute('aria-label'));
+      return {
+        day: dayIndex + 1,
+        slot,
+        name: row?.querySelector('.week-meal b')?.innerText || '',
+        found: Boolean(row),
+        complete: roles.some((role) => role.startsWith('Cambia Carboidrato:')) &&
+          roles.some((role) => role.startsWith('Cambia Proteina:') || role.startsWith('Cambia Latticino:')) &&
+          roles.some((role) => role.startsWith('Cambia Contorno:')),
+      };
+    });
+  }))()`);
   const weeklyConfirmation = await evaluate(`(() => {
     const lock = document.querySelector('.week-lock');
     const confirm = [...(lock?.querySelectorAll('button') || [])].find((button) => button.innerText.trim() === 'Conferma');
@@ -325,6 +366,27 @@ try {
       horizontalOverflow: Boolean(sheet && sheet.scrollWidth > sheet.clientWidth + 1),
     };
   })()`);
+  let printFlow = { skipped: true };
+  if (versionMinor >= 20 && versionPatch >= 38) {
+    await page.send("Emulation.setEmulatedMedia", { media: "print" });
+    const flow = await evaluate(`(() => {
+      const sheet = document.querySelector('.print-preview-sheet');
+      const backdrop = sheet?.parentElement;
+      const meal = sheet?.querySelector('.print-meal');
+      return {
+        sheetStatic: getComputedStyle(sheet).position === 'static',
+        backdropStatic: getComputedStyle(backdrop).position === 'static',
+        sheetNotClipped: getComputedStyle(sheet).overflow === 'visible' && getComputedStyle(sheet).display === 'block',
+        mealKeptTogether: getComputedStyle(meal).breakInside === 'avoid',
+        dayCount: sheet?.querySelectorAll('.print-day').length || 0,
+      };
+    })()`);
+    const pdf = await page.send("Page.printToPDF", { printBackground: true, preferCSSPageSize: true });
+    const pdfBytes = Buffer.from(pdf.data, "base64");
+    printFlow = { ...flow, pdfBytes: pdfBytes.length,
+      pdfPages: (pdfBytes.toString("latin1").match(/\/Type\s*\/Page\b/g) || []).length };
+    await page.send("Emulation.setEmulatedMedia", { media: "screen" });
+  }
   await evaluate(`document.querySelector('[aria-label="Chiudi anteprima stampa"]')?.click()`);
   await wait(300);
   weeklyPrintPreview.closed = await evaluate(`!document.querySelector('.print-preview-sheet')`);
@@ -1645,8 +1707,11 @@ try {
     initialMainBalance,
     scrollStability,
     week,
+    weeklySeasonality,
+    weeklyMainBalance,
     weeklyConfirmation,
     weeklyPrintPreview,
+    printFlow,
     recipes,
     recipeDetail,
     recipeCardFit,
@@ -1705,6 +1770,10 @@ try {
       [scrollStability.beforeMenu[1], scrollStability.beforeMenu[3]]
         .some((heading) => /· (?:noci|mandorle|nocciole|pistacchi|arachidi|anacardi)$/i.test(heading || ''))) ||
     week.recovery || week.horizontalOverflow || week.brokenViewportImages.length || week.pendingViewportImages.length ||
+    (versionMinor >= 20 && versionPatch >= 38 &&
+      (weeklyMainBalance.length !== 14 || weeklyMainBalance.some((meal) => !meal.found || !meal.complete))) ||
+    (versionMinor >= 20 && versionPatch >= 38 &&
+      (weeklySeasonality.length !== 35 || weeklySeasonality.some((meal) => !Number.isFinite(meal.mismatches) || meal.mismatches > 0))) ||
     !weeklyConfirmation.found || !weeklyConfirmation.locked || !weeklyConfirmation.hasAverage || weeklyConfirmation.calorieDays !== 7 ||
     !weeklyConfirmation.rotationConfirmed || weeklyConfirmation.rotationRows < 7 || !weeklyConfirmation.rotationInRange ||
     (releasePatch >= 79 &&
@@ -1715,6 +1784,9 @@ try {
     !weeklyPrintPreview.found || !weeklyPrintPreview.hasUpdatedAverage || !weeklyPrintPreview.columnsAligned || weeklyPrintPreview.dayCount !== 7 ||
     weeklyPrintPreview.mealCount < 21 || weeklyPrintPreview.foodRows === 0 || !weeklyPrintPreview.hasAllMacros ||
     !weeklyPrintPreview.hasExports || !weeklyPrintPreview.closeVisible || weeklyPrintPreview.horizontalOverflow || !weeklyPrintPreview.closed ||
+    (versionMinor >= 20 && versionPatch >= 38 &&
+      (!printFlow.sheetStatic || !printFlow.backdropStatic || !printFlow.sheetNotClipped ||
+       !printFlow.mealKeptTogether || printFlow.dayCount !== 7 || printFlow.pdfBytes < 20_000 || printFlow.pdfPages < 2)) ||
     recipes.recovery || recipes.horizontalOverflow || recipes.brokenViewportImages.length || recipes.pendingViewportImages.length ||
     !recipeDetail.found || !recipeDetail.hasIngredients || !recipeDetail.hasPreparation || !recipeDetail.hasNutrition ||
     !recipeDetail.hasAllergens || !recipeDetail.photoLoaded || recipeDetail.horizontalOverflow || !recipeDetail.closed || !recipeCoverage ||
@@ -1737,6 +1809,10 @@ try {
     (versionMinor >= 20 && versionPatch >= 36 &&
       [searchTodayProtein, searchTodayAddProtein, searchWeekProtein, searchWeekAlternativeProtein]
         .some((search) => !search.found || !search.expectedFound || !search.cleared || !search.resultsAtTop || search.horizontalOverflow)) ||
+    (versionMinor >= 20 && versionPatch >= 38 &&
+      [searchTodayProtein, searchTodayAddProtein, searchWeekProtein, searchWeekAlternativeProtein].some((search) =>
+        search.wheyImages.length !== 4 || search.wheyImages.some((image) => !image.loaded || !image.visible) ||
+        new Set(search.wheyImages.map((image) => image.src)).size !== 4)) ||
     !gramsEdit.persisted || afterReload.recovery || afterReload.horizontalOverflow || afterReload.brokenViewportImages.length || afterReload.pendingViewportImages.length ||
     !shopping.found || shopping.itemCount === 0 || !shopping.hasSelectAll || !shopping.hasDeselectAll ||
     shopping.horizontalOverflow || !shopping.allSelected || !shopping.allDeselected || !shopping.closed ||
