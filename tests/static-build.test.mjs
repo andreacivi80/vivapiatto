@@ -1227,6 +1227,28 @@ test("v1.20.38 keeps weekly print and Word meal blocks together", async () => {
   assert.ok(audit.includes("printFlow.pdfPages < 2"));
 });
 
+test("v1.20.39 presents every whey flavor as a prepared photographed shake with measured milk", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  for (const [flavor, slug, urlPart] of [
+    ["cioccolato", "chocolate", "R-p-347357"],
+    ["fragola", "strawberry", "g42m8667972"],
+    ["cookie cream", "cookie", "R-p-336357"],
+  ]) {
+    const recipe = app.slice(app.indexOf(`id: "snack-whey-${flavor === "cookie cream" ? "cookie" : flavor}-latte"`));
+    assert.ok(recipe.includes(`food: "Proteine whey ${flavor} Decathlon", grams: 30`));
+    assert.ok(recipe.includes('food: "Latte parzialmente scremato", grams: 200'));
+    assert.ok(recipe.includes(`photo("recipe-whey-${slug}-milk-v12039")`));
+    assert.ok(recipe.includes(urlPart));
+    const image = await readFile(new URL(`../dist/food/recipe-whey-${slug}-milk-v12039.png`, import.meta.url));
+    assert.ok(image.length > 100_000);
+    assert.equal(image.readUInt32BE(16), 640);
+    assert.equal(image.readUInt32BE(20), 640);
+  }
+  const audit = await readFile(new URL("../scripts/audit-public-mobile.mjs", import.meta.url), "utf8");
+  assert.ok(audit.includes("wheyShakerRecipes.count !== 4"));
+  assert.ok(audit.includes("wheyShakerRecipes.photos.some((item) => !item.loaded)"));
+});
+
 test("v1.20.28 searches foods and dishes by any text fragment in both meal pickers", async () => {
   const [app, css, audit] = await Promise.all([
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
@@ -1353,9 +1375,9 @@ test("v1.19.20 caches framework dependencies without lazy-loading the planner", 
   // mappings. The sourced whole ortolana adds 11 weighed components and five
   // beginner preparation steps; allow only that small measured bundle growth.
   const appBundle = await readFile(new URL(`../dist/assets/${appChunk}`, import.meta.url));
-  // Four verified whey flavors and a structured Word week add a small bounded
-  // amount of UI/export code; keep a margin while the planner is monolithic.
-  assert.ok(appBundle.length < 610_000);
+  // Four verified whey flavors, three complete shaker recipes and a structured
+  // Word week add a small bounded amount of code; retain a measured margin.
+  assert.ok(appBundle.length < 615_000);
   assert.ok(gzipSync(appBundle).length < 136_000);
 });
 

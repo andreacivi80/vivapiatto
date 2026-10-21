@@ -8167,6 +8167,57 @@ const proteinShakeRecipes: Recipe[] = [{
   steps: ["Versa circa 200 ml di latte freddo nello shaker pulito.", "Aggiungi 30 g di polvere misurati con bilancia, chiudi bene e agita per 20-30 secondi finché non restano grumi.", "Bevi subito o conserva in frigorifero seguendo le indicazioni della confezione. Se usi un'altra marca o gusto, controlla allergeni e nutrienti sull'etichetta reale."],
   alternatives: ["Latte senza lattosio se compatibile con la tua confezione", "Acqua al posto del latte con nuovo conteggio", "Yogurt proteico pronto"],
   allergens: ["Latte"],
+},
+{
+  id: "snack-whey-cioccolato-latte",
+  name: "Shaker whey al cioccolato con latte",
+  kicker: "Spuntino facoltativo · etichetta controllabile",
+  course: "Spuntino", cuisine: "Italiano", time: 3,
+  image: photo("recipe-whey-chocolate-milk-v12039"),
+  sourceLabel: "Etichetta Decathlon Whey Protein cioccolato; latte da banca dati CREA",
+  sourceUrl: "https://www.decathlon.it/p/proteine-whey-cioccolato-30g/_/R-p-347357",
+  ingredients: [{ food: "Proteine whey cioccolato Decathlon", grams: 30, label: "Whey cioccolato · 30 g" }, { food: "Latte parzialmente scremato", grams: 200, label: "Latte · circa 200 ml" }],
+  parts: [
+    { category: "Proteina", food: "Proteine whey cioccolato Decathlon", grams: 30, label: "Whey cioccolato · 30 g", image: photo("part-whey-chocolate-v12038") },
+    { category: "Latticino", food: "Latte parzialmente scremato", grams: 200, label: "Latte · circa 200 ml", image: photo("part-milk-v7") },
+  ],
+  steps: ["Versa circa 200 ml di latte freddo nello shaker pulito.", "Pesa 30 g di whey al cioccolato, aggiungili al latte, chiudi e agita energicamente per 20-30 secondi finché non restano grumi.", "Versa nel bicchiere e bevi subito. Se cambi marca o quantità, ricontrolla nutrienti e allergeni sull'etichetta della confezione."],
+  alternatives: ["Shaker whey alla vaniglia con latte", "Shaker whey alla fragola con latte", "Acqua al posto del latte con nuovo conteggio"],
+  allergens: ["Latte"],
+},
+{
+  id: "snack-whey-fragola-latte",
+  name: "Shaker whey alla fragola con latte",
+  kicker: "Spuntino facoltativo · etichetta controllabile",
+  course: "Spuntino", cuisine: "Italiano", time: 3,
+  image: photo("recipe-whey-strawberry-milk-v12039"),
+  sourceLabel: "Etichetta Decathlon Whey Protein fragola; latte da banca dati CREA",
+  sourceUrl: "https://www.decathlon.it/p/whey-protein-900g-fragola/336433/g42m8667972",
+  ingredients: [{ food: "Proteine whey fragola Decathlon", grams: 30, label: "Whey fragola · 30 g" }, { food: "Latte parzialmente scremato", grams: 200, label: "Latte · circa 200 ml" }],
+  parts: [
+    { category: "Proteina", food: "Proteine whey fragola Decathlon", grams: 30, label: "Whey fragola · 30 g", image: photo("part-whey-strawberry-v12038") },
+    { category: "Latticino", food: "Latte parzialmente scremato", grams: 200, label: "Latte · circa 200 ml", image: photo("part-milk-v7") },
+  ],
+  steps: ["Versa circa 200 ml di latte freddo nello shaker pulito.", "Pesa 30 g di whey alla fragola, aggiungili al latte, chiudi e agita energicamente per 20-30 secondi finché non restano grumi.", "Versa nel bicchiere e bevi subito. Il colore chiaro viene dal gusto della polvere: non sono aggiunte fragole fresche. Controlla l'etichetta se cambi prodotto."],
+  alternatives: ["Shaker whey alla vaniglia con latte", "Shaker whey al cioccolato con latte", "Acqua al posto del latte con nuovo conteggio"],
+  allergens: ["Latte"],
+},
+{
+  id: "snack-whey-cookie-latte",
+  name: "Shaker whey cookie & cream con latte",
+  kicker: "Spuntino facoltativo · etichetta controllabile",
+  course: "Spuntino", cuisine: "Italiano", time: 3,
+  image: photo("recipe-whey-cookie-milk-v12039"),
+  sourceLabel: "Etichetta Decathlon Whey Protein cookie & cream; latte da banca dati CREA",
+  sourceUrl: "https://www.decathlon.it/p/proteina-del-siero-di-latte-cookie-e-cream-900-g/_/R-p-336357",
+  ingredients: [{ food: "Proteine whey cookie cream Decathlon", grams: 30, label: "Whey cookie & cream · 30 g" }, { food: "Latte parzialmente scremato", grams: 200, label: "Latte · circa 200 ml" }],
+  parts: [
+    { category: "Proteina", food: "Proteine whey cookie cream Decathlon", grams: 30, label: "Whey cookie & cream · 30 g", image: photo("part-whey-cookie-v12038") },
+    { category: "Latticino", food: "Latte parzialmente scremato", grams: 200, label: "Latte · circa 200 ml", image: photo("part-milk-v7") },
+  ],
+  steps: ["Versa circa 200 ml di latte freddo nello shaker pulito.", "Pesa 30 g di whey gusto cookie & cream, aggiungili al latte, chiudi e agita energicamente per 20-30 secondi finché non restano grumi.", "Versa nel bicchiere e bevi subito. La ricetta non aggiunge biscotti: le caratteristiche del gusto dipendono dalla polvere usata. Controlla l'etichetta se cambi prodotto."],
+  alternatives: ["Shaker whey alla vaniglia con latte", "Shaker whey alla fragola con latte", "Acqua al posto del latte con nuovo conteggio"],
+  allergens: ["Latte"],
 }];
 const verifiedWorldRecipeExpansion: Recipe[] = [
   {
@@ -10883,7 +10934,7 @@ const isSubstantialRecipe = (recipe: Recipe) => {
       preparation,
     );
   const isNamedPreparedDish =
-    /panino|toast|insalata|bowl|coppa|jar|porridge|pancake|frullato|smoothie|gelato|hummus|vellutata|minestrone|zuppa|frittata|omelette/.test(
+    /panino|toast|insalata|bowl|coppa|jar|porridge|pancake|frullato|smoothie|shaker|gelato|hummus|vellutata|minestrone|zuppa|frittata|omelette/.test(
       recipe.name.toLowerCase(),
     );
   return hasRealTechnique || isNamedPreparedDish || recipe.ingredients.length >= 4;

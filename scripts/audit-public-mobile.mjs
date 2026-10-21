@@ -13,7 +13,7 @@ const version = process.env.VIVAPIATTO_AUDIT_VERSION || packageFile.version;
 // zero and silently skipped established mobile flows (including Sgarri).
 const [versionMajor, versionMinor, versionPatch] = version.split(".").map(Number);
 const releasePatch = versionMajor > 1 || versionMinor >= 20 ? 1000 : versionPatch;
-const auditBaseUrl = process.env.VIVAPIATTO_AUDIT_URL || "https://andreacivi80.github.io/vivapiatto/";
+const auditBaseUrl = process.argv[2] || process.env.VIVAPIATTO_AUDIT_URL || "https://andreacivi80.github.io/vivapiatto/";
 const edge = [
   "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe",
   "C:/Program Files/Microsoft/Edge/Application/msedge.exe",
@@ -425,6 +425,33 @@ try {
   await evaluate(`document.querySelector('.recipe-sheet .close')?.click()`);
   await wait(300);
   recipeDetail.closed = await evaluate(`!document.querySelector('.recipe-sheet')`);
+  const wheyShakerRecipes = { skipped: releasePatch < 39 };
+  if (!wheyShakerRecipes.skipped) {
+    await evaluate(`(() => { const input = document.querySelector('.library-tools input'); input.focus(); input.select(); })()`);
+    await page.send("Input.insertText", { text: "Shaker whey" });
+    await wait(450);
+    await evaluate(`(() => {
+      [...document.querySelectorAll('.recipe-grid article img')].forEach((image) => { image.loading = 'eager'; });
+    })()`);
+    await wait(850);
+    Object.assign(wheyShakerRecipes, await evaluate(`(() => {
+      const cards = [...document.querySelectorAll('.recipe-grid article')]
+        .filter((card) => card.querySelector('h3')?.textContent?.startsWith('Shaker whey'));
+      return {
+        count: cards.length,
+        photos: cards.map((card) => {
+          const image = card.querySelector('img');
+          return { name: card.querySelector('h3')?.textContent, src: image?.currentSrc || image?.src,
+            loaded: Boolean(image?.complete && image.naturalWidth > 0) };
+        }),
+        horizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+      };
+    })()`));
+    await evaluate(`(() => { const input = document.querySelector('.library-tools input'); input.focus(); input.select(); })()`);
+    await page.send("Input.dispatchKeyEvent", { type: "keyDown", key: "Backspace", code: "Backspace", windowsVirtualKeyCode: 8, nativeVirtualKeyCode: 8 });
+    await page.send("Input.dispatchKeyEvent", { type: "keyUp", key: "Backspace", code: "Backspace", windowsVirtualKeyCode: 8, nativeVirtualKeyCode: 8 });
+    await wait(300);
+  }
   const recipeCardFit = [];
   if (releasePatch >= 83) {
     for (const width of [320, 390]) {
@@ -1552,6 +1579,15 @@ try {
   })()`);
   await wait(350);
   const setPreference = async (label, value) => {
+    const opened = await evaluate(`(() => {
+      if (document.querySelector('.preferences')) return true;
+      const toggle = [...document.querySelectorAll('.today-strip-actions button')]
+        .find((button) => button.innerText.includes('Preferenze'));
+      toggle?.click();
+      return Boolean(toggle);
+    })()`);
+    if (!opened) throw new Error(`Pannello preferenze non disponibile per ${label}`);
+    await wait(250);
     const found = await evaluate(`(() => {
       const field = [...document.querySelectorAll('.preferences label')]
         .find((item) => item.querySelector('span')?.innerText.trim() === ${JSON.stringify(label)});
@@ -1714,6 +1750,7 @@ try {
     printFlow,
     recipes,
     recipeDetail,
+    wheyShakerRecipes,
     recipeCardFit,
     recipeCoverage,
     suppliedRecipeGroups,
@@ -1790,6 +1827,8 @@ try {
     recipes.recovery || recipes.horizontalOverflow || recipes.brokenViewportImages.length || recipes.pendingViewportImages.length ||
     !recipeDetail.found || !recipeDetail.hasIngredients || !recipeDetail.hasPreparation || !recipeDetail.hasNutrition ||
     !recipeDetail.hasAllergens || !recipeDetail.photoLoaded || recipeDetail.horizontalOverflow || !recipeDetail.closed || !recipeCoverage ||
+    (!wheyShakerRecipes.skipped && (wheyShakerRecipes.count !== 4 || wheyShakerRecipes.horizontalOverflow ||
+      new Set(wheyShakerRecipes.photos.map((item) => item.src)).size !== 4 || wheyShakerRecipes.photos.some((item) => !item.loaded))) ||
     (releasePatch >= 83 && (recipeCardFit.length !== 4 || recipeCardFit.some((card) => !card.found || !card.textInside || !card.noInternalOverflow || !card.noPageOverflow))) ||
     (!occasionalLibrary.skipped && (!occasionalLibrary.tabFound || !occasionalLibrary.quickFilterReset || !occasionalLibrary.choicesVisible || !occasionalLibrary.pizzaVisible)) ||
     suppliedRecipeGroups.length !== 4 || suppliedRecipeGroups.some((group) =>
