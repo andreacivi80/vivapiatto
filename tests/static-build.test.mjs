@@ -1136,7 +1136,8 @@ test("v1.20.28 searches foods and dishes by any text fragment in both meal picke
   assert.match(app, /setPickerSearch\(""\)/);
   assert.match(app, /aria-label="Cerca alimento o piatto"/);
   assert.match(app, /\.includes\(query\)/);
-  assert.match(app, /\[\.\.\.mealPartOptions\[partPicker\.role\], \.\.\.orderedFreePartOptions\(partPicker\.role, partPicker\.key\)\]/);
+  assert.match(app, /\[\.\.\.mealPartOptions\[partPicker\.role\], \.\.\.Object\.values\(mealPartOptions\)\.flat\(\)\]/);
+  assert.match(app, /pickerScrollRef\.current\.scrollTop = 0/);
   assert.match(app, /completeMealOptions\(partPicker\.key\)/);
   assert.match(app, /occasionalRecipes\.filter/);
   assert.match(css, /\.part-picker-search input/);

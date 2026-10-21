@@ -112,6 +112,8 @@ try {
   const searchPicker = async (query, expected) => {
     const focused = await evaluate(`(() => {
       const input = document.querySelector('.part-picker-sheet [aria-label="Cerca alimento o piatto"]');
+      const scroller = document.querySelector('.part-picker-scroll');
+      if (scroller) scroller.scrollTop = scroller.scrollHeight;
       input?.focus();
       return Boolean(input);
     })()`);
@@ -121,6 +123,7 @@ try {
     const result = await evaluate(`(() => {
       const sheet = document.querySelector('.part-picker-sheet');
       const results = sheet?.querySelector('.picker-search-results');
+      const scroller = sheet?.querySelector('.part-picker-scroll');
       const names = [...(results?.querySelectorAll('.part-choice-grid button span, .complete-meal-select span') || [])]
         .map((node) => node.innerText.trim());
       return {
@@ -128,6 +131,7 @@ try {
         query: sheet?.querySelector('[aria-label="Cerca alimento o piatto"]')?.value,
         expectedFound: names.some((name) => name.toLocaleLowerCase('it').includes(${JSON.stringify(expected.toLocaleLowerCase('it'))})),
         count: names.length,
+        resultsAtTop: Boolean(scroller && scroller.scrollTop < 2),
         horizontalOverflow: Boolean(sheet && sheet.scrollWidth > sheet.clientWidth + 1),
       };
     })()`);
@@ -479,6 +483,7 @@ try {
     };
   })()`);
   const searchTodayAlternative = await searchPicker('el', 'mela');
+  const searchTodayPompelmo = await searchPicker('pelmo', 'pompelmo');
   await evaluate(`document.querySelector('[aria-label="Chiudi alternative"]')?.click()`);
   await wait(500);
   const pickerClosed = await evaluate(`!document.querySelector('.part-picker-sheet')`);
@@ -572,6 +577,7 @@ try {
   })()`);
   await wait(500);
   const searchWeekAlternative = await searchPicker('el', 'mela');
+  const searchWeekAlbicocca = await searchPicker('cocc', 'albicocche');
   Object.assign(todayWeekSync, await evaluate(`(() => {
     const picker = document.querySelector('.part-picker-sheet');
     const choices = [...(picker?.querySelectorAll('.part-choice-grid button') || [])];
@@ -1600,7 +1606,7 @@ try {
     swapBottom,
     afterSwapReturn,
     milkAlternatives,
-    pickerSearch: { searchTodayAlternative, searchWeekAlternative, searchTodayAdd, searchWeekAdd },
+    pickerSearch: { searchTodayAlternative, searchTodayPompelmo, searchWeekAlternative, searchWeekAlbicocca, searchTodayAdd, searchWeekAdd },
     pickerClosed,
     gramsEdit,
     afterReload,
@@ -1671,8 +1677,8 @@ try {
     !milkAlternatives.hasOat || !milkAlternatives.hasSkimmed ||
     !milkAlternatives.closeVisible || milkAlternatives.horizontalOverflow || !pickerClosed ||
     (versionMinor >= 20 && versionPatch >= 28 &&
-      [searchTodayAlternative, searchWeekAlternative, searchTodayAdd, searchWeekAdd]
-        .some((search) => !search.found || !search.expectedFound || !search.cleared || search.horizontalOverflow)) ||
+      [searchTodayAlternative, searchTodayPompelmo, searchWeekAlternative, searchWeekAlbicocca, searchTodayAdd, searchWeekAdd]
+        .some((search) => !search.found || !search.expectedFound || !search.cleared || !search.resultsAtTop || search.horizontalOverflow)) ||
     !gramsEdit.persisted || afterReload.recovery || afterReload.horizontalOverflow || afterReload.brokenViewportImages.length || afterReload.pendingViewportImages.length ||
     !shopping.found || shopping.itemCount === 0 || !shopping.hasSelectAll || !shopping.hasDeselectAll ||
     shopping.horizontalOverflow || !shopping.allSelected || !shopping.allDeselected || !shopping.closed ||

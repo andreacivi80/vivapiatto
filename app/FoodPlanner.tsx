@@ -11168,6 +11168,7 @@ export function FoodPlanner() {
     adding?: boolean;
   } | null>(null);
   const [pickerSearch, setPickerSearch] = useState("");
+  const pickerScrollRef = useRef<HTMLDivElement>(null);
   const openPartPicker = (next: NonNullable<typeof partPicker>) => {
     setPickerSearch("");
     setPartPicker(next);
@@ -16648,9 +16649,17 @@ export function FoodPlanner() {
                 aria-label="Cerca alimento o piatto"
                 placeholder="Cerca alimento o piatto…"
                 value={pickerSearch}
-                onChange={(event) => setPickerSearch(event.target.value)}
+                onChange={(event) => {
+                  setPickerSearch(event.target.value);
+                  // A search started after scrolling through alternatives must
+                  // reveal the first result immediately, on Today and Week.
+                  if (pickerScrollRef.current) pickerScrollRef.current.scrollTop = 0;
+                }}
               />
-              {pickerSearch && <button type="button" aria-label="Cancella ricerca" onClick={() => setPickerSearch("")}>×</button>}
+              {pickerSearch && <button type="button" aria-label="Cancella ricerca" onClick={() => {
+                setPickerSearch("");
+                if (pickerScrollRef.current) pickerScrollRef.current.scrollTop = 0;
+              }}>×</button>}
             </div>
             {!pickerSearch.trim() && <div className="part-picker-shortcuts" aria-label="Vai alle scelte del pasto">
               <button
@@ -16666,7 +16675,7 @@ export function FoodPlanner() {
                 🍕 Sgarri · pizza, gelato, dolci
               </button>
             </div>}
-            <div className={`part-picker-scroll${pickerSearch.trim() ? " searching" : ""}`}>
+            <div ref={pickerScrollRef} className={`part-picker-scroll${pickerSearch.trim() ? " searching" : ""}`}>
               {!partPicker.adding && (
                 <button className="remove-part-choice" onClick={removeMealPart}>
                   − Nessuno · togli questo elemento
@@ -16674,9 +16683,16 @@ export function FoodPlanner() {
               )}
               {pickerSearch.trim() && (() => {
                 const query = foldPickerSearch(pickerSearch);
-                const foodsFound = [...mealPartOptions[partPicker.role], ...orderedFreePartOptions(partPicker.role, partPicker.key)]
+                const foodsFound = [...mealPartOptions[partPicker.role], ...Object.values(mealPartOptions).flat()]
                   .filter((option, index, all) => all.findIndex((candidate) => candidate.food === option.food) === index)
-                  .filter((option) => foldPickerSearch(`${option.food} ${partDisplayName(option)}`).includes(query));
+                  .filter((option) => foldPickerSearch(`${option.food} ${partDisplayName(option)}`).includes(query))
+                  .sort((a, b) => {
+                    const aName = foldPickerSearch(partDisplayName(a));
+                    const bName = foldPickerSearch(partDisplayName(b));
+                    const aStarts = aName.startsWith(query) ? 0 : 1;
+                    const bStarts = bName.startsWith(query) ? 0 : 1;
+                    return aStarts - bStarts || aName.length - bName.length || aName.localeCompare(bName, "it");
+                  });
                 const mealsFound = partPicker.adding ? [] : completeMealOptions(partPicker.key).filter((recipe) =>
                   foldPickerSearch(recipe.name).includes(query));
                 const occasionalFound = occasionalRecipes.filter((recipe) =>
