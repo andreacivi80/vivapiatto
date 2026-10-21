@@ -1166,6 +1166,17 @@ test("v1.20.35 makes amatriciana an editable, sourced bucatini recipe", async ()
   await access(new URL("../dist/food/part-bucatini-dry-v12035.png", import.meta.url));
 });
 
+test("v1.20.36 searches protein powder in both quick pickers and respects allergy filters", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.ok(app.includes('...Object.values(ingredientPartCatalog)]'));
+  assert.ok(app.includes('label: "Proteine whey vaniglia · 30 g"'));
+  assert.ok(app.includes('.filter(pickerFoodAllowed)'));
+  assert.ok(app.includes('.filter(pickerRecipeAllowed)'));
+  const audit = await readFile(new URL("../scripts/audit-public-mobile.mjs", import.meta.url), "utf8");
+  assert.ok(audit.includes("searchPicker('pro', 'proteine whey')"));
+  assert.ok(audit.includes('severeProfile.blockedWheyAbsent'));
+});
+
 test("v1.20.28 searches foods and dishes by any text fragment in both meal pickers", async () => {
   const [app, css, audit] = await Promise.all([
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
@@ -1176,7 +1187,7 @@ test("v1.20.28 searches foods and dishes by any text fragment in both meal picke
   assert.match(app, /setPickerSearch\(""\)/);
   assert.match(app, /aria-label="Cerca alimento o piatto"/);
   assert.match(app, /\.includes\(query\)/);
-  assert.match(app, /\[\.\.\.mealPartOptions\[partPicker\.role\], \.\.\.Object\.values\(mealPartOptions\)\.flat\(\)\]/);
+  assert.match(app, /\[\.\.\.mealPartOptions\[partPicker\.role\], \.\.\.Object\.values\(mealPartOptions\)\.flat\(\), \.\.\.Object\.values\(ingredientPartCatalog\)\]/);
   assert.match(app, /pickerScrollRef\.current\.scrollTop = 0/);
   assert.match(app, /completeMealOptions\(partPicker\.key\)/);
   assert.match(app, /occasionalRecipes\.filter/);

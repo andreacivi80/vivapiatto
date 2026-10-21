@@ -7058,7 +7058,7 @@ const ingredientPartCatalog: Record<string, MealPart> = {
   "Lievito di birra fresco": { category: "Extra", food: "Lievito di birra fresco", grams: 1, label: "Lievito fresco · 1 g", image: photo("part-fresh-yeast-v12027") },
   "Gorgonzola": { category: "Latticino", food: "Gorgonzola", grams: 30, label: "Gorgonzola · 30 g", image: photo("part-gorgonzola-v12023") },
   "Schiacciata piccante Levoni": { category: "Proteina", food: "Schiacciata piccante Levoni", grams: 50, label: "Salame piccante · 50 g", image: photo("part-spicy-salami-v12023") },
-  "Proteine whey vaniglia Decathlon": { category: "Proteina", food: "Proteine whey vaniglia Decathlon", grams: 30, label: "Whey vaniglia · 30 g", image: photo("part-whey-powder-v12023") },
+  "Proteine whey vaniglia Decathlon": { category: "Proteina", food: "Proteine whey vaniglia Decathlon", grams: 30, label: "Proteine whey vaniglia · 30 g", image: photo("part-whey-powder-v12023") },
   "Riso basmati cotto": { category: "Carboidrato", food: "Riso basmati cotto", grams: 180, label: "Riso basmati cotto", image: photo("part-basmati-cooked-v11650") },
   "Salsa di soia": { category: "Extra", food: "Salsa di soia", grams: 10, label: "Salsa di soia", image: photo("part-soy-sauce-v11819") },
   Tiramisu: { category: "Extra", food: "Tiramisu", grams: 120, label: "Tiramisù", image: photo("cheat-tiramisu-v11619") },
@@ -11891,6 +11891,15 @@ export function FoodPlanner() {
   const isAllowed = (recipe: Recipe) =>
     recipe.ingredients.every((i) => !blockedFoods.includes(i.food)) &&
     recipeAllergens(recipe).every((allergen) => !blockedAllergenGroups.has(allergen));
+  const pickerFoodAllowed = (part: MealPart) =>
+    !blockedFoods.includes(part.food) &&
+    inferTextAllergens(part.food).every((allergen) => !blockedAllergenGroups.has(allergen));
+  const pickerRecipeAllowed = (recipe: Recipe) =>
+    isAllowed(recipe) &&
+    // A single generic ready-made item has no complete ingredient list. Do
+    // not present it as allergy-safe merely because its name lacks the allergen.
+    (!blockedAllergenGroups.size || !recipe.id.startsWith("occasional-") ||
+      Boolean(recipe.parts?.length && recipe.ingredients.length > 1));
   const textMatchesFoodStyle = (textValue: string) => {
     const text = textValue.toLowerCase();
     const meat = /\bpollo\b|tacchino|coniglio|manzo|vitello|maiale|cavallo|bresaola|prosciutto|mortadella|salame|salsiccia|porchetta|pancetta|guanciale/.test(text);
@@ -12220,7 +12229,7 @@ export function FoodPlanner() {
     .filter(
       (r) =>
         r.ingredients.every((item) => Boolean(foodSearchDatabase[item.food])) &&
-        isAllowed(r) &&
+        pickerRecipeAllowed(r) &&
         matchesFoodStyle(r) &&
         (cuisineFilter === "Sgarri" || recipeMatchesQuickFilter(r)) &&
         r.name.toLowerCase().includes(libraryQuery.toLowerCase()) &&
@@ -12331,7 +12340,7 @@ export function FoodPlanner() {
         ).values(),
       )
         .filter((part) =>
-          partDisplayName(part)
+          pickerFoodAllowed(part) && partDisplayName(part)
             .toLowerCase()
             .includes(libraryQuery.toLowerCase()),
         )
@@ -12351,7 +12360,7 @@ export function FoodPlanner() {
     setVisibleFoodCount(24);
   }, [libraryQuery, swapTarget?.day, swapTarget?.slot]);
   const chooseSingleFoodFromLibrary = (part: MealPart) => {
-    if (!swapTarget) return;
+    if (!swapTarget || !pickerFoodAllowed(part)) return;
     const key = `${swapTarget.day}-${swapTarget.slot}`;
     const changedDay = swapTarget.day;
     clearMealOverrides([key]);
@@ -13283,7 +13292,7 @@ export function FoodPlanner() {
     setPartPicker(null);
   };
   const chooseCompleteMeal = (recipe: Recipe) => {
-    if (!partPicker) return;
+    if (!partPicker || !pickerRecipeAllowed(recipe)) return;
     const [dayText] = partPicker.key.split("-");
     const changedDay = Number(dayText);
     const key = partPicker.key;
@@ -13890,7 +13899,7 @@ export function FoodPlanner() {
     planFromCheck(next);
   };
   const chooseMealPart = (replacement: MealPart, keepOriginalRole = true) => {
-    if (!partPicker) return;
+    if (!partPicker || !pickerFoodAllowed(replacement)) return;
     const [dayText, slotText] = partPicker.key.split("-");
     const day = Number(dayText);
     const slot = Number(slotText);
@@ -16729,8 +16738,9 @@ export function FoodPlanner() {
               )}
               {pickerSearch.trim() && (() => {
                 const query = foldPickerSearch(pickerSearch);
-                const foodsFound = [...mealPartOptions[partPicker.role], ...Object.values(mealPartOptions).flat()]
+                const foodsFound = [...mealPartOptions[partPicker.role], ...Object.values(mealPartOptions).flat(), ...Object.values(ingredientPartCatalog)]
                   .filter((option, index, all) => all.findIndex((candidate) => candidate.food === option.food) === index)
+                  .filter(pickerFoodAllowed)
                   .filter((option) => foldPickerSearch(`${option.food} ${partDisplayName(option)}`).includes(query))
                   .sort((a, b) => {
                     const aName = foldPickerSearch(partDisplayName(a));
@@ -16739,13 +16749,13 @@ export function FoodPlanner() {
                     const bStarts = bName.startsWith(query) ? 0 : 1;
                     return aStarts - bStarts || aName.length - bName.length || aName.localeCompare(bName, "it");
                   });
-                const mealsFound = partPicker.adding ? [] : completeMealOptions(partPicker.key).filter((recipe) =>
+                const mealsFound = partPicker.adding ? [] : completeMealOptions(partPicker.key).filter(pickerRecipeAllowed).filter((recipe) =>
                   foldPickerSearch(recipe.name).includes(query));
-                const occasionalFound = occasionalRecipes.filter((recipe) =>
+                const occasionalFound = occasionalRecipes.filter(pickerRecipeAllowed).filter((recipe) =>
                   foldPickerSearch(recipe.name).includes(query));
                 return <section className="picker-search-results" aria-label="Risultati ricerca">
                   <p role="status">{foodsFound.length + mealsFound.length + occasionalFound.length} risultati per “{pickerSearch.trim()}”</p>
-                  {!foodsFound.length && !mealsFound.length && !occasionalFound.length && <p>Nessun risultato. Prova un altro termine.</p>}
+                  {!foodsFound.length && !mealsFound.length && !occasionalFound.length && <p>Nessun risultato compatibile con i filtri attivi. Prova un altro termine o controlla Preferenze.</p>}
                   {foodsFound.length > 0 && <>
                     <h3>Alimenti</h3>
                     <div className="part-choice-grid free">
@@ -16797,7 +16807,7 @@ export function FoodPlanner() {
                 <summary>Piatti completi consigliati</summary>
                 <p>Sostituisci l'intero pasto. Dopo puoi tenerlo unico o dividerlo nei suoi componenti.</p>
                 <div className="complete-meal-grid">
-                  {completeMealOptions(partPicker.key).map((recipe, optionIndex) => {
+                  {completeMealOptions(partPicker.key).filter(pickerRecipeAllowed).map((recipe, optionIndex) => {
                     const macros = calc(plannedIngredients(partPicker.key, recipe, true));
                     return (
                       <article key={recipe.id}>
@@ -16849,7 +16859,7 @@ export function FoodPlanner() {
                   {recommendedPartOptions(
                     { ...partPicker.part, category: partPicker.role },
                     partPicker.key,
-                  ).map((option) => {
+                  ).filter(pickerFoodAllowed).map((option) => {
                     const adjusted = equivalentPart(
                       option,
                       partPicker.part,
@@ -16878,6 +16888,7 @@ export function FoodPlanner() {
                   <p>{partPicker.adding ? "Aggiungi una scelta occasionale al pasto." : "Scelte occasionali: restano conteggiate nel totale reale, senza punizioni."}</p>
                   <div className="complete-meal-grid">
                     {[...occasionalRecipes]
+                      .filter(pickerRecipeAllowed)
                       .sort((a, b) =>
                         Number(fitsSlot(b, Number(partPicker.key.split("-")[1]))) -
                         Number(fitsSlot(a, Number(partPicker.key.split("-")[1]))),
@@ -16970,7 +16981,7 @@ export function FoodPlanner() {
                   sotto resta disponibile tutto il catalogo.
                 </p>
                 <div className="part-choice-grid free">
-                  {orderedFreePartOptions(partPicker.role, partPicker.key).map(
+                  {orderedFreePartOptions(partPicker.role, partPicker.key).filter(pickerFoodAllowed).map(
                     (option) => {
                       const adjusted = equivalentPart(
                         option,

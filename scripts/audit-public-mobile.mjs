@@ -484,6 +484,7 @@ try {
   })()`);
   const searchTodayAlternative = await searchPicker('el', 'mela');
   const searchTodayPompelmo = await searchPicker('pelmo', 'pompelmo');
+  const searchTodayProtein = await searchPicker('pro', 'proteine whey');
   await evaluate(`document.querySelector('[aria-label="Chiudi alternative"]')?.click()`);
   await wait(500);
   const pickerClosed = await evaluate(`!document.querySelector('.part-picker-sheet')`);
@@ -565,6 +566,7 @@ try {
   })()`);
   await wait(300);
   const searchWeekAdd = openedWeekAdd ? await searchPicker('wi', 'kiwi') : { found: false };
+  const searchWeekProtein = openedWeekAdd ? await searchPicker('pro', 'proteine whey') : { found: false };
   await evaluate(`document.querySelector('.part-picker-sheet [aria-label="Chiudi alternative"]')?.click()`);
   await wait(300);
   const todayWeekSync = await evaluate(`(() => {
@@ -578,6 +580,7 @@ try {
   await wait(500);
   const searchWeekAlternative = await searchPicker('el', 'mela');
   const searchWeekAlbicocca = await searchPicker('cocc', 'albicocche');
+  const searchWeekAlternativeProtein = await searchPicker('pro', 'proteine whey');
   Object.assign(todayWeekSync, await evaluate(`(() => {
     const picker = document.querySelector('.part-picker-sheet');
     const choices = [...(picker?.querySelectorAll('.part-choice-grid button') || [])];
@@ -792,6 +795,7 @@ try {
   })()`);
   await wait(500);
   const searchTodayAdd = await searchPicker('wi', 'kiwi');
+  const searchTodayAddProtein = await searchPicker('pro', 'proteine whey');
   Object.assign(mealPartAddition, await evaluate(`(() => {
     const sheet = document.querySelector('.part-picker-sheet');
     const close = sheet?.querySelector('[aria-label="Chiudi alternative"]');
@@ -1540,6 +1544,19 @@ try {
     excludedToday: document.querySelectorAll('.meal-card.blocked').length,
     mismatchToday: document.querySelectorAll('.meal-card.profile-mismatch').length,
   }))()`));
+  severeProfile.pickerOpened = await evaluate(`(() => {
+    const button = document.querySelector('.meal-card .add-part-compact, .meal-card .part-change');
+    button?.click();
+    return Boolean(button);
+  })()`);
+  if (severeProfile.pickerOpened) {
+    await wait(350);
+    const blockedWhey = await searchPicker('pro', 'proteine whey');
+    const availableFruit = await searchPicker('el', 'mela');
+    severeProfile.blockedWheyAbsent = blockedWhey.found && !blockedWhey.expectedFound;
+    severeProfile.safeFruitStillFound = availableFruit.expectedFound;
+    await evaluate(`document.querySelector('.part-picker-sheet [aria-label="Chiudi alternative"]')?.click()`);
+  }
   await clickTab('Settimana');
   Object.assign(severeProfile, await evaluate(`(() => {
     const excluded = document.querySelectorAll('.week-meal-row.excluded').length;
@@ -1614,7 +1631,8 @@ try {
     swapBottom,
     afterSwapReturn,
     milkAlternatives,
-    pickerSearch: { searchTodayAlternative, searchTodayPompelmo, searchWeekAlternative, searchWeekAlbicocca, searchTodayAdd, searchWeekAdd },
+    pickerSearch: { searchTodayAlternative, searchTodayPompelmo, searchWeekAlternative, searchWeekAlbicocca, searchTodayAdd, searchWeekAdd,
+      searchTodayProtein, searchTodayAddProtein, searchWeekProtein, searchWeekAlternativeProtein },
     pickerClosed,
     gramsEdit,
     afterReload,
@@ -1686,6 +1704,9 @@ try {
     !milkAlternatives.closeVisible || milkAlternatives.horizontalOverflow || !pickerClosed ||
     (versionMinor >= 20 && versionPatch >= 28 &&
       [searchTodayAlternative, searchTodayPompelmo, searchWeekAlternative, searchWeekAlbicocca, searchTodayAdd, searchWeekAdd]
+        .some((search) => !search.found || !search.expectedFound || !search.cleared || !search.resultsAtTop || search.horizontalOverflow)) ||
+    (versionMinor >= 20 && versionPatch >= 36 &&
+      [searchTodayProtein, searchTodayAddProtein, searchWeekProtein, searchWeekAlternativeProtein]
         .some((search) => !search.found || !search.expectedFound || !search.cleared || !search.resultsAtTop || search.horizontalOverflow)) ||
     !gramsEdit.persisted || afterReload.recovery || afterReload.horizontalOverflow || afterReload.brokenViewportImages.length || afterReload.pendingViewportImages.length ||
     !shopping.found || shopping.itemCount === 0 || !shopping.hasSelectAll || !shopping.hasDeselectAll ||
@@ -1770,6 +1791,8 @@ try {
       !severeProfile.veganTargetsOnlyPlant || !severeProfile.veganNoFalseRangeWarnings
     )) ||
     severeProfile.allergyFiltersFound < 5 || !severeProfile.persistentWarningToday ||
+    (versionMinor >= 20 && versionPatch >= 36 &&
+      (!severeProfile.pickerOpened || !severeProfile.blockedWheyAbsent || !severeProfile.safeFruitStillFound)) ||
     !severeProfile.persistentWarningWeek || !severeProfile.incompatibleMealsFlagged ||
     !severeProfile.unsafeWeekCannotConfirm || severeProfile.horizontalOverflow ||
     !severeProfile.warningSurvivesReload ||
