@@ -877,6 +877,8 @@ try {
           !button.querySelector('.recipe-visual-parts')));
       const hamburger = [...(group?.querySelectorAll('.complete-meal-select') || [])]
         .find((button) => button.innerText.includes('Hamburger semplice fatto in casa'));
+      const carbonara = [...(group?.querySelectorAll('.complete-meal-select') || [])]
+        .find((button) => button.innerText.includes('Spaghetti alla carbonara'));
       const result = {
         visibleWithPlus: Boolean(group),
         shortcutVisible,
@@ -886,6 +888,8 @@ try {
         pizzaVariantsShowWholeDish,
         hamburgerWholeDish: Boolean(hamburger?.querySelector('img.recipe-visual-single')?.src.includes('hamburger-homemade-wholegrain-v12025') &&
           !hamburger?.querySelector('.recipe-visual-parts')),
+        carbonaraWholeDish: Boolean(carbonara?.querySelector('img.recipe-visual-single')?.src.includes('cheat-carbonara-v11619') &&
+          !carbonara?.querySelector('.recipe-visual-parts')),
         freeChoiceAlsoAvailable: Boolean(picker?.querySelector('.part-choice-grid.free')),
       };
       pizza?.click();
@@ -1703,6 +1707,7 @@ try {
       !occasionalAddition.pizzaAvailable || !occasionalAddition.pizzaVariants ||
       (releasePatch >= 86 && !occasionalAddition.pizzaVariantsShowWholeDish) || !occasionalAddition.freeChoiceAlsoAvailable ||
       (versionMinor >= 20 && versionPatch >= 25 && !occasionalAddition.hamburgerWholeDish) ||
+      (versionMinor >= 20 && versionPatch >= 34 && !occasionalAddition.carbonaraWholeDish) ||
       !occasionalAddition.appended || !occasionalAddition.pizzaPhoto || !occasionalAddition.pizzaEditable ||
       !occasionalAddition.pickerClosed || !occasionalAddition.originalPartsKept || !occasionalAddition.removedDirectly)) ||
     (releasePatch >= 84 && (!occasionalAddition.replacementAvailable ||

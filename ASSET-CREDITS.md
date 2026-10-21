@@ -62,6 +62,10 @@ Sono immagini originali generate per rendere riconoscibile la materia prima; non
 
 - `cheat-pizza-potato-rosemary-v12031.png`: immagine originale generata con `image_gen` dalla ricetta completa: una pizza bianca intera da forno con fettine sottili di patata, poca mozzarella fusa, rosmarino, olio e peperoncino discreto. Nessun pomodoro o altro topping. Rappresentazione illustrativa, non una porzione pesata.
 
+### Nuove immagini v1.20.34
+
+- `part-spaghetti-dry-v12033.png`, `part-guanciale-v12033.png`, `part-pecorino-romano-v12033.png`: immagini originali generate con `image_gen` per tre ingredienti distinti della carbonara; controllate visivamente contro il soggetto richiesto. L'immagine del piatto finito `cheat-carbonara-v11619.png` era già presente e rimane un'illustrazione del risultato, non una misura della porzione.
+
 ### Nuova immagine v1.20.15
 
 - `recipe-p38-bulgur-salmon-fennel-orange-v12015.png`: immagine generata dalla ricetta P38 con bulgur cotto, filetto di salmone grigliato, finocchio crudo affettato e spicchi d'arancia. Richiesti soltanto questi ingredienti e la finitura con olio; nessun testo o marchio. La fotografia precedente, con pesce troppo pallido per riconoscere il salmone, resta nell'archivio ma non è più collegata alla ricetta.

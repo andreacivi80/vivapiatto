@@ -1126,6 +1126,28 @@ test("v1.20.32 treats a small salted anchovy serving as a topping, not a fish-ma
   assert.match(pizza, /category: "Extra", food: "Acciughe sotto sale", grams: 15/);
 });
 
+test("v1.20.34 makes carbonara an editable, sourced recipe instead of a generic 350 g dish", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const carbonara = app.slice(app.indexOf('id: "occasional-carbonara"'), app.indexOf('id: "occasional-gelato"'));
+  assert.doesNotMatch(carbonara, /food: "Pasta alla carbonara", grams: 350/);
+  for (const [food, grams] of [
+    ["Spaghetti di semola secchi", 90], ["Guanciale stagionato Conad", 25],
+    ["Uovo", 50], ["Pecorino romano", 20], ["Pepe nero", 1],
+  ]) {
+    assert.match(carbonara, new RegExp(`food: "${food}", grams: ${grams}`));
+  }
+  assert.match(carbonara, /parts: \[/);
+  assert.match(carbonara, /accademiaitalianadellacucina\.it/);
+  assert.match(carbonara, /uovo pastorizzato/);
+  assert.match(carbonara, /71 °C/);
+  assert.match(app, /"Guanciale stagionato Conad"\] = \{ kcal: 661, protein: 10, carbs: 0, fat: 69/);
+  assert.match(app, /guanciale\/\.test\(text\)/);
+  for (const image of ["part-spaghetti-dry-v12033", "part-guanciale-v12033", "part-pecorino-romano-v12033"]) {
+    assert.match(carbonara, new RegExp(image));
+    await access(new URL(`../dist/food/${image}.png`, import.meta.url));
+  }
+});
+
 test("v1.20.28 searches foods and dishes by any text fragment in both meal pickers", async () => {
   const [app, css, audit] = await Promise.all([
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
@@ -1252,8 +1274,10 @@ test("v1.19.20 caches framework dependencies without lazy-loading the planner", 
   // mappings. The sourced whole ortolana adds 11 weighed components and five
   // beginner preparation steps; allow only that small measured bundle growth.
   const appBundle = await readFile(new URL(`../dist/assets/${appChunk}`, import.meta.url));
-  assert.ok(appBundle.length < 601_000);
-  assert.ok(gzipSync(appBundle).length < 133_000);
+  // Three source-backed carbonara ingredients and their editable recipe add
+  // useful catalog data; keep a bounded margin while the planner is monolithic.
+  assert.ok(appBundle.length < 605_000);
+  assert.ok(gzipSync(appBundle).length < 134_000);
 });
 
 test("v1.19.21 keeps the public mobile stress audit silent and reusable", async () => {

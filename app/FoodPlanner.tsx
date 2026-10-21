@@ -1886,6 +1886,12 @@ foods["Gorgonzola"] = { kcal: 324, protein: 19.1, carbs: 1, fat: 27.1, fiber: 0,
 foods["Schiacciata piccante Levoni"] = { kcal: 329, protein: 26, carbs: 0, fat: 25, fiber: 0, source: "ETICHETTA" };
 // Etichetta Decathlon Whey Protein vaniglia: fibra non dichiarata, conteggiata come 0 solo per il riepilogo.
 foods["Proteine whey vaniglia Decathlon"] = { kcal: 366, protein: 70, carbs: 15, fat: 3.6, fiber: 0, source: "ETICHETTA" };
+// La carbonara è calcolata dai pesi degli ingredienti prima della cottura.
+// Il guanciale è intenzionalmente legato a una specifica etichetta: altre marche
+// possono differire. La fibra 0 non è dichiarata sulla confezione, solo tecnica.
+foods["Spaghetti di semola secchi"] = { kcal: 341, protein: 13.5, carbs: 72.7, fat: 1.2, fiber: 1.7, source: "CREA 000800" };
+foods["Guanciale stagionato Conad"] = { kcal: 661, protein: 10, carbs: 0, fat: 69, fiber: 0, source: "ETICHETTA" };
+foods["Pecorino romano"] = { kcal: 409, protein: 26, carbs: 1.8, fat: 33.1, fiber: 0, source: "CREA 166060" };
 
 // Build the searchable database only after every verified alias has been added.
 // Creating this snapshot earlier made valid aliases look missing and crashed the
@@ -1919,7 +1925,7 @@ export const proteinFamilyForItems = (items: RecipeIngredient[]): WeeklyProteinF
   const names = items.map((item) => item.food.toLowerCase());
   const has = (terms: string[]) => names.some((name) => terms.some((term) =>
     term === "pollo" ? /\bpollo\b/.test(name) : name.includes(term)));
-  if (has(["bresaola", "prosciutto", "salame", "mortadella", "speck", "wurstel"])) return "salumi";
+  if (has(["bresaola", "prosciutto", "salame", "mortadella", "speck", "wurstel", "guanciale"])) return "salumi";
   if (has(["salmone", "tonno", "merluzzo", "nasello", "orata", "branzino", "spigola", "sogliola", "platessa", "rombo", "trota", "sgombro", "sardine", "alici", "acciughe", "pesce spada", "palombo", "polpo", "sepp", "calamar", "gamber", "cozz", "vongol", "pesce"])) return "pesce";
   if (has(["pollo", "tacchino", "coniglio"])) return "carne-bianca";
   if (has(["manzo", "vitello", "maiale", "lonza", "cavallo", "bistecca", "roast beef", "roastbeef", "carpaccio"])) return "carne-rossa";
@@ -5920,6 +5926,7 @@ const attachmentMainsP53P64: Recipe[] = [
 
 const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
   Carboidrato: [
+    { category: "Carboidrato", food: "Spaghetti di semola secchi", grams: 90, label: "Spaghetti · peso secco", image: photo("part-spaghetti-dry-v12033") },
     { category: "Carboidrato", food: "Riso parboiled cotto", grams: 150, label: "Riso parboiled cotto · 150 g", image: photo("part-parboiled-rice-cooked-v1209") },
     { category: "Carboidrato", food: "Riso giapponese cotto", grams: 150, label: "Riso giapponese cotto · 150 g", image: photo("part-japanese-shortgrain-rice-v11994") },
     {
@@ -6821,6 +6828,8 @@ const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
     { category: "Frutta", food: "Melagrana fresca", grams: 150, label: "Melagrana · parte edibile", image: photo("part-pomegranate-v1160") },
   ],
   Extra: [
+    { category: "Extra", food: "Guanciale stagionato Conad", grams: 25, label: "Guanciale · peso prima della cottura", image: photo("part-guanciale-v12033") },
+    { category: "Extra", food: "Pecorino romano", grams: 20, label: "Pecorino romano", image: photo("part-pecorino-romano-v12033") },
     { category: "Extra", food: "Aceto di mele", grams: 10, label: "Aceto di mele · 10 g", image: photo("part-apple-cider-vinegar-v11850") },
     { category: "Extra", food: "Succo di limone", grams: 15, label: "Succo di limone · 15 g", image: photo("part-lemon-juice-v1181") },
     { category: "Extra", food: "Aceto di vino", grams: 10, label: "Aceto di vino · 10 g", image: photo("part-wine-vinegar-v1181") },
@@ -7926,19 +7935,36 @@ const occasionalRecipes: Recipe[] = [
   {
     id: "occasional-carbonara",
     name: "Spaghetti alla carbonara",
-    kicker: "Sgarro salato conteggiato",
+    kicker: "Piatto occasionale · ingredienti pesati",
     course: "Piatto unico",
     cuisine: "Italiano",
     image: photo("cheat-carbonara-v11619"),
     time: 25,
-    ingredients: [{ food: "Pasta alla carbonara", grams: 350 }],
-    steps: [
-      "Cuoci gli spaghetti al dente e conserva poca acqua di cottura.",
-      "Rosola il guanciale senza olio. Mescola a parte tuorli, pecorino e pepe.",
-      "Spegni il fuoco, unisci pasta, crema d'uovo e poca acqua; manteca senza far rapprendere l'uovo.",
-      "Registra la quantità realmente mangiata: i valori derivano dalla ricetta completa.",
+    ingredients: [
+      { food: "Spaghetti di semola secchi", grams: 90 },
+      { food: "Guanciale stagionato Conad", grams: 25 },
+      { food: "Uovo", grams: 50 },
+      { food: "Pecorino romano", grams: 20 },
+      { food: "Pepe nero", grams: 1 },
     ],
-    alternatives: ["Porzione più piccola", "Amatriciana", "Pasta al forno"],
+    parts: [
+      { category: "Carboidrato", food: "Spaghetti di semola secchi", grams: 90, label: "Spaghetti · peso secco", image: photo("part-spaghetti-dry-v12033") },
+      { category: "Extra", food: "Guanciale stagionato Conad", grams: 25, label: "Guanciale · peso prima della cottura", image: photo("part-guanciale-v12033") },
+      { category: "Proteina", food: "Uovo", grams: 50, label: "Uovo intero · 1 medio", image: photo("part-whole-egg-v11651") },
+      { category: "Extra", food: "Pecorino romano", grams: 20, label: "Pecorino romano grattugiato", image: photo("part-pecorino-romano-v12033") },
+      { category: "Extra", food: "Pepe nero", grams: 1, label: "Pepe nero", image: photo("part-black-pepper-v11866") },
+    ],
+    steps: [
+      "Per una persona pesa 90 g di spaghetti secchi, 25 g di guanciale, 20 g di pecorino e 1 uovo medio sgusciato (circa 50 g). Il peso della pasta cotta cambierà per l'acqua assorbita: le calorie restano riferite ai 90 g secchi.",
+      "Porta a bollore acqua in una pentola. Cuoci gli spaghetti secondo i minuti indicati sulla confezione, lasciandoli al dente; prima di scolarli conserva una tazzina di acqua di cottura.",
+      "Taglia il guanciale a listarelle e fallo rosolare lentamente in padella antiaderente per 5–7 minuti: deve cuocersi e diventare dorato, senza aggiungere olio.",
+      "In una ciotola sbatti l'uovo con circa metà pecorino e il pepe. Per la crema a fuoco spento usa un uovo pastorizzato: l'uovo comune crudo o appena scaldato può veicolare Salmonella.",
+      "Scola la pasta nella padella col guanciale, spegni il fuoco, unisci la crema e poca acqua di cottura; mescola subito e completa col restante pecorino. Se usi un uovo non pastorizzato, cuoci invece il composto d'uovo fino a 71 °C misurati al centro: la consistenza sarà diversa. Servi subito.",
+    ],
+    alternatives: ["I 25 g di guanciale sono un condimento, non una porzione proteica autonoma", "Cambia i grammi dei singoli ingredienti: il totale si ricalcola", "Altra marca di guanciale: controlla la sua etichetta"],
+    sourceLabel: "Adattamento per una persona dell'Accademia Italiana della Cucina; valori CREA, USDA ed etichetta Conad",
+    sourceUrl: "https://www.accademiaitalianadellacucina.it/sites/default/files/notizie_files/2009_03_06_4_ricette.pdf",
+    allergens: ["Glutine", "Uova", "Latte"],
   },
   {
     id: "occasional-gelato",
@@ -9957,8 +9983,8 @@ const attachmentMainsP35P40: Recipe[] = [
 const inferTextAllergens = (textValue: string) => {
   const text = textValue.toLowerCase();
   const rules: Array<[string, RegExp]> = [
-    ["Glutine", /pasta|pane|pizza|farro|orzo|bulgur|cous cous|cracker|fette biscottate|biscott|wafer|muesli|frumento|segale|grissini|avena/],
-    ["Latte", /latte|whey|gorgonzola|margherita|schiacciata piccante levoni|yogurt|skyr|kefir|ricotta|feta|mozzarella|crescenza|scamorza|provolone|grana|parmigiano|burro|paneer/],
+    ["Glutine", /pasta|spaghett|semola|pane|pizza|farro|orzo|bulgur|cous cous|cracker|fette biscottate|biscott|wafer|muesli|frumento|segale|grissini|avena/],
+    ["Latte", /latte|whey|gorgonzola|margherita|schiacciata piccante levoni|yogurt|skyr|kefir|ricotta|feta|mozzarella|crescenza|scamorza|provolone|grana|parmigiano|pecorino|burro|paneer/],
     ["Uova", /uov|albume/],
     ["Pesce", /salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|rombo|acciugh/],
     ["Crostacei", /gamber|scamp|aragost|granchio/],
@@ -11794,7 +11820,7 @@ export function FoodPlanner() {
     profileHydrated,
   ]);
   const groupFoods: Record<string, string[]> = {
-    Latte: ["Yogurt greco 2%", "Yogurt greco 0%", "Mozzarella vaccina", "Mozzarella light", "Ricotta vaccina", "Crescenza", "Primo sale", "Scamorza", "Provolone Dolce Auricchio", "Feta"],
+    Latte: ["Yogurt greco 2%", "Yogurt greco 0%", "Mozzarella vaccina", "Mozzarella light", "Ricotta vaccina", "Crescenza", "Primo sale", "Scamorza", "Provolone Dolce Auricchio", "Feta", "Pecorino romano"],
     Uova: ["Uovo", "Uova sode", "Uova strapazzate o in frittata"],
     Pesce: ["Salmone cotto", "Salmone crudo · parte edibile", "Orata, filetto crudo", "Tonno al naturale sgocciolato", "Acciughe sotto sale", "Sogliola · peso a crudo", "Rombo · peso a crudo", "Seppia · peso a crudo"],
     Glutine: [
@@ -11847,9 +11873,9 @@ export function FoodPlanner() {
     recipeAllergens(recipe).every((allergen) => !blockedAllergenGroups.has(allergen));
   const textMatchesFoodStyle = (textValue: string) => {
     const text = textValue.toLowerCase();
-    const meat = /\bpollo\b|tacchino|coniglio|manzo|vitello|maiale|cavallo|bresaola|prosciutto|mortadella|salame|salsiccia|porchetta|pancetta/.test(text);
+    const meat = /\bpollo\b|tacchino|coniglio|manzo|vitello|maiale|cavallo|bresaola|prosciutto|mortadella|salame|salsiccia|porchetta|pancetta|guanciale/.test(text);
     const fish = /salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|acciugh|gamber|polpo|cozze|calamari|rombo|seppia/.test(text);
-    const animal = meat || fish || /uov|albume|latte|yogurt|skyr|kefir|ricotta|feta|mozzarella|crescenza|scamorza|provolone|burro/.test(text);
+    const animal = meat || fish || /uov|albume|latte|yogurt|skyr|kefir|ricotta|feta|mozzarella|crescenza|scamorza|provolone|pecorino|burro/.test(text);
     if (foodStyle === "Vegano") return !animal;
     if (foodStyle === "Vegetariano") return !meat && !fish;
     if (foodStyle === "Pescetariano") return !meat;
@@ -11877,7 +11903,7 @@ export function FoodPlanner() {
     recipe.time <= maxPrepTime;
   const proteinSignatureForItems = (items: RecipeIngredient[]) => {
     const protein = items.find((ingredient) =>
-      /\bpollo\b|tacchino|coniglio|manzo|vitello|maiale|cavallo|roast beef|carpaccio|bresaola|prosciutto|salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|acciugh|gamber|polpo|cozze|calamari|rombo|seppia|uov|ceci|lenticchie|fagioli(?!ni)|piselli|tofu|tempeh|ricotta|feta|mozzarella|crescenza|scamorza|provolone/i.test(ingredient.food),
+      /\bpollo\b|tacchino|coniglio|manzo|vitello|maiale|cavallo|roast beef|carpaccio|bresaola|prosciutto|guanciale|salmone|tonno|merluzzo|orata|branzino|nasello|platessa|sogliola|trota|sgombro|sardine|acciugh|gamber|polpo|cozze|calamari|rombo|seppia|uov|ceci|lenticchie|fagioli(?!ni)|piselli|tofu|tempeh|ricotta|feta|mozzarella|crescenza|scamorza|provolone|pecorino/i.test(ingredient.food),
     );
     return protein?.food || proteinFamilyForItems(items);
   };
