@@ -879,6 +879,8 @@ try {
         .find((button) => button.innerText.includes('Hamburger semplice fatto in casa'));
       const carbonara = [...(group?.querySelectorAll('.complete-meal-select') || [])]
         .find((button) => button.innerText.includes('Spaghetti alla carbonara'));
+      const amatriciana = [...(group?.querySelectorAll('.complete-meal-select') || [])]
+        .find((button) => button.innerText.includes("Bucatini all'amatriciana"));
       const result = {
         visibleWithPlus: Boolean(group),
         shortcutVisible,
@@ -890,6 +892,8 @@ try {
           !hamburger?.querySelector('.recipe-visual-parts')),
         carbonaraWholeDish: Boolean(carbonara?.querySelector('img.recipe-visual-single')?.src.includes('cheat-carbonara-v11619') &&
           !carbonara?.querySelector('.recipe-visual-parts')),
+        amatricianaWholeDish: Boolean(amatriciana?.querySelector('img.recipe-visual-single')?.src.includes('cheat-amatriciana-v11625') &&
+          !amatriciana?.querySelector('.recipe-visual-parts')),
         freeChoiceAlsoAvailable: Boolean(picker?.querySelector('.part-choice-grid.free')),
       };
       pizza?.click();
@@ -1708,6 +1712,7 @@ try {
       (releasePatch >= 86 && !occasionalAddition.pizzaVariantsShowWholeDish) || !occasionalAddition.freeChoiceAlsoAvailable ||
       (versionMinor >= 20 && versionPatch >= 25 && !occasionalAddition.hamburgerWholeDish) ||
       (versionMinor >= 20 && versionPatch >= 34 && !occasionalAddition.carbonaraWholeDish) ||
+      (versionMinor >= 20 && versionPatch >= 35 && !occasionalAddition.amatricianaWholeDish) ||
       !occasionalAddition.appended || !occasionalAddition.pizzaPhoto || !occasionalAddition.pizzaEditable ||
       !occasionalAddition.pickerClosed || !occasionalAddition.originalPartsKept || !occasionalAddition.removedDirectly)) ||
     (releasePatch >= 84 && (!occasionalAddition.replacementAvailable ||

@@ -1890,6 +1890,7 @@ foods["Proteine whey vaniglia Decathlon"] = { kcal: 366, protein: 70, carbs: 15,
 // Il guanciale è intenzionalmente legato a una specifica etichetta: altre marche
 // possono differire. La fibra 0 non è dichiarata sulla confezione, solo tecnica.
 foods["Spaghetti di semola secchi"] = { kcal: 341, protein: 13.5, carbs: 72.7, fat: 1.2, fiber: 1.7, source: "CREA 000800" };
+foods["Bucatini di semola secchi"] = { kcal: 341, protein: 13.5, carbs: 72.7, fat: 1.2, fiber: 1.7, source: "CREA 000800" };
 foods["Guanciale stagionato Conad"] = { kcal: 661, protein: 10, carbs: 0, fat: 69, fiber: 0, source: "ETICHETTA" };
 foods["Pecorino romano"] = { kcal: 409, protein: 26, carbs: 1.8, fat: 33.1, fiber: 0, source: "CREA 166060" };
 
@@ -5927,6 +5928,7 @@ const attachmentMainsP53P64: Recipe[] = [
 const mealPartOptions: Record<MealPart["category"], MealPart[]> = {
   Carboidrato: [
     { category: "Carboidrato", food: "Spaghetti di semola secchi", grams: 90, label: "Spaghetti · peso secco", image: photo("part-spaghetti-dry-v12033") },
+    { category: "Carboidrato", food: "Bucatini di semola secchi", grams: 90, label: "Bucatini · peso secco", image: photo("part-bucatini-dry-v12035") },
     { category: "Carboidrato", food: "Riso parboiled cotto", grams: 150, label: "Riso parboiled cotto · 150 g", image: photo("part-parboiled-rice-cooked-v1209") },
     { category: "Carboidrato", food: "Riso giapponese cotto", grams: 150, label: "Riso giapponese cotto · 150 g", image: photo("part-japanese-shortgrain-rice-v11994") },
     {
@@ -8018,19 +8020,37 @@ const occasionalRecipes: Recipe[] = [
   {
     id: "occasional-amatriciana",
     name: "Bucatini all'amatriciana",
-    kicker: "Piatto occasionale italiano con porzione conteggiata",
+    kicker: "Piatto occasionale · ingredienti pesati",
     course: "Piatto unico",
     cuisine: "Italiano",
     image: photo("cheat-amatriciana-v11625"),
-    time: 25,
-    ingredients: [{ food: "Pasta all'amatriciana", grams: 350 }],
-    steps: [
-      "Rosola il guanciale senza aggiungere olio e tienilo da parte.",
-      "Cuoci il pomodoro nel grasso rilasciato, poi unisci i bucatini scolati al dente.",
-      "Manteca con pecorino e completa con il guanciale croccante.",
-      "Registra la quantità realmente mangiata; il valore deriva dalla ricetta completa.",
+    time: 30,
+    ingredients: [
+      { food: "Bucatini di semola secchi", grams: 90 },
+      { food: "Guanciale stagionato Conad", grams: 30 },
+      { food: "Pomodorini", grams: 150 },
+      { food: "Pecorino romano", grams: 10 },
+      { food: "Peperoncino rosso fresco", grams: 2 },
+      { food: "Pepe nero", grams: 1 },
     ],
-    alternatives: ["Carbonara", "Gricia", "Porzione più piccola"],
+    parts: [
+      { category: "Carboidrato", food: "Bucatini di semola secchi", grams: 90, label: "Bucatini · peso secco", image: photo("part-bucatini-dry-v12035") },
+      { category: "Extra", food: "Guanciale stagionato Conad", grams: 30, label: "Guanciale · peso prima della cottura", image: photo("part-guanciale-v12033") },
+      { category: "Contorno", food: "Pomodorini", grams: 150, label: "Pomodorini maturi · parte edibile", image: photo("part-tomatoes-v8") },
+      { category: "Extra", food: "Pecorino romano", grams: 10, label: "Pecorino romano grattugiato", image: photo("part-pecorino-romano-v12033") },
+      { category: "Extra", food: "Peperoncino rosso fresco", grams: 2, label: "Peperoncino rosso", image: photo("part-chili-v11866") },
+      { category: "Extra", food: "Pepe nero", grams: 1, label: "Pepe nero", image: photo("part-black-pepper-v11866") },
+    ],
+    steps: [
+      "Per una persona pesa 90 g di bucatini secchi, 30 g di guanciale, 150 g di pomodorini maturi lavati, 10 g di pecorino, 2 g di peperoncino e 1 g di pepe. La pasta va pesata prima della cottura.",
+      "Taglia il guanciale a listarelle. Mettilo in padella con un cucchiaio d'acqua e cuocilo a fuoco basso per 5–7 minuti, finché il grasso si scioglie e il guanciale è ben cotto; tieni le listarelle da parte. Non aggiungere olio.",
+      "Taglia i pomodorini a pezzetti e cuocili nel fondo del guanciale con peperoncino e pepe per circa 10 minuti. Unisci di nuovo il guanciale e scalda brevemente. Assaggia prima di aggiungere sale: guanciale e pecorino sono già sapidi.",
+      "Nel frattempo cuoci i bucatini in acqua bollente secondo la confezione, scolali al dente conservando poca acqua di cottura e mescolali al sugo. Spegni il fuoco, completa con il pecorino grattugiato e servi caldo.",
+    ],
+    alternatives: ["I 30 g di guanciale sono condimento, non un secondo", "Puoi modificare separatamente bucatini, pomodoro, guanciale e pecorino", "Controlla l'etichetta del guanciale se scegli una marca diversa"],
+    sourceLabel: "Adattamento per una persona dell'Accademia Italiana della Cucina; valori CREA ed etichetta Conad",
+    sourceUrl: "https://www.accademiaitalianadellacucina.it/sites/default/files/Il%20Falso%20in%20tavola.pdf",
+    allergens: ["Glutine", "Latte"],
   },
   {
     id: "occasional-cheesecake",

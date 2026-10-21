@@ -1148,6 +1148,24 @@ test("v1.20.34 makes carbonara an editable, sourced recipe instead of a generic 
   }
 });
 
+test("v1.20.35 makes amatriciana an editable, sourced bucatini recipe", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const amatriciana = app.slice(app.indexOf('id: "occasional-amatriciana"'), app.indexOf('id: "occasional-cheesecake"'));
+  assert.doesNotMatch(amatriciana, /food: "Pasta all'amatriciana", grams: 350/);
+  for (const [food, grams] of [
+    ["Bucatini di semola secchi", 90], ["Guanciale stagionato Conad", 30],
+    ["Pomodorini", 150], ["Pecorino romano", 10],
+    ["Peperoncino rosso fresco", 2], ["Pepe nero", 1],
+  ]) {
+    assert.match(amatriciana, new RegExp(`food: "${food}", grams: ${grams}`));
+  }
+  assert.match(amatriciana, /parts: \[/);
+  assert.match(amatriciana, /accademiaitalianadellacucina\.it/);
+  assert.match(amatriciana, /part-bucatini-dry-v12035/);
+  assert.match(app, /"Bucatini di semola secchi"\] = \{ kcal: 341, protein: 13\.5, carbs: 72\.7/);
+  await access(new URL("../dist/food/part-bucatini-dry-v12035.png", import.meta.url));
+});
+
 test("v1.20.28 searches foods and dishes by any text fragment in both meal pickers", async () => {
   const [app, css, audit] = await Promise.all([
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),

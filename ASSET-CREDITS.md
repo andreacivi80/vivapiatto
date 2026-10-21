@@ -66,6 +66,10 @@ Sono immagini originali generate per rendere riconoscibile la materia prima; non
 
 - `part-spaghetti-dry-v12033.png`, `part-guanciale-v12033.png`, `part-pecorino-romano-v12033.png`: immagini originali generate con `image_gen` per tre ingredienti distinti della carbonara; controllate visivamente contro il soggetto richiesto. L'immagine del piatto finito `cheat-carbonara-v11619.png` era già presente e rimane un'illustrazione del risultato, non una misura della porzione.
 
+### Nuova immagine v1.20.35
+
+- `part-bucatini-dry-v12035.png`: immagine originale generata con `image_gen`; mostra bucatini secchi lunghi con il foro centrale visibile, distinti dagli spaghetti. Controllata visivamente prima dell'integrazione; l'immagine finale del piatto `cheat-amatriciana-v11625.png` era già presente.
+
 ### Nuova immagine v1.20.15
 
 - `recipe-p38-bulgur-salmon-fennel-orange-v12015.png`: immagine generata dalla ricetta P38 con bulgur cotto, filetto di salmone grigliato, finocchio crudo affettato e spicchi d'arancia. Richiesti soltanto questi ingredienti e la finitura con olio; nessun testo o marchio. La fotografia precedente, con pesce troppo pallido per riconoscere il salmone, resta nell'archivio ma non è più collegata alla ricetta.
