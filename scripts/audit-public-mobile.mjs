@@ -225,6 +225,33 @@ try {
   if (!appReady) throw new Error("Tavola Mia non ha completato il caricamento entro 20 secondi");
 
   const today = await snapshot();
+  const initialMainBalance = [];
+  for (const slot of [2, 4]) {
+    const opened = await evaluate(`(() => {
+      const card = document.querySelectorAll('.meal-card')[${slot}];
+      const split = [...(card?.querySelectorAll('.dish-view-actions button') || [])]
+        .find((button) => button.innerText.includes('Dividi in componenti'));
+      split?.click();
+      return { found: Boolean(card), split: Boolean(split), name: card?.querySelector('h3')?.innerText || '' };
+    })()`);
+    if (opened.split) await wait(250);
+    const checked = await evaluate(`(() => {
+      const card = document.querySelectorAll('.meal-card')[${slot}];
+      const roles = [...(card?.querySelectorAll('.meal-part .part-change') || [])]
+        .map((button) => button.getAttribute('aria-label'));
+      const recombine = [...(card?.querySelectorAll('.dish-view-actions button') || [])]
+        .find((button) => button.innerText.includes('Ricomponi piatto'));
+      recombine?.click();
+      return {
+        roles,
+        complete: roles.includes('Cambia Carboidrato') &&
+          (roles.includes('Cambia Proteina') || roles.includes('Cambia Latticino')) &&
+          roles.includes('Cambia Contorno'),
+      };
+    })()`);
+    initialMainBalance.push({ slot, ...opened, ...checked });
+    if (opened.split) await wait(250);
+  }
   const scrollStability = await evaluate(`(() => ({
     beforeMenu: [...document.querySelectorAll('.meal-card h3')].map((heading) => heading.innerText.trim()),
     beforeGrams: [...document.querySelectorAll('.meal-card .part-grams input')].map((input) => input.value),
@@ -1615,6 +1642,7 @@ try {
   }
   const report = {
     today,
+    initialMainBalance,
     scrollStability,
     week,
     weeklyConfirmation,
@@ -1666,10 +1694,11 @@ try {
   console.log(JSON.stringify(report));
   if (
     !today.version || today.recovery || today.horizontalOverflow || today.brokenViewportImages.length || today.pendingViewportImages.length ||
+    (versionMinor >= 20 && versionPatch >= 37 && initialMainBalance.some((meal) => !meal.found || !meal.complete)) ||
     !scrollStability.menuUnchanged || !scrollStability.gramsUnchanged || !scrollStability.returnedTop || scrollStability.horizontalOverflow ||
     (releasePatch >= 81 && new Date().getMonth() === 9 &&
       [scrollStability.beforeMenu[1], scrollStability.beforeMenu[3], profileAdaptation.lowMenu[1], profileAdaptation.lowMenu[3]]
-        .some((heading) => /nettarina|anguria|pompelmo rosa|albicocc|ciliegie|melone estivo/i.test(heading || ''))) ||
+        .some((heading) => /nettarina|anguria|pompelmo rosa|albicocc|ciliegie|melone estivo|fichi/i.test(heading || ''))) ||
     (releasePatch >= 81 && new Date().getMonth() === 9 &&
       !/mela|pera|uva|melagrana|cachi|pesca/i.test(scrollStability.beforeMenu[1] || '')) ||
     (releasePatch >= 81 &&

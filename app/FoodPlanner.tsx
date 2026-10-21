@@ -7110,7 +7110,7 @@ const normalizeMealPart = (part: MealPart): MealPart => {
 
 const seasonalMonths: Record<string, number[]> = {
   "Pompelmo rosa fresco": [11, 12, 1, 2, 3, 4],
-  "Lattuga fresca": [3, 4, 5, 6, 7, 8, 9, 10],
+  "Lattuga fresca": [3, 4, 5, 6, 7, 8, 9, 10, 11],
   "Songino fresco": [10, 11, 12, 1, 2, 3],
   "Catalogna fresca": [10, 11, 12, 1, 2, 3],
   "Verza fresca": [10, 11, 12, 1, 2, 3],
@@ -7120,7 +7120,7 @@ const seasonalMonths: Record<string, number[]> = {
   "Mirtilli freschi": [6, 7, 8, 9],
   "Mandarini freschi": [11, 12, 1, 2, 3],
   "Melagrana fresca": [9, 10, 11, 12],
-  "Fichi freschi": [7, 8, 9, 10],
+  "Fichi freschi": [7, 8, 9],
   "Ribes freschi": [6, 7, 8],
   More: [6, 7, 8, 9],
   "Ravanelli crudi": [4, 5, 6, 7, 8, 9, 10],
@@ -12177,8 +12177,7 @@ export function FoodPlanner() {
     const gluten = /pasta|pane|farro|orzo|bulgur|cous cous|cracker|fette biscottate|biscott|wafer|muesli|farina di frumento|segale/.test(foodsText);
     const legumes = /ceci|lenticchie|fagioli(?!ni)|piselli|edamame|soia|tofu|tempeh|fave/.test(foodsText);
     const wholeGrains = /integrale|farro|orzo|riso venere|riso rosso|quinoa|miglio|bulgur|grano saraceno/.test(foodsText);
-    const month = new Date().getMonth() + 1;
-    const seasonal = recipe.ingredients.some((item) => seasonalMonths[item.food]?.includes(month));
+    const seasonal = recipeHasSeasonalProduce(recipe) && recipeOutOfSeasonProduceCount(recipe) === 0;
     if (filter === "verdure") return vegetableGrams >= 180;
     if (filter === "vegetale") return !meat && !fish && vegetableGrams >= 100;
     if (filter === "integrali") return wholeGrains;
@@ -13388,10 +13387,17 @@ export function FoodPlanner() {
         varietyBonus
       );
     };
+    // A first-choice lunch or dinner should contain a starch, a protein
+    // source and vegetables whenever the compatible pool offers one. The
+    // ranking score alone can be outweighed by a distant calorie target.
+    const completeMains = [2, 4].includes(slot)
+      ? pool.filter((recipe) => mainMealBalanceScore(recipe) === 3)
+      : [];
+    const coherentPool = completeMains.length ? completeMains : pool;
     const compactSnackPool = [1, 3].includes(slot) && target <= 200
-      ? pool.filter((recipe) => profileRecipeKcal(recipe, slot) <= target + 60)
-      : pool;
-    const ranked = [...(compactSnackPool.length ? compactSnackPool : pool)]
+      ? coherentPool.filter((recipe) => profileRecipeKcal(recipe, slot) <= target + 60)
+      : coherentPool;
+    const ranked = [...(compactSnackPool.length ? compactSnackPool : coherentPool)]
       .sort((a, b) => rankingScore(a) - rankingScore(b));
     return ranked[offset % Math.min(5, ranked.length)];
   };

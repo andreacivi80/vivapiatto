@@ -1042,7 +1042,7 @@ test("v1.20.26 offers two more whole-pizza choices and edible seasonal fruits", 
     assert.match(app, new RegExp(`food: "${name}"[^\\n]*photo\\("${image}"\\)`));
     await access(new URL(`../dist/food/${image}.png`, import.meta.url));
   }
-  assert.match(app, /"Fichi freschi": \[7, 8, 9, 10\]/);
+  assert.match(app, /"Fichi freschi": \[7, 8, 9\]/);
   assert.match(app, /"Ribes freschi": \[6, 7, 8\]/);
   assert.match(app, /const stableCatalogFruits = mealPartOptions\.Frutta\.filter/);
   assert.match(app, /stableCatalogFruits\[index % stableCatalogFruits\.length\]/);
@@ -1175,6 +1175,15 @@ test("v1.20.36 searches protein powder in both quick pickers and respects allerg
   const audit = await readFile(new URL("../scripts/audit-public-mobile.mjs", import.meta.url), "utf8");
   assert.ok(audit.includes("searchPicker('pro', 'proteine whey')"));
   assert.ok(audit.includes('severeProfile.blockedWheyAbsent'));
+});
+
+test("v1.20.37 keeps first-choice main meals complete and all fresh ingredients seasonal", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.ok(app.includes('"Fichi freschi": [7, 8, 9]'));
+  assert.ok(app.includes('"Lattuga fresca": [3, 4, 5, 6, 7, 8, 9, 10, 11]'));
+  assert.ok(app.includes('const seasonal = recipeHasSeasonalProduce(recipe) && recipeOutOfSeasonProduceCount(recipe) === 0'));
+  assert.ok(app.includes('pool.filter((recipe) => mainMealBalanceScore(recipe) === 3)'));
+  assert.ok(app.includes('const coherentPool = completeMains.length ? completeMains : pool'));
 });
 
 test("v1.20.28 searches foods and dishes by any text fragment in both meal pickers", async () => {
@@ -3573,7 +3582,7 @@ test("low-energy plans keep automatic snacks near their meal allocation", async 
   const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(source, /const compactSnackPool = \[1, 3\]\.includes\(slot\) && target <= 200/);
   assert.match(source, /profileRecipeKcal\(recipe, slot\) <= target \+ 60/);
-  assert.match(source, /compactSnackPool\.length \? compactSnackPool : pool/);
+  assert.match(source, /compactSnackPool\.length \? compactSnackPool : coherentPool/);
 });
 
 test("displayed component grams and meal calories use one calibrated portion", async () => {
