@@ -396,6 +396,71 @@ try {
   })()`);
   await wait(300);
   weeklyConfirmation.reopened = await evaluate(`document.querySelector('.week-lock')?.innerText.includes('Settimana modificabile')`);
+  const editedWeekExports = { skipped: releasePatch < 40 };
+  if (!editedWeekExports.skipped) {
+    editedWeekExports.dayOpened = await evaluate(`(() => {
+      const button = document.querySelector('.week-day header button');
+      button?.click();
+      return Boolean(button);
+    })()`);
+    await wait(450);
+    Object.assign(editedWeekExports, await evaluate(`(() => {
+      const input = document.querySelector('.meal-card .part-grams input');
+      if (!input) return { gramsInputFound: false };
+      const before = Number(input.value);
+      const after = before + 10;
+      const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
+      setter.call(input, String(after));
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      return { gramsInputFound: true, before, after };
+    })()`));
+    await wait(500);
+    editedWeekExports.inputUpdated = await evaluate(`Number(document.querySelector('.meal-card .part-grams input')?.value) === ${editedWeekExports.after}`);
+    await evaluate(`(() => {
+      [...document.querySelectorAll('.week-edit-banner button')]
+        .find((button) => button.innerText.trim() === 'Chiudi')?.click();
+    })()`);
+    await wait(450);
+    editedWeekExports.backInWeek = await evaluate(`Boolean(document.querySelector('.week-day') && !document.querySelector('.week-edit-banner'))`);
+    await evaluate(`document.querySelector('.print-preview-trigger')?.click()`);
+    await wait(450);
+    Object.assign(editedWeekExports, await evaluate(`(() => {
+      const sheet = document.querySelector('.print-preview-sheet');
+      const firstRow = sheet?.querySelector('.print-day .print-food-row');
+      return { printDayCount: sheet?.querySelectorAll('.print-day').length || 0,
+        printMealCount: sheet?.querySelectorAll('.print-meal').length || 0,
+        printFirstGrams: Number(firstRow?.querySelector('b')?.textContent),
+        printFirstFood: firstRow?.querySelector('span')?.firstChild?.textContent?.trim() || '' };
+    })()`));
+    editedWeekExports.word = await evaluate(`(async () => {
+      const originalCreate = URL.createObjectURL;
+      const originalClick = HTMLAnchorElement.prototype.click;
+      let captured = null;
+      URL.createObjectURL = function(blob) { captured = blob; return originalCreate.call(URL, blob); };
+      HTMLAnchorElement.prototype.click = function() {};
+      try {
+        const button = [...document.querySelectorAll('.print-preview-actions button')]
+          .find((item) => item.innerText.trim() === 'Word');
+        button?.click();
+        if (!captured) return { found: Boolean(button), captured: false };
+        const html = await captured.text();
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        const days = [...doc.querySelectorAll('.day')];
+        const firstFood = days[0]?.querySelector('.meal .foods tbody tr');
+        return { found: Boolean(button), captured: true,
+          dayCount: days.length,
+          mealCount: doc.querySelectorAll('.meal').length,
+          firstGrams: Number(firstFood?.children[1]?.textContent.replace(' g', '')),
+          groupedMeal: Boolean(days[0]?.querySelector('.meal > tbody > tr[style*="mso-row-split:avoid"]')),
+          followingDaysStartNewPage: days.slice(1).every((day) => day.querySelector('h2')?.style.pageBreakBefore === 'always') };
+      } finally {
+        URL.createObjectURL = originalCreate;
+        HTMLAnchorElement.prototype.click = originalClick;
+      }
+    })()`);
+    await evaluate(`document.querySelector('[aria-label="Chiudi anteprima stampa"]')?.click()`);
+    await wait(300);
+  }
   await clickTab("Ricette");
   const recipes = await snapshot();
   const openedRecipe = await evaluate(`(() => {
@@ -1748,6 +1813,7 @@ try {
     weeklyConfirmation,
     weeklyPrintPreview,
     printFlow,
+    editedWeekExports,
     recipes,
     recipeDetail,
     wheyShakerRecipes,
@@ -1824,6 +1890,14 @@ try {
     (versionMinor >= 20 && versionPatch >= 38 &&
       (!printFlow.sheetStatic || !printFlow.backdropStatic || !printFlow.sheetNotClipped ||
        !printFlow.mealKeptTogether || printFlow.dayCount !== 7 || printFlow.pdfBytes < 20_000 || printFlow.pdfPages < 2)) ||
+    (!editedWeekExports.skipped && (!editedWeekExports.dayOpened || !editedWeekExports.gramsInputFound ||
+      !editedWeekExports.inputUpdated || !editedWeekExports.backInWeek ||
+      editedWeekExports.printDayCount !== 7 || editedWeekExports.printMealCount !== 35 ||
+      editedWeekExports.printFirstGrams !== editedWeekExports.after ||
+      !editedWeekExports.word.found || !editedWeekExports.word.captured ||
+      editedWeekExports.word.dayCount !== 7 || editedWeekExports.word.mealCount !== 35 ||
+      editedWeekExports.word.firstGrams !== editedWeekExports.after ||
+      !editedWeekExports.word.groupedMeal || !editedWeekExports.word.followingDaysStartNewPage)) ||
     recipes.recovery || recipes.horizontalOverflow || recipes.brokenViewportImages.length || recipes.pendingViewportImages.length ||
     !recipeDetail.found || !recipeDetail.hasIngredients || !recipeDetail.hasPreparation || !recipeDetail.hasNutrition ||
     !recipeDetail.hasAllergens || !recipeDetail.photoLoaded || recipeDetail.horizontalOverflow || !recipeDetail.closed || !recipeCoverage ||

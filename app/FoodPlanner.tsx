@@ -14735,7 +14735,7 @@ export function FoodPlanner() {
       .replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
       .replaceAll('"', "&quot;");
     const rows = weeklyExportRows();
-    const daySections = days.map((day) => {
+    const daySections = days.map((day, dayIndex) => {
       const dayRows = rows.filter((row) => row.day === day.label);
       const meals = SLOT_LABELS.map((meal) => {
         const mealRows = dayRows.filter((row) => row.meal === meal);
@@ -14743,7 +14743,7 @@ export function FoodPlanner() {
         const ingredientRows = mealRows.map((row) => `<tr style="page-break-inside:avoid;mso-row-split:avoid"><td>${escapeHtml(row.food)}</td><td>${escapeHtml(row.grams)} g</td><td>${escapeHtml(row.kcal)}</td><td>${escapeHtml(row.protein)}</td><td>${escapeHtml(row.carbs)}</td><td>${escapeHtml(row.fat)}</td></tr>`).join("");
         return `<table class="meal" style="width:100%;border-collapse:collapse;page-break-inside:avoid"><tr style="page-break-inside:avoid;mso-row-split:avoid"><td><h3>${escapeHtml(meal)} · ${escapeHtml(mealRows[0].recipe)}</h3><p>${escapeHtml(mealRows[0].status)}</p><table class="foods" style="width:100%;border-collapse:collapse"><thead><tr><th>Alimento</th><th>Quantità</th><th>kcal</th><th>Proteine</th><th>Carboidrati</th><th>Grassi</th></tr></thead><tbody>${ingredientRows}</tbody></table></td></tr></table>`;
       }).join("");
-      return `<div class="day"><h2>${escapeHtml(day.label)}</h2>${meals}</div>`;
+      return `<div class="day"><h2${dayIndex ? ' style="page-break-before:always"' : ""}>${escapeHtml(day.label)}</h2>${meals}</div>`;
     }).join("");
     const html = `<html><head><meta charset="utf-8"><title>Tavola Mia · settimana</title><style>@page{size:A4;margin:14mm}body{font-family:Arial,sans-serif;color:#26372d;font-size:9pt}h1{font-size:16pt;margin:0 0 6mm}h2{font-size:12pt;background:#edf4e5;padding:5px;margin:7mm 0 2mm;page-break-after:avoid}h3{font-size:10pt;margin:0 0 2mm}p{margin:0 0 2mm}.day{page-break-inside:avoid}.meal,.meal>tbody>tr{page-break-inside:avoid;mso-row-split:avoid}.meal{margin:0 0 3mm}.meal>tbody>tr>td{border:1px solid #dbe4d9;padding:3mm}.foods th,.foods td{padding:1.5mm;border-bottom:1px solid #e8eee7;text-align:right}.foods th:first-child,.foods td:first-child{text-align:left;width:38%}.foods th{background:#f5f8f2;font-size:8pt}</style></head><body><h1>Settimana · media ${weeklySnapshotAverageKcal} kcal/giorno</h1>${daySections}</body></html>`;
     downloadWeeklyFile(html, "application/msword", "doc");

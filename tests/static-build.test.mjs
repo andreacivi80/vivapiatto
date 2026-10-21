@@ -1249,6 +1249,18 @@ test("v1.20.39 presents every whey flavor as a prepared photographed shake with 
   assert.ok(audit.includes("wheyShakerRecipes.photos.some((item) => !item.loaded)"));
 });
 
+test("v1.20.40 keeps an edited seven-day plan intact in print preview and Word export", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const word = app.slice(app.indexOf("const exportWeeklyWord ="), app.indexOf("const selectedIngredients ="));
+  assert.ok(word.includes("const rows = weeklyExportRows()"));
+  assert.ok(word.includes("page-break-before:always"));
+  assert.ok(word.includes("mso-row-split:avoid"));
+  const audit = await readFile(new URL("../scripts/audit-public-mobile.mjs", import.meta.url), "utf8");
+  assert.ok(audit.includes("editedWeekExports.printFirstGrams !== editedWeekExports.after"));
+  assert.ok(audit.includes("editedWeekExports.word.firstGrams !== editedWeekExports.after"));
+  assert.ok(audit.includes("editedWeekExports.word.followingDaysStartNewPage"));
+});
+
 test("v1.20.28 searches foods and dishes by any text fragment in both meal pickers", async () => {
   const [app, css, audit] = await Promise.all([
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
