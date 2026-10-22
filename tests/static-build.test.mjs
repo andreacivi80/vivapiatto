@@ -1261,6 +1261,17 @@ test("v1.20.40 keeps an edited seven-day plan intact in print preview and Word e
   assert.ok(audit.includes("editedWeekExports.word.followingDaysStartNewPage"));
 });
 
+test("v1.20.41 waits for saved week hydration and all whey photos, and requires one printed page per day", async () => {
+  const audit = await readFile(new URL("../scripts/audit-public-mobile.mjs", import.meta.url), "utf8");
+  assert.ok(audit.includes("rows?.[0]?.dataset.recipeId"));
+  assert.ok(audit.includes("for (let attempt = 0; attempt < 30; attempt += 1)"));
+  assert.ok(audit.includes("images.length === 4 && images.every"));
+  assert.ok(audit.includes("printFlow.pdfPages !== 7"));
+  const matrix = await readFile(new URL("../scripts/audit-cuisine-plan.mjs", import.meta.url), "utf8");
+  assert.ok(matrix.includes('process.argv.includes("--matrix-full")'));
+  assert.ok(matrix.includes("contextTargetMatrix.length !== 24 || invalid.length"));
+});
+
 test("v1.20.28 searches foods and dishes by any text fragment in both meal pickers", async () => {
   const [app, css, audit] = await Promise.all([
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),

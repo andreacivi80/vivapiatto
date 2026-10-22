@@ -118,8 +118,9 @@ try {
   const asian = await setStyle("Asiatico");
   const italian = await setStyle("Italiano");
   const contextTargetMatrix = [];
-  const matrixFocus = process.env.VIVAPIATTO_MATRIX_FOCUS === "1";
-  if (process.env.VIVAPIATTO_MATRIX_AUDIT === "1" || matrixFocus) {
+  const matrixFocus = process.argv.includes("--matrix") || process.env.VIVAPIATTO_MATRIX_FOCUS === "1";
+  const matrixFull = process.argv.includes("--matrix-full") || process.env.VIVAPIATTO_MATRIX_AUDIT === "1";
+  if (matrixFull || matrixFocus) {
     const changeSelect = async (selector, index, value) => {
       const changed = await evaluate(`(() => {
         const select = document.querySelectorAll(${JSON.stringify(selector)})[${index}];
@@ -285,10 +286,10 @@ try {
     followUpAfterSwap,
     completeMealProjection,
   };
-  console.log(JSON.stringify(process.env.VIVAPIATTO_MATRIX_AUDIT === "1" || matrixFocus
+  console.log(JSON.stringify(matrixFull || matrixFocus
     ? { contextTargetMatrix, followUpAfterSwap, completeMealProjection, asianDocumentedCount: report.asianDocumentedCount }
     : report));
-  if (process.env.VIVAPIATTO_MATRIX_AUDIT === "1" && !matrixFocus) {
+  if (matrixFull && !matrixFocus) {
     const mensaIds = new Set([
       "simple-pasta-white", "simple-pasta-tomato", "simple-eggs",
       "simple-steak-potatoes", "everyday-pasta-e-fagioli",
@@ -311,14 +312,16 @@ try {
         (row.context === "Mensa" &&
           (row.weekdayLunches.length !== 5 || row.weekdayLunches.some((id) => !mensaIds.has(id))));
     });
-    if (contextTargetMatrix.length !== 24 || invalid.length ||
-        !followUpAfterSwap || followUpAfterSwap.chosenId !== followUpAfterSwap.lunchIdAfter ||
-        followUpAfterSwap.tomorrow.length !== 5 || followUpAfterSwap.mainMeals !== 14 ||
-        Math.abs(followUpAfterSwap.tomorrowKcal - 2000) > 350 ||
-        !completeMealProjection?.partEdit ||
-        completeMealProjection.editedGrams !== completeMealProjection.partEdit.after ||
-        !completeMealProjection?.projected.kcal ||
-        completeMealProjection.projected.kcal !== completeMealProjection.applied.kcal) {
+    const followUpInvalid = process.env.VIVAPIATTO_MATRIX_AUDIT === "1" && (
+      !followUpAfterSwap || followUpAfterSwap.chosenId !== followUpAfterSwap.lunchIdAfter ||
+      followUpAfterSwap.tomorrow.length !== 5 || followUpAfterSwap.mainMeals !== 14 ||
+      Math.abs(followUpAfterSwap.tomorrowKcal - 2000) > 350 ||
+      !completeMealProjection?.partEdit ||
+      completeMealProjection.editedGrams !== completeMealProjection.partEdit.after ||
+      !completeMealProjection?.projected.kcal ||
+      completeMealProjection.projected.kcal !== completeMealProjection.applied.kcal
+    );
+    if (contextTargetMatrix.length !== 24 || invalid.length || followUpInvalid) {
       console.error(`Matrice contesto/target non coerente: ${JSON.stringify({ invalid, completeMealProjection })}`);
       process.exitCode = 1;
     }

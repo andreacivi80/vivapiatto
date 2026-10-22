@@ -121,12 +121,26 @@ try {
     await page.send('Input.insertText', { text: query });
     await wait(300);
     if (expected.includes('proteine whey')) {
-      await evaluate(`Promise.race([
-        Promise.all([...document.querySelectorAll('.picker-search-results .part-choice-grid button')]
-          .filter((button) => button.innerText.toLocaleLowerCase('it').includes('proteine whey'))
-          .map((button) => button.querySelector('img')?.decode().catch(() => {}))),
-        new Promise((resolve) => setTimeout(resolve, 2500)),
-      ])`);
+      // The public CDN can take longer than a local preview to deliver all four
+      // thumbnails. Re-query the current React nodes after each bounded decode:
+      // the picker may replace them while search results are being rendered.
+      for (let attempt = 0; attempt < 4; attempt += 1) {
+        const loaded = await evaluate(`(() => {
+          const images = [...document.querySelectorAll('.picker-search-results .part-choice-grid button')]
+            .filter((button) => button.innerText.toLocaleLowerCase('it').includes('proteine whey'))
+            .map((button) => button.querySelector('img'));
+          images.forEach((image) => { if (image) image.loading = 'eager'; });
+          return images.length === 4 && images.every((image) => image?.complete && image.naturalWidth > 0);
+        })()`);
+        if (loaded) break;
+        await evaluate(`Promise.race([
+          Promise.all([...document.querySelectorAll('.picker-search-results .part-choice-grid button')]
+            .filter((button) => button.innerText.toLocaleLowerCase('it').includes('proteine whey'))
+            .map((button) => button.querySelector('img')?.decode().catch(() => {}))),
+          new Promise((resolve) => setTimeout(resolve, 2500)),
+        ])`);
+        await wait(300);
+      }
     }
     const result = await evaluate(`(() => {
       const sheet = document.querySelector('.part-picker-sheet');
@@ -1633,10 +1647,28 @@ try {
   })()`);
   await wait(450);
   await page.send('Page.reload', { ignoreCache: false });
-  await wait(5_000);
-  await evaluate(`document.querySelectorAll('.week-day')[1]?.querySelector('header button')?.click()`);
-  await wait(500);
-  freeChoiceAndReplan.persistedAfterReload = await evaluate(`document.querySelector('.meal-card')?.dataset.recipeId === ${JSON.stringify(freeChoiceAndReplan.chosenId)}`);
+  // Wait for the saved week to hydrate, not merely for a fixed wall-clock delay.
+  // A public navigation can be slower than localhost without losing any data.
+  freeChoiceAndReplan.persistedAfterReload = false;
+  for (let attempt = 0; attempt < 30; attempt += 1) {
+    await wait(500);
+    const restored = await evaluate(`(() => {
+      const rows = document.querySelectorAll('.week-day')[1]?.querySelectorAll('.week-meal-row');
+      return {
+        weekFound: Boolean(rows?.length),
+        chosenFound: rows?.[0]?.dataset.recipeId === ${JSON.stringify(freeChoiceAndReplan.chosenId)},
+      };
+    })()`);
+    if (restored.weekFound && restored.chosenFound) {
+      await evaluate(`document.querySelectorAll('.week-day')[1]?.querySelector('header button')?.click()`);
+      for (let editorAttempt = 0; editorAttempt < 10; editorAttempt += 1) {
+        await wait(300);
+        freeChoiceAndReplan.persistedAfterReload = await evaluate(`document.querySelector('.meal-card')?.dataset.recipeId === ${JSON.stringify(freeChoiceAndReplan.chosenId)}`);
+        if (freeChoiceAndReplan.persistedAfterReload) break;
+      }
+      break;
+    }
+  }
   await evaluate(`(() => {
     if (!document.querySelector('.preferences'))
       [...document.querySelectorAll('.today-strip-actions button')]
@@ -1889,7 +1921,8 @@ try {
     !weeklyPrintPreview.hasExports || !weeklyPrintPreview.closeVisible || weeklyPrintPreview.horizontalOverflow || !weeklyPrintPreview.closed ||
     (versionMinor >= 20 && versionPatch >= 38 &&
       (!printFlow.sheetStatic || !printFlow.backdropStatic || !printFlow.sheetNotClipped ||
-       !printFlow.mealKeptTogether || printFlow.dayCount !== 7 || printFlow.pdfBytes < 20_000 || printFlow.pdfPages < 2)) ||
+       !printFlow.mealKeptTogether || printFlow.dayCount !== 7 || printFlow.pdfBytes < 20_000 ||
+       (versionPatch >= 41 ? printFlow.pdfPages !== 7 : printFlow.pdfPages < 2))) ||
     (!editedWeekExports.skipped && (!editedWeekExports.dayOpened || !editedWeekExports.gramsInputFound ||
       !editedWeekExports.inputUpdated || !editedWeekExports.backInWeek ||
       editedWeekExports.printDayCount !== 7 || editedWeekExports.printMealCount !== 35 ||
