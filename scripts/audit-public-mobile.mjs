@@ -965,14 +965,26 @@ try {
     };
   })()`));
   await page.send("Page.reload", { ignoreCache: false });
-  await wait(5000);
-  Object.assign(mealRegistration, await evaluate(`(() => {
-    const button = document.querySelectorAll('.meal-card')[1]?.querySelector('.check');
-    const summary = document.querySelector('.actual-day-summary');
-    return {
-      persisted: button?.classList.contains('done') && summary?.innerText.includes('1/5 registrati'),
-    };
-  })()`));
+  mealRegistration.persisted = false;
+  for (let attempt = 0; attempt < 30; attempt += 1) {
+    await wait(500);
+    try {
+      const restored = await evaluate(`(() => {
+        const button = document.querySelectorAll('.meal-card')[1]?.querySelector('.check');
+        const summary = document.querySelector('.actual-day-summary');
+        return {
+          buttonDone: Boolean(button?.classList.contains('done')),
+          summaryText: summary?.innerText || '',
+        };
+      })()`);
+      mealRegistration.afterReloadButtonDone = restored.buttonDone;
+      mealRegistration.afterReloadSummary = restored.summaryText;
+      mealRegistration.persisted = restored.buttonDone && restored.summaryText.includes('1/5 registrati');
+    } catch {
+      // The previous JavaScript context may still be closing during reload.
+    }
+    if (mealRegistration.persisted) break;
+  }
   await evaluate(`document.querySelectorAll('.meal-card')[1]?.querySelector('.check')?.click()`);
   await wait(600);
   Object.assign(mealRegistration, await evaluate(`(() => {

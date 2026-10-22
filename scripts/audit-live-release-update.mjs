@@ -7,7 +7,10 @@ const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const fromVersion = process.argv[2] || process.env.VIVAPIATTO_FROM_VERSION;
 const toVersion = process.argv[3] || process.env.VIVAPIATTO_TO_VERSION;
 const selfReload = process.argv.includes("--self-reload");
-const baseUrl = "https://andreacivi80.github.io/vivapiatto/";
+const simulateManifest = process.argv.includes("--simulate-manifest");
+const simulateStall = process.argv.includes("--simulate-stall");
+const baseUrl = process.argv.find((arg) => arg.startsWith("--url="))?.slice(6) ||
+  "https://andreacivi80.github.io/vivapiatto/";
 if (!fromVersion || !toVersion) throw new Error("Impostare VIVAPIATTO_FROM_VERSION e VIVAPIATTO_TO_VERSION");
 
 const edge = [
@@ -140,6 +143,30 @@ try {
   const initial = { ...initialMeal, ...initialView };
   if (!initial.libraryVisible || initial.scrollY <= 0) throw new Error(`Vista lunga di prova non disponibile: ${JSON.stringify(initial)}`);
   console.log(`Transizione reale pronta: v${fromVersion} aperta nel browser isolato`);
+  if (simulateManifest) {
+    // Force only the advertised version to be newer while keeping the real
+    // entry script. This isolates the app's periodic polling without a dummy
+    // deployment. The navigation should happen autonomously within 15 s.
+    await evaluate(`(() => {
+      const originalFetch = window.fetch.bind(window);
+      const script = document.querySelector('script[type="module"][src]')?.getAttribute('src');
+      if (!script) throw new Error('Script della release non trovato');
+      let manifestRequests = 0;
+      window.fetch = (input, init) => {
+        if (!String(input).includes('version.json')) return originalFetch(input, init);
+        manifestRequests += 1;
+        if (${simulateStall} && manifestRequests === 1) {
+          return new Promise((resolve, reject) => {
+            init?.signal?.addEventListener('abort', () =>
+              reject(new DOMException('Simulated stalled CDN request', 'AbortError')), { once: true });
+          });
+        }
+        return Promise.resolve(new Response(JSON.stringify({ version: ${JSON.stringify(toVersion)}, script }),
+          { status: 200, headers: { 'Content-Type': 'application/json' } }));
+      };
+      return true;
+    })()`);
+  }
   await wait(7_000);
   if (selfReload) {
     // Reproduce the browser navigation independently of a new deployment,
@@ -158,11 +185,11 @@ try {
   let releaseNavigation = false;
   // Pages deployment can take longer than ten minutes; distinguish a slow
   // publication from a broken refresh in the real browser.
-  for (let attempt = 0; attempt < (selfReload ? 24 : 240); attempt += 1) {
+  for (let attempt = 0; attempt < (selfReload || simulateManifest ? 24 : 240); attempt += 1) {
     await wait(5_000);
     try {
       finalState = await evaluate(`(() => ({
-        versionUpdated: document.querySelector('.topbar .version')?.textContent?.trim() === ${JSON.stringify(`v${toVersion}`)},
+        versionUpdated: document.querySelector('.topbar .version')?.textContent?.trim() === ${JSON.stringify(`v${simulateManifest ? fromVersion : toVersion}`)},
         scrollY: Math.round(window.scrollY),
         libraryVisible: document.body.innerText.includes('Le tue 214'),
         recovery: document.body.innerText.includes('La pagina ha incontrato un errore'),
@@ -181,7 +208,7 @@ try {
           if (Math.abs(finalState.scrollY - initial.scrollY) <= 20) break;
           await wait(100);
           finalState = await evaluate(`(() => ({
-            versionUpdated: document.querySelector('.topbar .version')?.textContent?.trim() === ${JSON.stringify(`v${toVersion}`)},
+            versionUpdated: document.querySelector('.topbar .version')?.textContent?.trim() === ${JSON.stringify(`v${simulateManifest ? fromVersion : toVersion}`)},
             scrollY: Math.round(window.scrollY),
             libraryVisible: document.body.innerText.includes('Le tue 214'),
             recovery: document.body.innerText.includes('La pagina ha incontrato un errore'),
@@ -233,7 +260,7 @@ try {
   console.log(JSON.stringify(report));
   if (
     !finalState?.versionUpdated || !releaseNavigation || !finalState.libraryVisible || finalState.recovery || finalState.horizontalOverflow ||
-    !report.gramsPreserved || !report.menuPreserved || !report.scrollPreserved || report.javascriptErrors
+    !report.gramsPreserved || !report.menuPreserved || (!simulateManifest && !report.scrollPreserved) || report.javascriptErrors
   ) process.exitCode = 1;
   page.close();
   browser.close();

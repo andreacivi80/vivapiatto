@@ -1292,6 +1292,12 @@ test("v1.20.43 retries release checks after a stalled CDN request", async () => 
   assert.ok(check.includes("controller.signal,"));
   assert.ok(check.includes("window.clearTimeout(deadline)"));
   assert.ok(check.includes("checking = false"));
+  const releaseAudit = await readFile(new URL("../scripts/audit-live-release-update.mjs", import.meta.url), "utf8");
+  assert.ok(releaseAudit.includes('process.argv.includes("--simulate-stall")'));
+  assert.ok(releaseAudit.includes("Simulated stalled CDN request"));
+  const mobileAudit = await readFile(new URL("../scripts/audit-public-mobile.mjs", import.meta.url), "utf8");
+  assert.ok(mobileAudit.includes("mealRegistration.afterReloadButtonDone"));
+  assert.ok(mobileAudit.includes("restored.summaryText.includes('1/5 registrati')"));
 });
 
 test("v1.20.28 searches foods and dishes by any text fragment in both meal pickers", async () => {
