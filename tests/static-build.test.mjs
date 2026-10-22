@@ -1283,6 +1283,17 @@ test("v1.20.42 renders the exported Word week as seven A4 pages without splittin
   assert.ok(audit.includes("editedWeekExports.word.renderedPdfPages !== 7"));
 });
 
+test("v1.20.43 retries release checks after a stalled CDN request", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const check = app.slice(app.indexOf("const checkVersion = async"), app.indexOf("const onVisibility ="));
+  assert.ok(check.includes("const controller = new AbortController()"));
+  assert.ok(check.includes("window.setTimeout(() => controller.abort(), 15_000)"));
+  assert.ok(check.includes("signal: controller.signal"));
+  assert.ok(check.includes("controller.signal,"));
+  assert.ok(check.includes("window.clearTimeout(deadline)"));
+  assert.ok(check.includes("checking = false"));
+});
+
 test("v1.20.28 searches foods and dishes by any text fragment in both meal pickers", async () => {
   const [app, css, audit] = await Promise.all([
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),

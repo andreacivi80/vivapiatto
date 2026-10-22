@@ -11474,10 +11474,14 @@ export function FoodPlanner() {
     const checkVersion = async () => {
       if (checking || disposed) return;
       checking = true;
+      // A stalled CDN request must not disable every later automatic check.
+      // All three release requests share one deadline; the next timer retries.
+      const controller = new AbortController();
+      const deadline = window.setTimeout(() => controller.abort(), 15_000);
       try {
         const response = await fetch(
           `${import.meta.env.BASE_URL}version.json?time=${Date.now()}`,
-          { cache: "no-store" },
+          { cache: "no-store", signal: controller.signal },
         );
         if (!response.ok) return;
         const release = (await response.json()) as { version?: string; script?: string };
@@ -11491,6 +11495,7 @@ export function FoodPlanner() {
             new URL(import.meta.env.BASE_URL, window.location.href).href,
             release.script,
             String(Date.now()),
+            controller.signal,
           );
           setReleaseReady(ready);
           if (ready) {
@@ -11506,6 +11511,7 @@ export function FoodPlanner() {
       } catch {
         // Offline: il controllo riprova senza modificare il lavoro salvato.
       } finally {
+        window.clearTimeout(deadline);
         checking = false;
       }
     };
