@@ -411,6 +411,7 @@ try {
   await wait(300);
   weeklyConfirmation.reopened = await evaluate(`document.querySelector('.week-lock')?.innerText.includes('Settimana modificabile')`);
   const editedWeekExports = { skipped: releasePatch < 40 };
+  let editedWordHtml = "";
   if (!editedWeekExports.skipped) {
     editedWeekExports.dayOpened = await evaluate(`(() => {
       const button = document.querySelector('.week-day header button');
@@ -461,7 +462,7 @@ try {
         const doc = new DOMParser().parseFromString(html, 'text/html');
         const days = [...doc.querySelectorAll('.day')];
         const firstFood = days[0]?.querySelector('.meal .foods tbody tr');
-        return { found: Boolean(button), captured: true,
+        return { found: Boolean(button), captured: true, html,
           dayCount: days.length,
           mealCount: doc.querySelectorAll('.meal').length,
           firstGrams: Number(firstFood?.children[1]?.textContent.replace(' g', '')),
@@ -472,6 +473,8 @@ try {
         HTMLAnchorElement.prototype.click = originalClick;
       }
     })()`);
+    editedWordHtml = editedWeekExports.word.html || "";
+    delete editedWeekExports.word.html;
     await evaluate(`document.querySelector('[aria-label="Chiudi anteprima stampa"]')?.click()`);
     await wait(300);
   }
@@ -1835,6 +1838,31 @@ try {
     }
     exceptions.push(event);
   }
+  if (editedWordHtml) {
+    // The Word document is A4, not a 390px phone screen. Render the exported
+    // HTML at an A4-sized desktop viewport before checking its pagination.
+    await page.send("Emulation.setDeviceMetricsOverride", {
+      width: 794, height: 1123, deviceScaleFactor: 1, mobile: false,
+    });
+    const frameTree = await page.send("Page.getFrameTree");
+    await page.send("Page.setDocumentContent", {
+      frameId: frameTree.frameTree.frame.id,
+      html: editedWordHtml,
+    });
+    await wait(350);
+    editedWeekExports.word.layout = await evaluate(`(() => ({
+      viewportWidth: document.documentElement.clientWidth,
+      bodyHeight: document.body.scrollHeight,
+      days: [...document.querySelectorAll('.day')].map((day) => ({
+        height: Math.round(day.getBoundingClientRect().height),
+        meals: [...day.querySelectorAll('.meal')].map((meal) => Math.round(meal.getBoundingClientRect().height)),
+      })),
+    }))()`);
+    const wordPdf = await page.send("Page.printToPDF", { printBackground: true, preferCSSPageSize: true });
+    const wordPdfBytes = Buffer.from(wordPdf.data, "base64");
+    editedWeekExports.word.renderedPdfBytes = wordPdfBytes.length;
+    editedWeekExports.word.renderedPdfPages = (wordPdfBytes.toString("latin1").match(/\/Type\s*\/Page\b/g) || []).length;
+  }
   const report = {
     today,
     initialMainBalance,
@@ -1930,7 +1958,9 @@ try {
       !editedWeekExports.word.found || !editedWeekExports.word.captured ||
       editedWeekExports.word.dayCount !== 7 || editedWeekExports.word.mealCount !== 35 ||
       editedWeekExports.word.firstGrams !== editedWeekExports.after ||
-      !editedWeekExports.word.groupedMeal || !editedWeekExports.word.followingDaysStartNewPage)) ||
+      !editedWeekExports.word.groupedMeal || !editedWeekExports.word.followingDaysStartNewPage ||
+      (versionMinor >= 20 && versionPatch >= 42 &&
+        (editedWeekExports.word.renderedPdfBytes < 20_000 || editedWeekExports.word.renderedPdfPages !== 7)))) ||
     recipes.recovery || recipes.horizontalOverflow || recipes.brokenViewportImages.length || recipes.pendingViewportImages.length ||
     !recipeDetail.found || !recipeDetail.hasIngredients || !recipeDetail.hasPreparation || !recipeDetail.hasNutrition ||
     !recipeDetail.hasAllergens || !recipeDetail.photoLoaded || recipeDetail.horizontalOverflow || !recipeDetail.closed || !recipeCoverage ||

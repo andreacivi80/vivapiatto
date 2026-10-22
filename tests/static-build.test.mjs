@@ -1272,6 +1272,17 @@ test("v1.20.41 waits for saved week hydration and all whey photos, and requires 
   assert.ok(matrix.includes("contextTargetMatrix.length !== 24 || invalid.length"));
 });
 
+test("v1.20.42 renders the exported Word week as seven A4 pages without splitting meal rows", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const word = app.slice(app.indexOf("const exportWeeklyWord ="), app.indexOf("const selectedIngredients ="));
+  assert.ok(word.includes("@page{size:A4;margin:12mm}"));
+  assert.ok(word.includes(".meal>tbody>tr{page-break-inside:avoid;mso-row-split:avoid}"));
+  assert.ok(word.includes(".foods th,.foods td{padding:0.75mm 1mm"));
+  const audit = await readFile(new URL("../scripts/audit-public-mobile.mjs", import.meta.url), "utf8");
+  assert.ok(audit.includes("Page.setDocumentContent"));
+  assert.ok(audit.includes("editedWeekExports.word.renderedPdfPages !== 7"));
+});
+
 test("v1.20.28 searches foods and dishes by any text fragment in both meal pickers", async () => {
   const [app, css, audit] = await Promise.all([
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
