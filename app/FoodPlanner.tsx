@@ -5673,14 +5673,14 @@ const attachmentSnacksS35S42: Recipe[] = [
   {
     id: "matrix-s42-frutti-di-bosco-con-yogurt-e-chia",
     name: "Frutti di bosco con yogurt e chia", kicker: "Spuntino pratico · matrice S42", course: "Spuntino", cuisine: "Italiano", kind: "combination",
-    image: photo("recipe-s42-mixed-berries-yogurt-v11660"), time: 3,
+    image: photo("recipe-s42-mixed-berries-yogurt-v12045"), time: 3,
     ingredients: [
       { food: "Frutti di bosco", grams: 150 },
       { food: "Yogurt bianco", grams: 125 },
       { food: "Semi di chia", grams: 5 },
     ],
     parts: [
-      { category: "Frutta", food: "Frutti di bosco", grams: 150, label: "Fragole, mirtilli, lamponi e more · 150 g", image: photo("part-mixed-berries-v11") },
+      { category: "Frutta", food: "Frutti di bosco", grams: 150, label: "Mirtilli, lamponi e more · 150 g", image: photo("part-mixed-berries-v11") },
       { category: "Latticino", food: "Yogurt bianco", grams: 125, label: "Yogurt bianco · 125 g", image: photo("part-yogurt-v7") },
       { category: "Extra", food: "Semi di chia", grams: 5, label: "Semi di chia · 5 g", image: photo("part-chia-v11511") },
     ],
@@ -8675,7 +8675,7 @@ const attachmentBaseSnacks: Recipe[] = [
     course: "Spuntino",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("recipe-s01-apple-almonds-v11677"),
+    image: photo("recipe-s01-apple-almonds-v12045"),
     time: 2,
     ingredients: [{ food: "Mela", grams: 150 }, { food: "Mandorle", grams: 15 }],
     steps: ["Lava la mela e porziona le mandorle separatamente."],

@@ -45,7 +45,7 @@ test("build GitHub Pages autonomo e completo", async () => {
   await access(new URL("../dist/food/recipe-s39-ricotta-cucumber-radish-v11660.png", import.meta.url));
   await access(new URL("../dist/food/recipe-s40-apple-pistachio-kefir-v11660.png", import.meta.url));
   await access(new URL("../dist/food/recipe-s41-cottage-ricecakes-v11660.png", import.meta.url));
-  await access(new URL("../dist/food/recipe-s42-mixed-berries-yogurt-v11660.png", import.meta.url));
+  await access(new URL("../dist/food/recipe-s42-mixed-berries-yogurt-v12045.png", import.meta.url));
   await access(new URL("../dist/food/recipe-p53-whole-pasta-lentils-v11661.png", import.meta.url));
   await access(new URL("../dist/food/recipe-p54-basmati-salmon-peas-v11661.png", import.meta.url));
   await access(new URL("../dist/food/recipe-p55-quinoa-turkey-pumpkin-v11661.png", import.meta.url));
@@ -724,7 +724,7 @@ test("v1.16.77 completes generic breakfast imagery and starts faithful snack ima
   const assets = [
     ["matrix-c27-oat-pancakes-blueberries-almond", "recipe-c27-oat-pancakes-blueberries-v11677"],
     ["matrix-c28-ricotta-pineapple-rye-sesame", "recipe-c28-ricotta-pineapple-rye-v11677"],
-    ["matrix-s01-apple-almonds", "recipe-s01-apple-almonds-v11677"],
+    ["matrix-s01-apple-almonds", "recipe-s01-apple-almonds-v12045"],
     ["matrix-s03-skyr-kiwi", "recipe-s03-skyr-kiwi-v11677"],
     ["matrix-s04-kefir-pear", "recipe-s04-kefir-pear-v11677"],
     ["matrix-s05-hummus-crunchy-vegetables", "recipe-s05-hummus-vegetables-v11677"],
@@ -1314,6 +1314,19 @@ test("v1.20.44 starts every printed day on a new page and keeps each meal togeth
   assert.match(app, /image: photo\("recipe-c26-skyr-grapes-pistachio-v12044"\)/);
   assert.equal(photoFile.readUInt32BE(16), 512);
   assert.equal(photoFile.readUInt32BE(20), 512);
+});
+
+test("v1.20.45 shows real apple and almond snack and separates berries from strawberries", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(app, /id: "matrix-s01-apple-almonds"[\s\S]{0,350}image: photo\("recipe-s01-apple-almonds-v12045"\)/);
+  assert.match(app, /id: "matrix-s42-frutti-di-bosco-con-yogurt-e-chia"[\s\S]{0,350}image: photo\("recipe-s42-mixed-berries-yogurt-v12045"\)/);
+  assert.match(app, /label: "Mirtilli, lamponi e more · 150 g"/);
+  assert.doesNotMatch(app, /label: "Fragole, mirtilli, lamponi e more/);
+  for (const filename of ["recipe-s01-apple-almonds-v12045.png", "recipe-s42-mixed-berries-yogurt-v12045.png"]) {
+    const image = await readFile(new URL("../dist/food/" + filename, import.meta.url));
+    assert.equal(image.readUInt32BE(16), 512);
+    assert.equal(image.readUInt32BE(20), 512);
+  }
 });
 
 test("v1.20.28 searches foods and dishes by any text fragment in both meal pickers", async () => {
