@@ -387,11 +387,13 @@ try {
       const sheet = document.querySelector('.print-preview-sheet');
       const backdrop = sheet?.parentElement;
       const meal = sheet?.querySelector('.print-meal');
+      const secondDay = sheet?.querySelector('.print-day + .print-day');
       return {
         sheetStatic: getComputedStyle(sheet).position === 'static',
         backdropStatic: getComputedStyle(backdrop).position === 'static',
         sheetNotClipped: getComputedStyle(sheet).overflow === 'visible' && getComputedStyle(sheet).display === 'block',
         mealKeptTogether: getComputedStyle(meal).breakInside === 'avoid',
+        dayStartsNewPage: getComputedStyle(secondDay).breakBefore === 'page',
         dayCount: sheet?.querySelectorAll('.print-day').length || 0,
       };
     })()`);
@@ -1961,7 +1963,8 @@ try {
     !weeklyPrintPreview.hasExports || !weeklyPrintPreview.closeVisible || weeklyPrintPreview.horizontalOverflow || !weeklyPrintPreview.closed ||
     (versionMinor >= 20 && versionPatch >= 38 &&
       (!printFlow.sheetStatic || !printFlow.backdropStatic || !printFlow.sheetNotClipped ||
-       !printFlow.mealKeptTogether || printFlow.dayCount !== 7 || printFlow.pdfBytes < 20_000 ||
+       !printFlow.mealKeptTogether || (versionPatch >= 44 && !printFlow.dayStartsNewPage) ||
+       printFlow.dayCount !== 7 || printFlow.pdfBytes < 20_000 ||
        (versionPatch >= 41 ? printFlow.pdfPages !== 7 : printFlow.pdfPages < 2))) ||
     (!editedWeekExports.skipped && (!editedWeekExports.dayOpened || !editedWeekExports.gramsInputFound ||
       !editedWeekExports.inputUpdated || !editedWeekExports.backInWeek ||

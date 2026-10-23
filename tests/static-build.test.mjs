@@ -711,7 +711,7 @@ test("v1.16.76 gives the third breakfast matrix block faithful recipe photos", a
     ["matrix-c23-bread-cottage-pear-pecans", "recipe-c23-cottage-pear-pecans-v11676"],
     ["matrix-c24-kefir-strawberry-oat-smoothie", "recipe-c24-kefir-strawberry-smoothie-v11676"],
     ["matrix-c25-scrambled-eggs-asparagus-rye", "recipe-c25-eggs-asparagus-kiwi-v11676"],
-    ["matrix-c26-skyr-grapes-pistachio-muesli", "recipe-c26-skyr-grapes-pistachio-v11676"],
+    ["matrix-c26-skyr-grapes-pistachio-muesli", "recipe-c26-skyr-grapes-pistachio-v12044"],
   ];
   for (const [id, asset] of assets) {
     assert.match(app, new RegExp('id: "' + id + '"[\\s\\S]{0,500}image: photo\\("' + asset + '"\\)'));
@@ -1298,6 +1298,22 @@ test("v1.20.43 retries release checks after a stalled CDN request", async () => 
   const mobileAudit = await readFile(new URL("../scripts/audit-public-mobile.mjs", import.meta.url), "utf8");
   assert.ok(mobileAudit.includes("mealRegistration.afterReloadButtonDone"));
   assert.ok(mobileAudit.includes("restored.summaryText.includes('1/5 registrati')"));
+});
+
+test("v1.20.44 starts every printed day on a new page and keeps each meal together", async () => {
+  const [app, css, audit, photoFile] = await Promise.all([
+    readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+    readFile(new URL("../scripts/audit-public-mobile.mjs", import.meta.url), "utf8"),
+    readFile(new URL("../dist/food/recipe-c26-skyr-grapes-pistachio-v12044.png", import.meta.url)),
+  ]);
+  assert.match(css, /\.print-day \+ \.print-day\s*\{\s*break-before: page;\s*page-break-before: always;/);
+  assert.match(css, /\.print-meal,[\s\S]{0,120}break-inside: avoid;/);
+  assert.ok(audit.includes("!printFlow.dayStartsNewPage"));
+  assert.ok(audit.includes("editedWeekExports.word.renderedPdfPages !== 7"));
+  assert.match(app, /image: photo\("recipe-c26-skyr-grapes-pistachio-v12044"\)/);
+  assert.equal(photoFile.readUInt32BE(16), 512);
+  assert.equal(photoFile.readUInt32BE(20), 512);
 });
 
 test("v1.20.28 searches foods and dishes by any text fragment in both meal pickers", async () => {

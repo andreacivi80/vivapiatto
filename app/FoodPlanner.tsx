@@ -9355,7 +9355,7 @@ const attachmentBreakfastsC22C28: Recipe[] = [
     course: "Colazione",
     cuisine: "Italiano",
     kind: "combination",
-    image: photo("recipe-c26-skyr-grapes-pistachio-v11676"),
+    image: photo("recipe-c26-skyr-grapes-pistachio-v12044"),
     time: 5,
     ingredients: [
       { food: "Skyr bianco", grams: 170 },
