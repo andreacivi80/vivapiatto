@@ -1123,7 +1123,9 @@ try {
       const result = {
         appended: parts.length === ${occasionalAddition.before} + 1,
         pizzaPhoto: Boolean(pizza?.querySelector('img[src*="pizza-margherita"]')),
-        pizzaEditable: Boolean(pizza?.querySelector('input')),
+        pizzaWholeWithSplit: Boolean(pizza?.classList.contains('occasional-whole') &&
+          pizza?.querySelector('button.occasional-split') &&
+          !pizza?.querySelector('input')),
         pickerClosed: !document.querySelector('.part-picker-sheet'),
         originalPartsKept: parts.length > 1,
       };
@@ -1160,6 +1162,57 @@ try {
     Object.assign(occasionalAddition, await evaluate(`(() => ({
       removedDirectly: document.querySelectorAll('.meal-card')[2]?.querySelectorAll('.meal-part').length === ${occasionalAddition.before}
     }))()`));
+    if (versionMinor >= 20 && versionPatch >= 46) {
+      await evaluate(`(() => {
+        const card = document.querySelectorAll('.meal-card')[2];
+        card?.querySelector('.add-part-compact')?.click();
+      })()`);
+      await wait(350);
+      await evaluate(`document.querySelector('.part-picker-sheet .part-picker-shortcuts button')?.click()`);
+      await wait(350);
+      Object.assign(occasionalAddition, await evaluate(`(() => {
+        const picker = document.querySelector('.part-picker-sheet');
+        const group = picker?.querySelector('.cheat-picker-group');
+        if (group) group.open = true;
+        const pizza = [...(group?.querySelectorAll('.complete-meal-select') || [])]
+          .find((button) => button.innerText.includes('Pizza con bresaola, rucola e grana'));
+        pizza?.click();
+        return { bresaolaChoiceFound: Boolean(pizza) };
+      })()`));
+      await wait(600);
+      Object.assign(occasionalAddition, await evaluate(`(() => {
+        const card = document.querySelectorAll('.meal-card')[2];
+        const whole = card?.querySelector('.meal-part.occasional-whole');
+        const result = {
+          bresaolaWhole: Boolean(whole?.innerText.includes('Pizza con bresaola, rucola e grana') &&
+            whole.querySelector('img')?.src.includes('cheat-pizza-bresaola-rucola-grana') &&
+            card.querySelectorAll('.meal-part').length === ${occasionalAddition.before} + 1),
+          splitAvailable: Boolean(whole?.querySelector('.occasional-split')),
+        };
+        return result;
+      })()`));
+      await page.send('Page.reload', { ignoreCache: false });
+      for (let attempt = 0; attempt < 40; attempt += 1) {
+        occasionalAddition.bresaolaPersisted = await evaluate(`Boolean(document.querySelectorAll('.meal-card')[2]?.querySelector('.meal-part.occasional-whole img[src*="cheat-pizza-bresaola-rucola-grana"]'))`);
+        if (occasionalAddition.bresaolaPersisted) break;
+        await wait(250);
+      }
+      await evaluate(`document.querySelectorAll('.meal-card')[2]?.querySelector('.meal-part.occasional-whole .occasional-split')?.click()`);
+      await wait(350);
+      occasionalAddition.bresaolaSplit = await evaluate(`(() => {
+        const card = document.querySelectorAll('.meal-card')[2];
+        return !card?.querySelector('.meal-part.occasional-whole') &&
+          card?.querySelectorAll('.meal-part').length === ${occasionalAddition.before} + 4;
+      })()`);
+      for (let part = 0; part < 4; part += 1) {
+        await evaluate(`(() => {
+          const parts = [...(document.querySelectorAll('.meal-card')[2]?.querySelectorAll('.meal-part') || [])];
+          parts.at(-1)?.querySelector('.part-remove')?.click();
+        })()`);
+        await wait(100);
+      }
+      occasionalAddition.bresaolaRemoved = await evaluate(`document.querySelectorAll('.meal-card')[2]?.querySelectorAll('.meal-part').length === ${occasionalAddition.before}`);
+    }
   }
   const readyDishFlow = await evaluate(`(() => {
     const card = document.querySelectorAll('.meal-card')[2];
@@ -2030,8 +2083,11 @@ try {
       (versionMinor >= 20 && versionPatch >= 25 && !occasionalAddition.hamburgerWholeDish) ||
       (versionMinor >= 20 && versionPatch >= 34 && !occasionalAddition.carbonaraWholeDish) ||
       (versionMinor >= 20 && versionPatch >= 35 && !occasionalAddition.amatricianaWholeDish) ||
-      !occasionalAddition.appended || !occasionalAddition.pizzaPhoto || !occasionalAddition.pizzaEditable ||
+      !occasionalAddition.appended || !occasionalAddition.pizzaPhoto || !occasionalAddition.pizzaWholeWithSplit ||
       !occasionalAddition.pickerClosed || !occasionalAddition.originalPartsKept || !occasionalAddition.removedDirectly)) ||
+    (versionMinor >= 20 && versionPatch >= 46 && (!occasionalAddition.bresaolaChoiceFound ||
+      !occasionalAddition.bresaolaWhole || !occasionalAddition.splitAvailable ||
+      !occasionalAddition.bresaolaPersisted || !occasionalAddition.bresaolaSplit || !occasionalAddition.bresaolaRemoved)) ||
     (releasePatch >= 84 && (!occasionalAddition.replacementAvailable ||
       !occasionalAddition.replacementKeptMeal || !occasionalAddition.oldPizzaGone || !occasionalAddition.tiramisuPhoto)) ||
     (!occasionalSplitPhoto.skipped && (!occasionalSplitPhoto.optionFound || !occasionalSplitPhoto.componentFound ||

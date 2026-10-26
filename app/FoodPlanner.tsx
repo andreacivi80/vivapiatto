@@ -17,6 +17,8 @@ type MealPart = RecipeIngredient & {
     "Carboidrato" | "Proteina" | "Contorno" | "Latticino" | "Frutta" | "Extra";
   image: string;
   occasionalGroupId?: string;
+  occasionalRecipeId?: string;
+  occasionalCollapsed?: boolean;
 };
 const partDisplayName = (part: Pick<RecipeIngredient, "food" | "label">) => {
   const label = (part.label || part.food).trim();
@@ -11729,6 +11731,9 @@ export function FoodPlanner() {
                     label: typeof entry.label === "string" ? entry.label : undefined,
                     category,
                     image,
+                    occasionalGroupId: typeof entry.occasionalGroupId === "string" ? entry.occasionalGroupId : undefined,
+                    occasionalRecipeId: typeof entry.occasionalRecipeId === "string" && recipeMap[entry.occasionalRecipeId] ? entry.occasionalRecipeId : undefined,
+                    occasionalCollapsed: entry.occasionalCollapsed === true,
                   } satisfies MealPart];
                 }),
             ]),
@@ -13271,7 +13276,7 @@ export function FoodPlanner() {
       .sort((a, b) => compatibilityScore(a) - compatibilityScore(b))
       .slice(0, 6);
   };
-  const appendOccasionalParts = (parts: MealPart[], label: string) => {
+  const appendOccasionalParts = (parts: MealPart[], label: string, recipeId?: string) => {
     if (!partPicker) return;
     const [dayText, slotText] = partPicker.key.split("-");
     const day = Number(dayText);
@@ -13285,7 +13290,7 @@ export function FoodPlanner() {
     setMealView((current) => ({ ...current, [key]: "parts" }));
     setPartSelections((current) => ({
       ...current,
-      [key]: [...currentParts, ...parts.map((part) => ({ ...part, occasionalGroupId: groupId }))],
+      [key]: [...currentParts, ...parts.map((part) => ({ ...part, occasionalGroupId: groupId, occasionalRecipeId: recipeId, occasionalCollapsed: Boolean(recipeId) }))],
     }));
     setReplanNote(`${label} aggiunto al pasto. Quantità e totali restano modificabili.`);
     replanFollowingDays(day);
@@ -13300,9 +13305,9 @@ export function FoodPlanner() {
         image: recipe.ingredients.length === 1 ? recipe.image : part.image,
       }));
   const addOccasionalRecipe = (recipe: Recipe) => {
-    appendOccasionalParts(occasionalRecipeParts(recipe), recipe.name);
+    appendOccasionalParts(occasionalRecipeParts(recipe), recipe.name, recipe.id);
   };
-  const replaceOccasionalParts = (parts: MealPart[], label: string) => {
+  const replaceOccasionalParts = (parts: MealPart[], label: string, recipeId?: string) => {
     if (!partPicker?.part.occasionalGroupId || !parts.length) return;
     const [dayText, slotText] = partPicker.key.split("-");
     const day = Number(dayText);
@@ -13318,7 +13323,7 @@ export function FoodPlanner() {
     const replacementId = crypto.randomUUID();
     const nextParts = [
       ...withoutGroup.slice(0, insertAt),
-      ...parts.map((part) => ({ ...part, occasionalGroupId: replacementId })),
+      ...parts.map((part) => ({ ...part, occasionalGroupId: replacementId, occasionalRecipeId: recipeId, occasionalCollapsed: Boolean(recipeId) })),
       ...withoutGroup.slice(insertAt),
     ];
     clearMealRegistration(key);
@@ -13330,7 +13335,7 @@ export function FoodPlanner() {
     setPartPicker(null);
   };
   const replaceOccasionalRecipe = (recipe: Recipe) => {
-    replaceOccasionalParts(occasionalRecipeParts(recipe), recipe.name);
+    replaceOccasionalParts(occasionalRecipeParts(recipe), recipe.name, recipe.id);
   };
   const chooseConfiguredGelato = () => {
     if (!partPicker) return;
@@ -14044,6 +14049,21 @@ export function FoodPlanner() {
       [key]: activeParts.filter((_, partIndex) => partIndex !== index),
     }));
     setReplanNote("Elemento rimosso: calorie e nutrienti aggiornati.");
+  };
+  const removeOccasionalGroup = (key: string, recipe: Recipe, groupId: string) => {
+    setPartSelections((current) => ({
+      ...current,
+      [key]: activeMealParts(key, recipe).filter((part) => part.occasionalGroupId !== groupId),
+    }));
+    setReplanNote("Piatto rimosso: calorie e nutrienti aggiornati.");
+  };
+  const splitOccasionalGroup = (key: string, recipe: Recipe, groupId: string) => {
+    setPartSelections((current) => ({
+      ...current,
+      [key]: activeMealParts(key, recipe).map((part) =>
+        part.occasionalGroupId === groupId ? { ...part, occasionalCollapsed: false } : part,
+      ),
+    }));
   };
   const updateMealPartGrams = (
     key: string,
@@ -15392,7 +15412,14 @@ export function FoodPlanner() {
                             ? `${SLOT_LABELS[i]} · ${
                                 activeParts
                                   .filter((part) => part.grams > 0)
-                                  .map(partDisplayName)
+                                  .map((part, index, parts) => {
+                                    if (part.occasionalCollapsed && part.occasionalGroupId && part.occasionalRecipeId) {
+                                      if (parts.findIndex((candidate) => candidate.occasionalGroupId === part.occasionalGroupId) !== index) return "";
+                                      return recipeMap[part.occasionalRecipeId]?.name || partDisplayName(part);
+                                    }
+                                    return partDisplayName(part);
+                                  })
+                                  .filter(Boolean)
                                   .join(", ") || "nessun elemento"
                               }`
                             : r.name}
@@ -15462,7 +15489,33 @@ export function FoodPlanner() {
                               {activeParts
                                 .map((part, partIndex) => ({ part, partIndex }))
                                 .filter(({ part }) => part.grams > 0)
-                                .map(({ part, partIndex }) => (
+                                .map(({ part, partIndex }) => {
+                                  const groupedRecipe = part.occasionalCollapsed && part.occasionalGroupId && part.occasionalRecipeId
+                                    ? recipeMap[part.occasionalRecipeId]
+                                    : undefined;
+                                  if (groupedRecipe && activeParts.some((previous, index) =>
+                                    index < partIndex && previous.grams > 0 && previous.occasionalGroupId === part.occasionalGroupId,
+                                  )) return null;
+                                  if (groupedRecipe && part.occasionalGroupId) {
+                                    const groupId = part.occasionalGroupId;
+                                    const groupParts = activeParts.filter((item) => item.occasionalGroupId === groupId && item.grams > 0);
+                                    const groupNutrition = calc(groupParts);
+                                    return (
+                                      <div className="meal-part occasional-whole" key={groupId} onClick={(event) => event.stopPropagation()}>
+                                        <img src={groupedRecipe.image} alt={groupedRecipe.name} loading="lazy" decoding="async" />
+                                        <button type="button" className="part-remove" aria-label={`Rimuovi ${groupedRecipe.name}`}
+                                          onClick={() => removeOccasionalGroup(key, r, groupId)}>−</button>
+                                        <button className="part-change" onClick={() => openPartPicker({ key, index: partIndex, part, role: part.category })}>
+                                          {groupedRecipe.name}<i>Alternative</i>
+                                        </button>
+                                        <small className="part-nutrients">{round(groupNutrition.kcal)} kcal · {round(groupNutrition.protein)} g proteine</small>
+                                        <button type="button" className="occasional-split" onClick={() => splitOccasionalGroup(key, r, groupId)}>
+                                          Dividi in componenti
+                                        </button>
+                                      </div>
+                                    );
+                                  }
+                                  return (
                                 <div
                                   className="meal-part"
                                   key={`${part.category}-${partIndex}`}
@@ -15526,7 +15579,7 @@ export function FoodPlanner() {
                                     {round(calc([part]).protein)} g proteine
                                   </small>
                                 </div>
-                              ))}
+                              );})}
                             </div>
                             <div className="part-extras">
                               {visibleIngredients
@@ -15900,6 +15953,14 @@ export function FoodPlanner() {
                     const weekParts = activeMealParts(key, r)
                       .map((part, originalIndex) => ({ ...part, originalIndex }))
                       .filter((part) => part.grams > 0);
+                    const weekDisplayedParts = weekParts.filter((part, index) =>
+                      !part.occasionalCollapsed || !part.occasionalGroupId || !part.occasionalRecipeId ||
+                      weekParts.findIndex((candidate) => candidate.occasionalGroupId === part.occasionalGroupId) === index,
+                    );
+                    const weekPartName = (part: MealPart) =>
+                      part.occasionalCollapsed && part.occasionalRecipeId
+                        ? recipeMap[part.occasionalRecipeId]?.name || partDisplayName(part)
+                        : partDisplayName(part);
                     const weekIngredients = plannedIngredients(key, r);
                     const excludedForCurrentProfile = mealContainsExcludedFood(key, r);
                     const outsideCurrentProfile = !excludedForCurrentProfile && !mealMatchesProfile(key, r);
@@ -15922,9 +15983,9 @@ export function FoodPlanner() {
                           <span>
                             <small>{SLOT_LABELS[slot]}</small>
                             <b>
-                              {weekParts.length
-                                ? weekParts
-                                    .map(partDisplayName)
+                              {weekDisplayedParts.length
+                                ? weekDisplayedParts
+                                    .map(weekPartName)
                                     .join(" · ")
                                 : r.name}
                             </b>
@@ -15951,10 +16012,10 @@ export function FoodPlanner() {
                         </button>
                         {weekParts.length > 0 && (
                           <div className="week-part-strip">
-                            {weekParts.map((part, partIndex) => (
+                            {weekDisplayedParts.map((part, partIndex) => (
                               <button
                                 key={`${part.category}-${partIndex}`}
-                                aria-label={`Cambia ${part.category}: ${partDisplayName(part)}`}
+                                aria-label={`Cambia ${part.category}: ${weekPartName(part)}`}
                                 onClick={() =>
                                   openPartPicker({
                                     key,
@@ -15965,13 +16026,15 @@ export function FoodPlanner() {
                                 }
                               >
                                 <img
-                                  src={part.image}
-                                  alt={partDisplayName(part)}
+                                  src={part.occasionalCollapsed && part.occasionalRecipeId ? recipeMap[part.occasionalRecipeId]?.image || part.image : part.image}
+                                  alt={weekPartName(part)}
                                   loading="lazy"
                                   decoding="async"
                                 />
-                                <span>{partDisplayName(part)}</span>
-                                <b>{part.grams} g</b>
+                                <span>{weekPartName(part)}</span>
+                                <b>{part.occasionalCollapsed && part.occasionalGroupId
+                                  ? weekParts.filter((item) => item.occasionalGroupId === part.occasionalGroupId).reduce((total, item) => total + item.grams, 0)
+                                  : part.grams} g</b>
                               </button>
                             ))}
                             <button

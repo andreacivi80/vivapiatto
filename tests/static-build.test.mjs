@@ -1329,6 +1329,21 @@ test("v1.20.45 shows real apple and almond snack and separates berries from stra
   }
 });
 
+test("v1.20.46 keeps every added pizza whole until an explicit split", async () => {
+  const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  const audit = await readFile(new URL("../scripts/audit-public-mobile.mjs", import.meta.url), "utf8");
+  assert.match(app, /appendOccasionalParts\(occasionalRecipeParts\(recipe\), recipe\.name, recipe\.id\)/);
+  assert.match(app, /occasionalRecipeId: recipeId, occasionalCollapsed: Boolean\(recipeId\)/);
+  assert.match(app, /occasionalGroupId: typeof entry\.occasionalGroupId === "string"/);
+  assert.match(app, /occasionalRecipeId: typeof entry\.occasionalRecipeId === "string"/);
+  assert.match(app, /className="meal-part occasional-whole"/);
+  assert.match(app, /className="occasional-split"/);
+  assert.match(app, /Dividi in componenti/);
+  assert.match(css, /\.meal-part\.occasional-whole/);
+  assert.match(audit, /pizzaWholeWithSplit/);
+});
+
 test("v1.20.28 searches foods and dishes by any text fragment in both meal pickers", async () => {
   const [app, css, audit] = await Promise.all([
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
@@ -3164,7 +3179,7 @@ test("v1.18.79 keeps one editable gram value instead of stale grams inside label
   assert.match(source, /const partDisplayName/);
   assert.match(source, /replace\(\/\\s\*·\\s\*\(\?:da circa/);
   assert.match(source, /<span>\{partDisplayName\(part\)\}<\/span>/);
-  assert.match(source, /<b>\{part[.]grams\} g<\/b>/);
+  assert.match(source, /: part\.grams\} g<\/b>/);
   assert.doesNotMatch(source, /<span>\{part[.]label \|\| part[.]food\}<\/span>/);
 });
 
@@ -3213,7 +3228,7 @@ test("v1.18.84 keeps portions and jars out of compact meal summaries", async () 
   const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(source, /\(\?:porzione\|vasetto\)/);
   assert.match(source, /partDisplayName\(part\)/);
-  assert.match(source, /<b>\{part[.]grams\} g<\/b>/);
+  assert.match(source, /: part\.grams\} g<\/b>/);
 });
 
 test("v1.18.85 spells out macros in visible extras and weekly text export", async () => {
