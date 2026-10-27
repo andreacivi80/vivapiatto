@@ -2295,7 +2295,7 @@ try {
     String(child.pid),
     "/T",
     "/F",
-  ], { windowsHide: true, stdio: "ignore" });
+  ], { windowsHide: true, stdio: "ignore", timeout: 10_000 });
   for (let attempt = 0; attempt < 6; attempt += 1) {
     await wait(attempt === 0 ? 1_500 : 1_000);
     try {
