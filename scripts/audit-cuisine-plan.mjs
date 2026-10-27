@@ -330,6 +330,10 @@ try {
       ? { contextTargetMatrix, followUpAfterSwap, completeMealProjection, asianDocumentedCount: report.asianDocumentedCount }
       : report));
   if (matrixFull && !matrixFocus) {
+    const repeatedDayFruit = (meals) =>
+      ["mela", "banana", "pera", "kiwi", "uva", "pesca", "nettarina", "mango", "papaya", "albicocca", "ciliegie", "anguria", "melone", "arancia", "fragole"]
+        .some((fruit) => [0, 1, 3].filter((slot) =>
+          new RegExp(`\\b${fruit}\\b`, "i").test(meals[slot] || "")).length > 1);
     const mensaIds = new Set([
       "simple-pasta-white", "simple-pasta-tomato", "simple-eggs",
       "simple-steak-potatoes", "everyday-pasta-e-fagioli",
@@ -348,6 +352,7 @@ try {
       return row.mainMealCount !== 14 || row.distinctMainMeals < 12 || row.horizontalOverflow ||
         row.rotation.some(({ status }) => status.startsWith("Da riequilibrare")) ||
         row.meals.length !== 5 || !planKcal || Math.abs(planKcal - row.target) > 300 ||
+        repeatedDayFruit(row.meals) ||
         (row.mealIds[0]?.startsWith("catalog-breakfast-") &&
           /mozzarella|paneer|crescenza|primo sale|scamorza|provolone|stracchino|parmigiano|\blime\b/i.test(row.meals[0])) ||
         row.meals.filter((meal, slot) => [0, 1, 3].includes(slot) &&

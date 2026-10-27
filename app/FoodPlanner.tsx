@@ -12626,8 +12626,11 @@ export function FoodPlanner() {
           }
           if (slot === 3) {
             const morning = recipeMap[next[`${day}-1`] || days[day].recipes[1]];
+            const breakfast = recipeMap[next[`${day}-0`] || days[day].recipes[0]];
             const differentFruit = candidates.filter((recipe) =>
-              recipe.id !== morning.id && !sharesFruit(morning, recipe),
+              recipe.id !== morning.id &&
+              !sharesFruit(morning, recipe, 1, 3, targetForDay(day)) &&
+              !sharesFruit(breakfast, recipe, 0, 3, targetForDay(day)),
             );
             if (differentFruit.length) candidates = differentFruit;
           }
@@ -13584,14 +13587,19 @@ export function FoodPlanner() {
       .sort((a, b) => rankingScore(a) - rankingScore(b));
     return ranked[offset % Math.min(5, ranked.length)];
   };
-  const sharesFruit = (left: Recipe, right: Recipe) => {
+  const plannedFruitFoods = (recipe: Recipe, slot: number, dailyTarget: number) => {
     const fruitFoods = new Set(mealPartOptions.Frutta.map((part) => part.food));
-    const leftFruit = new Set(
-      left.ingredients
+    const source = recipe.parts || recipe.ingredients;
+    return new Set(
+      [...source, ...targetAdditionsFor(slot, dailyTarget, source)]
         .filter((ingredient) => fruitFoods.has(ingredient.food))
         .map((ingredient) => ingredient.food),
     );
-    return right.ingredients.some((ingredient) => leftFruit.has(ingredient.food));
+  };
+  const sharesFruit = (left: Recipe, right: Recipe, leftSlot: number, rightSlot: number, dailyTarget: number) => {
+    const leftFruit = plannedFruitFoods(left, leftSlot, dailyTarget);
+    return [...plannedFruitFoods(right, rightSlot, dailyTarget)]
+      .some((food) => leftFruit.has(food));
   };
   const isSmoothieRecipe = (recipe: Recipe) =>
     /frullato|smoothie|shaker whey/i.test(`${recipe.name} ${recipe.kicker}`);
@@ -13772,9 +13780,10 @@ export function FoodPlanner() {
         );
         if (hasWholeEgg(breakfast.ingredients)) plannedWholeEggBreakfasts += 1;
         plannedEggEquivalents += wholeEggEquivalents(plannedIngredients(`${day}-0`, breakfast, true));
-        const morningSnackPool = isSmoothieRecipe(breakfast)
-          ? snacks.filter((recipe) => !isSmoothieRecipe(recipe))
-          : snacks;
+        const morningSnackPool = snacks.filter((recipe) =>
+          !sharesFruit(breakfast, recipe, 0, 1, profileTarget) &&
+          (!isSmoothieRecipe(breakfast) || !isSmoothieRecipe(recipe)),
+        );
         const morningSnack = closestForSlot(
           morningSnackPool.length ? morningSnackPool : snacks,
           1,
@@ -13788,7 +13797,8 @@ export function FoodPlanner() {
         const differentFruitSnacks = snacks.filter(
           (recipe) =>
             recipe.id !== morningSnack.id &&
-            !sharesFruit(morningSnack, recipe) &&
+            !sharesFruit(morningSnack, recipe, 1, 3, profileTarget) &&
+            !sharesFruit(breakfast, recipe, 0, 3, profileTarget) &&
             (!smoothieAlreadyPlanned || !isSmoothieRecipe(recipe)),
         );
         const afternoonPool = differentFruitSnacks.length
@@ -13994,9 +14004,10 @@ export function FoodPlanner() {
       (checkinBreakfastPool.length ? checkinBreakfastPool : breakfasts)[
         (dayIndex + offset) % (checkinBreakfastPool.length || breakfasts.length)
       ];
-    const morningSnackPool = isSmoothieRecipe(breakfast)
-      ? snacks.filter((recipe) => !isSmoothieRecipe(recipe))
-      : snacks;
+    const morningSnackPool = snacks.filter((recipe) =>
+      !sharesFruit(breakfast, recipe, 0, 1, plannedCalories) &&
+      (!isSmoothieRecipe(breakfast) || !isSmoothieRecipe(recipe)),
+    );
     const morningSnack = (morningSnackPool.length ? morningSnackPool : snacks)[
       (dayIndex + offset) % (morningSnackPool.length || snacks.length)
     ];
@@ -14005,7 +14016,8 @@ export function FoodPlanner() {
     const afternoonCandidates = snacks.filter(
       (recipe) =>
         recipe.id !== morningSnack.id &&
-        !sharesFruit(morningSnack, recipe) &&
+        !sharesFruit(morningSnack, recipe, 1, 3, plannedCalories) &&
+        !sharesFruit(breakfast, recipe, 0, 3, plannedCalories) &&
         (!smoothieAlreadyPlanned || !isSmoothieRecipe(recipe)),
     );
     const afternoonPool = afternoonCandidates.length
