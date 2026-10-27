@@ -11062,9 +11062,9 @@ if (recipeMetadataIssues.length) {
   throw new Error(`Metadati ricette non validi:\n${recipeMetadataIssues.join("\n")}`);
 }
 const recipeMap = Object.fromEntries(allRecipes.map((r) => [r.id, r]));
-// Older saved pizzas were appended as separate ingredients. Rejoin only exact,
-// untouched pizza ingredient sequences; an explicitly split group keeps its id
-// and is never recomposed by this migration.
+// Older saved pizzas were appended as separate ingredients. Rejoin an ordered
+// pizza sequence even if its portions changed: only presentation changes, so
+// the user's actual grams remain intact. Explicitly split groups keep their id.
 const restoreWholeLegacyPizzas = (saved: Record<string, MealPart[]>) =>
   Object.fromEntries(Object.entries(saved).map(([key, entries]) => {
     const restored = entries.map((part) => ({ ...part }));
@@ -11073,7 +11073,8 @@ const restoreWholeLegacyPizzas = (saved: Record<string, MealPart[]>) =>
       for (let start = 0; start <= restored.length - expected.length; start += 1) {
         const matches = expected.every((part, offset) => {
           const savedPart = restored[start + offset];
-          return !savedPart.occasionalGroupId && savedPart.food === part.food && savedPart.grams === part.grams;
+          return !savedPart.occasionalGroupId && savedPart.food === part.food &&
+            Number.isFinite(savedPart.grams) && savedPart.grams > 0;
         });
         if (!matches) continue;
         const groupId = `restored-pizza-${key}-${recipe.id}-${start}`;

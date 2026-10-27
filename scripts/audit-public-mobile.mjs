@@ -1266,10 +1266,10 @@ try {
         saved.partSelections = saved.partSelections || {};
         saved.mealView = saved.mealView || {};
         saved.partSelections['0-2'] = [
-          { food: 'Pizza Napoletana Margherita STG', grams: 300 },
-          { food: 'Bresaola', grams: 50 },
-          { food: 'Rucola', grams: 30 },
-          { food: 'Parmigiano Reggiano DOP', grams: 20 },
+          { food: 'Pizza Napoletana Margherita STG', grams: 340 },
+          { food: 'Bresaola', grams: 65 },
+          { food: 'Rucola', grams: 20 },
+          { food: 'Parmigiano Reggiano DOP', grams: 15 },
         ];
         saved.mealView['0-2'] = 'parts';
         localStorage.setItem('vivapiatto-v1', JSON.stringify(saved));
@@ -1279,6 +1279,33 @@ try {
         occasionalAddition.legacyPizzaRestored = await evaluate(`Boolean(document.querySelectorAll('.meal-card')[2]?.querySelector('.meal-part.occasional-whole img[src*="cheat-pizza-bresaola-rucola-grana"]'))`);
         if (occasionalAddition.legacyPizzaRestored) break;
         await wait(250);
+      }
+      if (versionPatch >= 55) {
+        occasionalAddition.legacyPizzaGramsPreserved = await evaluate(`(() => {
+          const saved = JSON.parse(localStorage.getItem('vivapiatto-v1') || '{}');
+          const parts = saved.partSelections?.['0-2'] || [];
+          return parts.map((part) => part.grams).join(',') === '340,65,20,15' &&
+            parts.every((part) => part.occasionalCollapsed === true && part.occasionalGroupId);
+        })()`);
+        await evaluate(`(() => {
+          const saved = JSON.parse(localStorage.getItem('vivapiatto-v1') || '{}');
+          saved.partSelections['0-2'] = saved.partSelections['0-2'].map((part) => ({
+            ...part, occasionalGroupId: 'explicit-user-split',
+            occasionalRecipeId: 'occasional-pizza-bresaola-rucola-grana',
+            occasionalCollapsed: false,
+          }));
+          localStorage.setItem('vivapiatto-v1', JSON.stringify(saved));
+        })()`);
+        await page.send('Page.reload', { ignoreCache: false });
+        for (let attempt = 0; attempt < 40; attempt += 1) {
+          if (await evaluate(`document.querySelectorAll('.meal-card').length === 5`)) break;
+          await wait(250);
+        }
+        occasionalAddition.explicitPizzaSplitPreserved = await evaluate(`(() => {
+          const card = document.querySelectorAll('.meal-card')[2];
+          return Boolean(card && !card.querySelector('.meal-part.occasional-whole') &&
+            card.querySelectorAll('.meal-part').length === 4);
+        })()`);
       }
       await evaluate(`localStorage.setItem('vivapiatto-v1', ${JSON.stringify(originalProfile)})`);
       await page.send('Page.reload', { ignoreCache: false });
@@ -2197,6 +2224,7 @@ try {
     (versionMinor >= 20 && versionPatch >= 48 && (!occasionalAddition.legacyPizzaRestored || occasionalAddition.wholePizzaVariants?.length !== 10 ||
       occasionalAddition.wholePizzaVariants.some((pizza) => !pizza.found || !pizza.singleCard || !pizza.wholePhoto || !pizza.canSplit))) ||
     (versionMinor >= 20 && versionPatch >= 54 && (!occasionalAddition.weekWholePizzaChosen || !occasionalAddition.weekWholePizza)) ||
+    (versionMinor >= 20 && versionPatch >= 55 && (!occasionalAddition.legacyPizzaGramsPreserved || !occasionalAddition.explicitPizzaSplitPreserved)) ||
     (releasePatch >= 84 && (!occasionalAddition.replacementAvailable ||
       !occasionalAddition.replacementKeptMeal || !occasionalAddition.oldPizzaGone || !occasionalAddition.tiramisuPhoto)) ||
     (!occasionalSplitPhoto.skipped && (!occasionalSplitPhoto.optionFound || !occasionalSplitPhoto.componentFound ||

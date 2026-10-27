@@ -1344,13 +1344,13 @@ test("v1.20.46 keeps every added pizza whole until an explicit split", async () 
   assert.match(audit, /pizzaWholeWithSplit/);
 });
 
-test("v1.20.48 restores untouched legacy pizzas as whole dishes and checks every variant", async () => {
+test("v1.20.55 restores saved pizza portions as whole dishes and checks every variant", async () => {
   const [app, audit] = await Promise.all([
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../scripts/audit-public-mobile.mjs", import.meta.url), "utf8"),
   ]);
   assert.match(app, /const restoreWholeLegacyPizzas = /);
-  assert.match(app, /!savedPart\.occasionalGroupId && savedPart\.food === part\.food && savedPart\.grams === part\.grams/);
+  assert.match(app, /!savedPart\.occasionalGroupId && savedPart\.food === part\.food &&\s*Number\.isFinite\(savedPart\.grams\) && savedPart\.grams > 0/);
   assert.match(app, /occasionalRecipeId: recipe\.id,\s*occasionalCollapsed: true/);
   assert.match(app, /setPartSelections\(restoreWholeLegacyPizzas\(safePartRecord/);
   assert.match(audit, /wholePizzaVariants\.push/);
