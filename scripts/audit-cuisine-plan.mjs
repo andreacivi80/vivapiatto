@@ -344,6 +344,8 @@ try {
       return row.mainMealCount !== 14 || row.distinctMainMeals < 12 || row.horizontalOverflow ||
         row.rotation.some(({ status }) => status.startsWith("Da riequilibrare")) ||
         row.meals.length !== 5 || !planKcal || Math.abs(planKcal - row.target) > 300 ||
+        row.meals.filter((meal, slot) => [0, 1, 3].includes(slot) &&
+          /frullato|smoothie|shaker whey/i.test(meal)).length > 1 ||
         row.mealParts.some((parts, index) => parts.length > 0 && !row.mealUnrepresentedExtras[index] &&
           Math.abs(parts.reduce((total, part) => total + part.kcal, 0) - row.mealKcal[index]) > 10) ||
         (row.context === "Mensa" &&

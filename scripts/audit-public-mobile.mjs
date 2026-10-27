@@ -1639,6 +1639,8 @@ try {
   profileAdaptation.workBreakfastFamiliar = /latte|fette biscottate|yogurt greco|cracker integrali/i.test(profileAdaptation.workMenu[0] || '');
   profileAdaptation.workSnacksPractical = [profileAdaptation.workMenu[1], profileAdaptation.workMenu[3]]
     .every((heading) => !/wafer|grissini/i.test(heading || ''));
+  profileAdaptation.workDrinkSnacksNotRepeated = [profileAdaptation.workMenu[1], profileAdaptation.workMenu[3]]
+    .filter((heading) => /frullato|smoothie|shaker whey/i.test(heading || '')).length <= 1;
   await changeSelectValue('.cuisine-picker select', 1, 'Casa');
   Object.assign(profileAdaptation, await evaluate(`(() => {
     const homeMenu = [...document.querySelectorAll('.meal-card h3')].map((heading) => heading.innerText.trim());
@@ -2193,7 +2195,7 @@ try {
     !profileAdaptation.historyConsentReenabled ||
     !profileAdaptation.lockedWeekConfirmed || !profileAdaptation.lockedWeekReopenedForAllergy ||
     !profileAdaptation.weekGlutenFree || !profileAdaptation.loggedMealPreserved ||
-    !profileAdaptation.workBreakfastPractical || (version === '1.19.82' && !profileAdaptation.workBreakfastFamiliar) || !profileAdaptation.workSnacksPractical || !profileAdaptation.homeSelected || !profileAdaptation.contextChangesPlan ||
+    !profileAdaptation.workBreakfastPractical || (version === '1.19.82' && !profileAdaptation.workBreakfastFamiliar) || !profileAdaptation.workSnacksPractical || !profileAdaptation.workDrinkSnacksNotRepeated || !profileAdaptation.homeSelected || !profileAdaptation.contextChangesPlan ||
     profileAdaptation.horizontalOverflow ||
     !freeChoiceAndReplan.editorOpened || !freeChoiceAndReplan.editablePartFound ||
     !freeChoiceAndReplan.registrationFound || !freeChoiceAndReplan.editedBeforeSwap ||

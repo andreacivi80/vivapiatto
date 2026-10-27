@@ -13579,7 +13579,7 @@ export function FoodPlanner() {
     return right.ingredients.some((ingredient) => leftFruit.has(ingredient.food));
   };
   const isSmoothieRecipe = (recipe: Recipe) =>
-    /frullato|smoothie/i.test(`${recipe.name} ${recipe.kicker}`);
+    /frullato|smoothie|shaker whey/i.test(`${recipe.name} ${recipe.kicker}`);
   const applyCuisine = (
     preference: "variety" | "repeat" = weekPreference,
     forceAllDays = false,
