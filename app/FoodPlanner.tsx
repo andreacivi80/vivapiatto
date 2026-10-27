@@ -7497,6 +7497,20 @@ const portableSnackDairy = mealPartOptions.Latticino.filter(
 const stableCatalogFruits = mealPartOptions.Frutta.filter(
   (part) => !["Fichi freschi", "Ribes freschi"].includes(part.food),
 );
+const practicalBreakfastDairyFoods = new Set([
+  "Yogurt greco 0%", "Yogurt greco 2%", "Yogurt bianco", "Yogurt proteico alla vaniglia",
+  "Skyr bianco", "Kefir bianco magro", "Budino proteico al cioccolato", "Ricotta vaccina",
+  "Latte parzialmente scremato", "Latte scremato", "Latte senza lattosio parzialmente scremato",
+  "Bevanda di soia senza zucchero", "Bevanda d'avena senza zucchero",
+  "Bevanda di mandorla senza zucchero",
+]);
+const allBreakfastDairyFoods = new Set(mealPartOptions.Latticino.map((part) => part.food));
+const practicalAutomaticBreakfast = (recipe: Recipe) =>
+  !recipe.id.startsWith("catalog-breakfast-") ||
+  recipe.ingredients.every((item) =>
+    (!allBreakfastDairyFoods.has(item.food) || practicalBreakfastDairyFoods.has(item.food)) &&
+    item.food !== "Lime",
+  );
 const practicalSnackFruits = stableCatalogFruits.filter(
   (part) => part.food !== "Lime",
 );
@@ -12102,7 +12116,8 @@ export function FoodPlanner() {
       .filter(
         (recipe) =>
           recipe.course === "Colazione" &&
-          (selectedContext === "Casa" || recipe.time <= 7),
+          (selectedContext === "Casa" || recipe.time <= 7) &&
+          practicalAutomaticBreakfast(recipe),
       )
       .filter(isProfileEligible);
     const workMorning = ["Lavoro", "Mensa"].includes(selectedContext)

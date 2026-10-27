@@ -303,8 +303,12 @@ try {
     completeMealProjection,
   };
   const rotationOnly = process.argv.includes("--rotation-only");
+  const menusOnly = process.argv.includes("--menus-only");
   const brief = process.argv.includes("--brief");
-  console.log(JSON.stringify(rotationOnly
+  console.log(JSON.stringify(menusOnly
+    ? contextTargetMatrix.map(({ style, context, target, plan, meals, mealIds }) =>
+        ({ style, context, target, plan, meals, mealIds }))
+    : rotationOnly
     ? {
         profiles: contextTargetMatrix.length,
         eggEquivalents: contextTargetMatrix.map(({ rotation }) =>
@@ -344,6 +348,8 @@ try {
       return row.mainMealCount !== 14 || row.distinctMainMeals < 12 || row.horizontalOverflow ||
         row.rotation.some(({ status }) => status.startsWith("Da riequilibrare")) ||
         row.meals.length !== 5 || !planKcal || Math.abs(planKcal - row.target) > 300 ||
+        (row.mealIds[0]?.startsWith("catalog-breakfast-") &&
+          /mozzarella|paneer|crescenza|primo sale|scamorza|provolone|stracchino|parmigiano|\blime\b/i.test(row.meals[0])) ||
         row.meals.filter((meal, slot) => [0, 1, 3].includes(slot) &&
           /frullato|smoothie|shaker whey/i.test(meal)).length > 1 ||
         row.mealParts.some((parts, index) => parts.length > 0 && !row.mealUnrepresentedExtras[index] &&
