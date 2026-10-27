@@ -2031,17 +2031,17 @@ test("v1.17.0 makes weekly calorie and rotation status explicit", async () => {
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
   assert.match(app, /weeklyKcalDelta/);
-  assert.match(app, /status: standardWeeklyTargets/);
+  assert.match(app, /status: standardWeeklyTargets && item\.label === "Uova"/);
   assert.match(app, /Nel range/);
   assert.match(app, /Da riequilibrare/);
   assert.match(css, /\.weekly-frequency \.within-target/);
 });
 
-test("v1.19.78 reports compatible weekly categories for non-omnivore styles", async () => {
+test("weekly categories remain visible without presenting meal counts as clinical portions", async () => {
   const app = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(app, /const visibleWeeklyFamilies = foodStyle === "Vegano"/);
-  assert.match(app, /"Solo conteggio"/);
-  assert.match(app, /sameFamily\.length \|\| standardWeeklyTargets \? sameFamily : compatible/);
+  assert.match(app, /"Pasti pianificati"/);
+  assert.match(app, /sameFamily\.length \? sameFamily : sameCuisine\.length \? sameCuisine : eggSafe/);
   assert.match(app, /proteinSignatureForItems\(items\)/);
 });
 
@@ -2299,16 +2299,17 @@ test("v1.18.11 distinguishes an orientation example from a defined calorie targe
   assert.match(css, /\.target-confirmation/);
 });
 
-test("v1.18.12 aligns the automatic 14-meal protein rotation with the supplied matrix", async () => {
+test("automatic 14-meal protein rotation leaves room for egg portions rather than egg meals", async () => {
   const app = await readFile("app/FoodPlanner.tsx", "utf8");
   const rotation = app.slice(app.indexOf("const WEEKLY_MAIN_ROTATION"), app.indexOf("const mainRotationForCuisine"));
   const count = (family) => [...rotation.matchAll(new RegExp(`"${family}"`, "g"))].length;
-  assert.equal(count("pesce"), 2);
+  assert.equal(count("pesce"), 3);
   assert.equal(count("legumi"), 3);
   assert.equal(count("carne-bianca"), 2);
   assert.equal(count("carne-rossa"), 1);
-  assert.equal(count("uova"), 3);
+  assert.equal(count("uova"), 1);
   assert.equal(count("latticini"), 3);
+  assert.equal(count("salumi"), 1);
   assert.match(app, /const requestedFamilies = mainRotationForCuisine\(cuisineChoice\)/);
   assert.match(app, /target: "0–1", min: 0, max: 1/);
 });
@@ -2504,11 +2505,12 @@ test("v1.18.31 never reloads a newer client toward an older queued Pages release
   assert.doesNotMatch(app, /release\.version !== VERSION/);
 });
 
-test("v1.18.32 treats egg recipes as weekly occasions and rebalances main meals around breakfast eggs", async () => {
+test("weekly rotation budgets whole-egg equivalents across breakfast and main meals", async () => {
   const app = await readFile("app/FoodPlanner.tsx", "utf8");
   assert.match(app, /label: "Uova", target: "2–4", min: 2, max: 4/);
-  assert.match(app, /const nonMainEggMeals = days\.reduce/);
-  assert.match(app, /const eggMainTarget = Math\.max\(0, 3 - nonMainEggMeals\)/);
+  assert.match(app, /const nonMainEggEquivalents = days\.reduce/);
+  assert.match(app, /const eggMainTarget = nonMainEggEquivalents <= 2 \? 1 : 0/);
+  assert.match(app, /let eggEquivalentsUsed = nonMainEggEquivalents/);
   assert.match(app, /const eggReplacements: WeeklyProteinFamily\[\] = \["pesce", "salumi"\]/);
 });
 
@@ -2768,8 +2770,8 @@ test("v1.18.57 permanently audits the initial 14-meal weekly protein rotation", 
   assert.match(packageFile, /audit-weekly-rotation\.mjs/);
   assert.match(audit, /rotation\.length !== 14/);
   assert.match(audit, /Proteine consecutive duplicate/);
-  assert.match(audit, /"carne-rossa": \[0, 1\]/);
-  assert.match(audit, /legumi: \[3, 3\]/);
+  assert.match(audit, /Object\.keys\(counts\)\.length < 6/);
+  assert.match(audit, /counts\.uova > 1/);
 });
 
 test("v1.18.58 exposes favism and blocks broad-bean foods from recipes and alternatives", async () => {
@@ -3753,13 +3755,24 @@ test("Asian automatic plans limit egg meals without hiding mixed-dish eggs", asy
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../scripts/audit-cuisine-plan.mjs", import.meta.url), "utf8"),
   ]);
-  assert.match(source, /cuisine === "Asiatico" && index === 13 \? "pesce" : family/);
+  assert.match(source, /cuisine === "Asiatico" && index === 8 \? "legumi" : family/);
   assert.match(source, /id: "asian-saba-miso-rice-spinach"/);
   assert.match(source, /sourceUrl: "https:\/\/www\.maff\.go\.jp\/e\/policies\/market\/japan-cuisine\/japan\/15\/index\.html"/);
   assert.match(source, /plannedWholeEggBreakfasts >= \(cuisineChoice === "Asiatico" \? 0 : 1\)/);
   assert.match(source, /mainRotationForCuisine\(cuisineChoice\)\.map\(\(family\) =>/);
-  assert.match(source, /Questi sono conteggi di pasti, non porzioni standard CREA/);
+  assert.match(source, /Uova: quantità equivalenti a 50 g, comprese quelle nelle ricette/);
   assert.match(audit, /outOfRange: contextTargetMatrix\.flatMap/);
+});
+
+test("weekly egg rotation counts actual 50 g equivalents and budgets automatic choices", async () => {
+  const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
+  assert.match(source, /const wholeEggEquivalents = \(items: RecipeIngredient\[\]\)/);
+  assert.match(source, /Math\.max\(0, item\.grams\) \/ 50/);
+  assert.match(source, /const weeklyEggEquivalents = Math\.round\(days\.reduce/);
+  assert.match(source, /count: weeklyEggEquivalents/);
+  assert.match(source, /plannedEggEquivalents \+ wholeEggEquivalents\(plannedIngredients/);
+  assert.match(source, /<= 4\.05/);
+  assert.match(source, /Pasti pianificati/);
 });
 
 test("low-energy plans keep automatic snacks near their meal allocation", async () => {

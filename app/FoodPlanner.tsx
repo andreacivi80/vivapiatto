@@ -1946,8 +1946,10 @@ export const proteinFamilyForItems = (items: RecipeIngredient[]): WeeklyProteinF
   return "altro";
 };
 const recipeProteinFamily = (recipe: Recipe) => proteinFamilyForItems(recipe.parts || recipe.ingredients);
-const hasWholeEgg = (items: RecipeIngredient[]) =>
-  items.some((item) => /uovo|uova/i.test(item.food) && item.grams > 0);
+const wholeEggEquivalents = (items: RecipeIngredient[]) =>
+  items.reduce((total, item) =>
+    total + (/^uov[ao](?:\b|\s)/i.test(item.food) ? Math.max(0, item.grams) / 50 : 0), 0);
+const hasWholeEgg = (items: RecipeIngredient[]) => wholeEggEquivalents(items) > 0;
 const vegetablePortionForItems = (items: RecipeIngredient[]) => {
   const vegetablePattern = /zucchin|pomodor|spinac|broccol|cavol|carot|zucca|melanzan|finocch|asparag|bietol|radicch|rucola|insalat|fung|peperon|carciof|sedano|cetriol|barbabietol|fagiolin|verza|porro/i;
   const leafyPattern = /spinac|bietol|rucola|insalat|radicch|cavolo nero|verza/i;
@@ -1960,11 +1962,11 @@ const vegetablePortionForItems = (items: RecipeIngredient[]) => {
 };
 const WEEKLY_MAIN_ROTATION: WeeklyProteinFamily[] = [
   "legumi", "pesce", "carne-bianca", "uova", "legumi", "pesce", "latticini",
-  "carne-bianca", "uova", "latticini", "legumi", "carne-rossa", "latticini", "uova",
+  "carne-bianca", "salumi", "latticini", "legumi", "carne-rossa", "latticini", "pesce",
 ];
 const mainRotationForCuisine = (cuisine: string): WeeklyProteinFamily[] =>
   WEEKLY_MAIN_ROTATION.map((family, index) =>
-    cuisine === "Asiatico" && index === 13 ? "pesce" : family,
+    cuisine === "Asiatico" && index === 8 ? "legumi" : family,
   );
 const recipes: Recipe[] = [
   {
@@ -12578,12 +12580,17 @@ export function FoodPlanner() {
     setChoices((current) => {
       const next = { ...current };
       const used = new Set<string>();
+      let eggEquivalentsUsed = 0;
       days.forEach((_, day) => {
         [0, 1, 2, 3, 4].forEach((slot) => {
           const key = `${day}-${slot}`;
-          if (day <= changedDay || completed[key] || partSelections[key]) {
-            used.add(completedRecipes[key] || next[key] || days[day].recipes[slot]);
-          }
+          if (day > changedDay && !completed[key] && !partSelections[key]) return;
+          const id = completedRecipes[key] || next[key] || days[day].recipes[slot];
+          used.add(id);
+          const recipe = recipeMap[id];
+          eggEquivalentsUsed += wholeEggEquivalents(completed[key]
+            ? actualIngredients(key, recipe)
+            : plannedIngredients(key, recipe));
         });
       });
       for (let day = changedDay + 1; day < days.length; day += 1) {
@@ -12609,11 +12616,20 @@ export function FoodPlanner() {
             );
             if (differentFruit.length) candidates = differentFruit;
           }
+          const withinEggBudget = (recipe: Recipe) =>
+            eggEquivalentsUsed + wholeEggEquivalents(plannedIngredients(key, recipe, true)) <= 4.05;
+          const eggSafe = candidates.filter(withinEggBudget);
+          if (eggSafe.length) candidates = eggSafe;
+          else {
+            const safePool = pool.filter(withinEggBudget);
+            if (safePool.length) candidates = safePool;
+          }
           const chosen = closestForSlot(
             candidates, slot, dayTarget * mealCalorieShares[slot], day + slot,
           );
           next[key] = chosen.id;
           used.add(chosen.id);
+          eggEquivalentsUsed += wholeEggEquivalents(plannedIngredients(key, chosen, true));
         });
       }
       return next;
@@ -13633,6 +13649,16 @@ export function FoodPlanner() {
         keys.bases.forEach((base) => seenBases.add(base));
         keys.vegetables.forEach((vegetable) => seenVegetables.add(vegetable));
       }));
+      const profileDaySet = new Set(profileDays);
+      let plannedEggEquivalents = days.reduce((total, _, day) =>
+        total + getDayIds(day).reduce((dayTotal, id, slot) => {
+          if (!isActiveMealSlot(slot) || (profileDaySet.has(day) && !completed[`${day}-${slot}`])) return dayTotal;
+          const key = `${day}-${slot}`;
+          const recipe = recipeMap[completed[key] ? completedRecipes[key] || id : id];
+          return dayTotal + wholeEggEquivalents(completed[key]
+            ? actualIngredients(key, recipe)
+            : plannedIngredients(key, recipe));
+        }, 0), 0);
       let plannedWholeEggBreakfasts = 0;
       const chooseMain = (
         pool: Recipe[],
@@ -13640,6 +13666,7 @@ export function FoodPlanner() {
         slot: number,
         target: number,
         offset: number,
+        day: number,
       ) => {
         const unused =
           preference === "repeat"
@@ -13672,13 +13699,20 @@ export function FoodPlanner() {
           ? byFamily
           : sameCuisineFamily.length
             ? sameCuisineFamily
-            : anyCuisineFamily.length
-              ? anyCuisineFamily
-              : unused.length
-                ? unused
+            : unused.length
+              ? unused
+              : anyCuisineFamily.length
+                ? anyCuisineFamily
                 : pool;
-        const inSeasonCandidates = candidates.filter((recipe) => recipeOutOfSeasonProduceCount(recipe) === 0);
-        const seasonAwareCandidates = inSeasonCandidates.length ? inSeasonCandidates : candidates;
+        const withinEggBudget = (recipe: Recipe) =>
+          plannedEggEquivalents + wholeEggEquivalents(plannedIngredients(`${day}-${slot}`, recipe, true)) <= 4.05;
+        const eggSafeCandidates = candidates.filter(withinEggBudget);
+        const alternativeEggSafe = pool.filter(withinEggBudget);
+        const budgetedCandidates = eggSafeCandidates.length
+          ? eggSafeCandidates
+          : alternativeEggSafe.length ? alternativeEggSafe : candidates;
+        const inSeasonCandidates = budgetedCandidates.filter((recipe) => recipeOutOfSeasonProduceCount(recipe) === 0);
+        const seasonAwareCandidates = inSeasonCandidates.length ? inSeasonCandidates : budgetedCandidates;
         const unusedSpecies =
           preference === "repeat"
             ? seasonAwareCandidates
@@ -13701,6 +13735,7 @@ export function FoodPlanner() {
           usedRecipes.add(chosen.id);
           usedProteinSignatures.add(recipeProteinSignature(chosen));
         }
+        plannedEggEquivalents += wholeEggEquivalents(plannedIngredients(`${day}-${slot}`, chosen, true));
         return chosen;
       };
       profileDays.forEach((day) => {
@@ -13710,7 +13745,7 @@ export function FoodPlanner() {
           ? homeMains.length ? homeMains : mains
           : lunches;
         const breakfastPool =
-          plannedWholeEggBreakfasts >= (cuisineChoice === "Asiatico" ? 0 : 1)
+          plannedWholeEggBreakfasts >= (cuisineChoice === "Asiatico" ? 0 : 1) || plannedEggEquivalents >= 3
             ? breakfasts.filter((recipe) => !hasWholeEgg(recipe.ingredients))
             : breakfasts;
         const breakfast = closestForSlot(
@@ -13721,6 +13756,7 @@ export function FoodPlanner() {
           preference,
         );
         if (hasWholeEgg(breakfast.ingredients)) plannedWholeEggBreakfasts += 1;
+        plannedEggEquivalents += wholeEggEquivalents(plannedIngredients(`${day}-0`, breakfast, true));
         const morningSnackPool = isSmoothieRecipe(breakfast)
           ? snacks.filter((recipe) => !isSmoothieRecipe(recipe))
           : snacks;
@@ -13731,6 +13767,7 @@ export function FoodPlanner() {
           offset,
           preference,
         );
+        plannedEggEquivalents += wholeEggEquivalents(plannedIngredients(`${day}-1`, morningSnack, true));
         const smoothieAlreadyPlanned =
           isSmoothieRecipe(breakfast) || isSmoothieRecipe(morningSnack);
         const differentFruitSnacks = snacks.filter(
@@ -13749,6 +13786,7 @@ export function FoodPlanner() {
           offset + 1,
           preference,
         );
+        plannedEggEquivalents += wholeEggEquivalents(plannedIngredients(`${day}-3`, afternoonSnack, true));
         let lunchFamily = mainRotationForCuisine(cuisineChoice)[day * 2];
         let dinnerFamily = mainRotationForCuisine(cuisineChoice)[day * 2 + 1];
         if (
@@ -13765,6 +13803,7 @@ export function FoodPlanner() {
           2,
           profileTarget * shares[2],
           offset,
+          day,
         );
         const dinnerPool = dinners.filter((recipe) => recipeProteinFamily(recipe) !== recipeProteinFamily(lunch));
         const dinner = chooseMain(
@@ -13773,6 +13812,7 @@ export function FoodPlanner() {
           4,
           profileTarget * shares[4],
           offset + 1,
+          day,
         );
         [breakfast, morningSnack, lunch, afternoonSnack, dinner].forEach((recipe, slot) => {
           const key = `${day}-${slot}`;
@@ -14330,7 +14370,17 @@ export function FoodPlanner() {
       });
     });
     return counts;
-  };  const weeklyCounts = weeklyProteinCounts();
+  };
+  const weeklyCounts = weeklyProteinCounts();
+  const weeklyEggEquivalents = Math.round(days.reduce((total, _, day) =>
+    total + getDayIds(day).reduce((dayTotal, id, slot) => {
+      if (!isActiveMealSlot(slot)) return dayTotal;
+      const key = `${day}-${slot}`;
+      const recordedId = completed[key] ? completedRecipes[key] || id : id;
+      const recipe = recipeMap[recordedId];
+      const items = completed[key] ? actualIngredients(key, recipe) : plannedIngredients(key, recipe);
+      return dayTotal + wholeEggEquivalents(items);
+    }, 0), 0) * 10) / 10;
   const weeklyPlannedKcal = days.map((_, day) =>
     round(
       getDayIds(day).reduce((total, id, slot) => {
@@ -14384,14 +14434,14 @@ export function FoodPlanner() {
     { label: "Legumi e vegetali", target: "3", min: 3, max: 3, count: weeklyCounts["Legumi e vegetali"] },
     { label: "Carne bianca", target: "1–2", min: 1, max: 2, count: weeklyCounts["Carne bianca"] },
     { label: "Carne rossa", target: "0–1", min: 0, max: 1, count: weeklyCounts["Carne rossa"] },
-    { label: "Uova", target: "2–4", min: 2, max: 4, count: weeklyCounts.Uova },
+    { label: "Uova", target: "2–4", min: 2, max: 4, count: weeklyEggEquivalents },
     { label: "Formaggi", target: "2–3", min: 2, max: 3, count: weeklyCounts.Formaggi },
     { label: "Salumi", target: "0–1", min: 0, max: 1, count: weeklyCounts.Salumi },
   ].filter((item) => !visibleWeeklyFamilies || visibleWeeklyFamilies.includes(item.label)).map((item) => ({
     ...item,
-    status: standardWeeklyTargets
+    status: standardWeeklyTargets && item.label === "Uova"
       ? item.count >= item.min && item.count <= item.max ? "Nel range" : "Da riequilibrare"
-      : "Solo conteggio",
+      : "Pasti pianificati",
   }));
   const weeklyKcalDelta = weeklyAverageKcal - calories;
   const consecutiveProteinRepeats = days
@@ -14408,19 +14458,23 @@ export function FoodPlanner() {
       setReplanNote("Rotazione automatica per minori disattivata: serve un professionista sanitario.");
       return;
     }
-    const nonMainEggMeals = days.reduce(
+    const nonMainEggEquivalents = days.reduce(
       (total, _, day) =>
         total +
-        [0, 1, 3].filter((slot) => {
-          if (!isActiveMealSlot(slot)) return false;
+        [0, 1, 3].reduce((slotTotal, slot) => {
+          if (!isActiveMealSlot(slot)) return slotTotal;
           const key = `${day}-${slot}`;
-          return hasWholeEgg(plannedIngredients(key, recipeMap[getDayIds(day)[slot]]));
-        }).length,
+          const id = completed[key] ? completedRecipes[key] || getDayIds(day)[slot] : getDayIds(day)[slot];
+          const recipe = recipeMap[id];
+          return slotTotal + wholeEggEquivalents(completed[key]
+            ? actualIngredients(key, recipe)
+            : plannedIngredients(key, recipe));
+        }, 0),
       0,
     );
     let retainedEggMains = 0;
     let replacementIndex = 0;
-    const eggMainTarget = Math.max(0, 3 - nonMainEggMeals);
+    const eggMainTarget = nonMainEggEquivalents <= 2 ? 1 : 0;
     const eggReplacements: WeeklyProteinFamily[] = ["pesce", "salumi"];
     const requestedFamilies = mainRotationForCuisine(cuisineChoice).map((family) => {
       if (family !== "uova" || retainedEggMains < eggMainTarget) {
@@ -14432,6 +14486,12 @@ export function FoodPlanner() {
       return replacement || family;
     });
     const mainSlots = days.flatMap((_, day) => [2, 4].map((slot) => ({ day, slot })));
+    let eggEquivalentsUsed = nonMainEggEquivalents + mainSlots.reduce((total, { day, slot }) => {
+      const key = `${day}-${slot}`;
+      if (!completed[key]) return total;
+      const recipe = recipeMap[completedRecipes[key] || getDayIds(day)[slot]];
+      return total + wholeEggEquivalents(actualIngredients(key, recipe));
+    }, 0);
     const used = new Set<string>();
     const usedProteinSignatures = new Set<string>();
     const updates: Record<string, string> = {};
@@ -14450,8 +14510,12 @@ export function FoodPlanner() {
         if (!fitsSlot(recipe, slot) || !isProfileEligible(recipe)) return false;
         return true;
       });
-      const sameFamily = compatible.filter((recipe) => proteinFamilyForItems(recipe.ingredients) === family);
-      const suitable = sameFamily.length || standardWeeklyTargets ? sameFamily : compatible;
+      const withinEggBudget = (recipe: Recipe) =>
+        eggEquivalentsUsed + wholeEggEquivalents(plannedIngredients(key, recipe, true)) <= 4.05;
+      const eggSafe = compatible.filter(withinEggBudget);
+      const sameFamily = eggSafe.filter((recipe) => proteinFamilyForItems(recipe.ingredients) === family);
+      const sameCuisine = eggSafe.filter((recipe) => recipeCuisine(recipe) === cuisineChoice);
+      const suitable = sameFamily.length ? sameFamily : sameCuisine.length ? sameCuisine : eggSafe;
       const ranked = suitable.sort((left, right) => {
         const uniqueDelta = Number(used.has(left.id)) - Number(used.has(right.id));
         if (uniqueDelta) return uniqueDelta;
@@ -14473,13 +14537,14 @@ export function FoodPlanner() {
         updates[key] = selectedRecipe.id;
         used.add(selectedRecipe.id);
         usedProteinSignatures.add(recipeProteinSignature(selectedRecipe));
+        eggEquivalentsUsed += wholeEggEquivalents(plannedIngredients(key, selectedRecipe, true));
       }
     });
     setChoices((current) => ({ ...current, ...updates }));
     clearMealOverrides(Object.keys(updates));
     setWeekLocked(false);
     setReplanNote(standardWeeklyTargets
-      ? "Rotazione settimanale ricalcolata sui pasti ancora da fare; quelli già registrati restano invariati. Controlla i range aggiornati prima di confermare."
+      ? "Rotazione settimanale ricalcolata sui pasti ancora da fare; quelli già registrati restano invariati. Controlla uova e varietà prima di confermare."
       : "Varietà dei pasti compatibili ricalcolata; quelli già registrati restano invariati. I conteggi non sono target clinici per lo stile scelto.");
   };
   const replanNextDay = (day: number) => {
@@ -15966,7 +16031,7 @@ export function FoodPlanner() {
             <div className="weekly-frequency">
               <header>
                 <b>{weekLocked ? "Rotazione confermata" : "Rotazione pianificata"}</b>
-                 <span>{standardWeeklyTargets ? "pasti della settimana · rotazione orientativa" : `conteggi · stile ${foodStyle.toLowerCase()}`} · {weeklyVariety.bases} basi · {weeklyVariety.vegetables} ortaggi</span>
+                 <span>{standardWeeklyTargets ? "pasti; uova in equivalenti da 50 g" : `conteggi · stile ${foodStyle.toLowerCase()}`} · {weeklyVariety.bases} basi · {weeklyVariety.vegetables} ortaggi</span>
                 <a
                   className="weekly-source"
                   href="https://www.crea.gov.it/documents/59764/0/Dossier%2BLG%2B2017_CAP10.pdf/"
@@ -15981,13 +16046,13 @@ export function FoodPlanner() {
                    <span key={item.label} className={item.status === "Nel range" ? "within-target" : item.status === "Da riequilibrare" ? "outside-target" : ""}>
                     <b>{item.count}</b>
                     {item.label}
-                     <small>{item.status}{standardWeeklyTargets ? ` · ${item.target}` : ""}</small>
+                     <small>{item.status}{standardWeeklyTargets && item.label === "Uova" ? ` · ${item.target} equivalenti` : ""}</small>
                   </span>
                 ))}
               </div>
               <p>
                  {standardWeeklyTargets
-                   ? "Questi sono conteggi di pasti, non porzioni standard CREA né obiettivi clinici. Puoi cambiare liberamente i piatti."
+                   ? "Pesce, carni, legumi, formaggi e salumi: pasti. Uova: quantità equivalenti a 50 g, comprese quelle nelle ricette. Sono indicatori orientativi, non obiettivi clinici."
                    : "I range generali CREA non sono applicati automaticamente allo stile scelto; qui vedi solo le frequenze e puoi variare i pasti."}
               </p>
               {consecutiveProteinRepeats > 0 && (

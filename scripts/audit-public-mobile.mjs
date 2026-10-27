@@ -349,7 +349,12 @@ try {
       calorieDays: kcalSummary?.querySelectorAll(':scope > div > span').length || 0,
       rotationConfirmed: frequency?.innerText.includes('Rotazione confermata'),
       rotationRows: frequency?.querySelectorAll(':scope > div > span').length || 0,
-      rotationInRange: [...(frequency?.querySelectorAll(':scope > div > span') || [])].every((row) => row.classList.contains('within-target')),
+      rotationInRange: (() => {
+        const rows = [...(frequency?.querySelectorAll(':scope > div > span') || [])];
+        const eggs = rows.find((row) => row.innerText.includes('Uova'));
+        return Boolean(eggs?.classList.contains('within-target')) &&
+          rows.filter((row) => row !== eggs).every((row) => row.querySelector('small')?.innerText.includes('Pasti pianificati'));
+      })(),
       varietyHeader: frequency?.querySelector('header span')?.innerText || '',
       hasPrintPreview: Boolean(print),
     };

@@ -303,9 +303,12 @@ try {
     completeMealProjection,
   };
   const rotationOnly = process.argv.includes("--rotation-only");
+  const brief = process.argv.includes("--brief");
   console.log(JSON.stringify(rotationOnly
     ? {
         profiles: contextTargetMatrix.length,
+        eggEquivalents: contextTargetMatrix.map(({ rotation }) =>
+          Number(rotation.find(({ label }) => label === "Uova")?.count || 0)),
         asianDocumentedCount: report.asianDocumentedCount,
         paneerDishesProposed: report.paneerDishesProposed,
         japaneseEggDishesProposed: report.japaneseEggDishesProposed,
@@ -313,7 +316,7 @@ try {
         outOfRange: contextTargetMatrix.flatMap(({ style, context, target, rotation }) =>
           rotation.filter(({ status }) => status.startsWith("Da riequilibrare"))
             .map(({ label, count, status }) => ({ style, context, target, label, count, status }))),
-        sample: contextTargetMatrix
+        sample: brief ? undefined : contextTargetMatrix
           .filter(({ style, context, target }) =>
             (style === "Italiano" && context === "Lavoro" && [2000, 2600].includes(target)) ||
             (style === "Asiatico" && context === "Casa" && target === 2000))
@@ -356,26 +359,46 @@ try {
       completeMealProjection.projected.kcal !== completeMealProjection.applied.kcal
     );
     if (contextTargetMatrix.length !== 24 || invalid.length || followUpInvalid) {
-      console.error(`Matrice contesto/target non coerente: ${JSON.stringify({ invalid, completeMealProjection })}`);
+      console.error(`Matrice contesto/target non coerente: ${brief ? JSON.stringify({
+        invalidCount: invalid.length,
+        rotations: invalid.flatMap(({ style, context, target, rotation }) => rotation
+          .filter(({ status }) => status.startsWith("Da riequilibrare"))
+          .map(({ label, count }) => ({ style, context, target, label, count }))),
+      }) : JSON.stringify({ invalid, completeMealProjection })}`);
       process.exitCode = 1;
     }
   }
   const italianCuisine = ([, , cuisine]) => cuisine === "Italiano" || cuisine === "Mediterraneo";
   const practicalWorkLunch = ([key, , , workFriendly]) =>
     !key.endsWith("-2") || Number(key.split("-")[0]) >= 5 || workFriendly === "true";
-  if (
+  const finalPlanInvalid = (
     initialItalian.length !== 14 || !initialItalian.every(italianCuisine) ||
     !initialItalian.every(practicalWorkLunch) ||
     italian.mainMeals.length !== 14 || !italian.mainMeals.every(italianCuisine) ||
     !italian.mainMeals.every(practicalWorkLunch) ||
     asian.mainMeals.length !== 14 || asian.style !== "Asiatico" ||
     report.paneerDishesProposed !== 3 ||
-    report.japaneseEggDishesProposed !== 2 ||
+    report.japaneseEggDishesProposed < 1 ||
     report.newLegumeDishesProposed !== 2 ||
     !asian.mainMeals.every(([, , cuisine]) => cuisine === "Asiatico") ||
     !asian.mainMeals.every(practicalWorkLunch) ||
     report.unsafeWorkLunches.length
-  ) process.exitCode = 1;
+  );
+  if (finalPlanInvalid && brief) console.error(JSON.stringify({
+    initialItalianCount: initialItalian.length,
+    initialItalianCuisine: initialItalian.every(italianCuisine),
+    initialItalianWork: initialItalian.every(practicalWorkLunch),
+    italianCount: italian.mainMeals.length,
+    italianCuisine: italian.mainMeals.every(italianCuisine),
+    italianWork: italian.mainMeals.every(practicalWorkLunch),
+    asianCount: asian.mainMeals.length,
+    asianStyle: asian.style,
+    asianCuisine: asian.mainMeals.every(([, , cuisine]) => cuisine === "Asiatico"),
+    asianFallbacks: asian.mainMeals.filter(([, , cuisine]) => cuisine !== "Asiatico"),
+    asianWork: asian.mainMeals.every(practicalWorkLunch),
+    unsafeWorkLunches: report.unsafeWorkLunches.length,
+  }));
+  if (finalPlanInvalid) process.exitCode = 1;
   page.close();
   browser.close();
 } finally {

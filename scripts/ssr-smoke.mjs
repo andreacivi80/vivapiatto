@@ -15,7 +15,7 @@ try {
   assert.equal(proteinFamilyForItems([{ food: "Petto di pollo cotto", grams: 150 }, { food: "Cipollotti freschi", grams: 30 }]), "carne-bianca");
   assert.deepEqual(initialWeeklyProteinFamilies, [
     "legumi", "pesce", "carne-bianca", "uova", "legumi", "pesce", "latticini",
-    "carne-bianca", "uova", "latticini", "legumi", "carne-rossa", "latticini", "uova",
+    "carne-bianca", "salumi", "latticini", "legumi", "carne-rossa", "latticini", "pesce",
   ]);
   const html = renderToString(React.createElement(FoodPlanner));
   console.log(`SSR render OK: ${html.length} characters`);
