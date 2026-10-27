@@ -352,6 +352,9 @@ try {
       return row.mainMealCount !== 14 || row.distinctMainMeals < 12 || row.horizontalOverflow ||
         row.rotation.some(({ status }) => status.startsWith("Da riequilibrare")) ||
         row.meals.length !== 5 || !planKcal || Math.abs(planKcal - row.target) > 300 ||
+        (["Lavoro", "Mensa"].includes(row.context) &&
+          [row.meals[1], row.meals[3]].some((meal) =>
+            /rucola|pomodor|carot|finocch|cetriol|ravanell/i.test(meal || ""))) ||
         repeatedDayFruit(row.meals) ||
         (row.mealIds[0]?.startsWith("catalog-breakfast-") &&
           /mozzarella|paneer|crescenza|primo sale|scamorza|provolone|stracchino|parmigiano|\blime\b/i.test(row.meals[0])) ||

@@ -1286,6 +1286,32 @@ try {
         if (await evaluate(`document.querySelectorAll('.meal-card').length === 5`)) break;
         await wait(250);
       }
+      if (versionPatch >= 54) {
+        await evaluate(`document.querySelectorAll('.meal-card')[2]?.querySelector('.meal-part .part-change')?.click()`);
+        await wait(180);
+        occasionalAddition.weekWholePizzaChosen = await evaluate(`(() => {
+          const group = document.querySelector('.part-picker-sheet .cheat-picker-group');
+          if (group) group.open = true;
+          const choice = [...(group?.querySelectorAll('.complete-meal-select') || [])]
+            .find((button) => button.querySelector('span')?.textContent?.trim() === 'Pizza con bresaola, rucola e grana');
+          choice?.click();
+          return Boolean(choice);
+        })()`);
+        await wait(350);
+        await clickTab('Settimana');
+        occasionalAddition.weekWholePizza = await evaluate(`(() => {
+          const row = document.querySelector('.week-meal-row[data-recipe-id="occasional-pizza-bresaola-rucola-grana"]');
+          return Boolean(row?.querySelector('.week-whole-pizza img[src*="cheat-pizza-bresaola-rucola-grana"]') &&
+            row.querySelectorAll('.week-part-strip button:not(.week-part-add)').length === 1 &&
+            row.querySelector('.week-meal b')?.textContent?.trim() === 'Pizza con bresaola, rucola e grana');
+        })()`);
+        await evaluate(`localStorage.setItem('vivapiatto-v1', ${JSON.stringify(originalProfile)})`);
+        await page.send('Page.reload', { ignoreCache: false });
+        for (let attempt = 0; attempt < 40; attempt += 1) {
+          if (await evaluate(`document.querySelectorAll('.meal-card').length === 5`)) break;
+          await wait(250);
+        }
+      }
     }
   }
   const readyDishFlow = await evaluate(`(() => {
@@ -1644,6 +1670,8 @@ try {
   profileAdaptation.workBreakfastFamiliar = /latte|fette biscottate|yogurt greco|cracker integrali/i.test(profileAdaptation.workMenu[0] || '');
   profileAdaptation.workSnacksPractical = [profileAdaptation.workMenu[1], profileAdaptation.workMenu[3]]
     .every((heading) => !/wafer|grissini/i.test(heading || ''));
+  profileAdaptation.workSnacksNoPrepVegetables = [profileAdaptation.workMenu[1], profileAdaptation.workMenu[3]]
+    .every((heading) => !/rucola|pomodor|carot|finocch|cetriol|ravanell/i.test(heading || ''));
   profileAdaptation.workDrinkSnacksNotRepeated = [profileAdaptation.workMenu[1], profileAdaptation.workMenu[3]]
     .filter((heading) => /frullato|smoothie|shaker whey/i.test(heading || '')).length <= 1;
   await changeSelectValue('.cuisine-picker select', 1, 'Casa');
@@ -2168,6 +2196,7 @@ try {
       !occasionalAddition.bresaolaPersisted || !occasionalAddition.bresaolaSplit || !occasionalAddition.bresaolaRemoved)) ||
     (versionMinor >= 20 && versionPatch >= 48 && (!occasionalAddition.legacyPizzaRestored || occasionalAddition.wholePizzaVariants?.length !== 10 ||
       occasionalAddition.wholePizzaVariants.some((pizza) => !pizza.found || !pizza.singleCard || !pizza.wholePhoto || !pizza.canSplit))) ||
+    (versionMinor >= 20 && versionPatch >= 54 && (!occasionalAddition.weekWholePizzaChosen || !occasionalAddition.weekWholePizza)) ||
     (releasePatch >= 84 && (!occasionalAddition.replacementAvailable ||
       !occasionalAddition.replacementKeptMeal || !occasionalAddition.oldPizzaGone || !occasionalAddition.tiramisuPhoto)) ||
     (!occasionalSplitPhoto.skipped && (!occasionalSplitPhoto.optionFound || !occasionalSplitPhoto.componentFound ||
@@ -2202,7 +2231,7 @@ try {
     !profileAdaptation.historyConsentReenabled ||
     !profileAdaptation.lockedWeekConfirmed || !profileAdaptation.lockedWeekReopenedForAllergy ||
     !profileAdaptation.weekGlutenFree || !profileAdaptation.loggedMealPreserved ||
-    !profileAdaptation.workBreakfastPractical || (version === '1.19.82' && !profileAdaptation.workBreakfastFamiliar) || !profileAdaptation.workSnacksPractical || !profileAdaptation.workDrinkSnacksNotRepeated || !profileAdaptation.homeSelected || !profileAdaptation.contextChangesPlan ||
+    !profileAdaptation.workBreakfastPractical || (version === '1.19.82' && !profileAdaptation.workBreakfastFamiliar) || !profileAdaptation.workSnacksPractical || !profileAdaptation.workSnacksNoPrepVegetables || !profileAdaptation.workDrinkSnacksNotRepeated || !profileAdaptation.homeSelected || !profileAdaptation.contextChangesPlan ||
     profileAdaptation.horizontalOverflow ||
     !freeChoiceAndReplan.editorOpened || !freeChoiceAndReplan.editablePartFound ||
     !freeChoiceAndReplan.registrationFound || !freeChoiceAndReplan.editedBeforeSwap ||

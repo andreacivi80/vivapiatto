@@ -3093,11 +3093,8 @@ test("v1.18.98 proposes breakfasts and snacks from the complete recipe catalog",
   const source = await readFile("app/FoodPlanner.tsx", "utf8");
   assert.match(source, /const availableBreakfasts[\s\S]*?allRecipes[\s\S]*?recipe\.course === "Colazione"/);
   assert.match(source, /const availableSnacks[\s\S]*?allRecipes[\s\S]*?recipe\.course === "Spuntino"/);
-  assert.equal(
-    (source.match(/const snacks = availableSnacks\(\)/g) || []).length +
-      (source.match(/const snacks = preferAvailableSeason\(availableSnacks\(\)\)/g) || []).length,
-    2,
-  );
+  assert.match(source, /const snacks = practicalWorkSnacks\(availableSnacks\(\), dayContext\)/);
+  assert.match(source, /const snacks = preferAvailableSeason\(practicalWorkSnacks\(availableSnacks\(\), dayContext\)\)/);
   assert.match(source, /let snacks = preferAvailableSeason\(availableSnacks\(\)\)/);
 });
 

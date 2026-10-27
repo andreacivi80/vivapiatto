@@ -12164,6 +12164,16 @@ export function FoodPlanner() {
         !(recipe.ingredients.length === 1 && /noci|mandorle|nocciole|pistacchi|arachidi|anacardi/i.test(recipe.ingredients[0].food)),
       )
       .filter(isProfileEligible);
+  const practicalWorkSnacks = (recipes: Recipe[], context: string) => {
+    if (!["Lavoro", "Mensa"].includes(context)) return recipes;
+    const portable = recipes.filter((recipe) =>
+      recipe.time <= 5 &&
+      recipe.ingredients.length <= 2 &&
+      !recipe.ingredients.some((item) =>
+        pantryPartByFood.get(item.food)?.category === "Contorno"),
+    );
+    return portable.length ? portable : recipes;
+  };
   const recipeCuisine = (r: Recipe) =>
     r.cuisine ||
     (r.id.includes("toast") || r.id.includes("sweet")
@@ -12584,7 +12594,7 @@ export function FoodPlanner() {
     }
     if (weekLocked && !forceConfirmedWeek) return;
     const breakfasts = preferAvailableSeason(availableBreakfasts());
-    const snacks = preferAvailableSeason(availableSnacks());
+    const snacks = preferAvailableSeason(practicalWorkSnacks(availableSnacks(), dayContext));
     const mains = allRecipes.filter(
       (r) =>
         isProfileEligible(r) &&
@@ -13634,7 +13644,7 @@ export function FoodPlanner() {
       (r) => isProfileEligible(r) && recipeCuisine(r) === cuisineChoice,
     );
     const breakfasts = availableBreakfasts();
-    const snacks = availableSnacks();
+    const snacks = practicalWorkSnacks(availableSnacks(), dayContext);
     const mains = styled.filter((r) =>
       ["Piatto unico", "Piatto completo", "Primo", "Secondo"].includes(recipeCourse(r)),
     );
@@ -13962,7 +13972,7 @@ export function FoodPlanner() {
       );
     }
     mains = preferAvailableSeason(mains);
-    snacks = preferAvailableSeason(snacks);
+    snacks = preferAvailableSeason(practicalWorkSnacks(snacks, selectedContext));
     if (!breakfasts.length || !snacks.length || !mains.length) return;
     const homeMains = mains.filter(
       (r) =>
@@ -16127,6 +16137,8 @@ export function FoodPlanner() {
                     .map(({ id, slot }) => {
                     const r = recipeMap[id];
                     const key = `${i}-${slot}`;
+                    const weekWholePizza = r.id.startsWith("occasional-pizza-") &&
+                      (mealView[key] || "dish") === "dish";
                     const weekParts = activeMealParts(key, r)
                       .map((part, originalIndex) => ({ ...part, originalIndex }))
                       .filter((part) => part.grams > 0);
@@ -16160,7 +16172,7 @@ export function FoodPlanner() {
                           <span>
                             <small>{SLOT_LABELS[slot]}</small>
                             <b>
-                              {weekDisplayedParts.length
+                              {weekWholePizza ? r.name : weekDisplayedParts.length
                                 ? weekDisplayedParts
                                     .map(weekPartName)
                                     .join(" · ")
@@ -16189,7 +16201,18 @@ export function FoodPlanner() {
                         </button>
                         {weekParts.length > 0 && (
                           <div className="week-part-strip">
-                            {weekDisplayedParts.map((part, partIndex) => (
+                            {weekWholePizza ? (
+                              <button
+                                type="button"
+                                className="week-whole-pizza"
+                                aria-label={`Apri ${r.name} per vedere o dividere gli ingredienti`}
+                                onClick={() => { setDayIndex(i); setTab("today"); }}
+                              >
+                                <img src={r.image} alt={r.name} loading="lazy" decoding="async" />
+                                <span>{r.name}</span>
+                                <b>{weekParts.reduce((total, part) => total + part.grams, 0)} g</b>
+                              </button>
+                            ) : weekDisplayedParts.map((part, partIndex) => (
                               <button
                                 key={`${part.category}-${partIndex}`}
                                 aria-label={`Cambia ${part.category}: ${weekPartName(part)}`}
