@@ -4,7 +4,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-const url = process.env.VIVAPIATTO_AUDIT_URL || "https://andreacivi80.github.io/vivapiatto/";
+const url = process.argv.find((arg) => arg.startsWith("--url="))?.slice(6) ||
+  process.env.VIVAPIATTO_AUDIT_URL || "https://andreacivi80.github.io/vivapiatto/";
 const edge = [
   "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe",
   "C:/Program Files/Microsoft/Edge/Application/msedge.exe",
@@ -76,6 +77,8 @@ try {
     await wait(250);
   }
   if (!ready) throw new Error("Piano non caricato");
+  let lastWeeklyRotation = [];
+  let lastEggMeals = [];
   const readVisibleWeek = async () => {
     const weekOpened = await evaluate(`(() => {
       const button = [...document.querySelectorAll('button')]
@@ -94,6 +97,17 @@ try {
           row.dataset.cuisine,
           row.dataset.workFriendly,
         ]))`);
+    lastWeeklyRotation = await evaluate(`[...document.querySelectorAll('.weekly-frequency > div > span')]
+      .map((item) => ({
+        label: [...item.childNodes].find((node) => node.nodeType === Node.TEXT_NODE)?.textContent?.trim() || '',
+        count: Number(item.querySelector('b')?.textContent || 0),
+        status: item.querySelector('small')?.textContent?.trim() || '',
+      }))`);
+    lastEggMeals = await evaluate(`[...document.querySelectorAll('.week-day')]
+      .flatMap((day, dayIndex) => [...day.querySelectorAll('.week-meal-row')]
+        .map((row, slot) => ({ day: dayIndex + 1, slot, id: row.dataset.recipeId,
+          parts: [...row.querySelectorAll('.week-part-strip span')].map((item) => item.textContent?.trim()) }))
+        .filter((meal) => meal.parts.some((name) => /uova|uovo/i.test(name || ''))))`);
     await evaluate(`(() => {
       [...document.querySelectorAll('button')]
         .find((item) => item.textContent?.includes('Oggi'))?.click();
@@ -159,6 +173,8 @@ try {
           const week = await readVisibleWeek();
           contextTargetMatrix.push({
             style, context, target, ...today,
+            rotation: lastWeeklyRotation,
+            eggMeals: lastEggMeals,
             weekdayLunches: week.filter(([key]) => key.endsWith("-2") && Number(key.split("-")[0]) < 5)
               .map(([, id]) => id),
             mainMealCount: week.length,
@@ -286,9 +302,26 @@ try {
     followUpAfterSwap,
     completeMealProjection,
   };
-  console.log(JSON.stringify(matrixFull || matrixFocus
-    ? { contextTargetMatrix, followUpAfterSwap, completeMealProjection, asianDocumentedCount: report.asianDocumentedCount }
-    : report));
+  const rotationOnly = process.argv.includes("--rotation-only");
+  console.log(JSON.stringify(rotationOnly
+    ? {
+        profiles: contextTargetMatrix.length,
+        asianDocumentedCount: report.asianDocumentedCount,
+        paneerDishesProposed: report.paneerDishesProposed,
+        japaneseEggDishesProposed: report.japaneseEggDishesProposed,
+        newLegumeDishesProposed: report.newLegumeDishesProposed,
+        outOfRange: contextTargetMatrix.flatMap(({ style, context, target, rotation }) =>
+          rotation.filter(({ status }) => status.startsWith("Da riequilibrare"))
+            .map(({ label, count, status }) => ({ style, context, target, label, count, status }))),
+        sample: contextTargetMatrix
+          .filter(({ style, context, target }) =>
+            (style === "Italiano" && context === "Lavoro" && [2000, 2600].includes(target)) ||
+            (style === "Asiatico" && context === "Casa" && target === 2000))
+          .map(({ style, context, target, rotation, eggMeals }) => ({ style, context, target, rotation, eggMeals })),
+      }
+    : matrixFull || matrixFocus
+      ? { contextTargetMatrix, followUpAfterSwap, completeMealProjection, asianDocumentedCount: report.asianDocumentedCount }
+      : report));
   if (matrixFull && !matrixFocus) {
     const mensaIds = new Set([
       "simple-pasta-white", "simple-pasta-tomato", "simple-eggs",
@@ -306,6 +339,7 @@ try {
     const invalid = contextTargetMatrix.filter((row) => {
       const planKcal = Number(row.plan.match(/piano (\d+)/)?.[1] || 0);
       return row.mainMealCount !== 14 || row.distinctMainMeals < 12 || row.horizontalOverflow ||
+        row.rotation.some(({ status }) => status.startsWith("Da riequilibrare")) ||
         row.meals.length !== 5 || !planKcal || Math.abs(planKcal - row.target) > 300 ||
         row.mealParts.some((parts, index) => parts.length > 0 && !row.mealUnrepresentedExtras[index] &&
           Math.abs(parts.reduce((total, part) => total + part.kcal, 0) - row.mealKcal[index]) > 10) ||

@@ -1344,6 +1344,18 @@ test("v1.20.46 keeps every added pizza whole until an explicit split", async () 
   assert.match(audit, /pizzaWholeWithSplit/);
 });
 
+test("v1.20.48 restores untouched legacy pizzas as whole dishes and checks every variant", async () => {
+  const [app, audit] = await Promise.all([
+    readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../scripts/audit-public-mobile.mjs", import.meta.url), "utf8"),
+  ]);
+  assert.match(app, /const restoreWholeLegacyPizzas = /);
+  assert.match(app, /!savedPart\.occasionalGroupId && savedPart\.food === part\.food && savedPart\.grams === part\.grams/);
+  assert.match(app, /occasionalRecipeId: recipe\.id,\s*occasionalCollapsed: true/);
+  assert.match(app, /setPartSelections\(restoreWholeLegacyPizzas\(safePartRecord/);
+  assert.match(audit, /wholePizzaVariants\.push/);
+});
+
 test("v1.20.28 searches foods and dishes by any text fragment in both meal pickers", async () => {
   const [app, css, audit] = await Promise.all([
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
@@ -1472,8 +1484,8 @@ test("v1.19.20 caches framework dependencies without lazy-loading the planner", 
   const appBundle = await readFile(new URL(`../dist/assets/${appChunk}`, import.meta.url));
   // Four verified whey flavors, three complete shaker recipes and a structured
   // Word week add a small bounded amount of code; retain a measured margin.
-  assert.ok(appBundle.length < 615_000);
-  assert.ok(gzipSync(appBundle).length < 136_000);
+  assert.ok(appBundle.length < 625_000);
+  assert.ok(gzipSync(appBundle).length < 139_000);
 });
 
 test("v1.19.21 keeps the public mobile stress audit silent and reusable", async () => {
@@ -2289,7 +2301,7 @@ test("v1.18.11 distinguishes an orientation example from a defined calorie targe
 
 test("v1.18.12 aligns the automatic 14-meal protein rotation with the supplied matrix", async () => {
   const app = await readFile("app/FoodPlanner.tsx", "utf8");
-  const rotation = app.slice(app.indexOf("const WEEKLY_MAIN_ROTATION"), app.indexOf("const recipes"));
+  const rotation = app.slice(app.indexOf("const WEEKLY_MAIN_ROTATION"), app.indexOf("const mainRotationForCuisine"));
   const count = (family) => [...rotation.matchAll(new RegExp(`"${family}"`, "g"))].length;
   assert.equal(count("pesce"), 2);
   assert.equal(count("legumi"), 3);
@@ -2297,7 +2309,7 @@ test("v1.18.12 aligns the automatic 14-meal protein rotation with the supplied m
   assert.equal(count("carne-rossa"), 1);
   assert.equal(count("uova"), 3);
   assert.equal(count("latticini"), 3);
-  assert.match(app, /const requestedFamilies = WEEKLY_MAIN_ROTATION/);
+  assert.match(app, /const requestedFamilies = mainRotationForCuisine\(cuisineChoice\)/);
   assert.match(app, /target: "0–1", min: 0, max: 1/);
 });
 
@@ -2503,7 +2515,7 @@ test("v1.18.32 treats egg recipes as weekly occasions and rebalances main meals 
 test("v1.18.33 caps automatic whole-egg breakfasts while preserving manual freedom", async () => {
   const app = await readFile("app/FoodPlanner.tsx", "utf8");
   assert.match(app, /let plannedWholeEggBreakfasts = 0/);
-  assert.match(app, /plannedWholeEggBreakfasts >= 1/);
+  assert.match(app, /plannedWholeEggBreakfasts >= \(cuisineChoice === "Asiatico" \? 0 : 1\)/);
   assert.match(app, /if \(hasWholeEgg\(breakfast\.ingredients\)\) plannedWholeEggBreakfasts \+= 1/);
   assert.match(app, /const otherWholeEggBreakfasts = days\.reduce/);
   assert.match(app, /const checkinBreakfastPool =/);
@@ -2809,7 +2821,7 @@ test("v1.18.63 migrates incompatible saved data without deleting the valid profi
   assert.match(app, /const safeArrayRecord =/);
   assert.match(app, /const safePartRecord =/);
   assert.match(app, /const safeRecipeIds =/);
-  assert.match(app, /setPartSelections\(safePartRecord/);
+  assert.match(app, /setPartSelections\(restoreWholeLegacyPizzas\(safePartRecord/);
   assert.match(app, /setCompletedRecipes\(canLoadHistory \? safeRecipeIds/);
   assert.match(main, /checkRecoveryRelease/);
   assert.match(main, /_recovery_release/);
@@ -3731,9 +3743,23 @@ test("manual meal changes replan later days against meal targets without erasing
   const replan = source.split("const replanFollowingDays =")[1]?.split("const clearMealOverrides")[0] || "";
   assert.match(replan, /targetForDay\(day\)/);
   assert.match(replan, /closestForSlot\(/);
-  assert.match(replan, /WEEKLY_MAIN_ROTATION\[day \* 2/);
+  assert.match(replan, /mainRotationForCuisine\(cuisineChoice\)\[day \* 2/);
   assert.match(replan, /completed\[key\] \|\| partSelections\[key\]/);
   assert.doesNotMatch(replan, /pool\[\(day \* 3 \+ slot\) % pool\.length\]/);
+});
+
+test("Asian automatic plans limit egg meals without hiding mixed-dish eggs", async () => {
+  const [source, audit] = await Promise.all([
+    readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../scripts/audit-cuisine-plan.mjs", import.meta.url), "utf8"),
+  ]);
+  assert.match(source, /cuisine === "Asiatico" && index === 13 \? "pesce" : family/);
+  assert.match(source, /id: "asian-saba-miso-rice-spinach"/);
+  assert.match(source, /sourceUrl: "https:\/\/www\.maff\.go\.jp\/e\/policies\/market\/japan-cuisine\/japan\/15\/index\.html"/);
+  assert.match(source, /plannedWholeEggBreakfasts >= \(cuisineChoice === "Asiatico" \? 0 : 1\)/);
+  assert.match(source, /mainRotationForCuisine\(cuisineChoice\)\.map\(\(family\) =>/);
+  assert.match(source, /Questi sono conteggi di pasti, non porzioni standard CREA/);
+  assert.match(audit, /outOfRange: contextTargetMatrix\.flatMap/);
 });
 
 test("low-energy plans keep automatic snacks near their meal allocation", async () => {

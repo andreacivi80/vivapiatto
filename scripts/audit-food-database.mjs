@@ -6,7 +6,7 @@ const end = source.indexOf("const occasionalFoodRows", start);
 if (start < 0 || end < 0) throw new Error("Banca dati alimenti non trovata");
 
 const block = source.slice(start, end);
-const allowedSources = new Set(["CREA", "USDA", "IFCT", "FRIDA", "ETICHETTA", "HUMANITAS", "IEO", "RICETTA CALCOLATA"]);
+const allowedSources = new Set(["CREA", "USDA", "IFCT", "FRIDA", "MEXT", "ETICHETTA", "HUMANITAS", "IEO", "RICETTA CALCOLATA"]);
 const records = [];
 for (const match of block.matchAll(/(?:^|[,;]\s*|foods\[)(?:"([^"]+)"|([A-Za-zÀ-ÿ][\wÀ-ÿ ]*))\]?\s*(?::|=)\s*\{([\s\S]*?)\}/gm)) {
   const name = (match[1] || match[2] || "").trim();

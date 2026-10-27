@@ -9,7 +9,7 @@ import { readSessionItem, removeSessionItem, writeStorageItem } from "./storageR
 type Macro = { kcal: number; protein: number; carbs: number; fat: number };
 type Food = Macro & {
   fiber: number;
-  source: "CREA" | `CREA ${string}` | "USDA" | "USDA FoodData Central" | "IFCT" | "FRIDA" | "ETICHETTA" | "ETICHETTA: verificare confezione" | "HUMANITAS" | "IEO" | "RICETTA CALCOLATA";
+  source: "CREA" | `CREA ${string}` | "USDA" | "USDA FoodData Central" | "IFCT" | "FRIDA" | "MEXT" | "ETICHETTA" | "ETICHETTA: verificare confezione" | "HUMANITAS" | "IEO" | "RICETTA CALCOLATA";
 };
 type RecipeIngredient = { food: string; grams: number; label?: string };
 type MealPart = RecipeIngredient & {
@@ -1879,6 +1879,8 @@ foods["Patate cotte arrosto"] = { kcal: 152, protein: 2.9, carbs: 25.7, fat: 4.5
 foods["Aceto di mele"] = { kcal: 21, protein: 0, carbs: 0.9, fat: 0, fiber: 0, source: "USDA FoodData Central" };
 // CREA PC0001: pizza margherita STG pronta, usata come base misurabile delle varianti farcite.
 foods["Pizza Napoletana Margherita STG"] = { kcal: 235, protein: 10.7, carbs: 27.4, fat: 9.3, fiber: 2.7, source: "CREA" };
+// Japanese Standard Tables of Food Composition (MEXT), food 17048: soybean-koji miso, per 100 g.
+foods["Miso di soia"] = { kcal: 207, protein: 17.2, carbs: 14.5, fat: 10.5, fiber: 6.5, source: "MEXT" };
 // Ingredienti pesati a crudo per la marinara domestica: il totale del piatto è una stima, non un'analisi della pizza cotta.
 foods["Farina di frumento tipo 00"] = { kcal: 323, protein: 11, carbs: 71.6, fat: 0.7, fiber: 2.2, source: "CREA 000220" };
 foods["Pomodori pelati in scatola"] = { kcal: 22, protein: 1.2, carbs: 3, fat: 0.5, fiber: 0.9, source: "CREA 006680" };
@@ -1960,6 +1962,10 @@ const WEEKLY_MAIN_ROTATION: WeeklyProteinFamily[] = [
   "legumi", "pesce", "carne-bianca", "uova", "legumi", "pesce", "latticini",
   "carne-bianca", "uova", "latticini", "legumi", "carne-rossa", "latticini", "uova",
 ];
+const mainRotationForCuisine = (cuisine: string): WeeklyProteinFamily[] =>
+  WEEKLY_MAIN_ROTATION.map((family, index) =>
+    cuisine === "Asiatico" && index === 13 ? "pesce" : family,
+  );
 const recipes: Recipe[] = [
   {
     id: "jar",
@@ -4621,6 +4627,45 @@ const balancedDinnerRecipes: Recipe[] = [
     sourceUrl: "https://www.maff.go.jp/e/policies/market/k_ryouri/search_menu/6628/index.html",
   },
   {
+    id: "asian-saba-miso-rice-spinach",
+    name: "Sgombro al miso con riso e spinaci",
+    kicker: "Sabamiso giapponese · piatto completo adattato",
+    course: "Piatto unico",
+    cuisine: "Asiatico",
+    image: photo("recipe-asian-mackerel-miso-rice-v12048"),
+    time: 35,
+    ingredients: [
+      { food: "Riso basmati cotto", grams: 150 },
+      { food: "Sgombro cotto", grams: 120 },
+      { food: "Spinaci cotti", grams: 150 },
+      { food: "Porro cotto", grams: 60 },
+      { food: "Miso di soia", grams: 10 },
+      { food: "Salsa di soia", grams: 5 },
+      { food: "Mirin", grams: 5 },
+      { food: "Zenzero fresco", grams: 5 },
+    ],
+    parts: [
+      { category: "Carboidrato", food: "Riso basmati cotto", grams: 150, label: "Riso · 150 g già cotto", image: photo("part-basmati-cooked-v11650") },
+      { category: "Proteina", food: "Sgombro cotto", grams: 120, label: "Sgombro · 120 g edibili cotti", image: photo("part-mackerel-baked-v11654") },
+      { category: "Contorno", food: "Spinaci cotti", grams: 150, label: "Spinaci · 150 g già cotti", image: photo("part-spinach-cooked-v11995") },
+      { category: "Contorno", food: "Porro cotto", grams: 60, label: "Porro · 60 g già cotto", image: photo("part-leek-v1163") },
+      { category: "Extra", food: "Miso di soia", grams: 10, label: "Miso di soia · 10 g", image: photo("part-soybean-miso-v12048") },
+      { category: "Extra", food: "Salsa di soia", grams: 5, label: "Salsa di soia · 5 g", image: photo("part-soy-sauce-v11819") },
+      { category: "Extra", food: "Mirin", grams: 5, label: "Mirin · 5 g", image: photo("part-mirin-v11819") },
+      { category: "Extra", food: "Zenzero fresco", grams: 5, label: "Zenzero fresco · 5 g", image: photo("part-ginger-v11866") },
+    ],
+    steps: [
+      "Cuoci il riso secondo la confezione e pesane 150 g già cotti. Lessa gli spinaci in poca acqua, scolali bene e pesane 150 g cotti.",
+      "Asciuga il filetto di sgombro crudo. Taglia il porro e lo zenzero. In una padella sciogli 10 g di miso con circa 100 ml d'acqua, 5 g di salsa di soia e 5 g di mirin; aggiungi lo zenzero. Non aggiungere sale: miso e salsa di soia ne contengono già molto.",
+      "Porta a leggero bollore, adagia lo sgombro con la pelle in alto e cuocilo coperto per circa 10 minuti, o finché è completamente cotto; il tempo varia con lo spessore. Negli ultimi minuti aggiungi il porro e fallo ammorbidire.",
+      "Elimina eventuali lische. Pesa 120 g di pesce edibile cotto e 60 g di porro cotto; servi con riso e spinaci. I nutrienti sono stimati da pesi già cotti e dai condimenti misurati, non dalla quantità iniziale di pesce crudo.",
+    ],
+    alternatives: ["Pesce e soia sono allergeni", "Riso, pesce, verdure e condimenti si possono modificare separatamente", "Il sabamiso MAFF è stato adattato in un pasto completo con riso e spinaci"],
+    allergens: ["Pesce", "Soia"],
+    sourceLabel: "MAFF · mackerel cooked in miso sauce; riso e spinaci aggiunti come adattamento; miso MEXT 17048",
+    sourceUrl: "https://www.maff.go.jp/e/policies/market/japan-cuisine/japan/15/index.html",
+  },
+  {
     id: "asian-japchae-authentic",
     name: "Japchae coreano con manzo e verdure",
     kicker: "Noodles di patata dolce · versione adattata VisitKorea",
@@ -7048,6 +7093,7 @@ const ingredientPartCatalog: Record<string, MealPart> = {
   Gochujang: { category: "Extra", food: "Gochujang", grams: 10, label: "Gochujang", image: photo("part-gochujang-v11819") },
   "Grano saraceno cotto": { category: "Carboidrato", food: "Grano saraceno cotto", grams: 160, label: "Grano saraceno cotto", image: photo("part-buckwheat-cooked-v11819") },
   Mirin: { category: "Extra", food: "Mirin", grams: 10, label: "Mirin", image: photo("part-mirin-v11819") },
+  "Miso di soia": { category: "Extra", food: "Miso di soia", grams: 10, label: "Miso di soia · 10 g", image: photo("part-soybean-miso-v12048") },
   "Noodles di riso cotti": { category: "Carboidrato", food: "Noodles di riso cotti", grams: 180, label: "Noodles di riso cotti", image: photo("part-rice-noodles-v11652") },
   "Panna cotta": { category: "Extra", food: "Panna cotta", grams: 120, label: "Panna cotta", image: photo("cheat-panna-cotta-v11628") },
   "Passata di pomodoro": { category: "Contorno", food: "Passata di pomodoro", grams: 100, label: "Passata di pomodoro", image: photo("part-passata-v11652") },
@@ -11000,6 +11046,34 @@ if (recipeMetadataIssues.length) {
   throw new Error(`Metadati ricette non validi:\n${recipeMetadataIssues.join("\n")}`);
 }
 const recipeMap = Object.fromEntries(allRecipes.map((r) => [r.id, r]));
+// Older saved pizzas were appended as separate ingredients. Rejoin only exact,
+// untouched pizza ingredient sequences; an explicitly split group keeps its id
+// and is never recomposed by this migration.
+const restoreWholeLegacyPizzas = (saved: Record<string, MealPart[]>) =>
+  Object.fromEntries(Object.entries(saved).map(([key, entries]) => {
+    const restored = entries.map((part) => ({ ...part }));
+    for (const recipe of occasionalRecipes.filter((item) => item.id.startsWith("occasional-pizza-") && (item.parts?.length || 0) > 1)) {
+      const expected = recipe.parts || [];
+      for (let start = 0; start <= restored.length - expected.length; start += 1) {
+        const matches = expected.every((part, offset) => {
+          const savedPart = restored[start + offset];
+          return !savedPart.occasionalGroupId && savedPart.food === part.food && savedPart.grams === part.grams;
+        });
+        if (!matches) continue;
+        const groupId = `restored-pizza-${key}-${recipe.id}-${start}`;
+        expected.forEach((_, offset) => {
+          restored[start + offset] = {
+            ...restored[start + offset],
+            occasionalGroupId: groupId,
+            occasionalRecipeId: recipe.id,
+            occasionalCollapsed: true,
+          };
+        });
+        start += expected.length - 1;
+      }
+    }
+    return [key, restored];
+  })) as Record<string, MealPart[]>;
 const automaticMultiLegumePenalty = (recipe: Recipe) =>
   recipe.ingredients.filter((item) =>
     /ceci|lenticchie|fagioli(?!ni)|piselli|fave|edamame|lupini|cicerchie/i.test(item.food),
@@ -11756,7 +11830,7 @@ export function FoodPlanner() {
         setCompletedRecipes(canLoadHistory ? safeRecipeIds(s.completedRecipes) : {});
         setActualWeights(canLoadHistory ? safeWeightRecord(s.actualWeights) as Record<string, number[]> : {});
         setRemovedIngredients(safeNumberArrayRecord(s.removedIngredients) as Record<string, number[]>);
-        setPartSelections(safePartRecord(s.partSelections) as Record<string, MealPart[]>);
+        setPartSelections(restoreWholeLegacyPizzas(safePartRecord(s.partSelections) as Record<string, MealPart[]>));
         setMealView(safeMealViewRecord(s.mealView) as Record<string, "parts" | "dish">);
         const savedCheck = safeRecord(s.check);
         setCheck({
@@ -12524,7 +12598,7 @@ export function FoodPlanner() {
           let candidates = pool.filter((recipe) => !used.has(recipe.id));
           if (!candidates.length) candidates = pool;
           if (slot === 2 || slot === 4) {
-            const family = WEEKLY_MAIN_ROTATION[day * 2 + Number(slot === 4)];
+            const family = mainRotationForCuisine(cuisineChoice)[day * 2 + Number(slot === 4)];
             const byFamily = candidates.filter((recipe) => recipeProteinFamily(recipe) === family);
             if (byFamily.length) candidates = byFamily;
           }
@@ -13636,7 +13710,7 @@ export function FoodPlanner() {
           ? homeMains.length ? homeMains : mains
           : lunches;
         const breakfastPool =
-          plannedWholeEggBreakfasts >= 1
+          plannedWholeEggBreakfasts >= (cuisineChoice === "Asiatico" ? 0 : 1)
             ? breakfasts.filter((recipe) => !hasWholeEgg(recipe.ingredients))
             : breakfasts;
         const breakfast = closestForSlot(
@@ -13675,8 +13749,8 @@ export function FoodPlanner() {
           offset + 1,
           preference,
         );
-        let lunchFamily = WEEKLY_MAIN_ROTATION[day * 2];
-        let dinnerFamily = WEEKLY_MAIN_ROTATION[day * 2 + 1];
+        let lunchFamily = mainRotationForCuisine(cuisineChoice)[day * 2];
+        let dinnerFamily = mainRotationForCuisine(cuisineChoice)[day * 2 + 1];
         if (
           ["Lavoro", "Mensa"].includes(dayContext) &&
           !dayLunches.some((recipe) => recipeProteinFamily(recipe) === lunchFamily) &&
@@ -14348,7 +14422,7 @@ export function FoodPlanner() {
     let replacementIndex = 0;
     const eggMainTarget = Math.max(0, 3 - nonMainEggMeals);
     const eggReplacements: WeeklyProteinFamily[] = ["pesce", "salumi"];
-    const requestedFamilies = WEEKLY_MAIN_ROTATION.map((family) => {
+    const requestedFamilies = mainRotationForCuisine(cuisineChoice).map((family) => {
       if (family !== "uova" || retainedEggMains < eggMainTarget) {
         if (family === "uova") retainedEggMains += 1;
         return family;
@@ -15892,14 +15966,14 @@ export function FoodPlanner() {
             <div className="weekly-frequency">
               <header>
                 <b>{weekLocked ? "Rotazione confermata" : "Rotazione pianificata"}</b>
-                 <span>{standardWeeklyTargets ? "pasti della settimana · riferimento CREA" : `conteggi · stile ${foodStyle.toLowerCase()}`} · {weeklyVariety.bases} basi · {weeklyVariety.vegetables} ortaggi</span>
+                 <span>{standardWeeklyTargets ? "pasti della settimana · rotazione orientativa" : `conteggi · stile ${foodStyle.toLowerCase()}`} · {weeklyVariety.bases} basi · {weeklyVariety.vegetables} ortaggi</span>
                 <a
                   className="weekly-source"
                   href="https://www.crea.gov.it/documents/59764/0/Dossier%2BLG%2B2017_CAP10.pdf/"
                   target="_blank"
                   rel="noreferrer"
                 >
-                  Fonte ↗
+                  Porzioni CREA ↗
                 </a>
               </header>
               <div>
@@ -15913,7 +15987,7 @@ export function FoodPlanner() {
               </div>
               <p>
                  {standardWeeklyTargets
-                   ? "Le proposte successive useranno ciò che registri per aumentare la varietà; i riferimenti non sono obblighi clinici."
+                   ? "Questi sono conteggi di pasti, non porzioni standard CREA né obiettivi clinici. Puoi cambiare liberamente i piatti."
                    : "I range generali CREA non sono applicati automaticamente allo stile scelto; qui vedi solo le frequenze e puoi variare i pasti."}
               </p>
               {consecutiveProteinRepeats > 0 && (

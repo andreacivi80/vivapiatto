@@ -1213,6 +1213,70 @@ try {
       }
       occasionalAddition.bresaolaRemoved = await evaluate(`document.querySelectorAll('.meal-card')[2]?.querySelectorAll('.meal-part').length === ${occasionalAddition.before}`);
     }
+    if (versionMinor >= 20 && versionPatch >= 48) {
+      occasionalAddition.wholePizzaVariants = [];
+      for (const name of [
+        'Pizza marinara fatta in casa', "Pizza all'ortolana fatta in casa",
+        'Pizza con acciughe, broccoletti e pinoli', 'Pizza bianca con patate e rosmarino',
+        'Pizza con bresaola, rucola e grana', 'Pizza ai quattro formaggi',
+        'Pizza alla diavola', 'Pizza capricciosa',
+        'Pizza prosciutto cotto e funghi', 'Pizza tonno e cipolla',
+      ]) {
+        await evaluate(`document.querySelectorAll('.meal-card')[2]?.querySelector('.add-part-compact')?.click()`);
+        await wait(180);
+        await evaluate(`document.querySelector('.part-picker-sheet .part-picker-shortcuts button')?.click()`);
+        await wait(180);
+        const found = await evaluate(`(() => {
+          const group = document.querySelector('.part-picker-sheet .cheat-picker-group');
+          if (group) group.open = true;
+          const button = [...(group?.querySelectorAll('.complete-meal-select') || [])]
+            .find((candidate) => candidate.querySelector('span')?.textContent?.trim() === ${JSON.stringify(name)});
+          button?.click();
+          return Boolean(button);
+        })()`);
+        await wait(260);
+        const result = await evaluate(`(() => {
+          const card = document.querySelectorAll('.meal-card')[2];
+          const whole = [...(card?.querySelectorAll('.meal-part.occasional-whole') || [])]
+            .find((part) => part.querySelector('.part-change')?.textContent?.includes(${JSON.stringify(name)}));
+          const result = {
+            singleCard: Boolean(whole && card.querySelectorAll('.meal-part').length === ${occasionalAddition.before} + 1),
+            wholePhoto: Boolean(whole?.querySelector('img')?.src.includes('cheat-pizza-')),
+            canSplit: Boolean(whole?.querySelector('.occasional-split')),
+          };
+          whole?.querySelector('.part-remove')?.click();
+          return result;
+        })()`);
+        await wait(100);
+        occasionalAddition.wholePizzaVariants.push({ name, found, ...result });
+      }
+      const originalProfile = await evaluate(`localStorage.getItem('vivapiatto-v1')`);
+      await evaluate(`(() => {
+        const saved = JSON.parse(localStorage.getItem('vivapiatto-v1') || '{}');
+        saved.partSelections = saved.partSelections || {};
+        saved.mealView = saved.mealView || {};
+        saved.partSelections['0-2'] = [
+          { food: 'Pizza Napoletana Margherita STG', grams: 300 },
+          { food: 'Bresaola', grams: 50 },
+          { food: 'Rucola', grams: 30 },
+          { food: 'Parmigiano Reggiano DOP', grams: 20 },
+        ];
+        saved.mealView['0-2'] = 'parts';
+        localStorage.setItem('vivapiatto-v1', JSON.stringify(saved));
+      })()`);
+      await page.send('Page.reload', { ignoreCache: false });
+      for (let attempt = 0; attempt < 40; attempt += 1) {
+        occasionalAddition.legacyPizzaRestored = await evaluate(`Boolean(document.querySelectorAll('.meal-card')[2]?.querySelector('.meal-part.occasional-whole img[src*="cheat-pizza-bresaola-rucola-grana"]'))`);
+        if (occasionalAddition.legacyPizzaRestored) break;
+        await wait(250);
+      }
+      await evaluate(`localStorage.setItem('vivapiatto-v1', ${JSON.stringify(originalProfile)})`);
+      await page.send('Page.reload', { ignoreCache: false });
+      for (let attempt = 0; attempt < 40; attempt += 1) {
+        if (await evaluate(`document.querySelectorAll('.meal-card').length === 5`)) break;
+        await wait(250);
+      }
+    }
   }
   const readyDishFlow = await evaluate(`(() => {
     const card = document.querySelectorAll('.meal-card')[2];
@@ -2088,6 +2152,8 @@ try {
     (versionMinor >= 20 && versionPatch >= 46 && (!occasionalAddition.bresaolaChoiceFound ||
       !occasionalAddition.bresaolaWhole || !occasionalAddition.splitAvailable ||
       !occasionalAddition.bresaolaPersisted || !occasionalAddition.bresaolaSplit || !occasionalAddition.bresaolaRemoved)) ||
+    (versionMinor >= 20 && versionPatch >= 48 && (!occasionalAddition.legacyPizzaRestored || occasionalAddition.wholePizzaVariants?.length !== 10 ||
+      occasionalAddition.wholePizzaVariants.some((pizza) => !pizza.found || !pizza.singleCard || !pizza.wholePhoto || !pizza.canSplit))) ||
     (releasePatch >= 84 && (!occasionalAddition.replacementAvailable ||
       !occasionalAddition.replacementKeptMeal || !occasionalAddition.oldPizzaGone || !occasionalAddition.tiramisuPhoto)) ||
     (!occasionalSplitPhoto.skipped && (!occasionalSplitPhoto.optionFound || !occasionalSplitPhoto.componentFound ||
