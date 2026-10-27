@@ -314,6 +314,11 @@ try {
     name: row.querySelector('.week-meal b')?.innerText || '',
     mismatches: Number(row.dataset.seasonMismatches),
   })))()`);
+  const weeklyFruitRepeats = Array.from({ length: 7 }, (_, day) =>
+    ["mela", "banana", "pera", "kiwi", "uva", "pesca", "nettarina", "mango", "papaya", "albicocca", "ciliegie", "anguria", "melone", "arancia", "fragole"]
+      .filter((fruit) => [0, 1, 3].filter((slot) =>
+        new RegExp(`\\b${fruit}\\b`, "i").test(weeklySeasonality[day * 5 + slot]?.name || "")).length > 1)
+      .map((fruit) => ({ day: day + 1, fruit }))).flat();
   const weeklyMainBalance = await evaluate(`(() => [...document.querySelectorAll('.week-day')].flatMap((day, dayIndex) => {
     const rows = [...day.querySelectorAll('.week-meal-row')];
     return [2, 4].map((slot) => {
@@ -2007,6 +2012,7 @@ try {
     scrollStability,
     week,
     weeklySeasonality,
+    weeklyFruitRepeats,
     weeklyMainBalance,
     weeklyConfirmation,
     weeklyPrintPreview,
@@ -2075,6 +2081,7 @@ try {
       (weeklyMainBalance.length !== 14 || weeklyMainBalance.some((meal) => !meal.found || !meal.complete))) ||
     (versionMinor >= 20 && versionPatch >= 38 &&
       (weeklySeasonality.length !== 35 || weeklySeasonality.some((meal) => !Number.isFinite(meal.mismatches) || meal.mismatches > 0))) ||
+    (releasePatch >= 53 && weeklyFruitRepeats.length > 0) ||
     !weeklyConfirmation.found || !weeklyConfirmation.locked || !weeklyConfirmation.hasAverage || weeklyConfirmation.calorieDays !== 7 ||
     !weeklyConfirmation.rotationConfirmed || weeklyConfirmation.rotationRows < 7 || !weeklyConfirmation.rotationInRange ||
     (releasePatch >= 79 &&

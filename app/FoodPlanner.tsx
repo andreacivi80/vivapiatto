@@ -11268,21 +11268,32 @@ const seasonalChoicesForNewPlan = () => {
     [1, 3].forEach((slot) => {
       const original = recipeMap[day.recipes[slot]];
       if (!original) return;
-      if (!isOutOfSeason(original) || !candidates.length) {
+      const breakfast = recipeMap[choices[`${dayIndex}-0`] || day.recipes[0]];
+      const morning = recipeMap[choices[`${dayIndex}-1`] || day.recipes[1]];
+      const earlierFruit = new Set(
+        [breakfast, ...(slot === 3 ? [morning] : [])]
+          .flatMap((recipe) => recipe.ingredients)
+          .filter((ingredient) => fruitFoods.has(ingredient.food))
+          .map((ingredient) => ingredient.food),
+      );
+      const repeatsEarlierFruit = original.ingredients.some((ingredient) =>
+        earlierFruit.has(ingredient.food),
+      );
+      if ((!isOutOfSeason(original) && !repeatsEarlierFruit) || !candidates.length) {
         used.add(original.id);
         return;
       }
-      const unused = candidates.filter((recipe) => !used.has(recipe.id));
-      const morning = recipeMap[choices[`${dayIndex}-1`] || day.recipes[1]];
-      const morningFruit = new Set(morning.ingredients
-        .filter((ingredient) => fruitFoods.has(ingredient.food))
-        .map((ingredient) => ingredient.food));
-      const ranked = [...(unused.length ? unused : candidates)].sort((left, right) => {
+      const differentFruit = candidates.filter((recipe) =>
+        recipe.id !== morning.id &&
+        !recipe.ingredients.some((ingredient) => earlierFruit.has(ingredient.food)),
+      );
+      const compatible = differentFruit.length ? differentFruit : candidates;
+      const unused = compatible.filter((recipe) => !used.has(recipe.id));
+      const ranked = [...(unused.length ? unused : compatible)].sort((left, right) => {
         const score = (recipe: Recipe) =>
           Math.abs(calc(recipe.ingredients).kcal - calc(original.ingredients).kcal) +
           Math.max(0, recipe.ingredients.length - 2) * 45 +
-          Number(recipe.ingredients.some((item) => fruitFoods.has(item.food) && seasonalMonths[item.food]?.includes(month))) * -80 +
-          Number(slot === 3 && recipe.ingredients.some((item) => morningFruit.has(item.food))) * 100;
+          Number(recipe.ingredients.some((item) => fruitFoods.has(item.food) && seasonalMonths[item.food]?.includes(month))) * -80;
         return score(left) - score(right);
       });
       const replacement = ranked[0];
