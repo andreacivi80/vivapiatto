@@ -7,11 +7,11 @@
 - [x] Filtri prudenziali per curry e aceti non verificati, con note sull'etichetta; nessuna dichiarazione di sicurezza clinica.
 - [x] Pulizia richiesta: 13 file di cache ricreabile, 2.526.210 byte rimossi e verificati; nessun dato dell'utente o versione eliminati. Misure del PC e helper di pulizia restano soltanto in locale, esclusi dal repository pubblico.
 - [x] Matrice locale: 24 profili passati, nessun overflow orizzontale, 14 pasti principali per settimana con varietà e cinque pranzi feriali Mensa nelle opzioni pratiche. Job `46e72377-279e-427c-8549-97e53fcd843a`, exit 0. Il precedente job `c26df8fa-3e7c-44fa-acb6-be654a6472c2` era fallito prima dell'app per la guardia exit 0, corretta prima di questa verifica.
-- [ ] Audit mobile locale avviato: `b9121ba6-7ce1-4d50-a896-60e2808e8d98`. Consultare stato/risultato prima di qualunque rilancio. Preview locale nella sessione `80563`.
+- [x] Audit mobile locale passato: `b9121ba6-7ce1-4d50-a896-60e2808e8d98`, exit 0. Zero errori JavaScript, nessun overflow o immagine visibile rotta rilevati; verificati anche aggiunta Margherita + variante come due pizze intere, persistenza dopo ricaricamento e divisione solo su richiesta. Preview locale nella sessione `80563`.
 - [ ] Pubblicazione e verifiche di matrice/mobile sul sito pubblico.
 - [x] Rimossi dai tre audit `taskkill` su PID numerici e rimozioni forzate del profilo. La chiusura usa la propria sessione CDP e il proprio handle; incertezza WMI, reparse, file in uso o timeout conservano il profilo, con resoconto nei log del job. Sul PC WMIC può produrre CSV non valido quando CommandLine contiene virgole: il parser conserva prudentemente il profilo anziché ignorare righe.
 - [ ] Manutenzione: valutare output WMI strutturato per i casi di CSV malformato, con test anonimo e senza indebolire le prove di assenza dei processi.
-- [ ] Verifica del passaggio automatico 1.20.60 → 1.20.61 su sessione già aperta, preservando le modifiche.
+- [ ] Verifica del passaggio automatico 1.20.60 → 1.20.61: job `1d68c885-442e-4b50-bec6-7082877baa45` avviato sulla versione pubblica 1.20.60. Prima del push verificare nei log che la sessione iniziale e le modifiche di prova siano pronte; poi pubblicare e controllare quantità, menu e scroll conservati. Non rilanciare il job senza consultarne prima stato e risultato.
 - [ ] Proseguire le richieste residue, comprese preparazioni complete distinte dai prodotti pronti (`PREPARED-RECIPE-BACKLOG.md`) e controllo delle quantità di limone/opzioni.
 
 Questa checklist resta nel repository e viene aggiornata a ogni revisione. Una voce è completa solo quando dati, fotografia, proposta, alternativa, calcolo e comportamento mobile sono verificati insieme.
