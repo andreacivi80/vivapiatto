@@ -11063,6 +11063,15 @@ if (recipeMetadataIssues.length) {
   throw new Error(`Metadati ricette non validi:\n${recipeMetadataIssues.join("\n")}`);
 }
 const recipeMap = Object.fromEntries(allRecipes.map((r) => [r.id, r]));
+const dairyFoodsInRecipe = (recipe: Recipe) => new Set(
+  recipe.ingredients
+    .filter((ingredient) => pantryPartByFood.get(ingredient.food)?.category === "Latticino")
+    .map((ingredient) => ingredient.food),
+);
+const sharesDairy = (left: Recipe, right: Recipe) => {
+  const leftDairy = dairyFoodsInRecipe(left);
+  return [...dairyFoodsInRecipe(right)].some((food) => leftDairy.has(food));
+};
 // Older saved pizzas were appended as separate ingredients. Rejoin an ordered
 // pizza sequence even if its portions changed: only presentation changes, so
 // the user's actual grams remain intact. Explicitly split groups keep their id.
@@ -11281,7 +11290,13 @@ const seasonalChoicesForNewPlan = () => {
       const repeatsEarlierFruit = original.ingredients.some((ingredient) =>
         earlierFruit.has(ingredient.food),
       );
-      if ((!isOutOfSeason(original) && !repeatsEarlierFruit) || !candidates.length) {
+      const earlierDairy = new Set(
+        [breakfast, ...(slot === 3 ? [morning] : [])]
+          .flatMap((recipe) => [...dairyFoodsInRecipe(recipe)]),
+      );
+      const repeatsEarlierDairy = [...dairyFoodsInRecipe(original)]
+        .some((food) => earlierDairy.has(food));
+      if ((!isOutOfSeason(original) && !repeatsEarlierFruit && !repeatsEarlierDairy) || !candidates.length) {
         used.add(original.id);
         return;
       }
@@ -11289,7 +11304,10 @@ const seasonalChoicesForNewPlan = () => {
         recipe.id !== morning.id &&
         !recipe.ingredients.some((ingredient) => earlierFruit.has(ingredient.food)),
       );
-      const compatible = differentFruit.length ? differentFruit : candidates;
+      const differentDairy = differentFruit.filter((recipe) =>
+        ![...dairyFoodsInRecipe(recipe)].some((food) => earlierDairy.has(food)),
+      );
+      const compatible = differentDairy.length ? differentDairy : differentFruit.length ? differentFruit : candidates;
       const unused = compatible.filter((recipe) => !used.has(recipe.id));
       const ranked = [...(unused.length ? unused : compatible)].sort((left, right) => {
         const score = (recipe: Recipe) =>
@@ -12656,7 +12674,11 @@ export function FoodPlanner() {
               !sharesFruit(morning, recipe, 1, 3, targetForDay(day)) &&
               !sharesFruit(breakfast, recipe, 0, 3, targetForDay(day)),
             );
-            if (differentFruit.length) candidates = differentFruit;
+            const differentDairy = differentFruit.filter((recipe) =>
+              !sharesDairy(morning, recipe) && !sharesDairy(breakfast, recipe),
+            );
+            if (differentDairy.length) candidates = differentDairy;
+            else if (differentFruit.length) candidates = differentFruit;
           }
           const withinEggBudget = (recipe: Recipe) =>
             eggEquivalentsUsed + wholeEggEquivalents(plannedIngredients(key, recipe, true)) <= 4.05;
@@ -13808,8 +13830,11 @@ export function FoodPlanner() {
           !sharesFruit(breakfast, recipe, 0, 1, profileTarget) &&
           (!isSmoothieRecipe(breakfast) || !isSmoothieRecipe(recipe)),
         );
+        const differentDairyMorning = morningSnackPool.filter((recipe) =>
+          !sharesDairy(breakfast, recipe),
+        );
         const morningSnack = closestForSlot(
-          morningSnackPool.length ? morningSnackPool : snacks,
+          differentDairyMorning.length ? differentDairyMorning : morningSnackPool.length ? morningSnackPool : snacks,
           1,
           profileTarget * shares[1],
           offset,
@@ -13825,8 +13850,13 @@ export function FoodPlanner() {
             !sharesFruit(breakfast, recipe, 0, 3, profileTarget) &&
             (!smoothieAlreadyPlanned || !isSmoothieRecipe(recipe)),
         );
-        const afternoonPool = differentFruitSnacks.length
-          ? differentFruitSnacks
+        const differentDairySnacks = differentFruitSnacks.filter((recipe) =>
+          !sharesDairy(morningSnack, recipe) && !sharesDairy(breakfast, recipe),
+        );
+        const afternoonPool = differentDairySnacks.length
+          ? differentDairySnacks
+          : differentFruitSnacks.length
+            ? differentFruitSnacks
           : snacks.filter((recipe) => recipe.id !== morningSnack.id);
         const afternoonSnack = closestForSlot(
           afternoonPool,
@@ -14032,8 +14062,10 @@ export function FoodPlanner() {
       !sharesFruit(breakfast, recipe, 0, 1, plannedCalories) &&
       (!isSmoothieRecipe(breakfast) || !isSmoothieRecipe(recipe)),
     );
-    const morningSnack = (morningSnackPool.length ? morningSnackPool : snacks)[
-      (dayIndex + offset) % (morningSnackPool.length || snacks.length)
+    const differentDairyMorning = morningSnackPool.filter((recipe) => !sharesDairy(breakfast, recipe));
+    const preferredMorning = differentDairyMorning.length ? differentDairyMorning : morningSnackPool.length ? morningSnackPool : snacks;
+    const morningSnack = preferredMorning[
+      (dayIndex + offset) % preferredMorning.length
     ];
     const smoothieAlreadyPlanned =
       isSmoothieRecipe(breakfast) || isSmoothieRecipe(morningSnack);
@@ -14044,8 +14076,13 @@ export function FoodPlanner() {
         !sharesFruit(breakfast, recipe, 0, 3, plannedCalories) &&
         (!smoothieAlreadyPlanned || !isSmoothieRecipe(recipe)),
     );
-    const afternoonPool = afternoonCandidates.length
-      ? afternoonCandidates
+    const differentDairyAfternoon = afternoonCandidates.filter((recipe) =>
+      !sharesDairy(morningSnack, recipe) && !sharesDairy(breakfast, recipe),
+    );
+    const afternoonPool = differentDairyAfternoon.length
+      ? differentDairyAfternoon
+      : afternoonCandidates.length
+        ? afternoonCandidates
       : snacks.filter((recipe) => recipe.id !== morningSnack.id);
     const afternoonSnack =
       afternoonPool[(dayIndex + offset + 1) % afternoonPool.length] ||

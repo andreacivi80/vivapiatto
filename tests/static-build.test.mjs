@@ -1368,6 +1368,17 @@ test("v1.20.56 recomposes an unchanged split pizza without hiding edited compone
   assert.match(audit, /editedPizzaCannotRecompose/);
 });
 
+test("v1.20.57 varies dairy across automatically chosen breakfast and snacks", async () => {
+  const [app, audit] = await Promise.all([
+    readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../scripts/audit-cuisine-plan.mjs", import.meta.url), "utf8"),
+  ]);
+  assert.match(app, /const sharesDairy = /);
+  assert.match(app, /const differentDairySnacks = differentFruitSnacks\.filter/);
+  assert.match(app, /const differentDairyAfternoon = afternoonCandidates\.filter/);
+  assert.match(audit, /repeatedDayDairy\(row\.meals\)/);
+});
+
 test("v1.20.28 searches foods and dishes by any text fragment in both meal pickers", async () => {
   const [app, css, audit] = await Promise.all([
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),

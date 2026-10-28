@@ -334,6 +334,9 @@ try {
       ["mela", "banana", "pera", "kiwi", "uva", "pesca", "nettarina", "mango", "papaya", "albicocca", "ciliegie", "anguria", "melone", "arancia", "fragole"]
         .some((fruit) => [0, 1, 3].filter((slot) =>
           new RegExp(`\\b${fruit}\\b`, "i").test(meals[slot] || "")).length > 1);
+    const repeatedDayDairy = (meals) =>
+      ["Skyr bianco", "Kefir bianco magro", "Yogurt greco", "Ricotta"]
+        .some((food) => [0, 1, 3].filter((slot) => (meals[slot] || "").includes(food)).length > 1);
     const mensaIds = new Set([
       "simple-pasta-white", "simple-pasta-tomato", "simple-eggs",
       "simple-steak-potatoes", "everyday-pasta-e-fagioli",
@@ -355,7 +358,7 @@ try {
         (["Lavoro", "Mensa"].includes(row.context) &&
           [row.meals[1], row.meals[3]].some((meal) =>
             /rucola|pomodor|carot|finocch|cetriol|ravanell/i.test(meal || ""))) ||
-        repeatedDayFruit(row.meals) ||
+        repeatedDayFruit(row.meals) || repeatedDayDairy(row.meals) ||
         (row.mealIds[0]?.startsWith("catalog-breakfast-") &&
           /mozzarella|paneer|crescenza|primo sale|scamorza|provolone|stracchino|parmigiano|\blime\b/i.test(row.meals[0])) ||
         row.meals.filter((meal, slot) => [0, 1, 3].includes(slot) &&
