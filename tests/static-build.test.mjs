@@ -1565,7 +1565,8 @@ test("v1.19.23 delegates Edge cleanup to the ownership-verified safe helper", as
     "utf8",
   );
   assert.match(audit, /import \{ cleanupHeadlessAudit \} from "\.\/headless-cleanup\.mjs"/);
-  assert.match(audit, /finally \{\s*await cleanupHeadlessAudit\(\{ child, browser, page, profile \}\)/);
+  assert.match(audit, /finally \{\s*const cleanupReport = await cleanupHeadlessAudit\(\{ child, browser, page, profile \}\)/);
+  assert.match(audit, /console\.error\(`\[headless-cleanup-report\] \$\{JSON\.stringify\(cleanupReport\)\}`\)/);
   assert.doesNotMatch(audit, /taskkill|rmSync|spawnSync/);
 });
 
@@ -3138,7 +3139,7 @@ test("v1.18.98 proposes breakfasts and snacks from the complete recipe catalog",
   const source = await readFile("app/FoodPlanner.tsx", "utf8");
   assert.match(source, /const availableBreakfasts[\s\S]*?allRecipes[\s\S]*?recipe\.course === "Colazione"/);
   assert.match(source, /const availableSnacks[\s\S]*?allRecipes[\s\S]*?recipe\.course === "Spuntino"/);
-  assert.match(source, /const snacks = practicalWorkSnacks\(availableSnacks\(\), dayContext\)/);
+  assert.match(source, /const snacks = (?:practicalWorkSnacks\(availableSnacks\(\), dayContext\)|preferAvailableSeason\(practicalWorkSnacks\(availableSnacks\(\), dayContext\)\));/);
   assert.match(source, /const snacks = preferAvailableSeason\(practicalWorkSnacks\(availableSnacks\(\), dayContext\)\)/);
   assert.match(source, /let snacks = preferAvailableSeason\(availableSnacks\(\)\)/);
 });
