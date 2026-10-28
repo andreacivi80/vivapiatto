@@ -1390,6 +1390,16 @@ test("v1.20.58 keeps an existing complete pizza whole when adding to its meal", 
   assert.match(audit, /originalPizzaSplitsOnRequest/);
 });
 
+test("v1.20.59 adds a topped pizza to a Margherita without splitting either pizza", async () => {
+  const [app, audit] = await Promise.all([
+    readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../scripts/audit-public-mobile.mjs", import.meta.url), "utf8"),
+  ]);
+  assert.match(app, /const existing = current\[key\] \|\| activeMealParts\(key, currentRecipe\)/);
+  assert.match(app, /existing\.map\(\(part\) => \(\{\s*\.\.\.part,\s*occasionalGroupId:/);
+  assert.match(audit, /margheritaAndVariantWhole/);
+});
+
 test("v1.20.28 searches foods and dishes by any text fragment in both meal pickers", async () => {
   const [app, css, audit] = await Promise.all([
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),

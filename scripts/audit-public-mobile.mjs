@@ -1423,6 +1423,43 @@ try {
           if (await evaluate(`document.querySelectorAll('.meal-card').length === 5`)) break;
           await wait(250);
         }
+        if (versionPatch >= 59) {
+          await evaluate(`document.querySelectorAll('.meal-card')[2]?.querySelector('.meal-part .part-change')?.click()`);
+          await wait(200);
+          occasionalAddition.margheritaAsBase = await evaluate(`(() => {
+            const group = document.querySelector('.part-picker-sheet .cheat-picker-group');
+            if (group) group.open = true;
+            const choice = [...(group?.querySelectorAll('.complete-meal-select') || [])]
+              .find((button) => button.querySelector('span')?.textContent?.trim() === 'Pizza margherita');
+            choice?.click();
+            return Boolean(choice);
+          })()`);
+          await wait(300);
+          await evaluate(`document.querySelector('.meal-card[data-recipe-id="occasional-pizza-margherita"] .add-part-compact')?.click()`);
+          await wait(200);
+          occasionalAddition.variantAddedToMargherita = await evaluate(`(() => {
+            const group = document.querySelector('.part-picker-sheet .cheat-picker-group');
+            if (group) group.open = true;
+            const choice = [...(group?.querySelectorAll('.complete-meal-select') || [])]
+              .find((button) => button.querySelector('span')?.textContent?.trim() === 'Pizza con bresaola, rucola e grana');
+            choice?.click();
+            return Boolean(choice);
+          })()`);
+          await wait(300);
+          occasionalAddition.margheritaAndVariantWhole = await evaluate(`(() => {
+            const card = document.querySelector('.meal-card[data-recipe-id="occasional-pizza-margherita"]');
+            const whole = [...(card?.querySelectorAll('.meal-part.occasional-whole') || [])];
+            return whole.length === 2 && card.querySelectorAll('.meal-part').length === 2 &&
+              whole.some((item) => item.textContent.includes('Pizza margherita')) &&
+              whole.some((item) => item.querySelector('img')?.src.includes('cheat-pizza-bresaola-rucola-grana'));
+          })()`);
+          await evaluate(`localStorage.setItem('vivapiatto-v1', ${JSON.stringify(originalProfile)})`);
+          await page.send('Page.reload', { ignoreCache: false });
+          for (let attempt = 0; attempt < 40; attempt += 1) {
+            if (await evaluate(`document.querySelectorAll('.meal-card').length === 5`)) break;
+            await wait(250);
+          }
+        }
       }
     }
   }
@@ -2312,6 +2349,8 @@ try {
     (versionMinor >= 20 && versionPatch >= 58 && (!occasionalAddition.originalPizzaWholeAfterPlus ||
       !occasionalAddition.twoPizzasWholeAfterPlus || !occasionalAddition.twoPizzasWholeAfterReload ||
       !occasionalAddition.originalPizzaSplitsOnRequest)) ||
+    (versionMinor >= 20 && versionPatch >= 59 && (!occasionalAddition.margheritaAsBase ||
+      !occasionalAddition.variantAddedToMargherita || !occasionalAddition.margheritaAndVariantWhole)) ||
     (versionMinor >= 20 && versionPatch >= 55 && (!occasionalAddition.legacyPizzaGramsPreserved || !occasionalAddition.explicitPizzaSplitPreserved)) ||
     (versionMinor >= 20 && versionPatch >= 56 && (!occasionalAddition.bresaolaRecomposeOffered ||
       !occasionalAddition.bresaolaRecomposed || !occasionalAddition.editedPizzaCannotRecompose)) ||

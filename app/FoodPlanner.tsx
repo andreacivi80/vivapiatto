@@ -13438,14 +13438,34 @@ export function FoodPlanner() {
     const key = partPicker.key;
     const currentRecipe = recipeMap[getDayIds(day)[slot]];
     if (!currentRecipe || !parts.length) return;
-    const currentParts = activeMealParts(key, currentRecipe);
     const groupId = crypto.randomUUID();
     clearMealRegistration(key);
     setMealView((current) => ({ ...current, [key]: "parts" }));
-    setPartSelections((current) => ({
-      ...current,
-      [key]: [...currentParts, ...parts.map((part) => ({ ...part, occasionalGroupId: groupId, occasionalRecipeId: recipeId, occasionalCollapsed: Boolean(recipeId) }))],
-    }));
+    setPartSelections((current) => {
+      // The + picker can open while a complete pizza is still in dish view.
+      // Read the latest saved parts here: otherwise the first pizza loses its
+      // whole-dish group when another pizza is added in the same interaction.
+      const existing = current[key] || activeMealParts(key, currentRecipe);
+      const existingParts = current[key] || (
+        currentRecipe.id.startsWith("occasional-pizza-") && (mealView[key] || "dish") === "dish"
+          ? existing.map((part) => ({
+              ...part,
+              occasionalGroupId: `original-pizza-${key}-${currentRecipe.id}`,
+              occasionalRecipeId: currentRecipe.id,
+              occasionalCollapsed: true,
+            }))
+          : existing
+      );
+      return {
+        ...current,
+        [key]: [...existingParts, ...parts.map((part) => ({
+          ...part,
+          occasionalGroupId: groupId,
+          occasionalRecipeId: recipeId,
+          occasionalCollapsed: Boolean(recipeId),
+        }))],
+      };
+    });
     setReplanNote(`${label} aggiunto al pasto. Quantità e totali restano modificabili.`);
     replanFollowingDays(day);
     setGelatoComposerOpen(false);
