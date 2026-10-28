@@ -19,6 +19,7 @@ type MealPart = RecipeIngredient & {
   occasionalGroupId?: string;
   occasionalRecipeId?: string;
   occasionalCollapsed?: boolean;
+  occasionalSplitGrams?: number;
 };
 const partDisplayName = (part: Pick<RecipeIngredient, "food" | "label">) => {
   const label = (part.label || part.food).trim();
@@ -11836,6 +11837,7 @@ export function FoodPlanner() {
                     occasionalGroupId: typeof entry.occasionalGroupId === "string" ? entry.occasionalGroupId : undefined,
                     occasionalRecipeId: typeof entry.occasionalRecipeId === "string" && recipeMap[entry.occasionalRecipeId] ? entry.occasionalRecipeId : undefined,
                     occasionalCollapsed: entry.occasionalCollapsed === true,
+                    occasionalSplitGrams: Number.isFinite(Number(entry.occasionalSplitGrams)) && Number(entry.occasionalSplitGrams) > 0 ? Number(entry.occasionalSplitGrams) : undefined,
                   } satisfies MealPart];
                 }),
             ]),
@@ -14224,7 +14226,27 @@ export function FoodPlanner() {
     setPartSelections((current) => ({
       ...current,
       [key]: activeMealParts(key, recipe).map((part) =>
-        part.occasionalGroupId === groupId ? { ...part, occasionalCollapsed: false } : part,
+        part.occasionalGroupId === groupId ? { ...part, occasionalCollapsed: false, occasionalSplitGrams: part.grams } : part,
+      ),
+    }));
+  };
+  const canRecomposeOccasionalGroup = (parts: MealPart[], groupId: string, recipeId: string) => {
+    const recipe = recipeMap[recipeId];
+    if (!recipe) return false;
+    const expected = recipe.parts || recipe.ingredients;
+    const group = parts.filter((part) => part.occasionalGroupId === groupId);
+    return group.length === expected.length && group.every((part, index) =>
+      !part.occasionalCollapsed && part.food === expected[index].food &&
+      part.grams > 0 && part.grams === part.occasionalSplitGrams,
+    );
+  };
+  const recomposeOccasionalGroup = (key: string, recipe: Recipe, groupId: string) => {
+    setPartSelections((current) => ({
+      ...current,
+      [key]: activeMealParts(key, recipe).map((part) =>
+        part.occasionalGroupId === groupId
+          ? { ...part, occasionalCollapsed: true, occasionalSplitGrams: undefined }
+          : part,
       ),
     }));
   };
@@ -15766,6 +15788,14 @@ export function FoodPlanner() {
                                     {round(calc([part]).kcal)} kcal ·{" "}
                                     {round(calc([part]).protein)} g proteine
                                   </small>
+                                  {part.occasionalGroupId && part.occasionalRecipeId &&
+                                    activeParts.findIndex((item) => item.occasionalGroupId === part.occasionalGroupId) === partIndex &&
+                                    canRecomposeOccasionalGroup(activeParts, part.occasionalGroupId, part.occasionalRecipeId) && (
+                                      <button type="button" className="occasional-recompose"
+                                        onClick={() => recomposeOccasionalGroup(key, r, part.occasionalGroupId!)}>
+                                        {recipeMap[part.occasionalRecipeId]?.name.startsWith("Pizza") ? "Ricomponi pizza" : "Ricomponi piatto"}
+                                      </button>
+                                    )}
                                 </div>
                               );})}
                             </div>

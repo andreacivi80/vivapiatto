@@ -1356,6 +1356,18 @@ test("v1.20.55 restores saved pizza portions as whole dishes and checks every va
   assert.match(audit, /wholePizzaVariants\.push/);
 });
 
+test("v1.20.56 recomposes an unchanged split pizza without hiding edited components", async () => {
+  const [app, audit] = await Promise.all([
+    readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../scripts/audit-public-mobile.mjs", import.meta.url), "utf8"),
+  ]);
+  assert.match(app, /occasionalSplitGrams: part\.grams/);
+  assert.match(app, /part\.grams === part\.occasionalSplitGrams/);
+  assert.match(app, /canRecomposeOccasionalGroup\(activeParts/);
+  assert.match(app, /Ricomponi pizza/);
+  assert.match(audit, /editedPizzaCannotRecompose/);
+});
+
 test("v1.20.28 searches foods and dishes by any text fragment in both meal pickers", async () => {
   const [app, css, audit] = await Promise.all([
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
