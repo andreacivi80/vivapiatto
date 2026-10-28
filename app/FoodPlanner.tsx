@@ -14308,6 +14308,20 @@ export function FoodPlanner() {
       slot === 0 || slot === 1 || slot === 3 ? "Frutta" : "Contorno";
     const seed = seasonalFirst(mealPartOptions[role])[0] || mealPartOptions[role][0];
     if (!seed) return;
+    // Opening "+" on a complete pizza switches to the editable view. Keep the
+    // existing pizza as one dish; only "Dividi in componenti" should split it.
+    if (recipe.id.startsWith("occasional-pizza-") && !partSelections[key] && (mealView[key] || "dish") === "dish") {
+      const groupId = `original-pizza-${key}-${recipe.id}`;
+      setPartSelections((current) => ({
+        ...current,
+        [key]: activeMealParts(key, recipe).map((part) => ({
+          ...part,
+          occasionalGroupId: groupId,
+          occasionalRecipeId: recipe.id,
+          occasionalCollapsed: true,
+        })),
+      }));
+    }
     setMealView((current) => ({ ...current, [key]: "parts" }));
     openPartPicker({
       key,

@@ -1379,6 +1379,17 @@ test("v1.20.57 varies dairy across automatically chosen breakfast and snacks", a
   assert.match(audit, /repeatedDayDairy\(row\.meals\)/);
 });
 
+test("v1.20.58 keeps an existing complete pizza whole when adding to its meal", async () => {
+  const [app, audit] = await Promise.all([
+    readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../scripts/audit-public-mobile.mjs", import.meta.url), "utf8"),
+  ]);
+  assert.match(app, /recipe\.id\.startsWith\("occasional-pizza-"\) && !partSelections\[key\]/);
+  assert.match(app, /original-pizza-\$\{key\}-\$\{recipe\.id\}/);
+  assert.match(audit, /twoPizzasWholeAfterReload/);
+  assert.match(audit, /originalPizzaSplitsOnRequest/);
+});
+
 test("v1.20.28 searches foods and dishes by any text fragment in both meal pickers", async () => {
   const [app, css, audit] = await Promise.all([
     readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8"),

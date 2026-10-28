@@ -1378,6 +1378,45 @@ try {
         occasionalAddition.weekWholePizza = occasionalAddition.weekWholePizzaState.photo &&
           occasionalAddition.weekWholePizzaState.count === 1 &&
           occasionalAddition.weekWholePizzaState.title === 'Pizza con bresaola, rucola e grana';
+        if (versionPatch >= 58) {
+          await clickTab('Oggi');
+          await evaluate(`document.querySelector('.meal-card[data-recipe-id="occasional-pizza-bresaola-rucola-grana"] .add-part-compact')?.click()`);
+          await wait(250);
+          await evaluate(`document.querySelector('.part-picker-sheet [aria-label="Chiudi alternative"]')?.click()`);
+          await wait(250);
+          occasionalAddition.originalPizzaWholeAfterPlus = await evaluate(`(() => {
+            const card = document.querySelector('.meal-card[data-recipe-id="occasional-pizza-bresaola-rucola-grana"]');
+            return card?.querySelectorAll('.meal-part').length === 1 &&
+              Boolean(card.querySelector('.meal-part.occasional-whole img[src*="cheat-pizza-bresaola-rucola-grana"]'));
+          })()`);
+          await evaluate(`document.querySelector('.meal-card[data-recipe-id="occasional-pizza-bresaola-rucola-grana"] .add-part-compact')?.click()`);
+          await wait(250);
+          await evaluate(`(() => {
+            const group = document.querySelector('.part-picker-sheet .cheat-picker-group');
+            if (group) group.open = true;
+            [...(group?.querySelectorAll('.complete-meal-select') || [])]
+              .find((button) => button.querySelector('span')?.textContent?.trim() === 'Pizza margherita')?.click();
+          })()`);
+          await wait(350);
+          occasionalAddition.twoPizzasWholeAfterPlus = await evaluate(`(() => {
+            const card = document.querySelector('.meal-card[data-recipe-id="occasional-pizza-bresaola-rucola-grana"]');
+            return card?.querySelectorAll('.meal-part.occasional-whole').length === 2 &&
+              card.querySelectorAll('.meal-part').length === 2;
+          })()`);
+          await page.send('Page.reload', { ignoreCache: false });
+          for (let attempt = 0; attempt < 40; attempt += 1) {
+            if (await evaluate(`document.querySelector('.meal-card[data-recipe-id="occasional-pizza-bresaola-rucola-grana"]')?.querySelectorAll('.meal-part.occasional-whole').length === 2`)) break;
+            await wait(250);
+          }
+          occasionalAddition.twoPizzasWholeAfterReload = await evaluate(`document.querySelector('.meal-card[data-recipe-id="occasional-pizza-bresaola-rucola-grana"]')?.querySelectorAll('.meal-part.occasional-whole').length === 2`);
+          await evaluate(`document.querySelector('.meal-card[data-recipe-id="occasional-pizza-bresaola-rucola-grana"] .meal-part.occasional-whole .occasional-split')?.click()`);
+          await wait(250);
+          occasionalAddition.originalPizzaSplitsOnRequest = await evaluate(`(() => {
+            const card = document.querySelector('.meal-card[data-recipe-id="occasional-pizza-bresaola-rucola-grana"]');
+            return card?.querySelectorAll('.meal-part').length === 5 &&
+              card.querySelectorAll('.meal-part.occasional-whole').length === 1;
+          })()`);
+        }
         await evaluate(`localStorage.setItem('vivapiatto-v1', ${JSON.stringify(originalProfile)})`);
         await page.send('Page.reload', { ignoreCache: false });
         for (let attempt = 0; attempt < 40; attempt += 1) {
@@ -2270,6 +2309,9 @@ try {
     (versionMinor >= 20 && versionPatch >= 48 && (!occasionalAddition.legacyPizzaRestored || occasionalAddition.wholePizzaVariants?.length !== 10 ||
       occasionalAddition.wholePizzaVariants.some((pizza) => !pizza.found || !pizza.singleCard || !pizza.wholePhoto || !pizza.canSplit))) ||
     (versionMinor >= 20 && versionPatch >= 54 && (!occasionalAddition.weekWholePizzaChosen || !occasionalAddition.weekWholePizza)) ||
+    (versionMinor >= 20 && versionPatch >= 58 && (!occasionalAddition.originalPizzaWholeAfterPlus ||
+      !occasionalAddition.twoPizzasWholeAfterPlus || !occasionalAddition.twoPizzasWholeAfterReload ||
+      !occasionalAddition.originalPizzaSplitsOnRequest)) ||
     (versionMinor >= 20 && versionPatch >= 55 && (!occasionalAddition.legacyPizzaGramsPreserved || !occasionalAddition.explicitPizzaSplitPreserved)) ||
     (versionMinor >= 20 && versionPatch >= 56 && (!occasionalAddition.bresaolaRecomposeOffered ||
       !occasionalAddition.bresaolaRecomposed || !occasionalAddition.editedPizzaCannotRecompose)) ||
