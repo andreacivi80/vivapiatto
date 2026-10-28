@@ -17,7 +17,13 @@ const child = spawn(edge, [
   "--headless=new", "--disable-gpu", "--disable-extensions", "--no-first-run",
   "--no-default-browser-check", "--remote-debugging-port=0", "--window-size=390,844",
   `--user-data-dir=${profile}`, `${url}?cuisine-audit=${Date.now()}`,
-], { windowsHide: true, stdio: "ignore" });
+], { windowsHide: true, stdio: ["ignore", "ignore", "pipe"] });
+let startupError = null;
+let browserDiagnostics = "";
+child.once("error", (error) => { startupError = error; });
+child.stderr.on("data", (chunk) => {
+  browserDiagnostics = `${browserDiagnostics}${chunk}`.slice(-4000);
+});
 
 const connect = async (address) => {
   const socket = new WebSocket(address);
@@ -50,7 +56,11 @@ const connect = async (address) => {
 try {
   let port;
   let browserPath;
-  for (let attempt = 0; attempt < 120; attempt += 1) {
+  for (let attempt = 0; attempt < 300; attempt += 1) {
+    if (startupError) throw startupError;
+    if (child.exitCode !== null) {
+      throw new Error(`Edge terminato prima dell'avvio (${child.exitCode}): ${browserDiagnostics}`);
+    }
     try {
       const lines = readFileSync(join(profile, "DevToolsActivePort"), "utf8").trim().split(/\r?\n/);
       port = Number(lines[0]);
@@ -58,7 +68,9 @@ try {
       break;
     } catch { await wait(100); }
   }
-  if (!port || !browserPath) throw new Error("Edge headless non disponibile");
+  if (!port || !browserPath) {
+    throw new Error(`Edge headless non pronto entro 30 s: ${browserDiagnostics}`);
+  }
   const targets = await fetch(`http://127.0.0.1:${port}/json/list`).then((response) => response.json());
   const target = targets.find((item) => item.type === "page");
   if (!target) throw new Error("Pagina headless non trovata");
@@ -338,8 +350,10 @@ try {
       ["Skyr bianco", "Kefir bianco magro", "Yogurt greco", "Ricotta"]
         .some((food) => [0, 1, 3].filter((slot) => (meals[slot] || "").includes(food)).length > 1);
     const mensaIds = new Set([
-      "simple-pasta-white", "simple-pasta-tomato", "simple-eggs",
+      "simple-pasta-white", "simple-pasta-tomato", "simple-eggs", "work-caprese", "work-turkey",
       "simple-steak-potatoes", "everyday-pasta-e-fagioli",
+      "mensa-pasta-pollo-zucchine", "mensa-riso-merluzzo-fagiolini",
+      "mensa-patate-bistecca-carote", "mensa-pasta-lenticchie-spinaci",
       "matrix-d02-orata-al-cartoccio-con-verdure-e-pane",
       "matrix-d15-branzino-al-vapore-con-orzo-e-bietole",
       "matrix-d17-trota-al-forno-con-zucca-e-patate",
@@ -349,6 +363,14 @@ try {
       "matrix-p09-barley-cannellini-black-kale",
       "matrix-p56-farro-con-ceci-barbabietole-e-finocchi",
       "catalog-main-1", "catalog-main-16", "catalog-main-50",
+    ]);
+    const mensaPracticalIds = new Set([
+      "mensa-pasta-pollo-zucchine", "mensa-riso-merluzzo-fagiolini",
+      "mensa-patate-bistecca-carote", "mensa-pasta-lenticchie-spinaci",
+      "simple-eggs", "everyday-pasta-e-fagioli", "work-caprese", "work-turkey",
+      "matrix-d31-zuppa-di-fagioli-borlotti-e-orzo",
+      "matrix-d32-frittata-al-forno-con-broccoli-e-patate",
+      "matrix-d41-sole-potatoes-fennel", "matrix-d42-chicken-brown-rice-peppers",
     ]);
     const invalid = contextTargetMatrix.filter((row) => {
       const planKcal = Number(row.plan.match(/piano (\d+)/)?.[1] || 0);
@@ -366,7 +388,8 @@ try {
         row.mealParts.some((parts, index) => parts.length > 0 && !row.mealUnrepresentedExtras[index] &&
           Math.abs(parts.reduce((total, part) => total + part.kcal, 0) - row.mealKcal[index]) > 10) ||
         (row.context === "Mensa" &&
-          (row.weekdayLunches.length !== 5 || row.weekdayLunches.some((id) => !mensaIds.has(id))));
+          (row.weekdayLunches.length !== 5 || row.weekdayLunches.some((id) =>
+            !mensaIds.has(id) || !mensaPracticalIds.has(id))));
     });
     const followUpInvalid = process.env.VIVAPIATTO_MATRIX_AUDIT === "1" && (
       !followUpAfterSwap || followUpAfterSwap.chosenId !== followUpAfterSwap.lunchIdAfter ||

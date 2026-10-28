@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 
 const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
-const dryPasta = /^Pasta (?!di lenticchie|di ceci|di piselli|di legumi)/i;
+const dryPasta = /^Pasta (?!cotta\b|di lenticchie|di ceci|di piselli|di legumi)/i;
 const legumes = /ceci|lenticchie|fagioli|cannellini|borlotti|piselli|fave|cicerchie/i;
 const failures = [];
 let combinations = 0;

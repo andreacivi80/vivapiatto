@@ -1182,8 +1182,8 @@ test("v1.20.37 keeps first-choice main meals complete and all fresh ingredients 
   assert.ok(app.includes('"Fichi freschi": [7, 8, 9]'));
   assert.ok(app.includes('"Lattuga fresca": [3, 4, 5, 6, 7, 8, 9, 10, 11]'));
   assert.ok(app.includes('const seasonal = recipeHasSeasonalProduce(recipe) && recipeOutOfSeasonProduceCount(recipe) === 0'));
-  assert.ok(app.includes('pool.filter((recipe) => mainMealBalanceScore(recipe) === 3)'));
-  assert.ok(app.includes('const coherentPool = completeMains.length ? completeMains : pool'));
+  assert.ok(app.includes('practicalPool.filter((recipe) => mainMealBalanceScore(recipe) === 3)'));
+  assert.ok(app.includes('const coherentPool = completeMains.length ? completeMains : practicalPool'));
 });
 
 test("v1.20.38 photographs four whey flavors with distinct label values and practical scoops", async () => {

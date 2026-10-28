@@ -7652,6 +7652,86 @@ const catalogMains: Recipe[] = Array.from({ length: 84 }, (_, index) => {
   };
 });
 catalogMains.forEach((recipe) => (recipe.kind = "combination"));
+// Familiar three-part lunches that can be selected from a canteen menu or
+// prepared at home. These are combinations of measured foods, not claims about
+// any particular canteen's daily offering.
+const mensaPart = (food: string, grams: number, label?: string): MealPart => {
+  const known = ingredientPartCatalog[food] ||
+    Object.values(mealPartOptions).flat().find((part) => part.food === food);
+  if (!known) throw new Error(`Componente mensa non trovato: ${food}`);
+  return { ...known, grams, label: label || known.label };
+};
+const mensaCombinations: Recipe[] = [
+  {
+    id: "mensa-pasta-pollo-zucchine",
+    name: "Pasta al pomodoro, pollo ai ferri e zucchine",
+    kicker: "Primo, secondo e contorno",
+    course: "Piatto completo", cuisine: "Italiano", kind: "combination", time: 20,
+    image: photo("recipe-mensa-pasta-pollo-zucchine-v12060"),
+    parts: [
+      mensaPart("Pasta cotta", 160, "Pasta · peso cotto"),
+      mensaPart("Passata di pomodoro", 100),
+      mensaPart("Petto di pollo alla griglia", 120),
+      mensaPart("Zucchine", 200, "Zucchine da cuocere · peso a crudo"),
+      mensaPart("Olio extravergine", 5),
+    ],
+    ingredients: [],
+    steps: ["Cuoci la pasta secondo confezione e scalda la passata per 8 minuti.", "Cuoci completamente il pollo alla piastra; cuoci le zucchine con poca acqua.", "Servi separati con l'olio pesato; in mensa verifica le voci disponibili."],
+    alternatives: ["Pasta in bianco al posto del pomodoro", "Fagiolini al posto delle zucchine"],
+  },
+  {
+    id: "mensa-riso-merluzzo-fagiolini",
+    name: "Riso in bianco, merluzzo e fagiolini",
+    kicker: "Riso, pesce e verdura",
+    course: "Piatto completo", cuisine: "Italiano", kind: "combination", time: 20,
+    image: photo("recipe-mensa-riso-merluzzo-fagiolini-v12060"),
+    parts: [
+      mensaPart("Riso parboiled cotto", 180, "Riso in bianco · 180 g cotto"),
+      mensaPart("Merluzzo cotto", 150),
+      mensaPart("Fagiolini", 200, "Fagiolini da lessare · peso a crudo"),
+      mensaPart("Olio extravergine", 10),
+    ],
+    ingredients: [],
+    steps: ["Cuoci il riso secondo la confezione; il peso indicato è quello dopo cottura.", "Cuoci completamente il merluzzo al vapore o in forno e lessa i fagiolini finché sono teneri.", "Servi separati e condisci con l'olio pesato. In mensa verifica il condimento reale."],
+    alternatives: ["Pasta in bianco al posto del riso", "Zucchine al posto dei fagiolini"],
+    allergens: ["Pesce"],
+  },
+  {
+    id: "mensa-patate-bistecca-carote",
+    name: "Patate lesse, bistecca ai ferri e carote",
+    kicker: "Patate, carne e contorno",
+    course: "Piatto completo", cuisine: "Italiano", kind: "combination", time: 25,
+    image: photo("recipe-mensa-patate-bistecca-carote-v12060"),
+    parts: [
+      mensaPart("Patate lesse", 200),
+      mensaPart("Bistecca di manzo · peso a crudo", 150, "Bistecca ai ferri · peso a crudo"),
+      mensaPart("Carote cotte bollite", 200),
+      mensaPart("Olio extravergine", 10),
+    ],
+    ingredients: [],
+    steps: ["Lessa le patate a pezzi 15–20 minuti, finché la forchetta entra facilmente; lessa le carote finché tenere.", "Cuoci completamente la bistecca ai ferri secondo le indicazioni di sicurezza della carne scelta.", "Servi separati con l'olio pesato; in mensa registra quantità e condimenti effettivi."],
+    alternatives: ["Pollo alla griglia al posto della bistecca", "Insalata al posto delle carote"],
+  },
+  {
+    id: "mensa-pasta-lenticchie-spinaci",
+    name: "Pasta, lenticchie e spinaci",
+    kicker: "Pasta, legumi e verdura",
+    course: "Piatto completo", cuisine: "Italiano", kind: "combination", time: 20,
+    image: photo("recipe-mensa-pasta-lenticchie-spinaci-v12060"),
+    parts: [
+      mensaPart("Pasta cotta", 160, "Pasta semplice · 160 g cotta"),
+      mensaPart("Lenticchie cotte", 150),
+      mensaPart("Spinaci cotti", 200),
+      mensaPart("Olio extravergine", 5),
+    ],
+    ingredients: [],
+    steps: ["Cuoci la pasta secondo la confezione; il peso indicato è da cotta.", "Scalda le lenticchie già cotte e lava e cuoci gli spinaci finché sono morbidi.", "Servi i componenti separati o uniscili nel piatto e aggiungi l'olio pesato. In mensa scegli equivalenti disponibili."],
+    alternatives: ["Fagioli al posto delle lenticchie", "Bietole al posto degli spinaci"],
+  },
+];
+mensaCombinations.forEach((recipe) => {
+  recipe.ingredients = (recipe.parts || []).map(({ food, grams }) => ({ food, grams }));
+});
 const catalogWorkMains = catalogMains.filter((recipe) =>
   recipe.parts?.some((part) =>
     ["Pane integrale", "Riso basmati secco", "Riso Venere secco", "Patate lesse"].includes(part.food),
@@ -10923,6 +11003,7 @@ const rawRecipes: Recipe[] = [
   ...attachmentDinnersD,
   ...attachmentDinnersE,
   ...catalogMains,
+  ...mensaCombinations,
   ...verifiedWorldRecipeExpansion,
   ...verifiedIndianPaneerRecipes,
   ...verifiedJapaneseEggRecipes,
@@ -12351,8 +12432,9 @@ export function FoodPlanner() {
   // ordinary canteen food. Keep this deliberately conservative: these are
   // simple menu patterns, not a claim that a particular canteen serves them.
   const mensaRecipeIds = new Set([
-    "simple-pasta-white", "simple-pasta-tomato", "simple-eggs",
+    "simple-pasta-white", "simple-pasta-tomato", "simple-eggs", "work-caprese", "work-turkey",
     "simple-steak-potatoes", "everyday-pasta-e-fagioli",
+    ...mensaCombinations.map((recipe) => recipe.id),
     "matrix-d02-orata-al-cartoccio-con-verdure-e-pane",
     "matrix-d15-branzino-al-vapore-con-orzo-e-bietole",
     "matrix-d17-trota-al-forno-con-zucca-e-patate",
@@ -12364,7 +12446,19 @@ export function FoodPlanner() {
     "matrix-p56-farro-con-ceci-barbabietole-e-finocchi",
     "catalog-main-1", "catalog-main-16", "catalog-main-50",
   ]);
+  const mensaFirstChoiceIds = new Set([
+    ...mensaCombinations.map((recipe) => recipe.id),
+    "simple-eggs", "everyday-pasta-e-fagioli", "work-caprese", "work-turkey",
+    "matrix-d31-zuppa-di-fagioli-borlotti-e-orzo",
+    "matrix-d32-frittata-al-forno-con-broccoli-e-patate",
+    "matrix-d41-sole-potatoes-fennel", "matrix-d42-chicken-brown-rice-peppers",
+  ]);
   const isMensaFriendly = (recipe: Recipe) => mensaRecipeIds.has(recipe.id);
+  const mensaPracticalPool = (pool: Recipe[], slot: number) => {
+    const practical = dayContext === "Mensa" && slot === 2
+      ? pool.filter((recipe) => mensaFirstChoiceIds.has(recipe.id)) : [];
+    return practical.length ? practical : pool;
+  };
   const mensaMainsFrom = () => allRecipes.filter((recipe) =>
     isMensaFriendly(recipe) &&
     isProfileEligible(recipe) &&
@@ -13642,10 +13736,11 @@ export function FoodPlanner() {
     // A first-choice lunch or dinner should contain a starch, a protein
     // source and vegetables whenever the compatible pool offers one. The
     // ranking score alone can be outweighed by a distant calorie target.
+    const practicalPool = mensaPracticalPool(pool, slot);
     const completeMains = [2, 4].includes(slot)
-      ? pool.filter((recipe) => mainMealBalanceScore(recipe) === 3)
+      ? practicalPool.filter((recipe) => mainMealBalanceScore(recipe) === 3)
       : [];
-    const coherentPool = completeMains.length ? completeMains : pool;
+    const coherentPool = completeMains.length ? completeMains : practicalPool;
     const compactSnackPool = [1, 3].includes(slot) && target <= 200
       ? coherentPool.filter((recipe) => profileRecipeKcal(recipe, slot) <= target + 60)
       : coherentPool;
@@ -13801,7 +13896,9 @@ export function FoodPlanner() {
           ? eggSafeCandidates
           : alternativeEggSafe.length ? alternativeEggSafe : candidates;
         const inSeasonCandidates = budgetedCandidates.filter((recipe) => recipeOutOfSeasonProduceCount(recipe) === 0);
-        const seasonAwareCandidates = inSeasonCandidates.length ? inSeasonCandidates : budgetedCandidates;
+        const seasonAwareCandidates = mensaPracticalPool(
+          inSeasonCandidates.length ? inSeasonCandidates : budgetedCandidates, slot,
+        );
         const unusedSpecies =
           preference === "repeat"
             ? seasonAwareCandidates
