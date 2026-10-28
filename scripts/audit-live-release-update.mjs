@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process";
-import { existsSync, mkdtempSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { connectHeadlessCdp, fetchCdpJson, waitForHeadlessEndpoint } from "./headless-startup.mjs";
@@ -14,6 +14,16 @@ const simulateStall = process.argv.includes("--simulate-stall");
 const baseUrl = process.argv.find((arg) => arg.startsWith("--url="))?.slice(6) ||
   "https://andreacivi80.github.io/vivapiatto/";
 if (!fromVersion || !toVersion) throw new Error("Impostare VIVAPIATTO_FROM_VERSION e VIVAPIATTO_TO_VERSION");
+if (![fromVersion, toVersion].every((value) => /^\d+\.\d+\.\d+$/.test(value))) throw new Error("Versioni di prova non valide");
+// The background controller buffers short stdout messages. Use a small local
+// handshake instead of waiting for its log to fill before deployment.
+const readyDirectory = join(process.cwd(), "outputs");
+mkdirSync(readyDirectory, { recursive: true });
+const readyFile = join(readyDirectory, `live-release-${fromVersion}-to-${toVersion}-${process.pid}.ready.json`);
+const writeReadiness = (status, details = {}) => writeFileSync(readyFile,
+  `${JSON.stringify({ status, fromVersion, toVersion, pid: process.pid, writtenAt: new Date().toISOString(), ...details })}\n`,
+  "utf8");
+writeReadiness("starting");
 
 const edge = [
   "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe",
@@ -112,6 +122,7 @@ try {
   };
   const initial = { ...initialMeal, ...initialView };
   if (!initial.libraryVisible || initial.scrollY <= 0) throw new Error(`Vista lunga di prova non disponibile: ${JSON.stringify(initial)}`);
+  writeReadiness("ready", { initial, profile });
   console.log(`Transizione reale pronta: v${fromVersion} aperta nel browser isolato`);
   if (simulateManifest) {
     // Force only the advertised version to be newer while keeping the real

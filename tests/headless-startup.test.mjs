@@ -93,3 +93,14 @@ test("all audits retain silent launch and use the same bounded startup and safe 
     assert.doesNotMatch(source, /taskkill|rmSync\(profile/);
   }
 });
+
+test("live release audit writes a local ready handshake only after its initial state is validated", async () => {
+  const source = await readFile(new URL("../scripts/audit-live-release-update.mjs", import.meta.url), "utf8");
+  assert.ok(source.includes('const readyDirectory = join(process.cwd(), "outputs")'));
+  assert.ok(source.includes('${process.pid}.ready.json'));
+  assert.ok(source.includes('writeReadiness("starting")'));
+  const ready = source.indexOf('writeReadiness("ready", { initial, profile })');
+  assert.ok(ready > source.indexOf('if (!initial.libraryVisible || initial.scrollY <= 0)'));
+  assert.ok(ready < source.indexOf('console.log(`Transizione reale pronta:'));
+  assert.ok(source.includes('writtenAt: new Date().toISOString()'));
+});
