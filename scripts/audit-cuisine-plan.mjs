@@ -1,7 +1,9 @@
-import { spawn, spawnSync } from "node:child_process";
-import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { spawn } from "node:child_process";
+import { existsSync, mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { connectHeadlessCdp, fetchCdpJson, waitForHeadlessEndpoint } from "./headless-startup.mjs";
+import { cleanupHeadlessAudit } from "./headless-cleanup.mjs";
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const url = process.argv.find((arg) => arg.startsWith("--url="))?.slice(6) ||
@@ -25,57 +27,19 @@ child.stderr.on("data", (chunk) => {
   browserDiagnostics = `${browserDiagnostics}${chunk}`.slice(-4000);
 });
 
-const connect = async (address) => {
-  const socket = new WebSocket(address);
-  await new Promise((resolve, reject) => {
-    socket.addEventListener("open", resolve, { once: true });
-    socket.addEventListener("error", reject, { once: true });
-  });
-  let id = 0;
-  const pending = new Map();
-  socket.addEventListener("message", ({ data }) => {
-    const message = JSON.parse(data);
-    if (!message.id || !pending.has(message.id)) return;
-    const call = pending.get(message.id);
-    pending.delete(message.id);
-    if (message.error) call.reject(new Error(message.error.message));
-    else call.resolve(message.result);
-  });
-  return {
-    send(method, params = {}) {
-      return new Promise((resolve, reject) => {
-        const callId = ++id;
-        pending.set(callId, { resolve, reject });
-        socket.send(JSON.stringify({ id: callId, method, params }));
-      });
-    },
-    close() { socket.close(); },
-  };
-};
+const connect = connectHeadlessCdp;
 
+let page;
+let browser;
 try {
-  let port;
-  let browserPath;
-  for (let attempt = 0; attempt < 300; attempt += 1) {
-    if (startupError) throw startupError;
-    if (child.exitCode !== null) {
-      throw new Error(`Edge terminato prima dell'avvio (${child.exitCode}): ${browserDiagnostics}`);
-    }
-    try {
-      const lines = readFileSync(join(profile, "DevToolsActivePort"), "utf8").trim().split(/\r?\n/);
-      port = Number(lines[0]);
-      browserPath = lines[1];
-      break;
-    } catch { await wait(100); }
-  }
-  if (!port || !browserPath) {
-    throw new Error(`Edge headless non pronto entro 30 s: ${browserDiagnostics}`);
-  }
-  const targets = await fetch(`http://127.0.0.1:${port}/json/list`).then((response) => response.json());
+  const { port, browserWebSocketUrl } = await waitForHeadlessEndpoint({
+    child, profile, getSpawnError: () => startupError, getDiagnostics: () => browserDiagnostics,
+  });
+  browser = await connect(browserWebSocketUrl);
+  const targets = await fetchCdpJson(`http://127.0.0.1:${port}/json/list`);
   const target = targets.find((item) => item.type === "page");
   if (!target) throw new Error("Pagina headless non trovata");
-  const page = await connect(target.webSocketDebuggerUrl);
-  const browser = await connect(`ws://127.0.0.1:${port}${browserPath}`);
+  page = await connect(target.webSocketDebuggerUrl);
   await Promise.all([page.send("Page.enable"), page.send("Runtime.enable")]);
   const evaluate = async (expression) => {
     const result = await page.send("Runtime.evaluate", { expression, returnByValue: true, awaitPromise: true });
@@ -441,14 +405,7 @@ try {
     unsafeWorkLunches: report.unsafeWorkLunches.length,
   }));
   if (finalPlanInvalid) process.exitCode = 1;
-  page.close();
-  browser.close();
 } finally {
-  spawnSync("C:/Windows/System32/taskkill.exe", ["/PID", String(child.pid), "/T", "/F"], {
-    windowsHide: true, stdio: "ignore",
-  });
-  for (let attempt = 0; attempt < 6; attempt += 1) {
-    await wait(attempt === 0 ? 1500 : 1000);
-    try { rmSync(profile, { recursive: true, force: true }); break; } catch { /* Edge releases handles late. */ }
-  }
+  const cleanupReport = await cleanupHeadlessAudit({ child, browser, page, profile });
+  console.error(`[headless-cleanup-report] ${JSON.stringify(cleanupReport)}`);
 }

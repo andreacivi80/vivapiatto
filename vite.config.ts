@@ -12,7 +12,9 @@ export default defineConfig({
     react(),
     {
       name: "vivapiatto-release-version",
-      closeBundle() {
+      // Only publish a manifest after a successful write. closeBundle also
+      // runs on failure and could hide the original error behind a missing HTML.
+      writeBundle() {
         const html = readFileSync(new URL("./dist/index.html", import.meta.url), "utf8");
         const script = html.match(/<script\b[^>]*\bsrc="([^"]+)"/i)?.[1];
         if (!script) throw new Error("Asset JavaScript della release non trovato");

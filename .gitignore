@@ -8,3 +8,7 @@ work/
 .env*
 *.log
 .DS_Store
+
+# Per-device maintenance records stay local, outside the public app repository.
+/CLEANUP-LOG.md
+/scripts/cleanup-vite-cache.py

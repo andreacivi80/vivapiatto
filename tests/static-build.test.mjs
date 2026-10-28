@@ -1519,17 +1519,17 @@ test("v1.19.20 caches framework dependencies without lazy-loading the planner", 
   const appChunk = assets.find((name) => /^index-.*[.]js$/.test(name));
   assert.ok(vendorChunk);
   assert.ok(appChunk);
+  assert.match(config, /writeBundle\(\)/);
+  assert.doesNotMatch(config, /^\s+closeBundle\(\)/m);
   assert.match(config, /codeSplitting:[\s\S]*name: "vendor"[\s\S]*test: \/node_modules\//);
   assert.doesNotMatch(main, /lazy\(\(\) =>/);
   assert.ok((await stat(new URL(`../dist/assets/${vendorChunk}`, import.meta.url))).size < 250_000);
-  // The verified recipe catalog grows with complete instructions and photo
-  // mappings. The sourced whole ortolana adds 11 weighed components and five
-  // beginner preparation steps; allow only that small measured bundle growth.
+  // Recipe data grows as previously implicit ingredients become explicit.
+  // Keep both raw and compressed budgets bounded; do not lazy-load the planner.
   const appBundle = await readFile(new URL(`../dist/assets/${appChunk}`, import.meta.url));
-  // Four verified whey flavors, three complete shaker recipes and a structured
-  // Word week add a small bounded amount of code; retain a measured margin.
-  assert.ok(appBundle.length < 625_000);
-  assert.ok(gzipSync(appBundle).length < 139_000);
+  // v1.20.61 declares 62 seasonings across 47 existing recipes and their photos.
+  assert.ok(appBundle.length < 640_000);
+  assert.ok(gzipSync(appBundle).length < 142_000);
 });
 
 test("v1.19.21 keeps the public mobile stress audit silent and reusable", async () => {
@@ -1559,13 +1559,14 @@ test("v1.19.22 keeps the public mobile audit executable", async () => {
   );
 });
 
-test("v1.19.23 tolerates delayed Edge profile cleanup after a successful audit", async () => {
+test("v1.19.23 delegates Edge cleanup to the ownership-verified safe helper", async () => {
   const audit = await readFile(
     new URL("../scripts/audit-public-mobile.mjs", import.meta.url),
     "utf8",
   );
-  assert.match(audit, /for \(let attempt = 0; attempt < 6; attempt \+= 1\)/);
-  assert.match(audit, /A cleanup race must not turn a successful application audit into a failure/);
+  assert.match(audit, /import \{ cleanupHeadlessAudit \} from "\.\/headless-cleanup\.mjs"/);
+  assert.match(audit, /finally \{\s*await cleanupHeadlessAudit\(\{ child, browser, page, profile \}\)/);
+  assert.doesNotMatch(audit, /taskkill|rmSync|spawnSync/);
 });
 
 test("v1.19.24 rejects broken photographs in every audited mobile viewport", async () => {
@@ -3473,9 +3474,12 @@ test("v1.19.60 waits for the actual ready-dish detail images", async () => {
 
 test("v1.19.61 gives the silent mobile browser enough startup time and useful diagnostics", async () => {
   const audit = await readFile(new URL("../scripts/audit-public-mobile.mjs", import.meta.url), "utf8");
-  assert.match(audit, /attempt < 300/);
-  assert.match(audit, /Edge headless non disponibile dopo 30 secondi/);
-  assert.match(audit, /child[.]exitCode/);
+  const startup = await readFile(new URL("../scripts/headless-startup.mjs", import.meta.url), "utf8");
+  assert.match(audit, /waitForHeadlessEndpoint/);
+  assert.match(audit, /getSpawnError: \(\) => startupError, getDiagnostics: \(\) => browserDiagnostics/);
+  assert.match(startup, /timeoutMs = 30000/);
+  assert.match(startup, /Edge headless non pronto entro/);
+  assert.match(startup, /child[.]exitCode/);
 });
 
 test("v1.19.62 verifies gram persistence through a real browser input event", async () => {
