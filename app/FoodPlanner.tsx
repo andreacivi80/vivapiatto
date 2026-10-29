@@ -12404,7 +12404,7 @@ export function FoodPlanner() {
   };
   const preferAvailableSeason = (recipes: Recipe[]) => {
     const inSeason = recipes.filter((recipe) => recipeOutOfSeasonProduceCount(recipe) === 0);
-    return inSeason.length >= 2 ? inSeason : recipes;
+    return inSeason.length ? inSeason : recipes;
   };
   const cleanKicker = (text: string) =>
     text.replace(/\s*·?\s*matrice\s+[cspd]\d+/gi, "").trim();
@@ -13795,10 +13795,13 @@ export function FoodPlanner() {
       ? practicalPool.filter((recipe) => mainMealBalanceScore(recipe) === 3)
       : [];
     const coherentPool = completeMains.length ? completeMains : practicalPool;
+    // Seasonality narrows automatic choices only after practical/complete meal
+    // gates; it must not promote an incomplete or unsuitable seasonal fallback.
+    const seasonalPool = preferAvailableSeason(coherentPool);
     const compactSnackPool = [1, 3].includes(slot) && target <= 200
-      ? coherentPool.filter((recipe) => profileRecipeKcal(recipe, slot) <= target + 60)
-      : coherentPool;
-    const ranked = [...(compactSnackPool.length ? compactSnackPool : coherentPool)]
+      ? seasonalPool.filter((recipe) => profileRecipeKcal(recipe, slot) <= target + 60)
+      : seasonalPool;
+    const ranked = [...(compactSnackPool.length ? compactSnackPool : seasonalPool)]
       .sort((a, b) => rankingScore(a) - rankingScore(b));
     return ranked[offset % Math.min(5, ranked.length)];
   };
@@ -13837,8 +13840,8 @@ export function FoodPlanner() {
     const styled = allRecipes.filter(
       (r) => isProfileEligible(r) && recipeCuisine(r) === cuisineChoice,
     );
-    const breakfasts = availableBreakfasts();
-    const snacks = practicalWorkSnacks(availableSnacks(), dayContext);
+    const breakfasts = preferAvailableSeason(availableBreakfasts());
+    const snacks = preferAvailableSeason(practicalWorkSnacks(availableSnacks(), dayContext));
     const mains = styled.filter((r) =>
       ["Piatto unico", "Piatto completo", "Primo", "Secondo"].includes(recipeCourse(r)),
     );
@@ -13949,9 +13952,12 @@ export function FoodPlanner() {
         const budgetedCandidates = eggSafeCandidates.length
           ? eggSafeCandidates
           : alternativeEggSafe.length ? alternativeEggSafe : candidates;
-        const inSeasonCandidates = budgetedCandidates.filter((recipe) => recipeOutOfSeasonProduceCount(recipe) === 0);
+        const practicalCandidates = mensaPracticalPool(budgetedCandidates, slot);
+        const completeCandidates = practicalCandidates.filter((recipe) => mainMealBalanceScore(recipe) === 3);
+        const coherentCandidates = completeCandidates.length ? completeCandidates : practicalCandidates;
+        const inSeasonCandidates = coherentCandidates.filter((recipe) => recipeOutOfSeasonProduceCount(recipe) === 0);
         const seasonAwareCandidates = mensaPracticalPool(
-          inSeasonCandidates.length ? inSeasonCandidates : budgetedCandidates, slot,
+          inSeasonCandidates.length ? inSeasonCandidates : coherentCandidates, slot,
         );
         const unusedSpecies =
           preference === "repeat"

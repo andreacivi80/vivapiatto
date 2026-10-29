@@ -3825,7 +3825,7 @@ test("low-energy plans keep automatic snacks near their meal allocation", async 
   const source = await readFile(new URL("../app/FoodPlanner.tsx", import.meta.url), "utf8");
   assert.match(source, /const compactSnackPool = \[1, 3\]\.includes\(slot\) && target <= 200/);
   assert.match(source, /profileRecipeKcal\(recipe, slot\) <= target \+ 60/);
-  assert.match(source, /compactSnackPool\.length \? compactSnackPool : coherentPool/);
+  assert.match(source, /compactSnackPool\.length \? compactSnackPool : seasonalPool/);
 });
 
 test("displayed component grams and meal calories use one calibrated portion", async () => {

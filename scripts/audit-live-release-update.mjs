@@ -2,6 +2,8 @@ import { spawn } from "node:child_process";
 import { existsSync, mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { isDeepStrictEqual } from "node:util";
+import { capturePersistedPlanState } from "./release-audit-state.mjs";
 import { connectHeadlessCdp, fetchCdpJson, waitForHeadlessEndpoint } from "./headless-startup.mjs";
 import { cleanupHeadlessAudit } from "./headless-cleanup.mjs";
 
@@ -122,6 +124,8 @@ try {
   };
   const initial = { ...initialMeal, ...initialView };
   if (!initial.libraryVisible || initial.scrollY <= 0) throw new Error(`Vista lunga di prova non disponibile: ${JSON.stringify(initial)}`);
+  const stateExpression = `(${capturePersistedPlanState.toString()})(localStorage.getItem('vivapiatto-v1'))`;
+  const initialPlanState = await evaluate(stateExpression);
   writeReadiness("ready", { initial, profile });
   console.log(`Transizione reale pronta: v${fromVersion} aperta nel browser isolato`);
   if (simulateManifest) {
@@ -204,6 +208,7 @@ try {
   }
 
   const restoredScrollY = finalState?.scrollY || 0;
+  const restoredPlanState = await evaluate(stateExpression);
   const openedToday = await evaluate(`(() => {
     const button = [...document.querySelectorAll('button')].find((item) => item.textContent?.includes('Oggi'));
     button?.click();
@@ -230,6 +235,9 @@ try {
     finalState: { ...finalState, releaseNavigation, restoredScrollY, restoredMeal },
     gramsPreserved: restoredMeal.grams === initial.expected,
     menuPreserved: JSON.stringify(restoredMeal.menu) === JSON.stringify(initial.menu),
+    planStatePreserved: isDeepStrictEqual(restoredPlanState, initialPlanState),
+    changedPlanFields: Object.keys(initialPlanState).filter((key) =>
+      !isDeepStrictEqual(restoredPlanState[key], initialPlanState[key])),
     scrollPreserved: Math.abs(restoredScrollY - initial.scrollY) <= 20,
     javascriptErrors: browserErrors.length,
     javascriptErrorDetails: browserErrors.map((event) => ({
@@ -241,7 +249,7 @@ try {
   console.log(JSON.stringify(report));
   if (
     !finalState?.versionUpdated || !releaseNavigation || !finalState.libraryVisible || finalState.recovery || finalState.horizontalOverflow ||
-    !report.gramsPreserved || !report.menuPreserved || (!simulateManifest && !report.scrollPreserved) || report.javascriptErrors
+    !report.gramsPreserved || !report.menuPreserved || !report.planStatePreserved || (!simulateManifest && !report.scrollPreserved) || report.javascriptErrors
   ) process.exitCode = 1;
 } finally {
   const cleanupReport = await cleanupHeadlessAudit({ child, browser, page, profile });

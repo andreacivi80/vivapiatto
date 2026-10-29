@@ -10,12 +10,17 @@ const imageSettleTimeoutMs = 20_000;
 const packageFile = JSON.parse(
   readFileSync(new URL("../package.json", import.meta.url), "utf8"),
 );
-const version = process.env.VIVAPIATTO_AUDIT_VERSION || packageFile.version;
+const version = process.argv.find((arg) => arg.startsWith("--version="))?.slice("--version=".length) ||
+  process.env.VIVAPIATTO_AUDIT_VERSION || packageFile.version;
+if (!/^\d+\.\d+\.\d+$/.test(version)) throw new Error("Versione audit mobile non valida");
 // The old audit gates used only the patch number. At 1.20.0 that reset to
 // zero and silently skipped established mobile flows (including Sgarri).
 const [versionMajor, versionMinor, versionPatch] = version.split(".").map(Number);
 const releasePatch = versionMajor > 1 || versionMinor >= 20 ? 1000 : versionPatch;
-const auditBaseUrl = process.argv[2] || process.env.VIVAPIATTO_AUDIT_URL || "https://andreacivi80.github.io/vivapiatto/";
+const auditBaseUrl = process.argv.find((arg) => arg.startsWith("--url="))?.slice("--url=".length) ||
+  process.argv.slice(2).find((arg) => !arg.startsWith("--")) ||
+  process.env.VIVAPIATTO_AUDIT_URL || "https://andreacivi80.github.io/vivapiatto/";
+if (!["https:", "http:"].includes(new URL(auditBaseUrl).protocol)) throw new Error("URL audit mobile non valido");
 const edge = [
   "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe",
   "C:/Program Files/Microsoft/Edge/Application/msedge.exe",
