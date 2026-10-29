@@ -1,6 +1,21 @@
 # Tavola Mia — checklist generale persistente
 
-## In corso — v1.20.62
+## In corso — v1.20.63
+
+- [x] Query WMI raw XML validata da parser Python isolato, con CreationDate/SessionId, budget condiviso e output limitato; nessuna riga processo scartata. WMI è un figlio diretto invisibile, quindi un timeout agisce sul proprio handle senza lasciare il comando dietro una shell intermedia. DIR rimane builtin cmd fisso e invisibile. Cinquantaquattro test mirati passati; nessuna nuova dipendenza.
+- [x] Confronto del piano normalizzato soltanto per foto derivate dal catalogo e default booleano assente/false. Alimenti, quantità, ordine, etichette, categorie e stato di composizione effettivo rimangono controllati. Nove test mirati passati; readiness conserva ora lo snapshot iniziale e il rapporto mostra le differenze dei soli campi modificati.
+- [x] Prima suite `645da95c-9317-4c76-a000-931c703562fd`: build riuscita e 404/405 test passati, una vecchia asserzione del segnale readiness non includeva lo snapshot appena aggiunto. Asserzione corretta mantenendo l'ordine validazione/cattura/annuncio; 19 test mirati passati. Preview costruita v1.20.63, asset `index-Dr2A1jNc.js`.
+- [x] Suite completa successiva `1ad262e8-cb7f-4b08-a5f8-a5ddbb0112f9`, exit 0: build, SSR, audit e 405/405 test (287 generali + 118 mirati) superati. Matrice locale `d75315cf-8098-4a99-a627-f985a0063990`, exit 0. Audit mobile locale avviato sulla build v1.20.63 prima di pubblicare.
+- [x] Audit mobile locale `6bbdc865-469d-4a29-bd62-acc07531bb58`, exit 0, URL preview esplicito e versione attesa 1.20.63: tutti i percorsi del test superati. Nessuna nuova voce del catalogo è stata aggiunta durante questa revisione.
+- [ ] Pubblicazione e nuovo passaggio reale 1.20.62 → 1.20.63, mantenendo requisiti menu/grammi/scroll/piano. Non trasformare retroattivamente in passaggi riusciti i precedenti audit inconclusivi.
+
+### Priorità dati registrati — fase successiva prima di altre modifiche al catalogo
+
+- [ ] Integrare snapshot datati di ingredienti e fatti nutrizionali alla registrazione, senza ricalcolare i pasti passati dal catalogo corrente. Analisi confermata: `actualWeights` legacy viene applicato per indice; un ingrediente inserito può spostare i pesi di un pasto già consumato. Non usare un ID invariato come prova sufficiente di conservazione.
+- [x] Preparato e testato un modulo puro `mealHistory.ts` (15 test) con snapshot, date esplicite, macro decimali, modifiche intenzionali e legacy `needsReview`. Non è ancora collegato a FoodPlanner e non risolve da solo il difetto dell'app pubblicata.
+- [ ] Collegare registrazione, ripristino, Oggi/Settimana/Diario/export agli stessi snapshot; conservare copia grezza dei dati legacy e segnalare i record non ricostruibili, senza indovinare associazioni indice/alimento o date mancanti. Nessuna nuova ricetta domestica va inserita prima di proteggere questi dati.
+
+## Pubblicata — v1.20.62
 
 - [x] Gate stagionale prima della rotazione automatica, anche con un solo candidato disponibile; praticità Mensa e completezza del pasto conservano la priorità. Corretti sia `closestForSlot` sia `chooseMain` e i pool di colazione/spuntini in `applyCuisine`.
 - [x] Calendario CREA della pesca a ottobre invariato; scelte manuali e salvate non sostituite per stagionalità. Dodici test mirati con novembre fisso, tutti gli offset e funzioni/ricette reali, oltre ai quattro test Mensa, passati.
@@ -10,7 +25,11 @@
 - [x] Passaggio completo finale della suite invisibile: job `2ac7857e-53b8-4508-aa32-2b594f604a8f`, exit 0: typecheck, audit dati/foto/ricette, SSR, build, 287 test generali e 64 mirati (351). I job precedenti `aecb86e7-9bcc-4ded-8b7f-d904d2913aaa` e `1b9eb249-77e4-403c-a08f-5f1139c2f585` erano terminati su asserzioni non ancora allineate e non contano come passaggi riusciti.
 - [x] Matrice locale v1.20.62, job `96e50f2f-cf9f-4cc0-9041-26248c26ac37`, exit 0: 24 profili, 14 pasti principali/settimana, almeno 13 distinti, nessun overflow o extra non rappresentato.
 - [x] Audit mobile completo locale `df1c73bf-0cfc-406c-a14d-04c3e88909a7`, exit 0 e zero errori JS: versione corretta, immagini visibili caricate, alternative al latte, stabilità di menu/grammi durante lo scroll, sincronizzazione Oggi/Settimana e tutti gli altri percorsi previsti dal test superati.
-- [ ] Verifiche mobile/matrice locali v1.20.62, pubblicazione sullo stesso link e passaggio pubblico 1.20.61 → 1.20.62 senza perdere scelte, quantità, registrazioni o scroll. Aggiornare insieme `package.json`, la radice di `package-lock.json` e `public/version.json` a ogni nuova revisione.
+- [x] Commit v1.20.62 `e9d98c8` verificato e inviato a `origin/main`; stesse repository e URL. Matrice e mobile locali passati prima del push.
+- [x] Pubblicazione v1.20.62 verificata: CI `40801881282` riuscita su `e9d98c8`, job pubblico `637414e0-0c36-4fa2-9de7-15e226756b0c` exit 0; manifest e asset `index-Dw1POIMW.js` pubblici allineati.
+- [ ] Passaggio reale 1.20.61 → 1.20.62, job `41c00f96-e95e-44ce-b97b-af04d6386766`: versione aggiornata, menu esatto, 49 g, Ricette e scroll 900 conservati, zero errori JS. Exit 1 perché `partSelections` integrale differisce. La fixture AST/VM del sanitizer dimostra foto versionate e default `occasionalCollapsed:false` aggiunto anche in 61→61; senza snapshot integrali di quel browser non provare retroattivamente l'uguaglianza completa. Nuovo audit 63 normalizza solo questi metadati e conserva diagnostica iniziale/finale.
+- [x] Audit mobile pubblico v1.20.62 `944e6de8-2eb3-4298-8db5-d7c9ef7f8ec4`, exit 0, zero errori JS: alternative latte, immagini, Oggi/Settimana, ricerca, registrazione, porzioni, ricette complete e pizze intere/divisione superati. Nessuna pulizia forzata del profilo quando l'assenza di processi non è certa.
+- [x] Matrice pubblica completa v1.20.62, job `b2f83a10-de12-4ed3-bd9a-6a2d26fa3e2f`, exit 0: 24 profili, 14 pasti principali per settimana, almeno 13 distinti, nessun overflow o extra non rappresentato. Aggiornare insieme `package.json`, la radice di `package-lock.json` e `public/version.json` a ogni nuova revisione.
 
 ## Pubblicata — v1.20.61
 

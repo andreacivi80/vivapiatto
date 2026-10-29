@@ -2,10 +2,14 @@ import { spawn } from "node:child_process";
 import * as fs from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { win32 } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const ownPrefix = /^vivapiatto-(?:cuisine-cdp|release-cdp|cdp)-[A-Za-z0-9_-]+$/;
 const cmd = "C:\\Windows\\System32\\cmd.exe";
+const wmic = "C:\\Windows\\System32\\wbem\\WMIC.exe";
 const wmiCommand = "C:\\Windows\\System32\\wbem\\WMIC.exe path Win32_Process get Name,CommandLine,ProcessId,ParentProcessId /format:csv";
+const wmiXmlCommand = "C:\\Windows\\System32\\wbem\\WMIC.exe path Win32_Process get Name,CommandLine,ProcessId,ParentProcessId,CreationDate,SessionId /format:rawxml";
+const xmlParserPath = fileURLToPath(new URL("./parse-wmi-xml.py", import.meta.url));
 const key = (value) => String(value).replaceAll("/", "\\").replace(/\\+$/, "").toLowerCase();
 
 export const ownedProfilePath = (profile, temporaryRoot) => {
@@ -72,6 +76,53 @@ const profileInCommand = (commandLine, profile) => {
   return false;
 };
 
+export const processCreationMicros = (value) => {
+  if (typeof value !== "string" || !/^[0-9]{14}\.[0-9]{6}[+-][0-9]{3}$/.test(value)) return null;
+  const parts = [value.slice(0, 4), value.slice(4, 6), value.slice(6, 8), value.slice(8, 10), value.slice(10, 12), value.slice(12, 14)].map(Number);
+  const [year, month, day, hour, minute, second] = parts;
+  if (year < 1 || month < 1 || month > 12 || day < 1 || day > 31 || hour > 23 || minute > 59 || second > 59) return null;
+  const date = new Date(0);
+  date.setUTCFullYear(year, month - 1, day);
+  date.setUTCHours(hour, minute, second, 0);
+  if (date.getUTCFullYear() !== year || date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day) return null;
+  const offsetMinutes = Number(value.slice(22)) * (value[21] === "+" ? 1 : -1);
+  return BigInt(date.getTime() - offsetMinutes * 60000) * 1000n + BigInt(value.slice(15, 21));
+};
+
+/** Diagnostic evidence only: session/parentage cannot prove that IPC or a file
+ * handle from an opaque service is unrelated to this profile. Never grants clear.
+ */
+export const opaqueServiceCrashpadEvidence = (processes, candidate, profile, childPid, {
+  observerPid = process.pid, observerName = win32.basename(process.execPath),
+} = {}) => {
+  const unknown = { compatible: false };
+  if (!Array.isArray(processes) || !candidate || candidate.name?.toLowerCase() !== "crashpad_handler.exe" || candidate.commandLine !== "") return unknown;
+  const byPid = new Map();
+  for (const row of processes) {
+    if (!row || typeof row.name !== "string" || typeof row.commandLine !== "string" ||
+        !Number.isInteger(row.pid) || byPid.has(row.pid) || profileInCommand(row.commandLine, profile)) return unknown;
+    byPid.set(row.pid, row);
+  }
+  if (byPid.get(candidate.pid) !== candidate) return unknown;
+  const observer = byPid.get(observerPid);
+  if (!observer || observer.name?.toLowerCase() !== observerName.toLowerCase() ||
+      !Number.isInteger(observer.sessionId) || observer.sessionId <= 0 || processCreationMicros(observer.creationDate) === null) return unknown;
+  const chain = [candidate];
+  while (chain.length < 4) {
+    const parent = byPid.get(chain.at(-1).parentPid);
+    if (!parent || chain.some((row) => row.pid === parent.pid)) return unknown;
+    chain.push(parent);
+  }
+  if (!/\.exe$/i.test(chain[1].name) || /edge|chrome|chromium|browser|updat|crashpad|services|wininit|node/i.test(chain[1].name) ||
+      chain[2].name.toLowerCase() !== "services.exe" || chain[3].name.toLowerCase() !== "wininit.exe") return unknown;
+  const times = chain.map((row) => processCreationMicros(row.creationDate));
+  if (chain.some((row) => row.pid <= 0 || row.pid === childPid || row.pid === observerPid || row.sessionId !== 0 ||
+      /--user-data-dir(?:=|\s)|msedge|microsoftedge|webview|chromium/i.test(row.commandLine)) || times.some((time) => time === null)) return unknown;
+  // Reused or ambiguous parent IDs must not even receive a compatible label.
+  if (times.slice(1).some((time, index) => time >= times[index]) || times[3] >= processCreationMicros(observer.creationDate)) return unknown;
+  return { compatible: true };
+};
+
 // Missing command lines / orphan Edge helpers are uncertainty, never absence.
 export const edgeProfileUse = (processes, profile, childPid) => {
   if (!Array.isArray(processes) || !processes.length) return { clear: false, reason: "Elenco processi non verificabile" };
@@ -104,9 +155,15 @@ const deadlinePromise = async (operation, timeoutMs) => {
 };
 
 export const createReadOnlyCommandRunner = ({ spawnImpl = spawn } = {}) =>
-  (command, { cwd, unicode = false, timeoutMs = 1500 } = {}) => new Promise((resolve, reject) => {
-    if (![wmiCommand, "dir /a:-l /b"].includes(command)) { reject(new Error("Comando readonly non autorizzato")); return; }
-    let query, timer, settled = false, size = 0;
+  (command, { cwd, unicode = false, raw = false, timeoutMs = 1500 } = {}) => new Promise((resolve, reject) => {
+    if (![wmiCommand, wmiXmlCommand, "dir /a:-l /b"].includes(command)) { reject(new Error("Comando readonly non autorizzato")); return; }
+    if (!Number.isFinite(timeoutMs) || timeoutMs <= 0 || timeoutMs > 5000) { reject(new Error("Budget readonly non valido")); return; }
+    const wmiArgs = command === wmiXmlCommand
+      ? ["path", "Win32_Process", "get", "Name,CommandLine,ProcessId,ParentProcessId,CreationDate,SessionId", "/format:rawxml"]
+      : command === wmiCommand
+        ? ["path", "Win32_Process", "get", "Name,CommandLine,ProcessId,ParentProcessId", "/format:csv"]
+        : null;
+    let query, timer, settled = false, closed = false, size = 0;
     const stdout = [], stderr = [];
     const finish = (error, output) => {
       if (settled) return;
@@ -114,7 +171,7 @@ export const createReadOnlyCommandRunner = ({ spawnImpl = spawn } = {}) =>
       if (error) {
         // Only this original readonly command handle, never an arbitrary numeric PID.
         // Close inherited pipes even if WMI stalls, so no stream/timer holds Node open.
-        if (query?.exitCode === null && query?.signalCode === null) {
+        if (!closed && query?.exitCode === null && query?.signalCode === null) {
           try { query.kill(); } catch { /* Uncertain query => retain the profile. */ }
         }
         query?.stdout?.destroy(); query?.stderr?.destroy(); query?.unref();
@@ -122,8 +179,11 @@ export const createReadOnlyCommandRunner = ({ spawnImpl = spawn } = {}) =>
       } else resolve(output);
     };
     try {
-      query = spawnImpl(cmd, ["/d", ...(unicode ? ["/u"] : []), "/s", "/c", command], {
-        cwd, windowsHide: true, windowsVerbatimArguments: true, shell: false,
+      // WMIC is the original owned handle: no intermediate cmd process can exit
+      // on timeout while leaving the actual WMI query orphaned behind it.
+      // Only DIR is a cmd builtin, with a fixed literal and cwd kept out of text.
+      query = spawnImpl(wmiArgs ? wmic : cmd, wmiArgs || ["/d", ...(unicode ? ["/u"] : []), "/s", "/c", "dir /a:-l /b"], {
+        cwd, ...(wmiArgs ? { windowsHide: true, shell: false } : { windowsHide: true, windowsVerbatimArguments: true, shell: false }),
         stdio: ["ignore", "pipe", "pipe"],
       });
       query.once("error", (error) => finish(error));
@@ -137,8 +197,9 @@ export const createReadOnlyCommandRunner = ({ spawnImpl = spawn } = {}) =>
         });
       }
       query.once("close", (code, signal) => {
+        closed = true;
         if (code !== 0 || signal || decodeWindowsOutput(Buffer.concat(stderr)).trim()) finish(new Error("Query readonly non verificabile"));
-        else finish(null, decodeWindowsOutput(Buffer.concat(stdout)));
+        else finish(null, raw ? Buffer.concat(stdout) : decodeWindowsOutput(Buffer.concat(stdout)));
       });
       timer = setTimeout(() => finish(new Error("Scadenza query readonly")), Math.max(1, timeoutMs));
     } catch (error) { finish(error); }
@@ -146,7 +207,105 @@ export const createReadOnlyCommandRunner = ({ spawnImpl = spawn } = {}) =>
 
 const runReadOnly = createReadOnlyCommandRunner();
 
-const defaultQueryProcesses = async () => parseWmiProcesses(await runReadOnly(wmiCommand));
+export const bundledPythonPath = (nodeExecutable) => {
+  if (typeof nodeExecutable !== "string" ||
+      !/^[A-Za-z]:[\\/]/.test(nodeExecutable) ||
+      !/[\\/]dependencies[\\/]node[\\/]bin[\\/]node\.exe$/i.test(nodeExecutable)) return null;
+  return win32.resolve(win32.dirname(nodeExecutable), "..", "..", "python", "python.exe");
+};
+
+const validatedProcessJson = (bytes) => {
+  const rows = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes));
+  if (!Array.isArray(rows) || !rows.length || rows.length > 4096) throw new Error("WMI_XML_UNKNOWN");
+  const seen = new Set();
+  for (const row of rows) {
+    if (!row || typeof row !== "object" || Array.isArray(row) ||
+        Object.keys(row).sort().join(",") !== "commandLine,creationDate,name,parentPid,pid,sessionId" ||
+        typeof row.name !== "string" || !row.name || row.name.length > 260 || row.name !== row.name.trim() ||
+        /[\x00-\x1f\\/:*?"<>|]/.test(row.name) ||
+        typeof row.commandLine !== "string" || row.commandLine.length > 32768 || row.commandLine.includes("\0") ||
+        !Number.isInteger(row.pid) || row.pid < 0 || row.pid > 4294967295 ||
+        !Number.isInteger(row.parentPid) || row.parentPid < 0 || row.parentPid > 4294967295 || seen.has(row.pid) ||
+        row.creationDate !== null && processCreationMicros(row.creationDate) === null ||
+        row.sessionId !== null && (!Number.isInteger(row.sessionId) || row.sessionId < 0 || row.sessionId > 4294967295)) {
+      throw new Error("WMI_XML_UNKNOWN");
+    }
+    seen.add(row.pid);
+  }
+  return rows;
+};
+
+/** Fixed readonly query + bundled Python parser share one bounded deadline. */
+export const createWmiProcessQuery = ({
+  nodeExecutable = process.execPath, spawnImpl = spawn, fsImpl = fs, now = Date.now,
+  runReadOnlyImpl = createReadOnlyCommandRunner({ spawnImpl }),
+} = {}) => async ({ timeoutMs = 5000 } = {}) => {
+  try {
+    if (!Number.isFinite(timeoutMs) || timeoutMs <= 0) throw new Error("WMI_XML_UNKNOWN");
+    const deadline = now() + Math.min(5000, timeoutMs);
+    const remaining = () => {
+      const value = deadline - now();
+      if (value <= 0) throw new Error("WMI_XML_UNKNOWN");
+      return value;
+    };
+    const python = bundledPythonPath(nodeExecutable);
+    if (!python) throw new Error("WMI_XML_UNKNOWN");
+    await deadlinePromise(async () => {
+      for (const file of [python, xmlParserPath]) {
+        const stat = await fsImpl.lstat(file);
+        if (!stat.isFile() || stat.isSymbolicLink()) throw new Error("WMI_XML_UNKNOWN");
+      }
+    }, Math.min(2000, remaining()));
+    const xml = await deadlinePromise(() => runReadOnlyImpl(wmiXmlCommand, {
+      raw: true, timeoutMs: remaining(),
+    }), remaining());
+    if (!Buffer.isBuffer(xml) || !xml.length || xml.length > 4 * 1024 * 1024) throw new Error("WMI_XML_UNKNOWN");
+    remaining();
+    return await new Promise((resolve, reject) => {
+      let child, timer, settled = false, closed = false, size = 0;
+      const chunks = [];
+      const finish = (error, rows) => {
+        if (settled) return;
+        settled = true; clearTimeout(timer);
+        if (error) {
+          if (!closed && child?.exitCode === null && child?.signalCode === null) {
+            try { child.kill(); } catch { /* Own parser handle only; uncertainty retains the profile. */ }
+          }
+          child?.stdin?.destroy(); child?.stdout?.destroy(); child?.stderr?.destroy(); child?.unref();
+          reject(new Error("WMI_XML_UNKNOWN"));
+        } else resolve(rows);
+      };
+      try {
+        child = spawnImpl(python, ["-I", "-B", xmlParserPath], {
+          windowsHide: true, shell: false, stdio: ["pipe", "pipe", "pipe"],
+        });
+        child.once("error", () => finish(true));
+        for (const stream of [child.stdin, child.stdout, child.stderr]) stream.once("error", () => finish(true));
+        child.stdout.on("data", (chunk) => {
+          if (settled) return;
+          size += chunk.length;
+          if (size > 4 * 1024 * 1024) finish(true);
+          else chunks.push(Buffer.from(chunk));
+        });
+        child.stderr.on("data", (chunk) => { if (chunk.length) finish(true); });
+        child.once("close", (code, signal) => {
+          closed = true;
+          if (code !== 0 || signal) { finish(true); return; }
+          try {
+            const rows = validatedProcessJson(Buffer.concat(chunks));
+            remaining();
+            finish(null, rows);
+          }
+          catch { finish(true); }
+        });
+        timer = setTimeout(() => finish(true), Math.max(1, remaining()));
+        child.stdin.end(xml);
+      } catch { finish(true); }
+    });
+  } catch { throw new Error("WMI_XML_UNKNOWN"); }
+};
+
+const defaultQueryProcesses = createWmiProcessQuery();
 const defaultNonReparseNames = async (directory) => {
   // /a:-l excludes ALL reparse tags, not only Node's symbolic-link types.
   // No path is interpolated into this fixed command; cwd is a spawn option.
@@ -165,7 +324,7 @@ export const createHeadlessCleanup = (overrides = {}) => {
   const deps = {
     fs, temporaryRoot: tmpdir, platform: process.platform, now: Date.now,
     queryProcesses: defaultQueryProcesses, nonReparseNames: defaultNonReparseNames,
-    warn: (message) => console.warn(message), closeTimeoutMs: 1000, totalTimeoutMs: 10000,
+    warn: (message) => console.warn(message), closeTimeoutMs: 1000, totalTimeoutMs: 30000,
     ...overrides,
   };
   return async ({ child, browser, page, profile }) => {
@@ -192,7 +351,11 @@ export const createHeadlessCleanup = (overrides = {}) => {
       if (childOwned && Number.isInteger(child.pid) && child.pid > 0 && child.exitCode === null && child.signalCode === null) child.kill();
       if (!owned || !childOwned || deps.platform !== "win32") throw new Error("Proprietà del profilo/processo non verificata");
       const requireNoEdge = async () => {
-        const proof = edgeProfileUse(await bounded(deps.queryProcesses), owned, child.pid);
+        withinBudget();
+        const queryBudget = Math.min(5000, deps.totalTimeoutMs - (deps.now() - started));
+        if (queryBudget <= 0) throw new Error("Budget cleanup esaurito");
+        const processes = await deadlinePromise(() => deps.queryProcesses({ timeoutMs: queryBudget }), queryBudget);
+        const proof = edgeProfileUse(processes, owned, child.pid);
         if (!proof.clear) throw new Error(proof.reason);
       };
       await requireNoEdge();

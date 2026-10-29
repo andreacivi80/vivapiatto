@@ -99,8 +99,11 @@ test("live release audit writes a local ready handshake only after its initial s
   assert.ok(source.includes('const readyDirectory = join(process.cwd(), "outputs")'));
   assert.ok(source.includes('${process.pid}.ready.json'));
   assert.ok(source.includes('writeReadiness("starting")'));
-  const ready = source.indexOf('writeReadiness("ready", { initial, profile })');
-  assert.ok(ready > source.indexOf('if (!initial.libraryVisible || initial.scrollY <= 0)'));
-  assert.ok(ready < source.indexOf('console.log(`Transizione reale pronta:'));
+  const ready = source.indexOf('writeReadiness("ready", { initial, profile, initialPlanState })');
+  const validatedView = source.indexOf('if (!initial.libraryVisible || initial.scrollY <= 0)');
+  const capturedPlan = source.indexOf('const initialPlanState = await evaluate(stateExpression)');
+  const announcedReady = source.indexOf('console.log(`Transizione reale pronta:');
+  assert.ok(validatedView >= 0 && capturedPlan > validatedView);
+  assert.ok(ready > capturedPlan && announcedReady > ready);
   assert.ok(source.includes('writtenAt: new Date().toISOString()'));
 });

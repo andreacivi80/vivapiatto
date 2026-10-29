@@ -1,6 +1,6 @@
 {
   "name": "vivapiatto",
-  "version": "1.20.62",
+  "version": "1.20.63",
   "private": true,
   "type": "module",
   "scripts": {
@@ -12,7 +12,7 @@
     "test:cuisine-mobile": "node scripts/audit-cuisine-plan.mjs",
     "test:public-release": "node scripts/verify-public-release.mjs",
     "test:live-update": "node scripts/audit-live-release-update.mjs",
-    "test:recipe-consistency": "node --test tests/catalog-condiments-v12061.test.mjs tests/recipe-aromatics-v12061.test.mjs tests/headless-startup.test.mjs tests/headless-cleanup.test.mjs tests/automatic-season-v12062.test.mjs tests/release-audit-state.test.mjs tests/ci-silent.test.mjs",
+    "test:recipe-consistency": "node --test tests/catalog-condiments-v12061.test.mjs tests/recipe-aromatics-v12061.test.mjs tests/headless-startup.test.mjs tests/headless-cleanup.test.mjs tests/automatic-season-v12062.test.mjs tests/release-audit-state.test.mjs tests/ci-silent.test.mjs tests/headless-wmi-xml.test.mjs tests/meal-history-snapshots.test.mjs",
     "pretest": "npm run typecheck && node scripts/audit-food-database.mjs",
     "test": "node scripts/audit-nutrition-coverage.mjs && node scripts/audit-copy-safety.mjs && node scripts/audit-pasta-legume-portions.mjs && node scripts/audit-fatty-fish-oil.mjs && node scripts/audit-photo-assets.mjs && node scripts/audit-full-dish-photos.mjs --strict && node scripts/audit-all-recipe-photos.mjs --strict && node scripts/audit-recipe-photo-semantics.mjs --strict && node scripts/audit-recipe-photo-uniqueness.mjs --strict && node scripts/audit-recipe-matrix.mjs && node scripts/audit-recipe-parts.mjs && node scripts/audit-requested-pantry.mjs && node scripts/audit-pantry-recipe-usage.mjs && node scripts/audit-occasional-foods.mjs && node scripts/audit-alternative-catalog.mjs && node scripts/audit-weekly-rotation.mjs && node scripts/ssr-smoke.mjs && npm run build && node --test tests/static-build.test.mjs tests/storage-recovery.test.mjs tests/mensa-v12060.test.mjs && npm run test:recipe-consistency"
   },

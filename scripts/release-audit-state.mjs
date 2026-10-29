@@ -15,5 +15,28 @@ export function capturePersistedPlanState(raw) {
     "maxPrepTime", "availableEquipment", "budgetLevel", "breakfastStyle",
     "mealPrepMode", "dayIndex", "diaryDay", "builder",
   ];
-  return Object.fromEntries(fields.map((field) => [field, state[field] ?? null]));
+  const captured = Object.fromEntries(fields.map((field) => [field, state[field] ?? null]));
+  const selections = captured.partSelections;
+  if (selections && typeof selections === "object" && !Array.isArray(selections)) {
+    captured.partSelections = Object.fromEntries(Object.entries(selections).map(([key, parts]) => [
+      key,
+      Array.isArray(parts) ? parts.map((part) => {
+        // Do not whitelist fields or discard unexpected shapes/data. Only known
+        // presentation metadata of an actual saved MealPart is canonicalized.
+        if (!part || typeof part !== "object" || Array.isArray(part) ||
+            typeof part.food !== "string" || typeof part.grams !== "number" ||
+            !Number.isFinite(part.grams)) return part;
+        const normalized = { ...part };
+        // A new bundle intentionally refreshes these catalog-derived photo URLs.
+        // Unexpected non-string values remain visible to the equality check.
+        if (typeof normalized.image === "string") delete normalized.image;
+        if (!Object.prototype.hasOwnProperty.call(part, "occasionalCollapsed") ||
+            typeof part.occasionalCollapsed === "boolean") {
+          normalized.occasionalCollapsed = part.occasionalCollapsed === true;
+        }
+        return normalized;
+      }) : parts,
+    ]));
+  }
+  return captured;
 }

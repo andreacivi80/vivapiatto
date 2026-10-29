@@ -126,7 +126,7 @@ try {
   if (!initial.libraryVisible || initial.scrollY <= 0) throw new Error(`Vista lunga di prova non disponibile: ${JSON.stringify(initial)}`);
   const stateExpression = `(${capturePersistedPlanState.toString()})(localStorage.getItem('vivapiatto-v1'))`;
   const initialPlanState = await evaluate(stateExpression);
-  writeReadiness("ready", { initial, profile });
+  writeReadiness("ready", { initial, profile, initialPlanState });
   console.log(`Transizione reale pronta: v${fromVersion} aperta nel browser isolato`);
   if (simulateManifest) {
     // Force only the advertised version to be newer while keeping the real
@@ -228,6 +228,8 @@ try {
     event.method === "Runtime.exceptionThrown" ||
     (event.method === "Log.entryAdded" && event.params?.entry?.level === "error")
   );
+  const changedPlanFields = Object.keys(initialPlanState).filter((key) =>
+    !isDeepStrictEqual(restoredPlanState[key], initialPlanState[key]));
   const report = {
     fromVersion,
     toVersion,
@@ -236,8 +238,11 @@ try {
     gramsPreserved: restoredMeal.grams === initial.expected,
     menuPreserved: JSON.stringify(restoredMeal.menu) === JSON.stringify(initial.menu),
     planStatePreserved: isDeepStrictEqual(restoredPlanState, initialPlanState),
-    changedPlanFields: Object.keys(initialPlanState).filter((key) =>
-      !isDeepStrictEqual(restoredPlanState[key], initialPlanState[key])),
+    changedPlanFields,
+    changedPlanState: Object.fromEntries(changedPlanFields.map((key) => [key, {
+      before: initialPlanState[key],
+      after: restoredPlanState[key],
+    }])),
     scrollPreserved: Math.abs(restoredScrollY - initial.scrollY) <= 20,
     javascriptErrors: browserErrors.length,
     javascriptErrorDetails: browserErrors.map((event) => ({

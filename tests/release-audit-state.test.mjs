@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
+import { isDeepStrictEqual } from "node:util";
 import vm from "node:vm";
 import { capturePersistedPlanState } from "../scripts/release-audit-state.mjs";
 
@@ -30,13 +31,133 @@ test("release audit reader runs unchanged inside the page and rejects absent/cor
   }
 });
 
+const breakfast49g = () => ({
+  choices: { "0-0": "breakfast-rusks-butter" },
+  partSelections: { "0-0": [
+    { category: "Carboidrato", food: "Fette biscottate integrali", grams: 49,
+      label: "Fette biscottate", image: "/vivapiatto/food/part-rusks-v7.png?v=1.20.61" },
+    { category: "Extra", food: "Burro", grams: 10,
+      label: "Burro", image: "/vivapiatto/food/part-butter-v7.png?v=1.20.61" },
+    { category: "Extra", food: "Confettura di frutta", grams: 25,
+      label: "Confettura", image: "/vivapiatto/food/part-jam-v7.png?v=1.20.61" },
+    { category: "Latticino", food: "Latte parzialmente scremato", grams: 200,
+      label: "Latte", image: "/vivapiatto/food/part-milk-v7.png?v=1.20.61" },
+  ] },
+});
+const capture = (state) => capturePersistedPlanState(JSON.stringify(state));
+
+test("release audit preserves the real 49 g breakfast across photo refresh and false collapse defaults", () => {
+  const before = breakfast49g();
+  const inputSnapshot = JSON.stringify(before);
+  const after = structuredClone(before);
+  for (const part of after.partSelections["0-0"]) {
+    part.image = part.image.replace("1.20.61", "1.20.62");
+    part.occasionalCollapsed = false;
+  }
+  assert.deepEqual(capture(before), capture(after));
+  assert.equal(capture(after).partSelections["0-0"][0].grams, 49);
+  assert.equal(JSON.stringify(before), inputSnapshot, "Reader must not mutate the input");
+  const raw = JSON.stringify(after);
+  const inPage = vm.runInNewContext(`(${capturePersistedPlanState.toString()})(raw)`, { raw });
+  assert.equal(JSON.stringify(inPage), JSON.stringify(capture(after)));
+  const sameVersionReload = structuredClone(before);
+  sameVersionReload.partSelections["0-0"].forEach((part) => { part.occasionalCollapsed = false; });
+  assert.deepEqual(capture(before), capture(sameVersionReload));
+});
+
+test("release audit still detects every logical MealPart change, order and unexpected fields", () => {
+  const before = breakfast49g();
+  const mutations = {
+    food: (parts) => { parts[0].food = "Pane integrale"; },
+    grams: (parts) => { parts[0].grams = 48; },
+    category: (parts) => { parts[0].category = "Extra"; },
+    label: (parts) => { parts[0].label = "Etichetta personalizzata"; },
+    order: (parts) => { [parts[0], parts[1]] = [parts[1], parts[0]]; },
+    removal: (parts) => { parts.pop(); },
+    addition: (parts) => { parts.push({ ...parts[0] }); },
+    occasionalGroupId: (parts) => { parts[0].occasionalGroupId = "pizza-user-group"; },
+    occasionalRecipeId: (parts) => { parts[0].occasionalRecipeId = "occasional-pizza-margherita"; },
+    occasionalSplitGrams: (parts) => { parts[0].occasionalSplitGrams = 49; },
+    occasionalCollapsed: (parts) => { parts[0].occasionalCollapsed = true; },
+    unknownField: (parts) => { parts[0].futureUserData = { preserve: true }; },
+    invalidImage: (parts) => { parts[0].image = { unexpected: true }; },
+    invalidCollapsed: (parts) => { parts[0].occasionalCollapsed = "true"; },
+  };
+  for (const [name, change] of Object.entries(mutations)) {
+    const after = structuredClone(before);
+    change(after.partSelections["0-0"]);
+    assert.notDeepEqual(capture(after), capture(before), name);
+  }
+});
+
+test("release audit keeps pizza grouping, split grams and true collapse state significant", () => {
+  const before = breakfast49g();
+  Object.assign(before.partSelections["0-0"][0], {
+    occasionalGroupId: "pizza-group-1", occasionalRecipeId: "occasional-pizza-margherita",
+    occasionalSplitGrams: 49, occasionalCollapsed: true,
+  });
+  for (const [field, value] of [
+    ["occasionalGroupId", "pizza-group-2"],
+    ["occasionalRecipeId", "occasional-pizza-marinara"],
+    ["occasionalSplitGrams", 48],
+    ["occasionalCollapsed", false],
+    ["occasionalCollapsed", undefined],
+  ]) {
+    const after = structuredClone(before);
+    if (value === undefined) delete after.partSelections["0-0"][0][field];
+    else after.partSelections["0-0"][0][field] = value;
+    assert.notDeepEqual(capture(after), capture(before), `${field}=${value}`);
+  }
+});
+
+test("release audit retains malformed and unknown part-selection data instead of filtering it", () => {
+  for (const value of [
+    "unexpected", ["unexpected"],
+    { "0-0": { food: "Tofu", grams: 150, image: "not-an-array" } },
+    { "0-0": [null, 7, ["unexpected"], { image: "not-a-MealPart" }] },
+  ]) {
+    assert.deepEqual(capture({ partSelections: value }).partSelections, value);
+  }
+  const state = breakfast49g();
+  state.partSelections["0-0"][0].futureUserData = { preserve: true };
+  assert.deepEqual(capture(state).partSelections["0-0"][0].futureUserData, { preserve: true });
+});
+
 test("live update still requires exact menu text as well as persisted plan equality", async () => {
   const audit = await readFile(new URL("../scripts/audit-live-release-update.mjs", import.meta.url), "utf8");
   assert.match(audit, /initialPlanState = await evaluate/);
   assert.match(audit, /restoredPlanState = await evaluate/);
+  assert.match(audit, /writeReadiness\("ready", \{ initial, profile, initialPlanState \}\)/);
+  assert.match(audit, /changedPlanState: Object\.fromEntries\(changedPlanFields\.map/);
+  assert.match(audit, /before: initialPlanState\[key\]/);
+  assert.match(audit, /after: restoredPlanState\[key\]/);
   assert.match(audit, /planStatePreserved: isDeepStrictEqual\(restoredPlanState, initialPlanState\)/);
   assert.match(audit, /menuPreserved: JSON.stringify\(restoredMeal.menu\) === JSON.stringify\(initial.menu\)/);
   assert.match(audit, /!report.gramsPreserved \|\| !report.menuPreserved \|\| !report.planStatePreserved/);
+});
+
+test("live update diagnostics expose before/after only for fields that actually changed", async () => {
+  const audit = await readFile(new URL("../scripts/audit-live-release-update.mjs", import.meta.url), "utf8");
+  const changedExpression = audit.match(/const changedPlanFields = ([\s\S]*?);\r?\n  const report =/)[1];
+  const detailsExpression = audit.slice(audit.indexOf("changedPlanState: ") + "changedPlanState: ".length,
+    audit.indexOf(",\n    scrollPreserved:") >= 0
+      ? audit.indexOf(",\n    scrollPreserved:") : audit.indexOf(",\r\n    scrollPreserved:"));
+  const initialPlanState = capture(breakfast49g());
+  const changed = breakfast49g();
+  changed.partSelections["0-0"][0].grams = 48;
+  const restoredPlanState = capture(changed);
+  const run = (restored) => vm.runInNewContext(`(() => {
+    const changedPlanFields = ${changedExpression};
+    return { changedPlanFields, changedPlanState: ${detailsExpression} };
+  })()`, { initialPlanState, restoredPlanState: restored, isDeepStrictEqual });
+  const result = JSON.parse(JSON.stringify(run(restoredPlanState)));
+  assert.deepEqual(result.changedPlanFields, ["partSelections"]);
+  assert.deepEqual(result.changedPlanState, { partSelections: {
+    before: initialPlanState.partSelections, after: restoredPlanState.partSelections,
+  } });
+  assert.deepEqual(JSON.parse(JSON.stringify(run(initialPlanState))), {
+    changedPlanFields: [], changedPlanState: {},
+  });
 });
 
 test("mobile audit can target the published version while the next local release is prepared", async () => {

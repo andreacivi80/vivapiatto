@@ -20,19 +20,65 @@ Dosi dichiarate dalla fonte: panna fresca 500 ml, zucchero 80 g, un baccello di 
 
 La [scheda PAT della Regione Piemonte](https://www.piemonteagri.it/qualita/it/prodotti/paste-e-dolci/scheda/334-panna-cotta) documenta la tradizione e varianti del prodotto. Non va confusa con un'analisi nutrizionale della nostra preparazione.
 
-### Dati ancora necessari
+### Fonti nutrizionali reperite, non ancora inserite nel database
 
-Nel database verificato mancano panna fresca liquida, gelatina alimentare in fogli e vaniglia pura. Esistono `Zucchero` e il prodotto composto `Panna cotta`, che non sostituisce la panna come ingrediente.
+Le fonti per i tre ingredienti mancanti sono ora disponibili. Questo sblocco documentale non significa che nuovi alimenti, foto o ricetta siano stati implementati. `Zucchero` esiste già; il prodotto composto `Panna cotta` resta separato e non entra nella distinta domestica.
 
-- Acquisire valori per 100 g della panna effettivamente scelta, precisandone la percentuale di grassi.
-- Acquisire gelatina e vaniglia come ingredienti distinti con fonte dei dati e fotografia corretta.
-- Non convertire automaticamente 500 ml di panna in 500 g: dichiarare la conversione adottata o pesare la massa reale.
-- Per la vaniglia distinguere baccello usato in infusione e parte effettivamente consumata. La pesatura editoriale eventualmente introdotta non è una dose in grammi della fonte.
-- Non equiparare un foglio di gelatina a un peso universale; verificare peso e indicazioni della confezione.
+Valori riferiti a **100 g di ingrediente**, non a una porzione di dolce:
 
-### Implementazione proposta
+| Voce da usare | kcal | Proteine (g) | Carboidrati (g) | Grassi (g) | Fibre (g) | Fonte |
+| --- | ---: | ---: | ---: | ---: | ---: | --- |
+| Panna liquida da montare, 35% grassi | 337 | 2,3 | 3,4 | 35 | 0 | [CREA, codice 140300](https://www.alimentinutrizione.it/tabelle-nutrizionali/140300) |
+| Gelatina in fogli S.Martino | 357 | 89 | 0 | 0 | 0 | [Etichetta ufficiale S.Martino](https://www.ilovesanmartino.it/catalogo/ingredienti/farciture/gelatina-in-fogli/) |
+| Vaniglia Bourbon Rapunzel, baccello intero macinato | 317 | 3,9 | 56 | 3,2 | 24,4 | [Etichetta ufficiale Rapunzel](https://shop.rapunzel.de/1460380/Vanillepulver-Bourbon/) |
+| Zucchero, voce già presente | 392 | 0 | 100 | 0 | 0 | Database corrente, attribuzione CREA da conservare |
 
-Calcolare il lotto completo e quattro porzioni. Distinguere tempo attivo e riposo refrigerato. Mostrare la panna cotta come dolce unico; consentire aggiunte o scomposizione volontaria. Guarnizioni con propri grammi, calorie e fotografie, mai aggiunte implicitamente.
+La gelatina scelta è espressamente **S.Martino**: il produttore dichiara origine suina, sei fogli da 2 g, sale 1,2 g/100 g e idratazione in acqua fredda per almeno dieci minuti. Gli 8 g della ricetta corrispondono a quattro fogli di questo prodotto. Non trasferire questi nutrienti o questa equivalenza a Paneangeli, ad altre marche o alla gelatina in polvere. La pagina non dichiara il valore Bloom: non inventarlo e verificare la resa culinaria con il prodotto scelto.
+
+I valori Rapunzel riguardano tutta la polvere di baccello consumata, non un baccello tolto dopo infusione e neppure i soli semi. Per panna con diversa percentuale di grassi o ingredienti di altra marca occorre rivalutare dati e formulazione.
+
+### Una sola ricetta domestica proposta, con adattamenti dichiarati
+
+Nuovo ID previsto: `home-panna-cotta-vaniglia`; categoria Dolce, cucina italiana, preparazione domestica distinta dall'ID esistente del prodotto pronto.
+
+| Ingrediente del lotto da quattro porzioni | Quantità da pesare per preparare il lotto | Quota ingredienti di 1/4 lotto, non peso pronto |
+| --- | ---: | ---: |
+| Panna liquida 35% | 500 g | 125 g |
+| Zucchero | 80 g | 20 g |
+| Gelatina in fogli S.Martino, prima dell'ammollo | 8 g | 2 g |
+| Vaniglia Bourbon Rapunzel in polvere | 1 g | 0,25 g |
+
+La fonte Piemonte Italia usa **500 ml** e un baccello: **500 g** di panna e **1 g** di polvere sono nuove dosi editoriali pesate, non una conversione volume/massa e non equivalenze della fonte. Gli 80 g di zucchero e gli 8 g di gelatina restano le quantità originali; marca della gelatina e sostituzione della vaniglia devono comparire nell'attribuzione dell'adattamento.
+
+Il procedimento futuro deve separare preparazione e riposo di almeno cinque ore in frigorifero. L'ammollo segue il prodotto S.Martino; la vaniglia in polvere resta nella miscela e non viene rimossa come il baccello della fonte. Uniformare prima della pubblicazione la formulazione termica contraddittoria della pagina culinaria, che menziona sia l'assenza di ebollizione sia il raggiungimento del bollore; non copiarla meccanicamente. La prova culinaria della nuova formulazione resta da fare.
+
+Calcolare i nutrienti dell'intero lotto dai quattro ingredienti e attribuirne un quarto a una porzione. Non aggiungere anche la voce composta `Panna cotta`. Non assegnare un peso finale di 589 g o un peso pronto per stampino dalla semplice somma: acqua trattenuta dalla gelatina, evaporazione e residui richiedono pesatura del lotto finito. Finché manca questa misura, la porzione si indica come **1/4 ricetta**; un successivo inserimento per grammi di dolce pronto richiede la resa misurata.
+
+Il dolce resta visivamente composto e le guarnizioni sono extra facoltativi, con nutrienti e pesi propri. La base proposta non contiene automaticamente frutti rossi, coulis, cioccolato o caramello.
+
+### Vincoli UI riscontrati e da risolvere prima dell'inserimento
+
+Nel modello `Recipe` corrente non esistono numero di porzioni, frazione consumata o resa finale. `peopleCount` è intero e il dettaglio arrotonda i grammi con `round`: non è un selettore di quarti di lotto e annullerebbe la quota di vaniglia da 0,25 g.
+
+- Mostrare separatamente **Ingredienti per preparare quattro porzioni** e **Porzione consumata: 1/4 ricetta**. I nutrienti del diario devono seguire la frazione del lotto; la spesa deve seguire la quantità realmente preparata, senza duplicare il prodotto composto.
+- Conservare i decimali necessari nei calcoli e nell'eventuale dettaglio proporzionale; non arrotondare 0,25 g a zero e non far pesare all'utente un quarto di aroma quando sta preparando il lotto intero.
+- Per il prodotto pronto restano grammi di dolce acquistato; per questa preparazione restano grammi di ingredienti prima della lavorazione. Le etichette devono esplicitare panna liquida, gelatina secca prima dell'ammollo e vaniglia in polvere. L'attuale euristica `ingredientWeightState` non distingue in modo affidabile questi stati.
+- `plannedIngredients`/`calibratePlannedIngredients` possono ricalibrare ingredienti singoli e applicare minimi/arrotondamenti standard: proteggere le proporzioni della ricetta, soprattutto gelatina e aroma. Una diversa porzione di dolce deve scalare il lotto coerentemente, non trasformare indipendentemente 2 g di gelatina in una quantità standard da alimento.
+- Verificare nello stesso percorso oggi, settimana, ricettario, diario e spesa: frazione del lotto, ingredienti visibili, eventuali modifiche, macro senza doppio conteggio e mantenimento della foto del dolce composto.
+
+### Allergeni, sicurezza e stato dei lavori
+
+Allergene certo della formulazione: latte, con lattosio. La gelatina S.Martino è suina: non classificare la ricetta come vegetariana/vegana o compatibile con restrizioni che la escludono. Verificare comunque confezioni e possibili contaminazioni degli ingredienti effettivi.
+
+Per igiene e conservazione riferirsi alle indicazioni attuali del [Ministero della Salute sulla sicurezza domestica](https://www.salute.gov.it/new/it/tema/sistema-di-controllo-della-sicurezza-alimentare/sicurezza-domestica-degli-alimenti/): alimenti deperibili refrigerati, contenitori chiusi, separazione dai crudi e rispetto delle etichette. Non inventare una durata domestica di due o tre giorni; le cinque ore della ricetta sono un riposo di rassodamento, non una scadenza sanitaria.
+
+- [x] Reperite fonti primarie di composizione per panna 35%, gelatina in fogli S.Martino e vaniglia in polvere Rapunzel.
+- [ ] Inserire le tre voci nel database con fonte corretta, metadati e fotografie canoniche.
+- [ ] Verificare formulazione, preparazione, porzionamento e resa finale; acquisire una foto fedele del dolce finito.
+- [ ] Adeguare il modello/UI per lotto, quarto di ricetta, decimali e stato di pesata senza alterare le registrazioni del prodotto pronto.
+- [ ] Integrare la ricetta e provarne tutti i percorsi senza duplicazioni o ricalibrazioni improprie.
+
+È uno sblocco delle fonti, non una ricetta già pubblicata o una validazione nutrizionale professionale.
 
 ## 2. Pastiera napoletana
 
